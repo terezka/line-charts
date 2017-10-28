@@ -1,0 +1,86 @@
+var _user$project$Svg_Coordinates$maximum = function (toValue) {
+	return function (_p0) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			1,
+			_elm_lang$core$List$maximum(
+				A2(_elm_lang$core$List$map, toValue, _p0)));
+	};
+};
+var _user$project$Svg_Coordinates$minimum = function (toValue) {
+	return function (_p1) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			0,
+			_elm_lang$core$List$minimum(
+				A2(_elm_lang$core$List$map, toValue, _p1)));
+	};
+};
+var _user$project$Svg_Coordinates$length = F2(
+	function (frame, dimension) {
+		var _p2 = dimension.orientation;
+		if (_p2.ctor === 'Horizontal') {
+			return A2(_elm_lang$core$Basics$max, 1, (frame.size.width - frame.margin.left) - frame.margin.right);
+		} else {
+			return A2(_elm_lang$core$Basics$max, 1, (frame.size.height - frame.margin.bottom) - frame.margin.top);
+		}
+	});
+var _user$project$Svg_Coordinates$range = function (dimension) {
+	var diff = dimension.bounds.max - dimension.bounds.min;
+	return (_elm_lang$core$Native_Utils.cmp(diff, 0) > 0) ? diff : 1;
+};
+var _user$project$Svg_Coordinates$scaleCartesian = F3(
+	function (frame, dimension, value) {
+		return (value * _user$project$Svg_Coordinates$range(dimension)) / A2(_user$project$Svg_Coordinates$length, frame, dimension);
+	});
+var _user$project$Svg_Coordinates$scaleSvg = F3(
+	function (frame, dimension, value) {
+		return (value * A2(_user$project$Svg_Coordinates$length, frame, dimension)) / _user$project$Svg_Coordinates$range(dimension);
+	});
+var _user$project$Svg_Coordinates$toCartesian = F3(
+	function (frame, dimension, value) {
+		var _p3 = dimension.orientation;
+		if (_p3.ctor === 'Horizontal') {
+			return dimension.bounds.min + A3(_user$project$Svg_Coordinates$scaleCartesian, frame, dimension, value - frame.margin.left);
+		} else {
+			return dimension.bounds.max - A3(_user$project$Svg_Coordinates$scaleCartesian, frame, dimension, value - frame.margin.top);
+		}
+	});
+var _user$project$Svg_Coordinates$toSvg = F3(
+	function (frame, dimension, value) {
+		var _p4 = dimension.orientation;
+		if (_p4.ctor === 'Horizontal') {
+			return A3(_user$project$Svg_Coordinates$scaleSvg, frame, dimension, value - dimension.bounds.min) + frame.margin.left;
+		} else {
+			return A3(_user$project$Svg_Coordinates$scaleSvg, frame, dimension, dimension.bounds.max - value) + frame.margin.top;
+		}
+	});
+var _user$project$Svg_Coordinates$bounds = F2(
+	function (toValue, data) {
+		return {
+			min: A2(_user$project$Svg_Coordinates$minimum, toValue, data),
+			max: A2(_user$project$Svg_Coordinates$maximum, toValue, data)
+		};
+	});
+var _user$project$Svg_Coordinates$Frame = F2(
+	function (a, b) {
+		return {margin: a, size: b};
+	});
+var _user$project$Svg_Coordinates$Size = F2(
+	function (a, b) {
+		return {width: a, height: b};
+	});
+var _user$project$Svg_Coordinates$Margin = F4(
+	function (a, b, c, d) {
+		return {top: a, right: b, bottom: c, left: d};
+	});
+var _user$project$Svg_Coordinates$Dimension = F2(
+	function (a, b) {
+		return {orientation: a, bounds: b};
+	});
+var _user$project$Svg_Coordinates$Bounds = F2(
+	function (a, b) {
+		return {min: a, max: b};
+	});
+var _user$project$Svg_Coordinates$Vertical = {ctor: 'Vertical'};
+var _user$project$Svg_Coordinates$Horizontal = {ctor: 'Horizontal'};

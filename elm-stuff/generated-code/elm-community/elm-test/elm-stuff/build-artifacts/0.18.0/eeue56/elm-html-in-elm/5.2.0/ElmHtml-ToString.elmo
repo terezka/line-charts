@@ -1,0 +1,234 @@
+var _eeue56$elm_html_in_elm$ElmHtml_ToString$nodeToLines = F2(
+	function (options, nodeType) {
+		var _p0 = nodeType;
+		switch (_p0.ctor) {
+			case 'TextTag':
+				return {
+					ctor: '::',
+					_0: _p0._0.text,
+					_1: {ctor: '[]'}
+				};
+			case 'NodeEntry':
+				return A2(_eeue56$elm_html_in_elm$ElmHtml_ToString$nodeRecordToString, options, _p0._0);
+			case 'CustomNode':
+				return {ctor: '[]'};
+			case 'MarkdownNode':
+				return {
+					ctor: '::',
+					_0: _p0._0.model.markdown,
+					_1: {ctor: '[]'}
+				};
+			default:
+				return {ctor: '[]'};
+		}
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_ToString$nodeRecordToString = F2(
+	function (options, _p1) {
+		var _p2 = _p1;
+		var _p13 = _p2.tag;
+		var _p12 = _p2.facts;
+		var boolAttributes = _elm_lang$core$Maybe$Just(
+			A2(
+				_elm_lang$core$String$join,
+				' ',
+				A2(
+					_elm_lang$core$List$map,
+					function (_p3) {
+						var _p4 = _p3;
+						return A2(
+							_elm_lang$core$Basics_ops['++'],
+							_p4._0,
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'=',
+								_elm_lang$core$String$toLower(
+									_elm_lang$core$Basics$toString(_p4._1))));
+					},
+					_elm_lang$core$Dict$toList(_p12.boolAttributes))));
+		var stringAttributes = _elm_lang$core$Maybe$Just(
+			A2(
+				_elm_lang$core$String$join,
+				' ',
+				A2(
+					_elm_lang$core$List$map,
+					function (_p5) {
+						var _p6 = _p5;
+						return A2(
+							_elm_lang$core$Basics_ops['++'],
+							_p6._0,
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'=\"',
+								A2(_elm_lang$core$Basics_ops['++'], _p6._1, '\"')));
+					},
+					_elm_lang$core$Dict$toList(
+						A2(
+							_elm_lang$core$Dict$filter,
+							F2(
+								function (k, v) {
+									return !_elm_lang$core$Native_Utils.eq(k, 'className');
+								}),
+							_p12.stringAttributes)))));
+		var classes = A2(
+			_elm_lang$core$Maybe$map,
+			function (name) {
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					'class=\"',
+					A2(_elm_lang$core$Basics_ops['++'], name, '\"'));
+			},
+			A2(_elm_lang$core$Dict$get, 'className', _p12.stringAttributes));
+		var styles = function () {
+			var _p7 = _elm_lang$core$Dict$toList(_p12.styles);
+			if (_p7.ctor === '[]') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return _elm_lang$core$Maybe$Just(
+					function (styleString) {
+						return A2(
+							_elm_lang$core$Basics_ops['++'],
+							'style=\"',
+							A2(_elm_lang$core$Basics_ops['++'], styleString, '\"'));
+					}(
+						A2(
+							_elm_lang$core$String$join,
+							'',
+							A2(
+								_elm_lang$core$List$map,
+								function (_p8) {
+									var _p9 = _p8;
+									return A2(
+										_elm_lang$core$Basics_ops['++'],
+										_p9._0,
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											':',
+											A2(_elm_lang$core$Basics_ops['++'], _p9._1, ';')));
+								},
+								_p7))));
+			}
+		}();
+		var childrenStrings = A2(
+			_elm_lang$core$List$map,
+			F2(
+				function (x, y) {
+					return A2(_elm_lang$core$Basics_ops['++'], x, y);
+				})(
+				A2(_elm_lang$core$String$repeat, options.indent, ' ')),
+			_elm_lang$core$List$concat(
+				A2(
+					_elm_lang$core$List$map,
+					_eeue56$elm_html_in_elm$ElmHtml_ToString$nodeToLines(options),
+					_p2.children)));
+		var closeTag = A2(
+			_elm_lang$core$Basics_ops['++'],
+			'</',
+			A2(_elm_lang$core$Basics_ops['++'], _p13, '>'));
+		var openTag = function (extras) {
+			var trimmedExtras = A2(
+				_elm_lang$core$List$filter,
+				F2(
+					function (x, y) {
+						return !_elm_lang$core$Native_Utils.eq(x, y);
+					})(''),
+				A2(
+					_elm_lang$core$List$map,
+					_elm_lang$core$String$trim,
+					A2(
+						_elm_lang$core$List$filterMap,
+						function (x) {
+							return x;
+						},
+						extras)));
+			var filling = function () {
+				var _p10 = trimmedExtras;
+				if (_p10.ctor === '[]') {
+					return '';
+				} else {
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						' ',
+						A2(_elm_lang$core$String$join, ' ', _p10));
+				}
+			}();
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'<',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_p13,
+					A2(_elm_lang$core$Basics_ops['++'], filling, '>')));
+		};
+		var _p11 = _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$toElementKind(_p13);
+		if (_p11.ctor === 'VoidElements') {
+			return {
+				ctor: '::',
+				_0: openTag(
+					{
+						ctor: '::',
+						_0: classes,
+						_1: {
+							ctor: '::',
+							_0: styles,
+							_1: {
+								ctor: '::',
+								_0: stringAttributes,
+								_1: {
+									ctor: '::',
+									_0: boolAttributes,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			};
+		} else {
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
+					ctor: '::',
+					_0: openTag(
+						{
+							ctor: '::',
+							_0: classes,
+							_1: {
+								ctor: '::',
+								_0: styles,
+								_1: {
+									ctor: '::',
+									_0: stringAttributes,
+									_1: {
+										ctor: '::',
+										_0: boolAttributes,
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				},
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					childrenStrings,
+					{
+						ctor: '::',
+						_0: closeTag,
+						_1: {ctor: '[]'}
+					}));
+		}
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_ToString$nodeToStringWithOptions = function (options) {
+	return function (_p14) {
+		return A2(
+			_elm_lang$core$String$join,
+			options.newLines ? '\n' : '',
+			A2(_eeue56$elm_html_in_elm$ElmHtml_ToString$nodeToLines, options, _p14));
+	};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_ToString$defaultFormatOptions = {indent: 0, newLines: false};
+var _eeue56$elm_html_in_elm$ElmHtml_ToString$nodeToString = _eeue56$elm_html_in_elm$ElmHtml_ToString$nodeToStringWithOptions(_eeue56$elm_html_in_elm$ElmHtml_ToString$defaultFormatOptions);
+var _eeue56$elm_html_in_elm$ElmHtml_ToString$FormatOptions = F2(
+	function (a, b) {
+		return {indent: a, newLines: b};
+	});

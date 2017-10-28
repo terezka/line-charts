@@ -1,0 +1,22 @@
+{
+    "version": "5.2.0",
+    "summary": "A pure Elm representation of Elm Html",
+    "repository": "https://github.com/eeue56/elm-html-in-elm.git",
+    "license": "BSD3",
+    "source-directories": [
+        "src"
+    ],
+    "exposed-modules": [
+        "ElmHtml.Constants",
+        "ElmHtml.InternalTypes",
+        "ElmHtml.Markdown",
+        "ElmHtml.ToString",
+        "ElmHtml.ToElmString",
+        "ElmHtml.ToHtml"
+    ],
+    "dependencies": {
+        "elm-lang/core": "5.0.0 <= v < 6.0.0",
+        "elm-lang/html": "2.0.0 <= v < 3.0.0"
+    },
+    "elm-version": "0.18.0 <= v < 0.19.0"
+}

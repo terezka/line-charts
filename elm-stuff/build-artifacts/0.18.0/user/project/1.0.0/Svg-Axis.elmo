@@ -1,0 +1,86 @@
+var _user$project$Svg_Axis$defaultLabel = function (position) {
+	return A2(
+		_elm_lang$svg$Svg$text_,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$svg$Svg$tspan,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg$text(
+						_elm_lang$core$Basics$toString(position)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Svg_Axis$defaultTick = {
+	length: 5,
+	attributes: {
+		ctor: '::',
+		_0: _elm_lang$svg$Svg_Attributes$stroke('#0f0f0f'),
+		_1: {ctor: '[]'}
+	}
+};
+var _user$project$Svg_Axis$defaultMark = function (position) {
+	return {
+		position: position,
+		tick: _elm_lang$core$Maybe$Just(_user$project$Svg_Axis$defaultTick),
+		label: _elm_lang$core$Maybe$Just(
+			_user$project$Svg_Axis$defaultLabel(position))
+	};
+};
+var _user$project$Svg_Axis$Axis = F2(
+	function (a, b) {
+		return {variable: a, look: b};
+	});
+var _user$project$Svg_Axis$Look = F4(
+	function (a, b, c, d) {
+		return {position: a, line: b, marks: c, direction: d};
+	});
+var _user$project$Svg_Axis$Mark = F3(
+	function (a, b, c) {
+		return {label: a, tick: b, position: c};
+	});
+var _user$project$Svg_Axis$Line = F3(
+	function (a, b, c) {
+		return {attributes: a, start: b, end: c};
+	});
+var _user$project$Svg_Axis$Tick = F2(
+	function (a, b) {
+		return {attributes: a, length: b};
+	});
+var _user$project$Svg_Axis$Positive = {ctor: 'Positive'};
+var _user$project$Svg_Axis$Negative = {ctor: 'Negative'};
+var _user$project$Svg_Axis$defaultAxis = function (variable) {
+	return {
+		variable: variable,
+		look: {
+			position: function (_p0) {
+				var _p1 = _p0;
+				return A3(_elm_lang$core$Basics$clamp, 0, _p1.min, _p1.max);
+			},
+			line: _elm_lang$core$Maybe$Just(
+				{ctor: '[]'}),
+			marks: function (_p2) {
+				var _p3 = _p2;
+				return {
+					ctor: '::',
+					_0: _user$project$Svg_Axis$defaultMark(2),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Svg_Axis$defaultMark(4),
+						_1: {
+							ctor: '::',
+							_0: _user$project$Svg_Axis$defaultMark(6),
+							_1: {ctor: '[]'}
+						}
+					}
+				};
+			},
+			direction: _user$project$Svg_Axis$Negative
+		}
+	};
+};

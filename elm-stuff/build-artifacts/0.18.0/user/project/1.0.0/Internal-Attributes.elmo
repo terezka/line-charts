@@ -1,0 +1,10 @@
+var _user$project$Internal_Attributes$toSvgAttributes = function (system) {
+	return _elm_lang$core$List$map(
+		function (_p0) {
+			var _p1 = _p0;
+			return _p1._0(system);
+		});
+};
+var _user$project$Internal_Attributes$Attribute = function (a) {
+	return {ctor: 'Attribute', _0: a};
+};

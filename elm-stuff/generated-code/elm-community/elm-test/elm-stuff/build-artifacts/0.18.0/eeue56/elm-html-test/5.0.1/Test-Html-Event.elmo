@@ -1,0 +1,174 @@
+var _eeue56$elm_html_test$Test_Html_Event$findEvent = F2(
+	function (eventName, element) {
+		var elementOutput = _eeue56$elm_html_test$Test_Html_Query_Internal$prettyPrint(element);
+		var eventDecoder = function (node) {
+			return A2(
+				_elm_lang$core$Result$fromMaybe,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'Event.expectEvent: The event ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						eventName,
+						A2(_elm_lang$core$Basics_ops['++'], ' does not exist on the found node.\n\n', elementOutput))),
+				A2(_elm_lang$core$Dict$get, eventName, node.facts.events));
+		};
+		var _p0 = element;
+		switch (_p0.ctor) {
+			case 'TextTag':
+				return _elm_lang$core$Result$Err(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'Found element is a text, which does not produce events, therefore could not simulate ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							eventName,
+							A2(_elm_lang$core$Basics_ops['++'], ' on it. Text found: ', elementOutput))));
+			case 'NodeEntry':
+				return eventDecoder(_p0._0);
+			case 'CustomNode':
+				return eventDecoder(_p0._0);
+			case 'MarkdownNode':
+				return eventDecoder(_p0._0);
+			default:
+				return _elm_lang$core$Result$Err(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'Unknown element found. Could not simulate ',
+						A2(_elm_lang$core$Basics_ops['++'], eventName, ' on it.')));
+		}
+	});
+var _eeue56$elm_html_test$Test_Html_Event$emptyObject = _elm_lang$core$Json_Encode$object(
+	{ctor: '[]'});
+var _eeue56$elm_html_test$Test_Html_Event$custom = F2(
+	function (v0, v1) {
+		return {ctor: '_Tuple2', _0: v0, _1: v1};
+	});
+var _eeue56$elm_html_test$Test_Html_Event$focus = {ctor: '_Tuple2', _0: 'focus', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$blur = {ctor: '_Tuple2', _0: 'blur', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$submit = {ctor: '_Tuple2', _0: 'submit', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$check = function (checked) {
+	return {
+		ctor: '_Tuple2',
+		_0: 'change',
+		_1: _elm_lang$core$Json_Encode$object(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'target',
+					_1: _elm_lang$core$Json_Encode$object(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'checked',
+								_1: _elm_lang$core$Json_Encode$bool(checked)
+							},
+							_1: {ctor: '[]'}
+						})
+				},
+				_1: {ctor: '[]'}
+			})
+	};
+};
+var _eeue56$elm_html_test$Test_Html_Event$input = function (value) {
+	return {
+		ctor: '_Tuple2',
+		_0: 'input',
+		_1: _elm_lang$core$Json_Encode$object(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'target',
+					_1: _elm_lang$core$Json_Encode$object(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'value',
+								_1: _elm_lang$core$Json_Encode$string(value)
+							},
+							_1: {ctor: '[]'}
+						})
+				},
+				_1: {ctor: '[]'}
+			})
+	};
+};
+var _eeue56$elm_html_test$Test_Html_Event$mouseOut = {ctor: '_Tuple2', _0: 'mouseout', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$mouseOver = {ctor: '_Tuple2', _0: 'mouseover', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$mouseLeave = {ctor: '_Tuple2', _0: 'mouseleave', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$mouseEnter = {ctor: '_Tuple2', _0: 'mouseenter', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$mouseUp = {ctor: '_Tuple2', _0: 'mouseup', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$mouseDown = {ctor: '_Tuple2', _0: 'mousedown', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$doubleClick = {ctor: '_Tuple2', _0: 'dblclick', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$click = {ctor: '_Tuple2', _0: 'click', _1: _eeue56$elm_html_test$Test_Html_Event$emptyObject};
+var _eeue56$elm_html_test$Test_Html_Event$toResult = function (_p1) {
+	var _p2 = _p1;
+	var _p5 = _p2._1._1;
+	var _p4 = _p2._0._0;
+	var node = A2(
+		_elm_lang$core$Result$mapError,
+		_eeue56$elm_html_test$Test_Html_Query_Internal$queryErrorToString(_p5),
+		A2(
+			_elm_lang$core$Result$andThen,
+			_eeue56$elm_html_test$Test_Html_Query_Internal$verifySingle(_p4),
+			_eeue56$elm_html_test$Test_Html_Query_Internal$traverse(_p5)));
+	var _p3 = node;
+	if (_p3.ctor === 'Err') {
+		return _elm_lang$core$Result$Err(_p3._0);
+	} else {
+		return A2(
+			_elm_lang$core$Result$andThen,
+			function (foundEvent) {
+				return A2(_elm_lang$core$Json_Decode$decodeValue, foundEvent, _p2._0._1);
+			},
+			A2(_eeue56$elm_html_test$Test_Html_Event$findEvent, _p4, _p3._0));
+	}
+};
+var _eeue56$elm_html_test$Test_Html_Event$Event = F2(
+	function (a, b) {
+		return {ctor: 'Event', _0: a, _1: b};
+	});
+var _eeue56$elm_html_test$Test_Html_Event$simulate = _eeue56$elm_html_test$Test_Html_Event$Event;
+var _eeue56$elm_html_test$Test_Html_Event$expect = F2(
+	function (msg, _p6) {
+		var _p7 = _p6;
+		var _p11 = _p7._1._0;
+		var _p10 = _p7._1._1;
+		var _p9 = _p7._0;
+		var _p8 = _eeue56$elm_html_test$Test_Html_Event$toResult(
+			A2(
+				_eeue56$elm_html_test$Test_Html_Event$Event,
+				_p9,
+				A2(_eeue56$elm_html_test$Test_Html_Query_Internal$Single, _p11, _p10)));
+		if (_p8.ctor === 'Err') {
+			return A4(
+				_eeue56$elm_html_test$Test_Html_Query_Internal$failWithQuery,
+				_p11,
+				'',
+				_p10,
+				_elm_community$elm_test$Expect$fail(_p8._0));
+		} else {
+			return A4(
+				_eeue56$elm_html_test$Test_Html_Query_Internal$failWithQuery,
+				_p11,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'Event.expectEvent: Expected the msg [32m',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(msg),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'[39m from the event [31m',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(_p9),
+								'[39m but could not find the event.')))),
+				_p10,
+				A2(_elm_community$elm_test$Expect$equal, msg, _p8._0));
+		}
+	});

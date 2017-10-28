@@ -1,0 +1,74 @@
+var _elm_community$elm_test$Test_Internal$duplicatedName = function () {
+	var insertOrFail = function (newName) {
+		return _elm_lang$core$Result$andThen(
+			function (oldNames) {
+				return A2(_elm_lang$core$Set$member, newName, oldNames) ? _elm_lang$core$Result$Err(newName) : _elm_lang$core$Result$Ok(
+					A2(_elm_lang$core$Set$insert, newName, oldNames));
+			});
+	};
+	var names = function (test) {
+		names:
+		while (true) {
+			var _p0 = test;
+			switch (_p0.ctor) {
+				case 'Labeled':
+					return {
+						ctor: '::',
+						_0: _p0._0,
+						_1: {ctor: '[]'}
+					};
+				case 'Batch':
+					return A2(_elm_lang$core$List$concatMap, names, _p0._0);
+				case 'Test':
+					return {ctor: '[]'};
+				case 'Skipped':
+					var _v1 = _p0._0;
+					test = _v1;
+					continue names;
+				default:
+					var _v2 = _p0._0;
+					test = _v2;
+					continue names;
+			}
+		}
+	};
+	return function (_p1) {
+		return A3(
+			_elm_lang$core$List$foldl,
+			insertOrFail,
+			_elm_lang$core$Result$Ok(_elm_lang$core$Set$empty),
+			A2(_elm_lang$core$List$concatMap, names, _p1));
+	};
+}();
+var _elm_community$elm_test$Test_Internal$Batch = function (a) {
+	return {ctor: 'Batch', _0: a};
+};
+var _elm_community$elm_test$Test_Internal$Only = function (a) {
+	return {ctor: 'Only', _0: a};
+};
+var _elm_community$elm_test$Test_Internal$Skipped = function (a) {
+	return {ctor: 'Skipped', _0: a};
+};
+var _elm_community$elm_test$Test_Internal$Labeled = F2(
+	function (a, b) {
+		return {ctor: 'Labeled', _0: a, _1: b};
+	});
+var _elm_community$elm_test$Test_Internal$Test = function (a) {
+	return {ctor: 'Test', _0: a};
+};
+var _elm_community$elm_test$Test_Internal$failNow = function (record) {
+	return _elm_community$elm_test$Test_Internal$Test(
+		F2(
+			function (_p3, _p2) {
+				return {
+					ctor: '::',
+					_0: _elm_community$elm_test$Test_Expectation$fail(record),
+					_1: {ctor: '[]'}
+				};
+			}));
+};
+var _elm_community$elm_test$Test_Internal$blankDescriptionFailure = _elm_community$elm_test$Test_Internal$failNow(
+	{
+		description: 'This test has a blank description. Let\'s give it a useful one!',
+		reason: _elm_community$elm_test$Test_Expectation$Invalid(_elm_community$elm_test$Test_Expectation$BadDescription)
+	});

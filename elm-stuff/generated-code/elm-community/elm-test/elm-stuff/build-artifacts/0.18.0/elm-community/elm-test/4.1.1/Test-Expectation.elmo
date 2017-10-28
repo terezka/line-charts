@@ -1,0 +1,48 @@
+var _elm_community$elm_test$Test_Expectation$Fail = function (a) {
+	return {ctor: 'Fail', _0: a};
+};
+var _elm_community$elm_test$Test_Expectation$fail = function (_p0) {
+	var _p1 = _p0;
+	return _elm_community$elm_test$Test_Expectation$Fail(
+		{given: _elm_lang$core$Maybe$Nothing, description: _p1.description, reason: _p1.reason});
+};
+var _elm_community$elm_test$Test_Expectation$withGiven = F2(
+	function (newGiven, expectation) {
+		var _p2 = expectation;
+		if (_p2.ctor === 'Fail') {
+			return _elm_community$elm_test$Test_Expectation$Fail(
+				_elm_lang$core$Native_Utils.update(
+					_p2._0,
+					{
+						given: _elm_lang$core$Maybe$Just(newGiven)
+					}));
+		} else {
+			return expectation;
+		}
+	});
+var _elm_community$elm_test$Test_Expectation$Pass = {ctor: 'Pass'};
+var _elm_community$elm_test$Test_Expectation$Invalid = function (a) {
+	return {ctor: 'Invalid', _0: a};
+};
+var _elm_community$elm_test$Test_Expectation$TODO = {ctor: 'TODO'};
+var _elm_community$elm_test$Test_Expectation$CollectionDiff = function (a) {
+	return {ctor: 'CollectionDiff', _0: a};
+};
+var _elm_community$elm_test$Test_Expectation$ListDiff = F3(
+	function (a, b, c) {
+		return {ctor: 'ListDiff', _0: a, _1: b, _2: c};
+	});
+var _elm_community$elm_test$Test_Expectation$Comparison = F2(
+	function (a, b) {
+		return {ctor: 'Comparison', _0: a, _1: b};
+	});
+var _elm_community$elm_test$Test_Expectation$Equals = F2(
+	function (a, b) {
+		return {ctor: 'Equals', _0: a, _1: b};
+	});
+var _elm_community$elm_test$Test_Expectation$Custom = {ctor: 'Custom'};
+var _elm_community$elm_test$Test_Expectation$DuplicatedName = {ctor: 'DuplicatedName'};
+var _elm_community$elm_test$Test_Expectation$BadDescription = {ctor: 'BadDescription'};
+var _elm_community$elm_test$Test_Expectation$InvalidFuzzer = {ctor: 'InvalidFuzzer'};
+var _elm_community$elm_test$Test_Expectation$NonpositiveFuzzCount = {ctor: 'NonpositiveFuzzCount'};
+var _elm_community$elm_test$Test_Expectation$EmptyList = {ctor: 'EmptyList'};

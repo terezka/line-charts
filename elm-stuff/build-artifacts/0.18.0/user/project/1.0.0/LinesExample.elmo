@@ -1,0 +1,77 @@
+var _user$project$LinesExample$Data = F2(
+	function (a, b) {
+		return {magnesium: a, heartattacks: b};
+	});
+var _user$project$LinesExample$data1 = {
+	ctor: '::',
+	_0: A2(_user$project$LinesExample$Data, 1, 4),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$LinesExample$Data, 2, 7),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$LinesExample$Data, 3, 6),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$LinesExample$Data, 9, 3),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$LinesExample$data2 = {
+	ctor: '::',
+	_0: A2(_user$project$LinesExample$Data, 2, 2),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$LinesExample$Data, 3, 4),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$LinesExample$Data, 4, 6),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$LinesExample$Data, 5, 8),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$LinesExample$data3 = {
+	ctor: '::',
+	_0: A2(_user$project$LinesExample$Data, 2, 5),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$LinesExample$Data, 3, 2),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$LinesExample$Data, 4, 8),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$LinesExample$Data, 5, 4),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$LinesExample$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
+	A3(
+		_user$project$Lines$viewSimple,
+		function (_) {
+			return _.magnesium;
+		},
+		function (_) {
+			return _.heartattacks;
+		},
+		{
+			ctor: '::',
+			_0: _user$project$LinesExample$data1,
+			_1: {
+				ctor: '::',
+				_0: _user$project$LinesExample$data2,
+				_1: {
+					ctor: '::',
+					_0: _user$project$LinesExample$data3,
+					_1: {ctor: '[]'}
+				}
+			}
+		}));

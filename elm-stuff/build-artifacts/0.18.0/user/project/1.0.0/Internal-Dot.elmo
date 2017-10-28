@@ -1,0 +1,38 @@
+var _user$project$Internal_Dot$default = function (color) {
+	return A4(
+		_user$project$Plot_Dot$Config,
+		_user$project$Plot_Dot$Circle(_user$project$Plot_Dot$NoOutline),
+		{ctor: '[]'},
+		5,
+		color);
+};
+var _user$project$Internal_Dot$viewConfig = function (config) {
+	var _p0 = config.shape;
+	if (_p0.ctor === 'Circle') {
+		if (_p0._0.ctor === 'NoOutline') {
+			return A3(_user$project$Internal_Primitives$viewCircle, config.color, config.size, _elm_lang$core$Maybe$Nothing);
+		} else {
+			return A3(
+				_user$project$Internal_Primitives$viewCircle,
+				config.color,
+				config.size,
+				_elm_lang$core$Maybe$Just(_p0._0._0));
+		}
+	} else {
+		return F2(
+			function (_p2, _p1) {
+				return _elm_lang$svg$Svg$text('');
+			});
+	}
+};
+var _user$project$Internal_Dot$view = function (dot) {
+	var _p3 = dot;
+	if (_p3.ctor === 'Dot') {
+		return _user$project$Internal_Dot$viewConfig(_p3._0);
+	} else {
+		return F2(
+			function (_p5, _p4) {
+				return _elm_lang$svg$Svg$text('');
+			});
+	}
+};

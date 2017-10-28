@@ -1,0 +1,125 @@
+var _user$project$Svg_Graph$viewDot = F4(
+	function (_p0, config, system, data) {
+		var _p1 = _p0;
+		return A2(
+			_elm_lang$svg$Svg$circle,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$cx(
+					_elm_lang$core$Basics$toString(
+						A3(
+							_user$project$Svg_Coordinate$toSVG,
+							_user$project$Svg_Coordinate$X,
+							system,
+							config.x.variable(data)))),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$cy(
+						_elm_lang$core$Basics$toString(
+							A3(
+								_user$project$Svg_Coordinate$toSVG,
+								_user$project$Svg_Coordinate$Y,
+								system,
+								config.y.variable(data)))),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$r(
+							_elm_lang$core$Basics$toString(_p1.radius)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$fill(_p1.color),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			},
+			{ctor: '[]'});
+	});
+var _user$project$Svg_Graph$viewShape = function (scatter) {
+	var _p2 = scatter.shape;
+	if (_p2.ctor === 'Dot') {
+		return _user$project$Svg_Graph$viewDot(scatter);
+	} else {
+		return F3(
+			function (_p5, _p4, _p3) {
+				return _elm_lang$svg$Svg$text('');
+			});
+	}
+};
+var _user$project$Svg_Graph$viewScatter = F3(
+	function (config, system, scatter) {
+		var shapes = A2(
+			_elm_lang$core$List$map,
+			A3(_user$project$Svg_Graph$viewShape, scatter, config, system),
+			scatter.data);
+		return A2(
+			_elm_lang$svg$Svg$g,
+			{ctor: '[]'},
+			shapes);
+	});
+var _user$project$Svg_Graph$view = F2(
+	function (config, scatters) {
+		var data = A2(
+			_elm_lang$core$List$concatMap,
+			function (_) {
+				return _.data;
+			},
+			scatters);
+		var system = A3(
+			_user$project$Svg_Coordinate$system,
+			config.frame,
+			A2(_user$project$Svg_Coordinate$limits, config.x.variable, data),
+			A2(_user$project$Svg_Coordinate$limits, config.y.variable, data));
+		return A2(
+			_elm_lang$svg$Svg$svg,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$width(
+					_elm_lang$core$Basics$toString(config.frame.size.width)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$height(
+						_elm_lang$core$Basics$toString(config.frame.size.height)),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$g,
+					{ctor: '[]'},
+					A2(
+						_elm_lang$core$List$map,
+						A2(_user$project$Svg_Graph$viewScatter, config, system),
+						scatters)),
+				_1: {
+					ctor: '::',
+					_0: A2(_user$project$Svg_Internal_Axis$viewHorizontal, system, config.x.look),
+					_1: {
+						ctor: '::',
+						_0: A2(_user$project$Svg_Internal_Axis$viewVertical, system, config.y.look),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
+var _user$project$Svg_Graph$scatter = F2(
+	function (_p6, data) {
+		var _p7 = _p6;
+		return {radius: _p7.radius, color: _p7.color, shape: _p7.shape, data: data};
+	});
+var _user$project$Svg_Graph$Scatter = F4(
+	function (a, b, c, d) {
+		return {radius: a, color: b, shape: c, data: d};
+	});
+var _user$project$Svg_Graph$Config = F3(
+	function (a, b, c) {
+		return {frame: a, x: b, y: c};
+	});
+var _user$project$Svg_Graph$Dot = {ctor: 'Dot'};
+var _user$project$Svg_Graph$Star = {ctor: 'Star'};
+var _user$project$Svg_Graph$Plus = {ctor: 'Plus'};
+var _user$project$Svg_Graph$Cross = {ctor: 'Cross'};
+var _user$project$Svg_Graph$Square = {ctor: 'Square'};
+var _user$project$Svg_Graph$Diamond = {ctor: 'Diamond'};
+var _user$project$Svg_Graph$Triangle = {ctor: 'Triangle'};

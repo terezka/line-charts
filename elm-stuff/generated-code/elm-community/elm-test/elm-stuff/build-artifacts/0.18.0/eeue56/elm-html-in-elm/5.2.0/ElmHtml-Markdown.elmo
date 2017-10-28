@@ -1,0 +1,45 @@
+var _eeue56$elm_html_in_elm$ElmHtml_Markdown$encodeOptions = function (options) {
+	return _elm_lang$core$Json_Encode$null;
+};
+var _eeue56$elm_html_in_elm$ElmHtml_Markdown$encodeMarkdownModel = function (model) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'options',
+				_1: _eeue56$elm_html_in_elm$ElmHtml_Markdown$encodeOptions(model.options)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'markdown',
+					_1: _elm_lang$core$Json_Encode$string(model.markdown)
+				},
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _eeue56$elm_html_in_elm$ElmHtml_Markdown$baseMarkdownModel = {
+	options: {
+		githubFlavored: _elm_lang$core$Maybe$Just(
+			{tables: false, breaks: false}),
+		defaultHighlighting: _elm_lang$core$Maybe$Nothing,
+		sanitize: false,
+		smartypants: false
+	},
+	markdown: ''
+};
+var _eeue56$elm_html_in_elm$ElmHtml_Markdown$MarkdownOptions = F4(
+	function (a, b, c, d) {
+		return {githubFlavored: a, defaultHighlighting: b, sanitize: c, smartypants: d};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_Markdown$MarkdownModel = F2(
+	function (a, b) {
+		return {options: a, markdown: b};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_Markdown$decodeMarkdownModel = A2(
+	_elm_lang$core$Json_Decode$map,
+	_eeue56$elm_html_in_elm$ElmHtml_Markdown$MarkdownModel(_eeue56$elm_html_in_elm$ElmHtml_Markdown$baseMarkdownModel.options),
+	A2(_elm_lang$core$Json_Decode$field, 'markdown', _elm_lang$core$Json_Decode$string));

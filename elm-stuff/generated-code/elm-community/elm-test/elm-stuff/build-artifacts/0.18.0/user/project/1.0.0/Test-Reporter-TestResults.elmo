@@ -1,0 +1,8 @@
+var _user$project$Test_Reporter_TestResults$TestResult = F3(
+	function (a, b, c) {
+		return {labels: a, expectations: b, duration: c};
+	});
+var _user$project$Test_Reporter_TestResults$Failure = F2(
+	function (a, b) {
+		return {given: a, message: b};
+	});

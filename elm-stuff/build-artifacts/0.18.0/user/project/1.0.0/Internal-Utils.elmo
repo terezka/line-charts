@@ -1,0 +1,69 @@
+var _user$project$Internal_Utils$distanceY = F3(
+	function (system, position, dot) {
+		return _elm_lang$core$Basics$abs(
+			A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$Y, system, dot.y) - A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$Y, system, position.y));
+	});
+var _user$project$Internal_Utils$distanceX = F3(
+	function (system, position, dot) {
+		return _elm_lang$core$Basics$abs(
+			A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$X, system, dot.x) - A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$X, system, position.x));
+	});
+var _user$project$Internal_Utils$distance = F3(
+	function (system, position, dot) {
+		return _elm_lang$core$Basics$sqrt(
+			Math.pow(
+				A3(_user$project$Internal_Utils$distanceX, system, position, dot),
+				2) + Math.pow(
+				A3(_user$project$Internal_Utils$distanceY, system, position, dot),
+				2));
+	});
+var _user$project$Internal_Utils$withinRadius = F4(
+	function (system, radius, position, dot) {
+		return _elm_lang$core$Native_Utils.cmp(
+			A3(_user$project$Internal_Utils$distance, system, position, dot),
+			radius) < 1;
+	});
+var _user$project$Internal_Utils$withinRadiusX = F4(
+	function (system, radius, position, dot) {
+		return _elm_lang$core$Native_Utils.cmp(
+			A3(_user$project$Internal_Utils$distanceX, system, position, dot),
+			radius) < 1;
+	});
+var _user$project$Internal_Utils$withFirst = F2(
+	function (stuff, process) {
+		var _p0 = stuff;
+		if (_p0.ctor === '::') {
+			return _elm_lang$core$Maybe$Just(
+				A2(process, _p0._0, _p0._1));
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	});
+var _user$project$Internal_Utils$nonEmptyList = function (list) {
+	return _elm_lang$core$List$isEmpty(list) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(list);
+};
+var _user$project$Internal_Utils$viewMaybeHtml = F2(
+	function (a, view) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$html$Html$text(''),
+			A2(_elm_lang$core$Maybe$map, view, a));
+	});
+var _user$project$Internal_Utils$viewMaybe = F2(
+	function (a, view) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$svg$Svg$text(''),
+			A2(_elm_lang$core$Maybe$map, view, a));
+	});
+var _user$project$Internal_Utils$concat = F3(
+	function (first, second, third) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			first,
+			A2(_elm_lang$core$Basics_ops['++'], second, third));
+	});
+var _user$project$Internal_Utils$apply = F2(
+	function (stuff, toNewStuff) {
+		return toNewStuff(stuff);
+	});

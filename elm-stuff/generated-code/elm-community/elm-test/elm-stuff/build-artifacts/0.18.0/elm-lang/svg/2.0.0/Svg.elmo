@@ -1,0 +1,86 @@
+var _elm_lang$svg$Svg$map = _elm_lang$virtual_dom$VirtualDom$map;
+var _elm_lang$svg$Svg$text = _elm_lang$virtual_dom$VirtualDom$text;
+var _elm_lang$svg$Svg$svgNamespace = A2(
+	_elm_lang$virtual_dom$VirtualDom$property,
+	'namespace',
+	_elm_lang$core$Json_Encode$string('http://www.w3.org/2000/svg'));
+var _elm_lang$svg$Svg$node = F3(
+	function (name, attributes, children) {
+		return A3(
+			_elm_lang$virtual_dom$VirtualDom$node,
+			name,
+			{ctor: '::', _0: _elm_lang$svg$Svg$svgNamespace, _1: attributes},
+			children);
+	});
+var _elm_lang$svg$Svg$svg = _elm_lang$svg$Svg$node('svg');
+var _elm_lang$svg$Svg$foreignObject = _elm_lang$svg$Svg$node('foreignObject');
+var _elm_lang$svg$Svg$animate = _elm_lang$svg$Svg$node('animate');
+var _elm_lang$svg$Svg$animateColor = _elm_lang$svg$Svg$node('animateColor');
+var _elm_lang$svg$Svg$animateMotion = _elm_lang$svg$Svg$node('animateMotion');
+var _elm_lang$svg$Svg$animateTransform = _elm_lang$svg$Svg$node('animateTransform');
+var _elm_lang$svg$Svg$mpath = _elm_lang$svg$Svg$node('mpath');
+var _elm_lang$svg$Svg$set = _elm_lang$svg$Svg$node('set');
+var _elm_lang$svg$Svg$a = _elm_lang$svg$Svg$node('a');
+var _elm_lang$svg$Svg$defs = _elm_lang$svg$Svg$node('defs');
+var _elm_lang$svg$Svg$g = _elm_lang$svg$Svg$node('g');
+var _elm_lang$svg$Svg$marker = _elm_lang$svg$Svg$node('marker');
+var _elm_lang$svg$Svg$mask = _elm_lang$svg$Svg$node('mask');
+var _elm_lang$svg$Svg$pattern = _elm_lang$svg$Svg$node('pattern');
+var _elm_lang$svg$Svg$switch = _elm_lang$svg$Svg$node('switch');
+var _elm_lang$svg$Svg$symbol = _elm_lang$svg$Svg$node('symbol');
+var _elm_lang$svg$Svg$desc = _elm_lang$svg$Svg$node('desc');
+var _elm_lang$svg$Svg$metadata = _elm_lang$svg$Svg$node('metadata');
+var _elm_lang$svg$Svg$title = _elm_lang$svg$Svg$node('title');
+var _elm_lang$svg$Svg$feBlend = _elm_lang$svg$Svg$node('feBlend');
+var _elm_lang$svg$Svg$feColorMatrix = _elm_lang$svg$Svg$node('feColorMatrix');
+var _elm_lang$svg$Svg$feComponentTransfer = _elm_lang$svg$Svg$node('feComponentTransfer');
+var _elm_lang$svg$Svg$feComposite = _elm_lang$svg$Svg$node('feComposite');
+var _elm_lang$svg$Svg$feConvolveMatrix = _elm_lang$svg$Svg$node('feConvolveMatrix');
+var _elm_lang$svg$Svg$feDiffuseLighting = _elm_lang$svg$Svg$node('feDiffuseLighting');
+var _elm_lang$svg$Svg$feDisplacementMap = _elm_lang$svg$Svg$node('feDisplacementMap');
+var _elm_lang$svg$Svg$feFlood = _elm_lang$svg$Svg$node('feFlood');
+var _elm_lang$svg$Svg$feFuncA = _elm_lang$svg$Svg$node('feFuncA');
+var _elm_lang$svg$Svg$feFuncB = _elm_lang$svg$Svg$node('feFuncB');
+var _elm_lang$svg$Svg$feFuncG = _elm_lang$svg$Svg$node('feFuncG');
+var _elm_lang$svg$Svg$feFuncR = _elm_lang$svg$Svg$node('feFuncR');
+var _elm_lang$svg$Svg$feGaussianBlur = _elm_lang$svg$Svg$node('feGaussianBlur');
+var _elm_lang$svg$Svg$feImage = _elm_lang$svg$Svg$node('feImage');
+var _elm_lang$svg$Svg$feMerge = _elm_lang$svg$Svg$node('feMerge');
+var _elm_lang$svg$Svg$feMergeNode = _elm_lang$svg$Svg$node('feMergeNode');
+var _elm_lang$svg$Svg$feMorphology = _elm_lang$svg$Svg$node('feMorphology');
+var _elm_lang$svg$Svg$feOffset = _elm_lang$svg$Svg$node('feOffset');
+var _elm_lang$svg$Svg$feSpecularLighting = _elm_lang$svg$Svg$node('feSpecularLighting');
+var _elm_lang$svg$Svg$feTile = _elm_lang$svg$Svg$node('feTile');
+var _elm_lang$svg$Svg$feTurbulence = _elm_lang$svg$Svg$node('feTurbulence');
+var _elm_lang$svg$Svg$font = _elm_lang$svg$Svg$node('font');
+var _elm_lang$svg$Svg$linearGradient = _elm_lang$svg$Svg$node('linearGradient');
+var _elm_lang$svg$Svg$radialGradient = _elm_lang$svg$Svg$node('radialGradient');
+var _elm_lang$svg$Svg$stop = _elm_lang$svg$Svg$node('stop');
+var _elm_lang$svg$Svg$circle = _elm_lang$svg$Svg$node('circle');
+var _elm_lang$svg$Svg$ellipse = _elm_lang$svg$Svg$node('ellipse');
+var _elm_lang$svg$Svg$image = _elm_lang$svg$Svg$node('image');
+var _elm_lang$svg$Svg$line = _elm_lang$svg$Svg$node('line');
+var _elm_lang$svg$Svg$path = _elm_lang$svg$Svg$node('path');
+var _elm_lang$svg$Svg$polygon = _elm_lang$svg$Svg$node('polygon');
+var _elm_lang$svg$Svg$polyline = _elm_lang$svg$Svg$node('polyline');
+var _elm_lang$svg$Svg$rect = _elm_lang$svg$Svg$node('rect');
+var _elm_lang$svg$Svg$use = _elm_lang$svg$Svg$node('use');
+var _elm_lang$svg$Svg$feDistantLight = _elm_lang$svg$Svg$node('feDistantLight');
+var _elm_lang$svg$Svg$fePointLight = _elm_lang$svg$Svg$node('fePointLight');
+var _elm_lang$svg$Svg$feSpotLight = _elm_lang$svg$Svg$node('feSpotLight');
+var _elm_lang$svg$Svg$altGlyph = _elm_lang$svg$Svg$node('altGlyph');
+var _elm_lang$svg$Svg$altGlyphDef = _elm_lang$svg$Svg$node('altGlyphDef');
+var _elm_lang$svg$Svg$altGlyphItem = _elm_lang$svg$Svg$node('altGlyphItem');
+var _elm_lang$svg$Svg$glyph = _elm_lang$svg$Svg$node('glyph');
+var _elm_lang$svg$Svg$glyphRef = _elm_lang$svg$Svg$node('glyphRef');
+var _elm_lang$svg$Svg$textPath = _elm_lang$svg$Svg$node('textPath');
+var _elm_lang$svg$Svg$text_ = _elm_lang$svg$Svg$node('text');
+var _elm_lang$svg$Svg$tref = _elm_lang$svg$Svg$node('tref');
+var _elm_lang$svg$Svg$tspan = _elm_lang$svg$Svg$node('tspan');
+var _elm_lang$svg$Svg$clipPath = _elm_lang$svg$Svg$node('clipPath');
+var _elm_lang$svg$Svg$colorProfile = _elm_lang$svg$Svg$node('colorProfile');
+var _elm_lang$svg$Svg$cursor = _elm_lang$svg$Svg$node('cursor');
+var _elm_lang$svg$Svg$filter = _elm_lang$svg$Svg$node('filter');
+var _elm_lang$svg$Svg$script = _elm_lang$svg$Svg$node('script');
+var _elm_lang$svg$Svg$style = _elm_lang$svg$Svg$node('style');
+var _elm_lang$svg$Svg$view = _elm_lang$svg$Svg$node('view');

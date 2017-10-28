@@ -1,0 +1,288 @@
+var _user$project$Scatter$viewTrend = F4(
+	function (config, system, _p0, points) {
+		var _p1 = _p0;
+		var _p2 = {
+			ctor: '_Tuple2',
+			_0: _p1._0.trend,
+			_1: _user$project$Internal_Trend$trend(points)
+		};
+		if (((_p2.ctor === '_Tuple2') && (_p2._0.ctor === 'Just')) && (_p2._1.ctor === 'Just')) {
+			var _p3 = _p2._1._0;
+			var limits = A2(
+				_user$project$Internal_Coordinate$limits,
+				function (_) {
+					return _.x;
+				},
+				points);
+			var trendConfig = _p2._0._0(_p3);
+			var attributes = A2(
+				_elm_lang$core$Basics_ops['++'],
+				trendConfig.attributes,
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$stroke(trendConfig.color),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$strokeDasharray(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(trendConfig.width),
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									' ',
+									_elm_lang$core$Basics$toString(trendConfig.space)))),
+						_1: {ctor: '[]'}
+					}
+				});
+			return A2(
+				_elm_lang$svg$Svg$g,
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$class('trend'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A4(
+						_user$project$Internal_Trend$view,
+						system,
+						attributes,
+						limits,
+						_elm_lang$core$Maybe$Just(_p3)),
+					_1: {ctor: '[]'}
+				});
+		} else {
+			return _elm_lang$svg$Svg$text('');
+		}
+	});
+var _user$project$Scatter$viewGroup = F4(
+	function (config, system, _p4, points) {
+		var _p5 = _p4;
+		return A2(
+			_elm_lang$svg$Svg$g,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$class('group'),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				A2(_user$project$Internal_Dot$viewConfig, _p5._0.dot, system),
+				points));
+	});
+var _user$project$Scatter$defaultGroups = function (stuff) {
+	return (_elm_lang$core$Native_Utils.cmp(
+		_elm_lang$core$List$length(stuff),
+		4) < 1) ? A2(_elm_lang$core$List$map, _user$project$Internal_Dot$default, _user$project$Plot_Color$defaults) : {ctor: '[]'};
+};
+var _user$project$Scatter$groupConfig = function (_p6) {
+	var _p7 = _p6;
+	return _p7._0;
+};
+var _user$project$Scatter$viewCustom = F2(
+	function (config, groups) {
+		var point = function (datum) {
+			return A2(
+				_user$project$Plot_Coordinate$Point,
+				config.x.variable(datum),
+				config.y.variable(datum));
+		};
+		var points = A2(
+			_elm_lang$core$List$map,
+			function (_p8) {
+				return A2(
+					_elm_lang$core$List$map,
+					point,
+					function (_) {
+						return _.data;
+					}(
+						_user$project$Scatter$groupConfig(_p8)));
+			},
+			groups);
+		var allPoints = _elm_lang$core$List$concat(points);
+		var system = {
+			frame: config.container.frame,
+			x: A2(
+				_user$project$Internal_Coordinate$limits,
+				function (_) {
+					return _.x;
+				},
+				allPoints),
+			y: A2(
+				_user$project$Internal_Coordinate$limits,
+				function (_) {
+					return _.y;
+				},
+				allPoints)
+		};
+		var attributes = A2(
+			_elm_lang$core$List$append,
+			A2(_user$project$Internal_Attributes$toSvgAttributes, system, config.container.attributes),
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$width(
+					_elm_lang$core$Basics$toString(system.frame.size.width)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$height(
+						_elm_lang$core$Basics$toString(system.frame.size.height)),
+					_1: {ctor: '[]'}
+				}
+			});
+		var junk = A3(_user$project$Internal_Junk$getLayers, config.junk, allPoints, system);
+		var container = function (plot) {
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '::', _0: plot, _1: junk.html});
+		};
+		var viewGroups = A3(
+			_elm_lang$core$List$map2,
+			A2(_user$project$Scatter$viewGroup, config, system),
+			groups,
+			points);
+		var viewTrends = A3(
+			_elm_lang$core$List$map2,
+			A2(_user$project$Scatter$viewTrend, config, system),
+			groups,
+			points);
+		return container(
+			A2(
+				_elm_lang$svg$Svg$svg,
+				attributes,
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$svg$Svg$defs,
+						{ctor: '[]'},
+						config.container.defs),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$svg$Svg$g,
+							{
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$class('junk--below'),
+								_1: {ctor: '[]'}
+							},
+							junk.below),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$svg$Svg$g,
+								{
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$class('lines'),
+									_1: {ctor: '[]'}
+								},
+								viewGroups),
+							_1: {
+								ctor: '::',
+								_0: A2(_user$project$Internal_Axis$viewHorizontal, system, config.x.look),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Internal_Axis$viewVertical, system, config.y.look),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$svg$Svg$g,
+											{
+												ctor: '::',
+												_0: _elm_lang$svg$Svg_Attributes$class('trends'),
+												_1: {ctor: '[]'}
+											},
+											viewTrends),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$svg$Svg$g,
+												{
+													ctor: '::',
+													_0: _elm_lang$svg$Svg_Attributes$class('junk--above'),
+													_1: {ctor: '[]'}
+												},
+												junk.above),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}
+						}
+					}
+				}));
+	});
+var _user$project$Scatter$defaultTrendConfig = {
+	attributes: {ctor: '[]'},
+	color: _user$project$Plot_Color$black,
+	space: 2,
+	width: 3
+};
+var _user$project$Scatter$Config = F4(
+	function (a, b, c, d) {
+		return {container: a, junk: b, x: c, y: d};
+	});
+var _user$project$Scatter$Axis = F2(
+	function (a, b) {
+		return {look: a, variable: b};
+	});
+var _user$project$Scatter$view = F2(
+	function (toX, toY) {
+		return _user$project$Scatter$viewCustom(
+			{
+				container: _user$project$Plot_Container$default,
+				x: A2(_user$project$Scatter$Axis, _user$project$Plot_Axis$defaultLook, toX),
+				y: A2(_user$project$Scatter$Axis, _user$project$Plot_Axis$defaultLook, toY),
+				junk: _user$project$Plot_Junk$none
+			});
+	});
+var _user$project$Scatter$Equation = F2(
+	function (a, b) {
+		return {slope: a, intercept: b};
+	});
+var _user$project$Scatter$TrendConfig = F4(
+	function (a, b, c, d) {
+		return {attributes: a, color: b, space: c, width: d};
+	});
+var _user$project$Scatter$GroupConfig = F3(
+	function (a, b, c) {
+		return {dot: a, trend: b, data: c};
+	});
+var _user$project$Scatter$Group = function (a) {
+	return {ctor: 'Group', _0: a};
+};
+var _user$project$Scatter$group = F2(
+	function (dot, data) {
+		return _user$project$Scatter$Group(
+			A3(_user$project$Scatter$GroupConfig, dot, _elm_lang$core$Maybe$Nothing, data));
+	});
+var _user$project$Scatter$viewSimple = F3(
+	function (toX, toY, datas) {
+		return A3(
+			_user$project$Scatter$view,
+			toX,
+			toY,
+			A3(
+				_elm_lang$core$List$map2,
+				_user$project$Scatter$group,
+				_user$project$Scatter$defaultGroups(datas),
+				datas));
+	});
+var _user$project$Scatter$groupCustom = F3(
+	function (dot, _p9, data) {
+		var _p10 = _p9;
+		return _user$project$Scatter$Group(
+			A3(_user$project$Scatter$GroupConfig, dot, _p10._0, data));
+	});
+var _user$project$Scatter$Trend = function (a) {
+	return {ctor: 'Trend', _0: a};
+};
+var _user$project$Scatter$trend = function (toConfig) {
+	return _user$project$Scatter$Trend(
+		_elm_lang$core$Maybe$Just(
+			_elm_lang$core$Basics$always(toConfig)));
+};
+var _user$project$Scatter$trendCustom = function (toConfig) {
+	return _user$project$Scatter$Trend(
+		_elm_lang$core$Maybe$Just(toConfig));
+};
+var _user$project$Scatter$noTrend = _user$project$Scatter$Trend(_elm_lang$core$Maybe$Nothing);

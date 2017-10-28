@@ -1,0 +1,27 @@
+var _user$project$Plot_Dot$OutlineConfig = F2(
+	function (a, b) {
+		return {color: a, width: b};
+	});
+var _user$project$Plot_Dot$Config = F4(
+	function (a, b, c, d) {
+		return {shape: a, events: b, size: c, color: d};
+	});
+var _user$project$Plot_Dot$None = {ctor: 'None'};
+var _user$project$Plot_Dot$none = _user$project$Plot_Dot$None;
+var _user$project$Plot_Dot$Dot = function (a) {
+	return {ctor: 'Dot', _0: a};
+};
+var _user$project$Plot_Dot$dot = _user$project$Plot_Dot$Dot;
+var _user$project$Plot_Dot$Star = {ctor: 'Star'};
+var _user$project$Plot_Dot$Plus = {ctor: 'Plus'};
+var _user$project$Plot_Dot$Cross = {ctor: 'Cross'};
+var _user$project$Plot_Dot$Circle = function (a) {
+	return {ctor: 'Circle', _0: a};
+};
+var _user$project$Plot_Dot$Square = {ctor: 'Square'};
+var _user$project$Plot_Dot$Diamond = {ctor: 'Diamond'};
+var _user$project$Plot_Dot$Triangle = {ctor: 'Triangle'};
+var _user$project$Plot_Dot$Outline = function (a) {
+	return {ctor: 'Outline', _0: a};
+};
+var _user$project$Plot_Dot$NoOutline = {ctor: 'NoOutline'};

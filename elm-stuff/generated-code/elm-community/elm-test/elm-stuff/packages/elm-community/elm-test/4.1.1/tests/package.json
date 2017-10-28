@@ -1,0 +1,22 @@
+{
+  "name": "elm-test-tests",
+  "version": "0.0.0",
+  "description": "tests for elm-test, so you can elm-test while you elm-test",
+  "main": "elm.js",
+  "scripts": {
+    "test": "node run-tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elm-community/elm-test.git"
+  },
+  "author": "Richard Feldman",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/elm-community/elm-test/issues"
+  },
+  "homepage": "https://github.com/elm-community/elm-test#readme",
+  "devDependencies": {
+    "node-elm-compiler": "4.1.3"
+  }
+}

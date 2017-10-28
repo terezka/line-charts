@@ -1,0 +1,110 @@
+var _elm_community$elm_test$Fuzz_Internal$invalidReason = function (valid) {
+	var _p0 = valid;
+	if (_p0.ctor === 'Ok') {
+		return _elm_lang$core$Maybe$Nothing;
+	} else {
+		return _elm_lang$core$Maybe$Just(_p0._0);
+	}
+};
+var _elm_community$elm_test$Fuzz_Internal$getValid = function (valid) {
+	var _p1 = valid;
+	if (_p1.ctor === 'Ok') {
+		return _elm_lang$core$Maybe$Just(_p1._0);
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _elm_community$elm_test$Fuzz_Internal$runAll = F2(
+	function (xs, seed) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p2) {
+				var _p3 = _elm_lang$lazy$Lazy$force(xs);
+				if (_p3.ctor === 'Nil') {
+					return _elm_community$lazy_list$Lazy_List$Nil;
+				} else {
+					var _p4 = A2(_mgold$elm_random_pcg$Random_Pcg$step, _p3._0, seed);
+					var x = _p4._0;
+					var newSeed = _p4._1;
+					return A2(
+						_elm_community$lazy_list$Lazy_List$Cons,
+						x,
+						A2(_elm_community$elm_test$Fuzz_Internal$runAll, _p3._1, newSeed));
+				}
+			});
+	});
+var _elm_community$elm_test$Fuzz_Internal$sequenceLazyList = function (xs) {
+	return A2(
+		_mgold$elm_random_pcg$Random_Pcg$map,
+		_elm_community$elm_test$Fuzz_Internal$runAll(xs),
+		_mgold$elm_random_pcg$Random_Pcg$independentSeed);
+};
+var _elm_community$elm_test$Fuzz_Internal$sequenceRoseTree = function (_p5) {
+	var _p6 = _p5;
+	return A3(
+		_mgold$elm_random_pcg$Random_Pcg$map2,
+		_elm_community$elm_test$RoseTree$Rose,
+		_p6._0,
+		_elm_community$elm_test$Fuzz_Internal$sequenceLazyList(
+			A2(_elm_community$lazy_list$Lazy_List$map, _elm_community$elm_test$Fuzz_Internal$sequenceRoseTree, _p6._1)));
+};
+var _elm_community$elm_test$Fuzz_Internal$removeInvalid = function (tree) {
+	var _p7 = A2(_elm_community$elm_test$RoseTree$filterMap, _elm_community$elm_test$Fuzz_Internal$getValid, tree);
+	if (_p7.ctor === 'Just') {
+		return _p7._0;
+	} else {
+		return _elm_lang$core$Native_Utils.crashCase(
+			'Fuzz.Internal',
+			{
+				start: {line: 54, column: 5},
+				end: {line: 59, column: 94}
+			},
+			_p7)('Returning an invalid fuzzer from `andThen` is currently unsupported');
+	}
+};
+var _elm_community$elm_test$Fuzz_Internal$andThen = F2(
+	function (fn, fuzzer) {
+		var helper = F2(
+			function (fn, xs) {
+				return A2(
+					_mgold$elm_random_pcg$Random_Pcg$map,
+					_elm_community$elm_test$RoseTree$flatten,
+					_elm_community$elm_test$Fuzz_Internal$sequenceRoseTree(
+						_elm_community$elm_test$Fuzz_Internal$removeInvalid(
+							A2(_elm_community$elm_test$RoseTree$map, fn, xs))));
+			});
+		return A2(
+			_elm_lang$core$Result$map,
+			_mgold$elm_random_pcg$Random_Pcg$andThen(
+				helper(fn)),
+			fuzzer);
+	});
+var _elm_community$elm_test$Fuzz_Internal$map = F2(
+	function (fn, fuzzer) {
+		return A2(
+			function (_p9) {
+				return _elm_lang$core$Result$map(
+					_mgold$elm_random_pcg$Random_Pcg$map(
+						_elm_community$elm_test$RoseTree$map(_p9)));
+			},
+			fn,
+			fuzzer);
+	});
+var _elm_community$elm_test$Fuzz_Internal$combineValid = function (valids) {
+	var _p10 = valids;
+	if (_p10.ctor === '[]') {
+		return _elm_lang$core$Result$Ok(
+			{ctor: '[]'});
+	} else {
+		if (_p10._0.ctor === 'Ok') {
+			return A2(
+				_elm_lang$core$Result$map,
+				F2(
+					function (x, y) {
+						return {ctor: '::', _0: x, _1: y};
+					})(_p10._0._0),
+				_elm_community$elm_test$Fuzz_Internal$combineValid(_p10._1));
+		} else {
+			return _elm_lang$core$Result$Err(_p10._0._0);
+		}
+	}
+};

@@ -1,0 +1,918 @@
+var _elm_community$shrink$Shrink$seriesFloat = F2(
+	function (low, high) {
+		if (_elm_lang$core$Native_Utils.cmp(low, high - 1.0e-4) > -1) {
+			return (!_elm_lang$core$Native_Utils.eq(high, 1.0e-6)) ? _elm_community$lazy_list$Lazy_List$singleton(low + 1.0e-6) : _elm_community$lazy_list$Lazy_List$empty;
+		} else {
+			var low_ = low + ((high - low) / 2);
+			return A2(
+				_elm_community$lazy_list$Lazy_List_ops[':::'],
+				low,
+				A2(_elm_community$shrink$Shrink$seriesFloat, low_, high));
+		}
+	});
+var _elm_community$shrink$Shrink$seriesInt = F2(
+	function (low, high) {
+		if (_elm_lang$core$Native_Utils.cmp(low, high) > -1) {
+			return _elm_community$lazy_list$Lazy_List$empty;
+		} else {
+			if (_elm_lang$core$Native_Utils.eq(low, high - 1)) {
+				return A2(_elm_community$lazy_list$Lazy_List_ops[':::'], low, _elm_community$lazy_list$Lazy_List$empty);
+			} else {
+				var low_ = low + (((high - low) / 2) | 0);
+				return A2(
+					_elm_community$lazy_list$Lazy_List_ops[':::'],
+					low,
+					A2(_elm_community$shrink$Shrink$seriesInt, low_, high));
+			}
+		}
+	});
+var _elm_community$shrink$Shrink$andMap = _elm_community$lazy_list$Lazy_List$andMap;
+var _elm_community$shrink$Shrink$map = _elm_community$lazy_list$Lazy_List$map;
+var _elm_community$shrink$Shrink$merge = F3(
+	function (shrink1, shrink2, a) {
+		return _elm_community$lazy_list$Lazy_List$unique(
+			A2(
+				_elm_community$lazy_list$Lazy_List_ops['+++'],
+				shrink1(a),
+				shrink2(a)));
+	});
+var _elm_community$shrink$Shrink$keepIf = F3(
+	function (predicate, shrink, a) {
+		return A2(
+			_elm_community$lazy_list$Lazy_List$keepIf,
+			predicate,
+			shrink(a));
+	});
+var _elm_community$shrink$Shrink$dropIf = function (predicate) {
+	return _elm_community$shrink$Shrink$keepIf(
+		function (_p0) {
+			return !predicate(_p0);
+		});
+};
+var _elm_community$shrink$Shrink$convert = F4(
+	function (f, g, shrink, b) {
+		return A2(
+			_elm_community$lazy_list$Lazy_List$map,
+			f,
+			shrink(
+				g(b)));
+	});
+var _elm_community$shrink$Shrink$tuple5 = F2(
+	function (_p2, _p1) {
+		var _p3 = _p2;
+		var _p14 = _p3._4;
+		var _p13 = _p3._3;
+		var _p12 = _p3._2;
+		var _p11 = _p3._1;
+		var _p10 = _p3._0;
+		var _p4 = _p1;
+		var _p9 = _p4._4;
+		var _p8 = _p4._3;
+		var _p7 = _p4._2;
+		var _p6 = _p4._1;
+		var _p5 = _p4._0;
+		return A2(
+			_elm_community$lazy_list$Lazy_List_ops['+++'],
+			A2(
+				_elm_community$lazy_list$Lazy_List$map,
+				function (e) {
+					return {ctor: '_Tuple5', _0: _p5, _1: _p6, _2: _p7, _3: _p8, _4: e};
+				},
+				_p14(_p9)),
+			A2(
+				_elm_community$lazy_list$Lazy_List_ops['+++'],
+				A2(
+					_elm_community$lazy_list$Lazy_List$map,
+					function (d) {
+						return {ctor: '_Tuple5', _0: _p5, _1: _p6, _2: _p7, _3: d, _4: _p9};
+					},
+					_p13(_p8)),
+				A2(
+					_elm_community$lazy_list$Lazy_List_ops['+++'],
+					A2(
+						_elm_community$lazy_list$Lazy_List$map,
+						function (c) {
+							return {ctor: '_Tuple5', _0: _p5, _1: _p6, _2: c, _3: _p8, _4: _p9};
+						},
+						_p12(_p7)),
+					A2(
+						_elm_community$lazy_list$Lazy_List_ops['+++'],
+						A2(
+							_elm_community$lazy_list$Lazy_List$map,
+							function (b) {
+								return {ctor: '_Tuple5', _0: _p5, _1: b, _2: _p7, _3: _p8, _4: _p9};
+							},
+							_p11(_p6)),
+						A2(
+							_elm_community$lazy_list$Lazy_List_ops['+++'],
+							A2(
+								_elm_community$lazy_list$Lazy_List$map,
+								function (a) {
+									return {ctor: '_Tuple5', _0: a, _1: _p6, _2: _p7, _3: _p8, _4: _p9};
+								},
+								_p10(_p5)),
+							A2(
+								_elm_community$lazy_list$Lazy_List_ops['+++'],
+								A3(
+									_elm_community$lazy_list$Lazy_List$map2,
+									F2(
+										function (d, e) {
+											return {ctor: '_Tuple5', _0: _p5, _1: _p6, _2: _p7, _3: d, _4: e};
+										}),
+									_p13(_p8),
+									_p14(_p9)),
+								A2(
+									_elm_community$lazy_list$Lazy_List_ops['+++'],
+									A3(
+										_elm_community$lazy_list$Lazy_List$map2,
+										F2(
+											function (c, e) {
+												return {ctor: '_Tuple5', _0: _p5, _1: _p6, _2: c, _3: _p8, _4: e};
+											}),
+										_p12(_p7),
+										_p14(_p9)),
+									A2(
+										_elm_community$lazy_list$Lazy_List_ops['+++'],
+										A3(
+											_elm_community$lazy_list$Lazy_List$map2,
+											F2(
+												function (b, e) {
+													return {ctor: '_Tuple5', _0: _p5, _1: b, _2: _p7, _3: _p8, _4: e};
+												}),
+											_p11(_p6),
+											_p14(_p9)),
+										A2(
+											_elm_community$lazy_list$Lazy_List_ops['+++'],
+											A3(
+												_elm_community$lazy_list$Lazy_List$map2,
+												F2(
+													function (a, e) {
+														return {ctor: '_Tuple5', _0: a, _1: _p6, _2: _p7, _3: _p8, _4: e};
+													}),
+												_p10(_p5),
+												_p14(_p9)),
+											A2(
+												_elm_community$lazy_list$Lazy_List_ops['+++'],
+												A3(
+													_elm_community$lazy_list$Lazy_List$map2,
+													F2(
+														function (c, d) {
+															return {ctor: '_Tuple5', _0: _p5, _1: _p6, _2: c, _3: d, _4: _p9};
+														}),
+													_p12(_p7),
+													_p13(_p8)),
+												A2(
+													_elm_community$lazy_list$Lazy_List_ops['+++'],
+													A3(
+														_elm_community$lazy_list$Lazy_List$map2,
+														F2(
+															function (b, d) {
+																return {ctor: '_Tuple5', _0: _p5, _1: b, _2: _p7, _3: d, _4: _p9};
+															}),
+														_p11(_p6),
+														_p13(_p8)),
+													A2(
+														_elm_community$lazy_list$Lazy_List_ops['+++'],
+														A3(
+															_elm_community$lazy_list$Lazy_List$map2,
+															F2(
+																function (a, d) {
+																	return {ctor: '_Tuple5', _0: a, _1: _p6, _2: _p7, _3: d, _4: _p9};
+																}),
+															_p10(_p5),
+															_p13(_p8)),
+														A2(
+															_elm_community$lazy_list$Lazy_List_ops['+++'],
+															A3(
+																_elm_community$lazy_list$Lazy_List$map2,
+																F2(
+																	function (b, c) {
+																		return {ctor: '_Tuple5', _0: _p5, _1: b, _2: c, _3: _p8, _4: _p9};
+																	}),
+																_p11(_p6),
+																_p12(_p7)),
+															A2(
+																_elm_community$lazy_list$Lazy_List_ops['+++'],
+																A3(
+																	_elm_community$lazy_list$Lazy_List$map2,
+																	F2(
+																		function (a, c) {
+																			return {ctor: '_Tuple5', _0: a, _1: _p6, _2: c, _3: _p8, _4: _p9};
+																		}),
+																	_p10(_p5),
+																	_p12(_p7)),
+																A2(
+																	_elm_community$lazy_list$Lazy_List_ops['+++'],
+																	A3(
+																		_elm_community$lazy_list$Lazy_List$map2,
+																		F2(
+																			function (a, b) {
+																				return {ctor: '_Tuple5', _0: a, _1: b, _2: _p7, _3: _p8, _4: _p9};
+																			}),
+																		_p10(_p5),
+																		_p11(_p6)),
+																	A2(
+																		_elm_community$lazy_list$Lazy_List_ops['+++'],
+																		A4(
+																			_elm_community$lazy_list$Lazy_List$map3,
+																			F3(
+																				function (a, b, c) {
+																					return {ctor: '_Tuple5', _0: a, _1: b, _2: c, _3: _p8, _4: _p9};
+																				}),
+																			_p10(_p5),
+																			_p11(_p6),
+																			_p12(_p7)),
+																		A2(
+																			_elm_community$lazy_list$Lazy_List_ops['+++'],
+																			A4(
+																				_elm_community$lazy_list$Lazy_List$map3,
+																				F3(
+																					function (a, b, d) {
+																						return {ctor: '_Tuple5', _0: a, _1: b, _2: _p7, _3: d, _4: _p9};
+																					}),
+																				_p10(_p5),
+																				_p11(_p6),
+																				_p13(_p8)),
+																			A2(
+																				_elm_community$lazy_list$Lazy_List_ops['+++'],
+																				A4(
+																					_elm_community$lazy_list$Lazy_List$map3,
+																					F3(
+																						function (a, c, d) {
+																							return {ctor: '_Tuple5', _0: a, _1: _p6, _2: c, _3: d, _4: _p9};
+																						}),
+																					_p10(_p5),
+																					_p12(_p7),
+																					_p13(_p8)),
+																				A2(
+																					_elm_community$lazy_list$Lazy_List_ops['+++'],
+																					A4(
+																						_elm_community$lazy_list$Lazy_List$map3,
+																						F3(
+																							function (b, c, d) {
+																								return {ctor: '_Tuple5', _0: _p5, _1: b, _2: c, _3: d, _4: _p9};
+																							}),
+																						_p11(_p6),
+																						_p12(_p7),
+																						_p13(_p8)),
+																					A2(
+																						_elm_community$lazy_list$Lazy_List_ops['+++'],
+																						A4(
+																							_elm_community$lazy_list$Lazy_List$map3,
+																							F3(
+																								function (a, b, e) {
+																									return {ctor: '_Tuple5', _0: a, _1: b, _2: _p7, _3: _p8, _4: e};
+																								}),
+																							_p10(_p5),
+																							_p11(_p6),
+																							_p14(_p9)),
+																						A2(
+																							_elm_community$lazy_list$Lazy_List_ops['+++'],
+																							A4(
+																								_elm_community$lazy_list$Lazy_List$map3,
+																								F3(
+																									function (a, c, e) {
+																										return {ctor: '_Tuple5', _0: a, _1: _p6, _2: c, _3: _p8, _4: e};
+																									}),
+																								_p10(_p5),
+																								_p12(_p7),
+																								_p14(_p9)),
+																							A2(
+																								_elm_community$lazy_list$Lazy_List_ops['+++'],
+																								A4(
+																									_elm_community$lazy_list$Lazy_List$map3,
+																									F3(
+																										function (b, c, e) {
+																											return {ctor: '_Tuple5', _0: _p5, _1: b, _2: c, _3: _p8, _4: e};
+																										}),
+																									_p11(_p6),
+																									_p12(_p7),
+																									_p14(_p9)),
+																								A2(
+																									_elm_community$lazy_list$Lazy_List_ops['+++'],
+																									A4(
+																										_elm_community$lazy_list$Lazy_List$map3,
+																										F3(
+																											function (a, d, e) {
+																												return {ctor: '_Tuple5', _0: a, _1: _p6, _2: _p7, _3: d, _4: e};
+																											}),
+																										_p10(_p5),
+																										_p13(_p8),
+																										_p14(_p9)),
+																									A2(
+																										_elm_community$lazy_list$Lazy_List_ops['+++'],
+																										A4(
+																											_elm_community$lazy_list$Lazy_List$map3,
+																											F3(
+																												function (b, d, e) {
+																													return {ctor: '_Tuple5', _0: _p5, _1: b, _2: _p7, _3: d, _4: e};
+																												}),
+																											_p11(_p6),
+																											_p13(_p8),
+																											_p14(_p9)),
+																										A2(
+																											_elm_community$lazy_list$Lazy_List_ops['+++'],
+																											A4(
+																												_elm_community$lazy_list$Lazy_List$map3,
+																												F3(
+																													function (c, d, e) {
+																														return {ctor: '_Tuple5', _0: _p5, _1: _p6, _2: c, _3: d, _4: e};
+																													}),
+																												_p12(_p7),
+																												_p13(_p8),
+																												_p14(_p9)),
+																											A2(
+																												_elm_community$lazy_list$Lazy_List_ops['+++'],
+																												A5(
+																													_elm_community$lazy_list$Lazy_List$map4,
+																													F4(
+																														function (b, c, d, e) {
+																															return {ctor: '_Tuple5', _0: _p5, _1: b, _2: c, _3: d, _4: e};
+																														}),
+																													_p11(_p6),
+																													_p12(_p7),
+																													_p13(_p8),
+																													_p14(_p9)),
+																												A2(
+																													_elm_community$lazy_list$Lazy_List_ops['+++'],
+																													A5(
+																														_elm_community$lazy_list$Lazy_List$map4,
+																														F4(
+																															function (a, c, d, e) {
+																																return {ctor: '_Tuple5', _0: a, _1: _p6, _2: c, _3: d, _4: e};
+																															}),
+																														_p10(_p5),
+																														_p12(_p7),
+																														_p13(_p8),
+																														_p14(_p9)),
+																													A2(
+																														_elm_community$lazy_list$Lazy_List_ops['+++'],
+																														A5(
+																															_elm_community$lazy_list$Lazy_List$map4,
+																															F4(
+																																function (a, b, d, e) {
+																																	return {ctor: '_Tuple5', _0: a, _1: b, _2: _p7, _3: d, _4: e};
+																																}),
+																															_p10(_p5),
+																															_p11(_p6),
+																															_p13(_p8),
+																															_p14(_p9)),
+																														A2(
+																															_elm_community$lazy_list$Lazy_List_ops['+++'],
+																															A5(
+																																_elm_community$lazy_list$Lazy_List$map4,
+																																F4(
+																																	function (a, b, c, d) {
+																																		return {ctor: '_Tuple5', _0: a, _1: b, _2: c, _3: d, _4: _p9};
+																																	}),
+																																_p10(_p5),
+																																_p11(_p6),
+																																_p12(_p7),
+																																_p13(_p8)),
+																															A6(
+																																_elm_community$lazy_list$Lazy_List$map5,
+																																F5(
+																																	function (v0, v1, v2, v3, v4) {
+																																		return {ctor: '_Tuple5', _0: v0, _1: v1, _2: v2, _3: v3, _4: v4};
+																																	}),
+																																_p10(_p5),
+																																_p11(_p6),
+																																_p12(_p7),
+																																_p13(_p8),
+																																_p14(_p9)))))))))))))))))))))))))))))));
+	});
+var _elm_community$shrink$Shrink$tuple4 = F2(
+	function (_p16, _p15) {
+		var _p17 = _p16;
+		var _p26 = _p17._3;
+		var _p25 = _p17._2;
+		var _p24 = _p17._1;
+		var _p23 = _p17._0;
+		var _p18 = _p15;
+		var _p22 = _p18._3;
+		var _p21 = _p18._2;
+		var _p20 = _p18._1;
+		var _p19 = _p18._0;
+		return A2(
+			_elm_community$lazy_list$Lazy_List_ops['+++'],
+			A2(
+				_elm_community$lazy_list$Lazy_List$map,
+				function (d) {
+					return {ctor: '_Tuple4', _0: _p19, _1: _p20, _2: _p21, _3: d};
+				},
+				_p26(_p22)),
+			A2(
+				_elm_community$lazy_list$Lazy_List_ops['+++'],
+				A2(
+					_elm_community$lazy_list$Lazy_List$map,
+					function (c) {
+						return {ctor: '_Tuple4', _0: _p19, _1: _p20, _2: c, _3: _p22};
+					},
+					_p25(_p21)),
+				A2(
+					_elm_community$lazy_list$Lazy_List_ops['+++'],
+					A2(
+						_elm_community$lazy_list$Lazy_List$map,
+						function (b) {
+							return {ctor: '_Tuple4', _0: _p19, _1: b, _2: _p21, _3: _p22};
+						},
+						_p24(_p20)),
+					A2(
+						_elm_community$lazy_list$Lazy_List_ops['+++'],
+						A2(
+							_elm_community$lazy_list$Lazy_List$map,
+							function (a) {
+								return {ctor: '_Tuple4', _0: a, _1: _p20, _2: _p21, _3: _p22};
+							},
+							_p23(_p19)),
+						A2(
+							_elm_community$lazy_list$Lazy_List_ops['+++'],
+							A3(
+								_elm_community$lazy_list$Lazy_List$map2,
+								F2(
+									function (c, d) {
+										return {ctor: '_Tuple4', _0: _p19, _1: _p20, _2: c, _3: d};
+									}),
+								_p25(_p21),
+								_p26(_p22)),
+							A2(
+								_elm_community$lazy_list$Lazy_List_ops['+++'],
+								A3(
+									_elm_community$lazy_list$Lazy_List$map2,
+									F2(
+										function (b, d) {
+											return {ctor: '_Tuple4', _0: _p19, _1: b, _2: _p21, _3: d};
+										}),
+									_p24(_p20),
+									_p26(_p22)),
+								A2(
+									_elm_community$lazy_list$Lazy_List_ops['+++'],
+									A3(
+										_elm_community$lazy_list$Lazy_List$map2,
+										F2(
+											function (a, d) {
+												return {ctor: '_Tuple4', _0: a, _1: _p20, _2: _p21, _3: d};
+											}),
+										_p23(_p19),
+										_p26(_p22)),
+									A2(
+										_elm_community$lazy_list$Lazy_List_ops['+++'],
+										A3(
+											_elm_community$lazy_list$Lazy_List$map2,
+											F2(
+												function (b, c) {
+													return {ctor: '_Tuple4', _0: _p19, _1: b, _2: c, _3: _p22};
+												}),
+											_p24(_p20),
+											_p25(_p21)),
+										A2(
+											_elm_community$lazy_list$Lazy_List_ops['+++'],
+											A3(
+												_elm_community$lazy_list$Lazy_List$map2,
+												F2(
+													function (a, c) {
+														return {ctor: '_Tuple4', _0: a, _1: _p20, _2: c, _3: _p22};
+													}),
+												_p23(_p19),
+												_p25(_p21)),
+											A2(
+												_elm_community$lazy_list$Lazy_List_ops['+++'],
+												A3(
+													_elm_community$lazy_list$Lazy_List$map2,
+													F2(
+														function (a, b) {
+															return {ctor: '_Tuple4', _0: a, _1: b, _2: _p21, _3: _p22};
+														}),
+													_p23(_p19),
+													_p24(_p20)),
+												A2(
+													_elm_community$lazy_list$Lazy_List_ops['+++'],
+													A4(
+														_elm_community$lazy_list$Lazy_List$map3,
+														F3(
+															function (b, c, d) {
+																return {ctor: '_Tuple4', _0: _p19, _1: b, _2: c, _3: d};
+															}),
+														_p24(_p20),
+														_p25(_p21),
+														_p26(_p22)),
+													A2(
+														_elm_community$lazy_list$Lazy_List_ops['+++'],
+														A4(
+															_elm_community$lazy_list$Lazy_List$map3,
+															F3(
+																function (a, c, d) {
+																	return {ctor: '_Tuple4', _0: a, _1: _p20, _2: c, _3: d};
+																}),
+															_p23(_p19),
+															_p25(_p21),
+															_p26(_p22)),
+														A2(
+															_elm_community$lazy_list$Lazy_List_ops['+++'],
+															A4(
+																_elm_community$lazy_list$Lazy_List$map3,
+																F3(
+																	function (a, b, d) {
+																		return {ctor: '_Tuple4', _0: a, _1: b, _2: _p21, _3: d};
+																	}),
+																_p23(_p19),
+																_p24(_p20),
+																_p26(_p22)),
+															A2(
+																_elm_community$lazy_list$Lazy_List_ops['+++'],
+																A4(
+																	_elm_community$lazy_list$Lazy_List$map3,
+																	F3(
+																		function (a, b, c) {
+																			return {ctor: '_Tuple4', _0: a, _1: b, _2: c, _3: _p22};
+																		}),
+																	_p23(_p19),
+																	_p24(_p20),
+																	_p25(_p21)),
+																A5(
+																	_elm_community$lazy_list$Lazy_List$map4,
+																	F4(
+																		function (v0, v1, v2, v3) {
+																			return {ctor: '_Tuple4', _0: v0, _1: v1, _2: v2, _3: v3};
+																		}),
+																	_p23(_p19),
+																	_p24(_p20),
+																	_p25(_p21),
+																	_p26(_p22))))))))))))))));
+	});
+var _elm_community$shrink$Shrink$tuple3 = F2(
+	function (_p28, _p27) {
+		var _p29 = _p28;
+		var _p36 = _p29._2;
+		var _p35 = _p29._1;
+		var _p34 = _p29._0;
+		var _p30 = _p27;
+		var _p33 = _p30._2;
+		var _p32 = _p30._1;
+		var _p31 = _p30._0;
+		return A2(
+			_elm_community$lazy_list$Lazy_List_ops['+++'],
+			A2(
+				_elm_community$lazy_list$Lazy_List$map,
+				function (c) {
+					return {ctor: '_Tuple3', _0: _p31, _1: _p32, _2: c};
+				},
+				_p36(_p33)),
+			A2(
+				_elm_community$lazy_list$Lazy_List_ops['+++'],
+				A2(
+					_elm_community$lazy_list$Lazy_List$map,
+					function (b) {
+						return {ctor: '_Tuple3', _0: _p31, _1: b, _2: _p33};
+					},
+					_p35(_p32)),
+				A2(
+					_elm_community$lazy_list$Lazy_List_ops['+++'],
+					A2(
+						_elm_community$lazy_list$Lazy_List$map,
+						function (a) {
+							return {ctor: '_Tuple3', _0: a, _1: _p32, _2: _p33};
+						},
+						_p34(_p31)),
+					A2(
+						_elm_community$lazy_list$Lazy_List_ops['+++'],
+						A3(
+							_elm_community$lazy_list$Lazy_List$map2,
+							F2(
+								function (b, c) {
+									return {ctor: '_Tuple3', _0: _p31, _1: b, _2: c};
+								}),
+							_p35(_p32),
+							_p36(_p33)),
+						A2(
+							_elm_community$lazy_list$Lazy_List_ops['+++'],
+							A3(
+								_elm_community$lazy_list$Lazy_List$map2,
+								F2(
+									function (a, c) {
+										return {ctor: '_Tuple3', _0: a, _1: _p32, _2: c};
+									}),
+								_p34(_p31),
+								_p36(_p33)),
+							A2(
+								_elm_community$lazy_list$Lazy_List_ops['+++'],
+								A3(
+									_elm_community$lazy_list$Lazy_List$map2,
+									F2(
+										function (a, b) {
+											return {ctor: '_Tuple3', _0: a, _1: b, _2: _p33};
+										}),
+									_p34(_p31),
+									_p35(_p32)),
+								A4(
+									_elm_community$lazy_list$Lazy_List$map3,
+									F3(
+										function (v0, v1, v2) {
+											return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+										}),
+									_p34(_p31),
+									_p35(_p32),
+									_p36(_p33))))))));
+	});
+var _elm_community$shrink$Shrink$tuple = F2(
+	function (_p38, _p37) {
+		var _p39 = _p38;
+		var _p44 = _p39._1;
+		var _p43 = _p39._0;
+		var _p40 = _p37;
+		var _p42 = _p40._1;
+		var _p41 = _p40._0;
+		return A2(
+			_elm_community$lazy_list$Lazy_List_ops['+++'],
+			A2(
+				_elm_community$lazy_list$Lazy_List$map,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					})(_p41),
+				_p44(_p42)),
+			A2(
+				_elm_community$lazy_list$Lazy_List_ops['+++'],
+				A2(
+					_elm_community$lazy_list$Lazy_List$map,
+					A2(
+						_elm_lang$core$Basics$flip,
+						F2(
+							function (v0, v1) {
+								return {ctor: '_Tuple2', _0: v0, _1: v1};
+							}),
+						_p42),
+					_p43(_p41)),
+				A3(
+					_elm_community$lazy_list$Lazy_List$map2,
+					F2(
+						function (v0, v1) {
+							return {ctor: '_Tuple2', _0: v0, _1: v1};
+						}),
+					_p43(_p41),
+					_p44(_p42))));
+	});
+var _elm_community$shrink$Shrink$lazylist = F2(
+	function (shrink, l) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p45) {
+				var _p46 = _p45;
+				var removes = F3(
+					function (k, n, l) {
+						return _elm_lang$lazy$Lazy$lazy(
+							function (_p47) {
+								var _p48 = _p47;
+								if (_elm_lang$core$Native_Utils.cmp(k, n) > 0) {
+									return _elm_lang$lazy$Lazy$force(_elm_community$lazy_list$Lazy_List$empty);
+								} else {
+									if (_elm_community$lazy_list$Lazy_List$isEmpty(l)) {
+										return _elm_lang$lazy$Lazy$force(
+											A2(_elm_community$lazy_list$Lazy_List_ops[':::'], _elm_community$lazy_list$Lazy_List$empty, _elm_community$lazy_list$Lazy_List$empty));
+									} else {
+										var rest = A2(_elm_community$lazy_list$Lazy_List$drop, k, l);
+										var first = A2(_elm_community$lazy_list$Lazy_List$take, k, l);
+										return _elm_lang$lazy$Lazy$force(
+											A2(
+												_elm_community$lazy_list$Lazy_List_ops[':::'],
+												rest,
+												A2(
+													_elm_community$lazy_list$Lazy_List$map,
+													F2(
+														function (x, y) {
+															return A2(_elm_community$lazy_list$Lazy_List_ops['+++'], x, y);
+														})(first),
+													A3(removes, k, n - k, rest))));
+									}
+								}
+							});
+					});
+				var shrinkOne = function (l) {
+					return _elm_lang$lazy$Lazy$lazy(
+						function (_p49) {
+							var _p50 = _p49;
+							var _p51 = _elm_lang$lazy$Lazy$force(l);
+							if (_p51.ctor === 'Nil') {
+								return _elm_lang$lazy$Lazy$force(_elm_community$lazy_list$Lazy_List$empty);
+							} else {
+								var _p53 = _p51._1;
+								var _p52 = _p51._0;
+								return _elm_lang$lazy$Lazy$force(
+									A2(
+										_elm_community$lazy_list$Lazy_List_ops['+++'],
+										A2(
+											_elm_community$lazy_list$Lazy_List$map,
+											A2(
+												_elm_lang$core$Basics$flip,
+												F2(
+													function (x, y) {
+														return A2(_elm_community$lazy_list$Lazy_List_ops[':::'], x, y);
+													}),
+												_p53),
+											shrink(_p52)),
+										A2(
+											_elm_community$lazy_list$Lazy_List$map,
+											F2(
+												function (x, y) {
+													return A2(_elm_community$lazy_list$Lazy_List_ops[':::'], x, y);
+												})(_p52),
+											shrinkOne(_p53))));
+							}
+						});
+				};
+				var n = _elm_community$lazy_list$Lazy_List$length(l);
+				return _elm_lang$lazy$Lazy$force(
+					A2(
+						_elm_community$lazy_list$Lazy_List_ops['+++'],
+						A2(
+							_elm_community$lazy_list$Lazy_List$andThen,
+							function (k) {
+								return A3(removes, k, n, l);
+							},
+							A2(
+								_elm_community$lazy_list$Lazy_List$takeWhile,
+								function (x) {
+									return _elm_lang$core$Native_Utils.cmp(x, 0) > 0;
+								},
+								A2(
+									_elm_community$lazy_list$Lazy_List$iterate,
+									function (n) {
+										return (n / 2) | 0;
+									},
+									n))),
+						shrinkOne(l)));
+			});
+	});
+var _elm_community$shrink$Shrink$list = function (shrink) {
+	return A3(
+		_elm_community$shrink$Shrink$convert,
+		_elm_community$lazy_list$Lazy_List$toList,
+		_elm_community$lazy_list$Lazy_List$fromList,
+		_elm_community$shrink$Shrink$lazylist(shrink));
+};
+var _elm_community$shrink$Shrink$array = function (shrink) {
+	return A3(
+		_elm_community$shrink$Shrink$convert,
+		_elm_community$lazy_list$Lazy_List$toArray,
+		_elm_community$lazy_list$Lazy_List$fromArray,
+		_elm_community$shrink$Shrink$lazylist(shrink));
+};
+var _elm_community$shrink$Shrink$result = F3(
+	function (shrinkError, shrinkValue, r) {
+		var _p54 = r;
+		if (_p54.ctor === 'Ok') {
+			return A2(
+				_elm_community$lazy_list$Lazy_List$map,
+				_elm_lang$core$Result$Ok,
+				shrinkValue(_p54._0));
+		} else {
+			return A2(
+				_elm_community$lazy_list$Lazy_List$map,
+				_elm_lang$core$Result$Err,
+				shrinkError(_p54._0));
+		}
+	});
+var _elm_community$shrink$Shrink$maybe = F2(
+	function (shrink, m) {
+		var _p55 = m;
+		if (_p55.ctor === 'Just') {
+			return A2(
+				_elm_community$lazy_list$Lazy_List_ops[':::'],
+				_elm_lang$core$Maybe$Nothing,
+				A2(
+					_elm_community$lazy_list$Lazy_List$map,
+					_elm_lang$core$Maybe$Just,
+					shrink(_p55._0)));
+		} else {
+			return _elm_community$lazy_list$Lazy_List$empty;
+		}
+	});
+var _elm_community$shrink$Shrink$atLeastFloat = F2(
+	function (min, n) {
+		return ((_elm_lang$core$Native_Utils.cmp(n, 0) < 0) && (_elm_lang$core$Native_Utils.cmp(n, min) > -1)) ? A2(
+			_elm_community$lazy_list$Lazy_List_ops[':::'],
+			0 - n,
+			A2(
+				_elm_community$lazy_list$Lazy_List$map,
+				F2(
+					function (x, y) {
+						return x * y;
+					})(-1),
+				A2(_elm_community$shrink$Shrink$seriesFloat, 0, 0 - n))) : A2(
+			_elm_community$shrink$Shrink$seriesFloat,
+			A2(_elm_lang$core$Basics$max, 0, min),
+			n);
+	});
+var _elm_community$shrink$Shrink$float = function (n) {
+	return (_elm_lang$core$Native_Utils.cmp(n, 0) < 0) ? A2(
+		_elm_community$lazy_list$Lazy_List_ops[':::'],
+		0 - n,
+		A2(
+			_elm_community$lazy_list$Lazy_List$map,
+			F2(
+				function (x, y) {
+					return x * y;
+				})(-1),
+			A2(_elm_community$shrink$Shrink$seriesFloat, 0, 0 - n))) : A2(_elm_community$shrink$Shrink$seriesFloat, 0, n);
+};
+var _elm_community$shrink$Shrink$atLeastInt = F2(
+	function (min, n) {
+		return ((_elm_lang$core$Native_Utils.cmp(n, 0) < 0) && (_elm_lang$core$Native_Utils.cmp(n, min) > -1)) ? A2(
+			_elm_community$lazy_list$Lazy_List_ops[':::'],
+			0 - n,
+			A2(
+				_elm_community$lazy_list$Lazy_List$map,
+				F2(
+					function (x, y) {
+						return x * y;
+					})(-1),
+				A2(_elm_community$shrink$Shrink$seriesInt, 0, 0 - n))) : A2(
+			_elm_community$shrink$Shrink$seriesInt,
+			A2(_elm_lang$core$Basics$max, 0, min),
+			n);
+	});
+var _elm_community$shrink$Shrink$atLeastChar = function ($char) {
+	return A3(
+		_elm_community$shrink$Shrink$convert,
+		_elm_lang$core$Char$fromCode,
+		_elm_lang$core$Char$toCode,
+		_elm_community$shrink$Shrink$atLeastInt(
+			_elm_lang$core$Char$toCode($char)));
+};
+var _elm_community$shrink$Shrink$character = _elm_community$shrink$Shrink$atLeastChar(
+	_elm_lang$core$Char$fromCode(32));
+var _elm_community$shrink$Shrink$string = A3(
+	_elm_community$shrink$Shrink$convert,
+	_elm_lang$core$String$fromList,
+	_elm_lang$core$String$toList,
+	_elm_community$shrink$Shrink$list(_elm_community$shrink$Shrink$character));
+var _elm_community$shrink$Shrink$int = function (n) {
+	return (_elm_lang$core$Native_Utils.cmp(n, 0) < 0) ? A2(
+		_elm_community$lazy_list$Lazy_List_ops[':::'],
+		0 - n,
+		A2(
+			_elm_community$lazy_list$Lazy_List$map,
+			F2(
+				function (x, y) {
+					return x * y;
+				})(-1),
+			A2(_elm_community$shrink$Shrink$seriesInt, 0, 0 - n))) : A2(_elm_community$shrink$Shrink$seriesInt, 0, n);
+};
+var _elm_community$shrink$Shrink$char = A3(_elm_community$shrink$Shrink$convert, _elm_lang$core$Char$fromCode, _elm_lang$core$Char$toCode, _elm_community$shrink$Shrink$int);
+var _elm_community$shrink$Shrink$order = function (o) {
+	var _p56 = o;
+	switch (_p56.ctor) {
+		case 'GT':
+			return A2(
+				_elm_community$lazy_list$Lazy_List_ops[':::'],
+				_elm_lang$core$Basics$EQ,
+				A2(_elm_community$lazy_list$Lazy_List_ops[':::'], _elm_lang$core$Basics$LT, _elm_community$lazy_list$Lazy_List$empty));
+		case 'LT':
+			return A2(_elm_community$lazy_list$Lazy_List_ops[':::'], _elm_lang$core$Basics$EQ, _elm_community$lazy_list$Lazy_List$empty);
+		default:
+			return _elm_community$lazy_list$Lazy_List$empty;
+	}
+};
+var _elm_community$shrink$Shrink$bool = function (b) {
+	var _p57 = b;
+	if (_p57 === true) {
+		return A2(_elm_community$lazy_list$Lazy_List_ops[':::'], false, _elm_community$lazy_list$Lazy_List$empty);
+	} else {
+		return _elm_community$lazy_list$Lazy_List$empty;
+	}
+};
+var _elm_community$shrink$Shrink$noShrink = function (_p58) {
+	return _elm_community$lazy_list$Lazy_List$empty;
+};
+var _elm_community$shrink$Shrink$unit = _elm_community$shrink$Shrink$noShrink;
+var _elm_community$shrink$Shrink$shrink = F3(
+	function (keepShrinking, shrinker, originalVal) {
+		var helper = F2(
+			function (lazyList, val) {
+				helper:
+				while (true) {
+					var _p59 = _elm_lang$lazy$Lazy$force(lazyList);
+					if (_p59.ctor === 'Nil') {
+						return val;
+					} else {
+						var _p60 = _p59._0;
+						if (keepShrinking(_p60)) {
+							var _v17 = shrinker(_p60),
+								_v18 = _p60;
+							lazyList = _v17;
+							val = _v18;
+							continue helper;
+						} else {
+							var _v19 = _p59._1,
+								_v20 = val;
+							lazyList = _v19;
+							val = _v20;
+							continue helper;
+						}
+					}
+				}
+			});
+		return A2(
+			helper,
+			shrinker(originalVal),
+			originalVal);
+	});

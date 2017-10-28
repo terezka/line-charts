@@ -1,0 +1,218 @@
+var _terezka$coordinates$Svg_Path$bool = function (bool) {
+	return bool ? '0' : '1';
+};
+var _terezka$coordinates$Svg_Path$point = function (_p0) {
+	var _p1 = _p0;
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(_p1.x),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			' ',
+			_elm_lang$core$Basics$toString(_p1.y)));
+};
+var _terezka$coordinates$Svg_Path$points = function (points) {
+	return A2(
+		_elm_lang$core$String$join,
+		',',
+		A2(_elm_lang$core$List$map, _terezka$coordinates$Svg_Path$point, points));
+};
+var _terezka$coordinates$Svg_Path$join = function (commands) {
+	return A2(_elm_lang$core$String$join, ' ', commands);
+};
+var _terezka$coordinates$Svg_Path$toString = function (command) {
+	var _p2 = command;
+	switch (_p2.ctor) {
+		case 'Move':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'M',
+				_terezka$coordinates$Svg_Path$point(_p2._0));
+		case 'Line':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'L',
+				_terezka$coordinates$Svg_Path$point(_p2._0));
+		case 'CubicBeziers':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'C',
+				_terezka$coordinates$Svg_Path$points(
+					{
+						ctor: '::',
+						_0: _p2._0,
+						_1: {
+							ctor: '::',
+							_0: _p2._1,
+							_1: {
+								ctor: '::',
+								_0: _p2._2,
+								_1: {ctor: '[]'}
+							}
+						}
+					}));
+		case 'CubicBeziersShort':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Q',
+				_terezka$coordinates$Svg_Path$points(
+					{
+						ctor: '::',
+						_0: _p2._0,
+						_1: {
+							ctor: '::',
+							_0: _p2._1,
+							_1: {ctor: '[]'}
+						}
+					}));
+		case 'QuadraticBeziers':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Q',
+				_terezka$coordinates$Svg_Path$points(
+					{
+						ctor: '::',
+						_0: _p2._0,
+						_1: {
+							ctor: '::',
+							_0: _p2._1,
+							_1: {ctor: '[]'}
+						}
+					}));
+		case 'QuadraticBeziersShort':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'T',
+				_terezka$coordinates$Svg_Path$point(_p2._0));
+		case 'Arc':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'A',
+				_terezka$coordinates$Svg_Path$join(
+					{
+						ctor: '::',
+						_0: _terezka$coordinates$Svg_Path$point(
+							A2(_terezka$coordinates$Svg_Coordinate$Point, _p2._0, _p2._1)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$core$Basics$toString(_p2._2),
+							_1: {
+								ctor: '::',
+								_0: _terezka$coordinates$Svg_Path$bool(_p2._3),
+								_1: {
+									ctor: '::',
+									_0: _terezka$coordinates$Svg_Path$bool(_p2._4),
+									_1: {
+										ctor: '::',
+										_0: _terezka$coordinates$Svg_Path$point(_p2._5),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}));
+		default:
+			return 'Z';
+	}
+};
+var _terezka$coordinates$Svg_Path$viewPath = function (attributes) {
+	return A2(
+		_elm_lang$svg$Svg$path,
+		attributes,
+		{ctor: '[]'});
+};
+var _terezka$coordinates$Svg_Path$Close = {ctor: 'Close'};
+var _terezka$coordinates$Svg_Path$Arc = F6(
+	function (a, b, c, d, e, f) {
+		return {ctor: 'Arc', _0: a, _1: b, _2: c, _3: d, _4: e, _5: f};
+	});
+var _terezka$coordinates$Svg_Path$QuadraticBeziersShort = function (a) {
+	return {ctor: 'QuadraticBeziersShort', _0: a};
+};
+var _terezka$coordinates$Svg_Path$QuadraticBeziers = F2(
+	function (a, b) {
+		return {ctor: 'QuadraticBeziers', _0: a, _1: b};
+	});
+var _terezka$coordinates$Svg_Path$CubicBeziersShort = F2(
+	function (a, b) {
+		return {ctor: 'CubicBeziersShort', _0: a, _1: b};
+	});
+var _terezka$coordinates$Svg_Path$CubicBeziers = F3(
+	function (a, b, c) {
+		return {ctor: 'CubicBeziers', _0: a, _1: b, _2: c};
+	});
+var _terezka$coordinates$Svg_Path$Line = function (a) {
+	return {ctor: 'Line', _0: a};
+};
+var _terezka$coordinates$Svg_Path$Move = function (a) {
+	return {ctor: 'Move', _0: a};
+};
+var _terezka$coordinates$Svg_Path$translate = F2(
+	function (_p3, command) {
+		var _p4 = _p3;
+		var _p7 = _p4;
+		var _p6 = _p4.frame;
+		var _p5 = command;
+		switch (_p5.ctor) {
+			case 'Move':
+				return _terezka$coordinates$Svg_Path$Move(
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._0));
+			case 'Line':
+				return _terezka$coordinates$Svg_Path$Line(
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._0));
+			case 'CubicBeziers':
+				return A3(
+					_terezka$coordinates$Svg_Path$CubicBeziers,
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._0),
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._1),
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._2));
+			case 'CubicBeziersShort':
+				return A2(
+					_terezka$coordinates$Svg_Path$CubicBeziersShort,
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._0),
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._1));
+			case 'QuadraticBeziers':
+				return A2(
+					_terezka$coordinates$Svg_Path$QuadraticBeziers,
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._0),
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._1));
+			case 'QuadraticBeziersShort':
+				return _terezka$coordinates$Svg_Path$QuadraticBeziersShort(
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._0));
+			case 'Arc':
+				return A6(
+					_terezka$coordinates$Svg_Path$Arc,
+					A3(_terezka$coordinates$Svg_Coordinate$svgValue, _p6, _p4.xAxis, _p5._0),
+					A3(_terezka$coordinates$Svg_Coordinate$svgValue, _p6, _p4.yAxis, _p5._1),
+					_p5._2,
+					_p5._3,
+					_p5._4,
+					A2(_terezka$coordinates$Svg_Coordinate$svgPoint, _p7, _p5._5));
+			default:
+				return _terezka$coordinates$Svg_Path$Close;
+		}
+	});
+var _terezka$coordinates$Svg_Path$description = F2(
+	function (system, commands) {
+		return _terezka$coordinates$Svg_Path$join(
+			A2(
+				_elm_lang$core$List$map,
+				function (_p8) {
+					return _terezka$coordinates$Svg_Path$toString(
+						A2(_terezka$coordinates$Svg_Path$translate, system, _p8));
+				},
+				commands));
+	});
+var _terezka$coordinates$Svg_Path$view = F3(
+	function (system, attributes, commands) {
+		return _terezka$coordinates$Svg_Path$viewPath(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				attributes,
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$d(
+						A2(_terezka$coordinates$Svg_Path$description, system, commands)),
+					_1: {ctor: '[]'}
+				}));
+	});

@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Lazy",
+    "comment": " This library lets you delay a computation until later.\n\n# Basics\n@docs Lazy, lazy, force\n\n# Mapping\n@docs map, map2, map3, map4, map5\n\n# Chaining\n@docs apply, andThen\n",
+    "aliases": [],
+    "types": [
+      {
+        "name": "Lazy",
+        "comment": " A wrapper around a value that will be lazily evaluated. ",
+        "args": [
+          "a"
+        ],
+        "cases": []
+      }
+    ],
+    "values": [
+      {
+        "name": "andThen",
+        "comment": " Lazily chain together lazy computations, for when you have a series of\nsteps that all need to be performed lazily. This can be nice when you need to\npattern match on a value, for example, when appending lazy lists:\n\n    type List a = Empty | Node a (Lazy (List a))\n\n    cons : a -> Lazy (List a) -> Lazy (List a)\n    cons first rest =\n      Lazy.map (Node first) rest\n\n    append : Lazy (List a) -> Lazy (List a) -> Lazy (List a)\n    append lazyList1 lazyList2 =\n      let\n        appendHelp list1 =\n          case list1 of\n            Empty ->\n              lazyList2\n\n            Node first rest ->\n              cons first (append rest list2))\n      in\n        lazyList1\n          |> Lazy.andThen appendHelp\n\n\nBy using `andThen` we ensure that neither `lazyList1` or `lazyList2` are forced\nbefore they are needed. So as written, the `append` function delays the pattern\nmatching until later.\n",
+        "type": "(a -> Lazy.Lazy b) -> Lazy.Lazy a -> Lazy.Lazy b"
+      },
+      {
+        "name": "apply",
+        "comment": " Lazily apply a lazy function to a lazy value. This is pretty rare on its\nown, but it lets you map as high as you want.\n\n    map3 f a b == f `map` a `apply` b `apply` c\n\nIt is not the most beautiful, but it is equivalent and will let you create\n`map9` quite easily if you really need it.\n",
+        "type": "Lazy.Lazy (a -> b) -> Lazy.Lazy a -> Lazy.Lazy b"
+      },
+      {
+        "name": "force",
+        "comment": " Force the evaluation of a lazy value. This means we only pay for the\ncomputation when we need it. Here is a rather contrived example.\n\n    lazySum : Lazy Int\n    lazySum =\n        lazy (\\() -> List.sum [1..1000000])\n\n    sums : (Int, Int, Int)\n    sums =\n        (force lazySum, force lazySum, force lazySum)\n\nWe are forcing this computation three times. The cool thing is that the first\ntime you `force` a value, the result is stored. This means you pay the cost on\nthe first one, but all the rest are very cheap, basically just looking up a\nvalue in memory.\n",
+        "type": "Lazy.Lazy a -> a"
+      },
+      {
+        "name": "lazy",
+        "comment": " Delay the evaluation of a value until later. For example, maybe we will\nneed to generate a very long list and find its sum, but we do not want to do\nit unless it is absolutely necessary.\n\n    lazySum : Lazy Int\n    lazySum =\n        lazy (\\() -> sum [1..1000000])\n\nNow we only pay for `lazySum` if we actually need it.\n",
+        "type": "(() -> a) -> Lazy.Lazy a"
+      },
+      {
+        "name": "map",
+        "comment": " Lazily apply a function to a lazy value.\n\n    lazySum : Lazy Int\n    lazySum =\n        map List.sum (lazy (\\() -> [1..1000000]))\n\nThe resulting lazy value will create a big list and sum it up when it is\nfinally forced.\n",
+        "type": "(a -> b) -> Lazy.Lazy a -> Lazy.Lazy b"
+      },
+      {
+        "name": "map2",
+        "comment": " Lazily apply a function to two lazy values.\n\n    lazySum : Lazy Int\n    lazySum =\n        lazy (\\() -> List.sum [1..1000000])\n\n    lazySumPair : Lazy (Int, Int)\n    lazySumPair =\n        map2 (,) lazySum lazySum\n\n",
+        "type": "(a -> b -> result) -> Lazy.Lazy a -> Lazy.Lazy b -> Lazy.Lazy result"
+      },
+      {
+        "name": "map3",
+        "comment": "",
+        "type": "(a -> b -> c -> result) -> Lazy.Lazy a -> Lazy.Lazy b -> Lazy.Lazy c -> Lazy.Lazy result"
+      },
+      {
+        "name": "map4",
+        "comment": "",
+        "type": "(a -> b -> c -> d -> result) -> Lazy.Lazy a -> Lazy.Lazy b -> Lazy.Lazy c -> Lazy.Lazy d -> Lazy.Lazy result"
+      },
+      {
+        "name": "map5",
+        "comment": "",
+        "type": "(a -> b -> c -> d -> e -> result) -> Lazy.Lazy a -> Lazy.Lazy b -> Lazy.Lazy c -> Lazy.Lazy d -> Lazy.Lazy e -> Lazy.Lazy result"
+      }
+    ],
+    "generated-with-elm-version": "0.18.0"
+  }
+]

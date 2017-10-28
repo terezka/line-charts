@@ -1,0 +1,105 @@
+var _user$project$Plot_Axis$customInterval = _user$project$Internal_Numbers$customInterval;
+var _user$project$Plot_Axis$defaultInterval = _user$project$Internal_Numbers$defaultInterval;
+var _user$project$Plot_Axis$defaultLine = F2(
+	function (attributes, limits) {
+		return {
+			attributes: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$style('pointer-events: none;'),
+				_1: attributes
+			},
+			start: limits.min,
+			end: limits.max
+		};
+	});
+var _user$project$Plot_Axis$defaultStringLabel = function (position) {
+	return A2(
+		_elm_lang$svg$Svg$text_,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$svg$Svg$tspan,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg$text(position),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Plot_Axis$defaultLabel = function (position) {
+	return A2(
+		_elm_lang$svg$Svg$text_,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$svg$Svg$tspan,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg$text(
+						_elm_lang$core$Basics$toString(position)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Plot_Axis$defaultTick = {
+	length: 5,
+	attributes: {
+		ctor: '::',
+		_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Plot_Color$black),
+		_1: {ctor: '[]'}
+	}
+};
+var _user$project$Plot_Axis$defaultMark = function (position) {
+	return {
+		position: position,
+		tick: _elm_lang$core$Maybe$Just(_user$project$Plot_Axis$defaultTick),
+		label: _elm_lang$core$Maybe$Just(
+			_user$project$Plot_Axis$defaultLabel(position))
+	};
+};
+var _user$project$Plot_Axis$towardsZero = function (_p0) {
+	var _p1 = _p0;
+	return A3(_elm_lang$core$Basics$clamp, 0, _p1.min, _p1.max);
+};
+var _user$project$Plot_Axis$Look = F5(
+	function (a, b, c, d, e) {
+		return {offset: a, position: b, line: c, marks: d, direction: e};
+	});
+var _user$project$Plot_Axis$Mark = F3(
+	function (a, b, c) {
+		return {label: a, tick: b, position: c};
+	});
+var _user$project$Plot_Axis$Line = F3(
+	function (a, b, c) {
+		return {attributes: a, start: b, end: c};
+	});
+var _user$project$Plot_Axis$Tick = F2(
+	function (a, b) {
+		return {attributes: a, length: b};
+	});
+var _user$project$Plot_Axis$Positive = {ctor: 'Positive'};
+var _user$project$Plot_Axis$Negative = {ctor: 'Negative'};
+var _user$project$Plot_Axis$defaultLook = {
+	offset: 0,
+	position: _user$project$Plot_Axis$towardsZero,
+	line: _elm_lang$core$Maybe$Just(
+		_user$project$Plot_Axis$defaultLine(
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Plot_Color$black),
+				_1: {ctor: '[]'}
+			})),
+	marks: function (_p2) {
+		return A2(
+			_elm_lang$core$List$map,
+			_user$project$Plot_Axis$defaultMark,
+			_user$project$Plot_Axis$defaultInterval(_p2));
+	},
+	direction: _user$project$Plot_Axis$Negative
+};

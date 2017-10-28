@@ -1,0 +1,323 @@
+var _user$project$Coordinates$updateFrame = F2(
+	function (system, frame) {
+		return _elm_lang$core$Native_Utils.update(
+			system,
+			{frame: frame});
+	});
+var _user$project$Coordinates$frame = {
+	margin: A4(_user$project$Svg_Coordinate$Margin, 0, 0, 0, 0),
+	size: A2(_user$project$Svg_Coordinate$Size, 100, 100)
+};
+var _user$project$Coordinates$system = {
+	frame: _user$project$Coordinates$frame,
+	x: A2(_user$project$Svg_Coordinate$Limits, 0, 10),
+	y: A2(_user$project$Svg_Coordinate$Limits, 0, 10)
+};
+var _user$project$Coordinates$coordinates = A2(
+	_elm_community$elm_test$Test$describe,
+	'Defaults',
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_community$elm_test$Test$test,
+			'Length should default to 1',
+			function (_p0) {
+				var _p1 = _p0;
+				return A2(
+					_elm_community$elm_test$Expect$equal,
+					0.9,
+					A3(
+						_user$project$Svg_Coordinate$toSVG,
+						_user$project$Svg_Coordinate$Y,
+						A2(
+							_user$project$Coordinates$updateFrame,
+							_user$project$Coordinates$system,
+							_elm_lang$core$Native_Utils.update(
+								_user$project$Coordinates$frame,
+								{
+									size: A2(_user$project$Svg_Coordinate$Size, 0, 0)
+								})),
+						1));
+			}),
+		_1: {
+			ctor: '::',
+			_0: A3(
+				_elm_community$elm_test$Test$fuzz,
+				_elm_community$elm_test$Fuzz$float,
+				'x-coordinate produced should always be a number',
+				function (number) {
+					return A2(
+						_elm_community$elm_test$Expect$false,
+						'Coordinate should always be a number!',
+						_elm_lang$core$Basics$isNaN(
+							A3(_user$project$Svg_Coordinate$toSVG, _user$project$Svg_Coordinate$X, _user$project$Coordinates$system, number)));
+				}),
+			_1: {
+				ctor: '::',
+				_0: A3(
+					_elm_community$elm_test$Test$fuzz,
+					_elm_community$elm_test$Fuzz$float,
+					'y-coordinate produced should always be a number',
+					function (number) {
+						return A2(
+							_elm_community$elm_test$Expect$false,
+							'Coordinate should always be a number!',
+							_elm_lang$core$Basics$isNaN(
+								A3(_user$project$Svg_Coordinate$toSVG, _user$project$Svg_Coordinate$Y, _user$project$Coordinates$system, number)));
+					}),
+				_1: {ctor: '[]'}
+			}
+		}
+	});
+var _user$project$Coordinates$horizontal = A2(
+	_elm_community$elm_test$Test$describe,
+	'Horizontal translation',
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_community$elm_test$Test$test,
+			'toSVG',
+			function (_p2) {
+				var _p3 = _p2;
+				return A2(
+					_elm_community$elm_test$Expect$equal,
+					10,
+					A3(_user$project$Svg_Coordinate$toSVG, _user$project$Svg_Coordinate$X, _user$project$Coordinates$system, 1));
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_community$elm_test$Test$test,
+				'toSVG with lower margin',
+				function (_p4) {
+					var _p5 = _p4;
+					return A2(
+						_elm_community$elm_test$Expect$equal,
+						28,
+						A3(
+							_user$project$Svg_Coordinate$toSVG,
+							_user$project$Svg_Coordinate$X,
+							A2(
+								_user$project$Coordinates$updateFrame,
+								_user$project$Coordinates$system,
+								_elm_lang$core$Native_Utils.update(
+									_user$project$Coordinates$frame,
+									{
+										margin: A4(_user$project$Svg_Coordinate$Margin, 0, 0, 0, 20)
+									})),
+							1));
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_community$elm_test$Test$test,
+					'toSVG with upper margin',
+					function (_p6) {
+						var _p7 = _p6;
+						return A2(
+							_elm_community$elm_test$Expect$equal,
+							8,
+							A3(
+								_user$project$Svg_Coordinate$toSVG,
+								_user$project$Svg_Coordinate$X,
+								A2(
+									_user$project$Coordinates$updateFrame,
+									_user$project$Coordinates$system,
+									_elm_lang$core$Native_Utils.update(
+										_user$project$Coordinates$frame,
+										{
+											margin: A4(_user$project$Svg_Coordinate$Margin, 0, 20, 0, 0)
+										})),
+								1));
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_community$elm_test$Test$test,
+						'toCartesian',
+						function (_p8) {
+							var _p9 = _p8;
+							return A2(
+								_elm_community$elm_test$Expect$equal,
+								1,
+								A3(_user$project$Svg_Coordinate$toCartesian, _user$project$Svg_Coordinate$X, _user$project$Coordinates$system, 10));
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_community$elm_test$Test$test,
+							'toCartesian with lower margin',
+							function (_p10) {
+								var _p11 = _p10;
+								return A2(
+									_elm_community$elm_test$Expect$equal,
+									1,
+									A3(
+										_user$project$Svg_Coordinate$toCartesian,
+										_user$project$Svg_Coordinate$X,
+										A2(
+											_user$project$Coordinates$updateFrame,
+											_user$project$Coordinates$system,
+											_elm_lang$core$Native_Utils.update(
+												_user$project$Coordinates$frame,
+												{
+													margin: A4(_user$project$Svg_Coordinate$Margin, 0, 0, 0, 20)
+												})),
+										28));
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_community$elm_test$Test$test,
+								'toCartesian with upper margin',
+								function (_p12) {
+									var _p13 = _p12;
+									return A2(
+										_elm_community$elm_test$Expect$equal,
+										1,
+										A3(
+											_user$project$Svg_Coordinate$toCartesian,
+											_user$project$Svg_Coordinate$X,
+											A2(
+												_user$project$Coordinates$updateFrame,
+												_user$project$Coordinates$system,
+												_elm_lang$core$Native_Utils.update(
+													_user$project$Coordinates$frame,
+													{
+														margin: A4(_user$project$Svg_Coordinate$Margin, 0, 20, 0, 0)
+													})),
+											8));
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	});
+var _user$project$Coordinates$vertical = A2(
+	_elm_community$elm_test$Test$describe,
+	'Vertical translation',
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_community$elm_test$Test$test,
+			'toSVG',
+			function (_p14) {
+				var _p15 = _p14;
+				return A2(
+					_elm_community$elm_test$Expect$equal,
+					90,
+					A3(_user$project$Svg_Coordinate$toSVG, _user$project$Svg_Coordinate$Y, _user$project$Coordinates$system, 1));
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_community$elm_test$Test$test,
+				'toSVG with lower margin',
+				function (_p16) {
+					var _p17 = _p16;
+					return A2(
+						_elm_community$elm_test$Expect$equal,
+						72,
+						A3(
+							_user$project$Svg_Coordinate$toSVG,
+							_user$project$Svg_Coordinate$Y,
+							A2(
+								_user$project$Coordinates$updateFrame,
+								_user$project$Coordinates$system,
+								_elm_lang$core$Native_Utils.update(
+									_user$project$Coordinates$frame,
+									{
+										margin: A4(_user$project$Svg_Coordinate$Margin, 0, 0, 20, 0)
+									})),
+							1));
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_community$elm_test$Test$test,
+					'toSVG with upper margin',
+					function (_p18) {
+						var _p19 = _p18;
+						return A2(
+							_elm_community$elm_test$Expect$equal,
+							92,
+							A3(
+								_user$project$Svg_Coordinate$toSVG,
+								_user$project$Svg_Coordinate$Y,
+								A2(
+									_user$project$Coordinates$updateFrame,
+									_user$project$Coordinates$system,
+									_elm_lang$core$Native_Utils.update(
+										_user$project$Coordinates$frame,
+										{
+											margin: A4(_user$project$Svg_Coordinate$Margin, 20, 0, 0, 0)
+										})),
+								1));
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_community$elm_test$Test$test,
+						'toCartesian',
+						function (_p20) {
+							var _p21 = _p20;
+							return A2(
+								_elm_community$elm_test$Expect$equal,
+								1,
+								A3(_user$project$Svg_Coordinate$toCartesian, _user$project$Svg_Coordinate$Y, _user$project$Coordinates$system, 90));
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_community$elm_test$Test$test,
+							'toCartesian with lower margin',
+							function (_p22) {
+								var _p23 = _p22;
+								return A2(
+									_elm_community$elm_test$Expect$equal,
+									1,
+									A3(
+										_user$project$Svg_Coordinate$toCartesian,
+										_user$project$Svg_Coordinate$Y,
+										A2(
+											_user$project$Coordinates$updateFrame,
+											_user$project$Coordinates$system,
+											_elm_lang$core$Native_Utils.update(
+												_user$project$Coordinates$frame,
+												{
+													margin: A4(_user$project$Svg_Coordinate$Margin, 0, 0, 20, 0)
+												})),
+										72));
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_community$elm_test$Test$test,
+								'toCartesian with upper margin',
+								function (_p24) {
+									var _p25 = _p24;
+									return A2(
+										_elm_community$elm_test$Expect$equal,
+										1,
+										A3(
+											_user$project$Svg_Coordinate$toCartesian,
+											_user$project$Svg_Coordinate$Y,
+											A2(
+												_user$project$Coordinates$updateFrame,
+												_user$project$Coordinates$system,
+												_elm_lang$core$Native_Utils.update(
+													_user$project$Coordinates$frame,
+													{
+														margin: A4(_user$project$Svg_Coordinate$Margin, 20, 0, 0, 0)
+													})),
+											92));
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	});

@@ -1,0 +1,198 @@
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$query = F4(
+	function (fn, fnAll, selector, list) {
+		var _p0 = selector;
+		switch (_p0.ctor) {
+			case 'All':
+				return A2(fnAll, _p0._0, list);
+			case 'Classes':
+				return A2(
+					_elm_lang$core$List$concatMap,
+					fn(
+						_eeue56$elm_html_query$ElmHtml_Query$ClassList(_p0._0)),
+					list);
+			case 'Class':
+				return A2(
+					_elm_lang$core$List$concatMap,
+					fn(
+						_eeue56$elm_html_query$ElmHtml_Query$ClassList(
+							{
+								ctor: '::',
+								_0: _p0._0,
+								_1: {ctor: '[]'}
+							})),
+					list);
+			case 'Attribute':
+				return A2(
+					_elm_lang$core$List$concatMap,
+					fn(
+						A2(_eeue56$elm_html_query$ElmHtml_Query$Attribute, _p0._0.name, _p0._0.value)),
+					list);
+			case 'BoolAttribute':
+				return A2(
+					_elm_lang$core$List$concatMap,
+					fn(
+						A2(_eeue56$elm_html_query$ElmHtml_Query$BoolAttribute, _p0._0.name, _p0._0.value)),
+					list);
+			case 'Style':
+				return A2(
+					_elm_lang$core$List$concatMap,
+					fn(
+						_eeue56$elm_html_query$ElmHtml_Query$Style(_p0._0)),
+					list);
+			case 'Tag':
+				return A2(
+					_elm_lang$core$List$concatMap,
+					fn(
+						_eeue56$elm_html_query$ElmHtml_Query$Tag(_p0._0)),
+					list);
+			case 'Text':
+				return A2(
+					_elm_lang$core$List$concatMap,
+					fn(
+						_eeue56$elm_html_query$ElmHtml_Query$ContainsText(_p0._0)),
+					list);
+			default:
+				return {ctor: '[]'};
+		}
+	});
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$queryAllChildren = F2(
+	function (selectors, list) {
+		queryAllChildren:
+		while (true) {
+			var _p1 = selectors;
+			if (_p1.ctor === '[]') {
+				return list;
+			} else {
+				var _v2 = _p1._1,
+					_v3 = A4(_eeue56$elm_html_test$Test_Html_Selector_Internal$query, _eeue56$elm_html_query$ElmHtml_Query$queryChildren, _eeue56$elm_html_test$Test_Html_Selector_Internal$queryAllChildren, _p1._0, list);
+				selectors = _v2;
+				list = _v3;
+				continue queryAllChildren;
+			}
+		}
+	});
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$queryAll = F2(
+	function (selectors, list) {
+		var _p2 = selectors;
+		if (_p2.ctor === '[]') {
+			return list;
+		} else {
+			return A2(
+				_eeue56$elm_html_test$Test_Html_Selector_Internal$queryAllChildren,
+				_p2._1,
+				A4(_eeue56$elm_html_test$Test_Html_Selector_Internal$query, _eeue56$elm_html_query$ElmHtml_Query$query, _eeue56$elm_html_test$Test_Html_Selector_Internal$queryAll, _p2._0, list));
+		}
+	});
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$styleToString = function (style) {
+	return A2(
+		_elm_lang$core$String$join,
+		' ',
+		A2(
+			_elm_lang$core$List$map,
+			function (_p3) {
+				var _p4 = _p3;
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					_p4._0,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						':',
+						A2(_elm_lang$core$Basics_ops['++'], _p4._1, ';')));
+			},
+			style));
+};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$selectorToString = function (criteria) {
+	var _p5 = criteria;
+	switch (_p5.ctor) {
+		case 'All':
+			return A2(
+				_elm_lang$core$String$join,
+				' ',
+				A2(_elm_lang$core$List$map, _eeue56$elm_html_test$Test_Html_Selector_Internal$selectorToString, _p5._0));
+		case 'Classes':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'classes ',
+				_elm_lang$core$Basics$toString(
+					A2(_elm_lang$core$String$join, ' ', _p5._0)));
+		case 'Class':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'class ',
+				_elm_lang$core$Basics$toString(_p5._0));
+		case 'Attribute':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'attribute ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(_p5._0.name),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' ',
+						_elm_lang$core$Basics$toString(_p5._0.value))));
+		case 'BoolAttribute':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'attribute ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(_p5._0.name),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' ',
+						_elm_lang$core$Basics$toString(_p5._0.value))));
+		case 'Style':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'styles ',
+				_eeue56$elm_html_test$Test_Html_Selector_Internal$styleToString(_p5._0));
+		case 'Tag':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'tag ',
+				_elm_lang$core$Basics$toString(_p5._0));
+		case 'Text':
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'text ',
+				_elm_lang$core$Basics$toString(_p5._0));
+		default:
+			return 'invalid';
+	}
+};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$Invalid = {ctor: 'Invalid'};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$Text = function (a) {
+	return {ctor: 'Text', _0: a};
+};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$Tag = function (a) {
+	return {ctor: 'Tag', _0: a};
+};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$Style = function (a) {
+	return {ctor: 'Style', _0: a};
+};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$BoolAttribute = function (a) {
+	return {ctor: 'BoolAttribute', _0: a};
+};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$namedBoolAttr = F2(
+	function (name, value) {
+		return _eeue56$elm_html_test$Test_Html_Selector_Internal$BoolAttribute(
+			{name: name, value: value});
+	});
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$Attribute = function (a) {
+	return {ctor: 'Attribute', _0: a};
+};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$namedAttr = F2(
+	function (name, value) {
+		return _eeue56$elm_html_test$Test_Html_Selector_Internal$Attribute(
+			{name: name, value: value});
+	});
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$Class = function (a) {
+	return {ctor: 'Class', _0: a};
+};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$Classes = function (a) {
+	return {ctor: 'Classes', _0: a};
+};
+var _eeue56$elm_html_test$Test_Html_Selector_Internal$All = function (a) {
+	return {ctor: 'All', _0: a};
+};

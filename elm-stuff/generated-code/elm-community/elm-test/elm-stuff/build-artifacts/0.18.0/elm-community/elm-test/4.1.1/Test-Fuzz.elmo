@@ -1,0 +1,119 @@
+var _elm_community$elm_test$Test_Fuzz$formatExpectation = function (_p0) {
+	var _p1 = _p0;
+	return A2(_elm_community$elm_test$Test_Expectation$withGiven, _p1._0, _p1._1);
+};
+var _elm_community$elm_test$Test_Fuzz$shrinkAndAdd = F4(
+	function (rootTree, getExpectation, rootsExpectation, failures) {
+		var _p2 = rootTree;
+		var failingValue = _p2._0;
+		var shrink = F2(
+			function (oldExpectation, _p3) {
+				shrink:
+				while (true) {
+					var _p4 = _p3;
+					var _p8 = _p4._0;
+					var _p5 = _elm_community$lazy_list$Lazy_List$headAndTail(_p4._1);
+					if (_p5.ctor === 'Just') {
+						var _p6 = getExpectation(_p5._0._0._0);
+						if (_p6.ctor === 'Pass') {
+							var _v4 = oldExpectation,
+								_v5 = A2(_elm_community$elm_test$RoseTree$Rose, _p8, _p5._0._1);
+							oldExpectation = _v4;
+							_p3 = _v5;
+							continue shrink;
+						} else {
+							var _p7 = A2(shrink, _p6, _p5._0._0);
+							var minimalValue = _p7._0;
+							var finalExpectation = _p7._1;
+							return {ctor: '_Tuple2', _0: minimalValue, _1: finalExpectation};
+						}
+					} else {
+						return {ctor: '_Tuple2', _0: _p8, _1: oldExpectation};
+					}
+				}
+			});
+		var _p9 = A2(shrink, rootsExpectation, rootTree);
+		var minimalValue = _p9._0;
+		var finalExpectation = _p9._1;
+		return A3(
+			_elm_lang$core$Dict$insert,
+			_elm_lang$core$Basics$toString(minimalValue),
+			finalExpectation,
+			failures);
+	});
+var _elm_community$elm_test$Test_Fuzz$findNewFailure = F5(
+	function (fuzzer, getExpectation, failures, currentSeed, value) {
+		var _p10 = getExpectation(value);
+		if (_p10.ctor === 'Pass') {
+			return failures;
+		} else {
+			var _p11 = A2(_mgold$elm_random_pcg$Random_Pcg$step, fuzzer, currentSeed);
+			var rosetree = _p11._0;
+			var nextSeed = _p11._1;
+			return A4(_elm_community$elm_test$Test_Fuzz$shrinkAndAdd, rosetree, getExpectation, _p10, failures);
+		}
+	});
+var _elm_community$elm_test$Test_Fuzz$getFailures = F4(
+	function (fuzzer, getExpectation, initialSeed, totalRuns) {
+		var initialFailures = _elm_lang$core$Dict$empty;
+		var genVal = A2(_mgold$elm_random_pcg$Random_Pcg$map, _elm_community$elm_test$RoseTree$root, fuzzer);
+		var helper = F3(
+			function (currentSeed, remainingRuns, failures) {
+				helper:
+				while (true) {
+					var _p12 = A2(_mgold$elm_random_pcg$Random_Pcg$step, genVal, currentSeed);
+					var value = _p12._0;
+					var nextSeed = _p12._1;
+					var newFailures = A5(_elm_community$elm_test$Test_Fuzz$findNewFailure, fuzzer, getExpectation, failures, currentSeed, value);
+					if (_elm_lang$core$Native_Utils.cmp(remainingRuns, 1) < 1) {
+						return newFailures;
+					} else {
+						var _v7 = nextSeed,
+							_v8 = remainingRuns - 1,
+							_v9 = newFailures;
+						currentSeed = _v7;
+						remainingRuns = _v8;
+						failures = _v9;
+						continue helper;
+					}
+				}
+			});
+		return A3(helper, initialSeed, totalRuns, initialFailures);
+	});
+var _elm_community$elm_test$Test_Fuzz$validatedFuzzTest = F3(
+	function (fuzzer, desc, getExpectation) {
+		var run = F2(
+			function (seed, runs) {
+				var failures = A4(_elm_community$elm_test$Test_Fuzz$getFailures, fuzzer, getExpectation, seed, runs);
+				return _elm_lang$core$Dict$isEmpty(failures) ? {
+					ctor: '::',
+					_0: _elm_community$elm_test$Test_Expectation$Pass,
+					_1: {ctor: '[]'}
+				} : A2(
+					_elm_lang$core$List$map,
+					_elm_community$elm_test$Test_Fuzz$formatExpectation,
+					_elm_lang$core$Dict$toList(failures));
+			});
+		return A2(
+			_elm_community$elm_test$Test_Internal$Labeled,
+			desc,
+			_elm_community$elm_test$Test_Internal$Test(run));
+	});
+var _elm_community$elm_test$Test_Fuzz$fuzzTest = F3(
+	function (fuzzer, untrimmedDesc, getExpectation) {
+		var desc = _elm_lang$core$String$trim(untrimmedDesc);
+		if (_elm_lang$core$String$isEmpty(desc)) {
+			return _elm_community$elm_test$Test_Internal$blankDescriptionFailure;
+		} else {
+			var _p13 = fuzzer;
+			if (_p13.ctor === 'Err') {
+				return _elm_community$elm_test$Test_Internal$failNow(
+					{
+						description: _p13._0,
+						reason: _elm_community$elm_test$Test_Expectation$Invalid(_elm_community$elm_test$Test_Expectation$InvalidFuzzer)
+					});
+			} else {
+				return A3(_elm_community$elm_test$Test_Fuzz$validatedFuzzTest, _p13._0, desc, getExpectation);
+			}
+		}
+	});

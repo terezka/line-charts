@@ -1,0 +1,106 @@
+var _user$project$Plot_Junk$findNearestXHelp = F3(
+	function (searched, points, system) {
+		var distanceX = A2(_user$project$Internal_Utils$distanceX, system, searched);
+		var getClosest = F2(
+			function (point, allClosest) {
+				var _p0 = _elm_lang$core$List$head(allClosest);
+				if (_p0.ctor === 'Just') {
+					var _p1 = _p0._0;
+					return _elm_lang$core$Native_Utils.eq(_p1.x, point.x) ? {ctor: '::', _0: point, _1: allClosest} : ((_elm_lang$core$Native_Utils.cmp(
+						distanceX(_p1),
+						distanceX(point)) > 0) ? {
+						ctor: '::',
+						_0: point,
+						_1: {ctor: '[]'}
+					} : allClosest);
+				} else {
+					return {
+						ctor: '::',
+						_0: point,
+						_1: {ctor: '[]'}
+					};
+				}
+			});
+		return A3(
+			_elm_lang$core$List$foldl,
+			getClosest,
+			{ctor: '[]'},
+			points);
+	});
+var _user$project$Plot_Junk$findNearestHelp = F3(
+	function (searched, points, system) {
+		var distance = A2(_user$project$Internal_Utils$distance, system, searched);
+		var getClosest = F2(
+			function (point, closest) {
+				return (_elm_lang$core$Native_Utils.cmp(
+					distance(closest),
+					distance(point)) < 0) ? closest : point;
+			});
+		return A2(
+			_user$project$Internal_Utils$withFirst,
+			points,
+			_elm_lang$core$List$foldl(getClosest));
+	});
+var _user$project$Plot_Junk$withHint = F2(
+	function (_p2, toLayers) {
+		var _p3 = _p2;
+		return _user$project$Internal_Junk$Junk(
+			F2(
+				function (points, system) {
+					var hint = A2(_p3._0, points, system);
+					return A2(toLayers, system, hint);
+				}));
+	});
+var _user$project$Plot_Junk$withoutHint = function (toLayers) {
+	return _user$project$Internal_Junk$Junk(
+		_elm_lang$core$Basics$always(toLayers));
+};
+var _user$project$Plot_Junk$Layers = F3(
+	function (a, b, c) {
+		return {above: a, below: b, html: c};
+	});
+var _user$project$Plot_Junk$none = _user$project$Plot_Junk$withoutHint(
+	function (_p4) {
+		return A3(
+			_user$project$Plot_Junk$Layers,
+			{ctor: '[]'},
+			{ctor: '[]'},
+			{ctor: '[]'});
+	});
+var _user$project$Plot_Junk$Searcher = function (a) {
+	return {ctor: 'Searcher', _0: a};
+};
+var _user$project$Plot_Junk$findNearest = function (searched) {
+	return _user$project$Plot_Junk$Searcher(
+		_user$project$Plot_Junk$findNearestHelp(searched));
+};
+var _user$project$Plot_Junk$findWithin = F2(
+	function (radius, searched) {
+		return _user$project$Plot_Junk$Searcher(
+			F2(
+				function (points, system) {
+					var keepIfEligible = function (closest) {
+						return A4(_user$project$Internal_Utils$withinRadius, system, radius, searched, closest) ? _elm_lang$core$Maybe$Just(closest) : _elm_lang$core$Maybe$Nothing;
+					};
+					return A2(
+						_elm_lang$core$Maybe$andThen,
+						keepIfEligible,
+						A3(_user$project$Plot_Junk$findNearestHelp, searched, points, system));
+				}));
+	});
+var _user$project$Plot_Junk$findNearestX = function (searched) {
+	return _user$project$Plot_Junk$Searcher(
+		_user$project$Plot_Junk$findNearestXHelp(searched));
+};
+var _user$project$Plot_Junk$findWithinX = F2(
+	function (radius, searched) {
+		return _user$project$Plot_Junk$Searcher(
+			F2(
+				function (points, system) {
+					var keepIfEligible = A3(_user$project$Internal_Utils$withinRadiusX, system, radius, searched);
+					return A2(
+						_elm_lang$core$List$filter,
+						keepIfEligible,
+						A3(_user$project$Plot_Junk$findNearestXHelp, searched, points, system));
+				}));
+	});

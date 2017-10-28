@@ -1,0 +1,196 @@
+var _user$project$HintExample$viewJust = F2(
+	function (view, maybe) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$html$Html$text(''),
+			A2(_elm_lang$core$Maybe$map, view, maybe));
+	});
+var _user$project$HintExample$junk = function (hoverSvgCoordinates) {
+	return A2(
+		_user$project$Plot_Junk$withHint,
+		_user$project$Plot_Junk$findNearest(hoverSvgCoordinates),
+		F2(
+			function (system, hint) {
+				var viewHint = function (hint) {
+					return A2(
+						_elm_lang$svg$Svg$g,
+						{
+							ctor: '::',
+							_0: A3(_user$project$Plot_Coordinate$place, system, hint.x, hint.y),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$svg$Svg$text_,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$svg$Svg$tspan,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													'( ',
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														_elm_lang$core$Basics$toString(hint.x),
+														A2(
+															_elm_lang$core$Basics_ops['++'],
+															', ',
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																_elm_lang$core$Basics$toString(hint.y),
+																' )'))))),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						});
+				};
+				return {
+					below: {ctor: '[]'},
+					above: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$core$Maybe$withDefault,
+							_elm_lang$html$Html$text(''),
+							A2(_elm_lang$core$Maybe$map, viewHint, hint)),
+						_1: {ctor: '[]'}
+					},
+					html: {ctor: '[]'}
+				};
+			}));
+};
+var _user$project$HintExample$pinkDot = _user$project$Plot_Dot$dot(
+	A4(
+		_user$project$Plot_Dot$Config,
+		_user$project$Plot_Dot$Circle,
+		{ctor: '[]'},
+		5,
+		_user$project$Plot_Color$pink));
+var _user$project$HintExample$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{hovering: _p0._0});
+	});
+var _user$project$HintExample$initialModel = {hovering: _elm_lang$core$Maybe$Nothing};
+var _user$project$HintExample$Model = function (a) {
+	return {hovering: a};
+};
+var _user$project$HintExample$Data = F2(
+	function (a, b) {
+		return {magnesium: a, heartattacks: b};
+	});
+var _user$project$HintExample$data1 = {
+	ctor: '::',
+	_0: A2(_user$project$HintExample$Data, 1, 4),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$HintExample$Data, 2, 7),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$HintExample$Data, 3, 6),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$HintExample$Data, 9, 3),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$HintExample$data2 = {
+	ctor: '::',
+	_0: A2(_user$project$HintExample$Data, 2, 2),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$HintExample$Data, 3, 4),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$HintExample$Data, 4, 6),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$HintExample$Data, 5, 8),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$HintExample$data3 = {
+	ctor: '::',
+	_0: A2(_user$project$HintExample$Data, 2, 5),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$HintExample$Data, 3, 2),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$HintExample$Data, 4, 8),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$HintExample$Data, 5, 4),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$HintExample$Hover = function (a) {
+	return {ctor: 'Hover', _0: a};
+};
+var _user$project$HintExample$view = function (model) {
+	return A2(
+		_user$project$Lines$viewCustom,
+		{
+			frame: A2(
+				_user$project$Plot_Coordinate$Frame,
+				A4(_user$project$Plot_Coordinate$Margin, 20, 20, 20, 20),
+				A2(_user$project$Plot_Coordinate$Size, 300, 300)),
+			attributes: {
+				ctor: '::',
+				_0: _user$project$Plot_Attributes$onMouseMove(
+					function (_p1) {
+						return _user$project$HintExample$Hover(
+							_elm_lang$core$Maybe$Just(_p1));
+					}),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Plot_Attributes$onMouseLeave(
+						_user$project$HintExample$Hover(_elm_lang$core$Maybe$Nothing)),
+					_1: {ctor: '[]'}
+				}
+			},
+			junk: A2(
+				_elm_lang$core$Maybe$withDefault,
+				_user$project$Plot_Junk$none,
+				A2(_elm_lang$core$Maybe$map, _user$project$HintExample$junk, model.hovering)),
+			y: _user$project$Plot_Axis$defaultAxis(
+				function (_) {
+					return _.heartattacks;
+				}),
+			x: _user$project$Plot_Axis$defaultAxis(
+				function (_) {
+					return _.magnesium;
+				}),
+			interpolation: _user$project$Lines$Monotone
+		},
+		{
+			ctor: '::',
+			_0: A4(_user$project$Lines$line, _user$project$Plot_Color$gray, 1, _user$project$Plot_Dot$none, _user$project$HintExample$data1),
+			_1: {
+				ctor: '::',
+				_0: A4(_user$project$Lines$line, _user$project$Plot_Color$blue, 2, _user$project$Plot_Dot$none, _user$project$HintExample$data2),
+				_1: {
+					ctor: '::',
+					_0: A4(_user$project$Lines$line, _user$project$Plot_Color$pink, 3, _user$project$HintExample$pinkDot, _user$project$HintExample$data3),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$HintExample$main = _elm_lang$html$Html$beginnerProgram(
+	{model: _user$project$HintExample$initialModel, update: _user$project$HintExample$update, view: _user$project$HintExample$view})();

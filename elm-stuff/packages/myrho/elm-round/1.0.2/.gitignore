@@ -1,0 +1,8 @@
+*.xcodeproj
+.DS_Store
+elm-stuff
+elm.js
+.session.vim
+*.swp
+*.swo
+node_modules

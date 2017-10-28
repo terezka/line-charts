@@ -1,0 +1,305 @@
+[
+  {
+    "name": "Lazy.List",
+    "comment": " Lazy list implementation in Elm.\n\n# Types\n@docs LazyList, LazyListView\n\n# Constructors\n@docs cons, empty, singleton\n\n# Query operations\n@docs isEmpty, head, tail, headAndTail, member, length\n\n# Conversions\n@docs toList, fromList, toArray, fromArray\n\n# Map-reduce et al.\n@docs map, zip, reduce, flatten, append, foldl, foldr\n\n# Common operations\n@docs intersperse, interleave, reverse, cycle, iterate, repeat, take, takeWhile, drop, dropWhile\n\n# Filtering operations\n@docs keepIf, dropIf, filterMap, unique\n\n# Chaining operations\n@docs andMap, andThen\n\n# Useful math stuff\n@docs numbers, sum, product\n\n# All the maps!\n@docs map2, map3, map4, map5\n\n# All the zips!\n@docs zip3, zip4, zip5\n\n# All the Cartesian products!\n**Warning:** Calling these functions on large lists and then calling `toList` can easily overflow the stack. Consider\npassing the results to `take aConstantNumber`.\n\n@docs product2, product3, product4, product5\n\n# Infix Operators\n@docs (:::), (+++)\n\n",
+    "aliases": [
+      {
+        "name": "LazyList",
+        "comment": " Lazy List type.\n",
+        "args": [
+          "a"
+        ],
+        "type": "Lazy.Lazy (Lazy.List.LazyListView a)"
+      }
+    ],
+    "types": [
+      {
+        "name": "LazyListView",
+        "comment": " Analogous to `List` type. This is the actual implementation type for the\n`LazyList` type. This type is exposed to the user if the user so wishes to\ndo pattern matching or understand how the list type works. It is not\nrecommended to work with this type directly. Try working solely with the\nprovided functions in the package.\n",
+        "args": [
+          "a"
+        ],
+        "cases": [
+          [
+            "Nil",
+            []
+          ],
+          [
+            "Cons",
+            [
+              "a",
+              "Lazy.List.LazyList a"
+            ]
+          ]
+        ]
+      }
+    ],
+    "values": [
+      {
+        "name": "+++",
+        "comment": " Alias for `append`. Analogous to `++` for lists.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList a -> Lazy.List.LazyList a",
+        "associativity": "right",
+        "precedence": 5
+      },
+      {
+        "name": ":::",
+        "comment": " Alias for `cons`. Analogous to `::` for lists.\n",
+        "type": "a -> Lazy.List.LazyList a -> Lazy.List.LazyList a",
+        "associativity": "right",
+        "precedence": 5
+      },
+      {
+        "name": "andMap",
+        "comment": " Known as `mapN` in some circles. Allows you to apply `map` in cases\nwhere then number of arguments are greater than 5.\n\nThe argument order is such that it works well with `|>` chains.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList (a -> b) -> Lazy.List.LazyList b"
+      },
+      {
+        "name": "andThen",
+        "comment": " Chain list producing operations. Map then flatten.\n",
+        "type": "(a -> Lazy.List.LazyList b) -> Lazy.List.LazyList a -> Lazy.List.LazyList b"
+      },
+      {
+        "name": "append",
+        "comment": " Append a list to another list.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "cons",
+        "comment": " Add a value to the front of a list.\n",
+        "type": "a -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "cycle",
+        "comment": " Take a list and repeat it ad infinitum. This cycles a finite list\nby putting the front after the end of the list. This results in a no-op in\nthe case of an infinite list.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "drop",
+        "comment": " Drop at most `n` many values from a list.\n",
+        "type": "Int -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "dropIf",
+        "comment": " Drop all elements in a list that satisfy the given predicate.\n",
+        "type": "(a -> Bool) -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "dropWhile",
+        "comment": " Drop elements from a list as long as the predicate is satisfied.\n",
+        "type": "(a -> Bool) -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "empty",
+        "comment": " Create an empty list.\n",
+        "type": "Lazy.List.LazyList a"
+      },
+      {
+        "name": "filterMap",
+        "comment": " Map a function that may fail over a lazy list, keeping only\nthe values that were successfully transformed.\n",
+        "type": "(a -> Maybe.Maybe b) -> Lazy.List.LazyList a -> Lazy.List.LazyList b"
+      },
+      {
+        "name": "flatten",
+        "comment": " Flatten a list of lists into a single list by appending all the inner\nlists into one big list.\n",
+        "type": "Lazy.List.LazyList (Lazy.List.LazyList a) -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "foldl",
+        "comment": " Analogous to `List.foldl`. Is an alias for `reduce`.\n",
+        "type": "(a -> b -> b) -> b -> Lazy.List.LazyList a -> b"
+      },
+      {
+        "name": "foldr",
+        "comment": " Analogous to `List.foldr`.\n",
+        "type": "(a -> b -> b) -> b -> Lazy.List.LazyList a -> b"
+      },
+      {
+        "name": "fromArray",
+        "comment": " Convert an array to a lazy list.\n",
+        "type": "Array.Array a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "fromList",
+        "comment": " Convert a normal list to a lazy list.\n",
+        "type": "List a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "head",
+        "comment": " Get the head of a list.\n",
+        "type": "Lazy.List.LazyList a -> Maybe.Maybe a"
+      },
+      {
+        "name": "headAndTail",
+        "comment": " Get the head and tail of a list.\n",
+        "type": "Lazy.List.LazyList a -> Maybe.Maybe ( a, Lazy.List.LazyList a )"
+      },
+      {
+        "name": "interleave",
+        "comment": " Interleave the elements of a list in another list. The two lists get\ninterleaved at the end.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "intersperse",
+        "comment": " Places the given value between all members of the given list.\n",
+        "type": "a -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "isEmpty",
+        "comment": " Detect if a list is empty or not.\n",
+        "type": "Lazy.List.LazyList a -> Bool"
+      },
+      {
+        "name": "iterate",
+        "comment": " Create an infinite list of applications of a function on some value.\n\nEquivalent to:\n\n    x ::: f x ::: f (f x) ::: f (f (f x)) ::: ... -- etc...\n",
+        "type": "(a -> a) -> a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "keepIf",
+        "comment": " Keep all elements in a list that satisfy the given predicate.\n",
+        "type": "(a -> Bool) -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "length",
+        "comment": " Get the length of a lazy list.\n\nWarning: This will not terminate if the list is infinite.\n",
+        "type": "Lazy.List.LazyList a -> Int"
+      },
+      {
+        "name": "map",
+        "comment": " Map a function to a list.\n",
+        "type": "(a -> b) -> Lazy.List.LazyList a -> Lazy.List.LazyList b"
+      },
+      {
+        "name": "map2",
+        "comment": " ",
+        "type": "(a -> b -> c) -> Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c"
+      },
+      {
+        "name": "map3",
+        "comment": " ",
+        "type": "(a -> b -> c -> d) -> Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c -> Lazy.List.LazyList d"
+      },
+      {
+        "name": "map4",
+        "comment": " ",
+        "type": "(a -> b -> c -> d -> e) -> Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c -> Lazy.List.LazyList d -> Lazy.List.LazyList e"
+      },
+      {
+        "name": "map5",
+        "comment": " ",
+        "type": "(a -> b -> c -> d -> e -> f) -> Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c -> Lazy.List.LazyList d -> Lazy.List.LazyList e -> Lazy.List.LazyList f"
+      },
+      {
+        "name": "member",
+        "comment": " Test if a value is a member of a list.\n",
+        "type": "a -> Lazy.List.LazyList a -> Bool"
+      },
+      {
+        "name": "numbers",
+        "comment": " The infinite list of counting numbers.\n\ni.e.:\n\n    1 ::: 2 ::: 3 ::: 4 ::: 5 ::: ... -- etc...\n",
+        "type": "Lazy.List.LazyList number"
+      },
+      {
+        "name": "product",
+        "comment": " Get the product of a list of numbers.\n",
+        "type": "Lazy.List.LazyList number -> number"
+      },
+      {
+        "name": "product2",
+        "comment": " Create a lazy list containing all possible pairs in the given lazy lists.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList ( a, b )"
+      },
+      {
+        "name": "product3",
+        "comment": " Create a lazy list containing all possible triples in the given lazy lists.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c -> Lazy.List.LazyList ( a, b, c )"
+      },
+      {
+        "name": "product4",
+        "comment": " Create a lazy list containing all possible 4-tuples in the given lazy lists.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c -> Lazy.List.LazyList d -> Lazy.List.LazyList ( a, b, c, d )"
+      },
+      {
+        "name": "product5",
+        "comment": " Create a lazy list containing all possible 5-tuples in the given lazy lists.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c -> Lazy.List.LazyList d -> Lazy.List.LazyList e -> Lazy.List.LazyList ( a, b, c, d, e )"
+      },
+      {
+        "name": "reduce",
+        "comment": " Reduce a list with a given reducer and an initial value.\n\nExample :\n    reduce (+) 0 (1 ::: 2 ::: 3 ::: 4 ::: empty) == 10\n",
+        "type": "(a -> b -> b) -> b -> Lazy.List.LazyList a -> b"
+      },
+      {
+        "name": "repeat",
+        "comment": " Repeat a value ad infinitum.\nBe careful when you use this. The result of this is a truly infinite list.\nDo not try calling `reduce` or `toList` on an infinite list as it'll never\nfinish computing. Make sure you then filter it down to a finite list with `head`\nor `take` or something.\n",
+        "type": "a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "reverse",
+        "comment": " Reverse a list.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "singleton",
+        "comment": " Create a singleton list.\n",
+        "type": "a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "sum",
+        "comment": " Get the sum of a list of numbers.\n",
+        "type": "Lazy.List.LazyList number -> number"
+      },
+      {
+        "name": "tail",
+        "comment": " Get the tail of a list.\n",
+        "type": "Lazy.List.LazyList a -> Maybe.Maybe (Lazy.List.LazyList a)"
+      },
+      {
+        "name": "take",
+        "comment": " Take at most `n` many values from a list.\n",
+        "type": "Int -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "takeWhile",
+        "comment": " Take elements from a list as long as the predicate is satisfied.\n",
+        "type": "(a -> Bool) -> Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "toArray",
+        "comment": " Convert a lazy list to an array.\n",
+        "type": "Lazy.List.LazyList a -> Array.Array a"
+      },
+      {
+        "name": "toList",
+        "comment": " Convert a lazy list to a normal list.\n",
+        "type": "Lazy.List.LazyList a -> List a"
+      },
+      {
+        "name": "unique",
+        "comment": " Remove all duplicates from a list and return a list of distinct elements.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList a"
+      },
+      {
+        "name": "zip",
+        "comment": " ",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList ( a, b )"
+      },
+      {
+        "name": "zip3",
+        "comment": " ",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c -> Lazy.List.LazyList ( a, b, c )"
+      },
+      {
+        "name": "zip4",
+        "comment": " ",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c -> Lazy.List.LazyList d -> Lazy.List.LazyList ( a, b, c, d )"
+      },
+      {
+        "name": "zip5",
+        "comment": " ",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList b -> Lazy.List.LazyList c -> Lazy.List.LazyList d -> Lazy.List.LazyList e -> Lazy.List.LazyList ( a, b, c, d, e )"
+      }
+    ],
+    "generated-with-elm-version": "0.18.0"
+  }
+]

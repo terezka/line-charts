@@ -1,0 +1,4 @@
+var _mgold$elm_random_pcg$Random_Pcg_Interop$fission = A2(
+	_elm_lang$core$Random$map,
+	_mgold$elm_random_pcg$Random_Pcg$initialSeed,
+	A2(_elm_lang$core$Random$int, 0, 4294967295));

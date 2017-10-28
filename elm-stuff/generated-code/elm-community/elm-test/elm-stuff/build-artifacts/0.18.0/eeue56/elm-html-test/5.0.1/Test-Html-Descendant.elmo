@@ -1,0 +1,39 @@
+var _eeue56$elm_html_test$Test_Html_Descendant$prependChildren = F2(
+	function (parentNode, nodeList) {
+		var _p0 = parentNode;
+		if (_p0.ctor === 'NodeEntry') {
+			return _elm_lang$core$List$concat(
+				{
+					ctor: '::',
+					_0: _p0._0.children,
+					_1: {
+						ctor: '::',
+						_0: nodeList,
+						_1: {ctor: '[]'}
+					}
+				});
+		} else {
+			return nodeList;
+		}
+	});
+var _eeue56$elm_html_test$Test_Html_Descendant$isDescendant = F2(
+	function (html, potentialDescendant) {
+		isDescendant:
+		while (true) {
+			var _p1 = html;
+			if (_p1.ctor === '[]') {
+				return false;
+			} else {
+				var _p2 = _p1._0;
+				if (_elm_lang$core$Native_Utils.eq(_p2, potentialDescendant)) {
+					return true;
+				} else {
+					var _v2 = A2(_eeue56$elm_html_test$Test_Html_Descendant$prependChildren, _p2, _p1._1),
+						_v3 = potentialDescendant;
+					html = _v2;
+					potentialDescendant = _v3;
+					continue isDescendant;
+				}
+			}
+		}
+	});

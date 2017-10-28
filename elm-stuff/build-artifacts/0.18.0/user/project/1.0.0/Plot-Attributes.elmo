@@ -1,0 +1,96 @@
+var _user$project$Plot_Attributes$translate = F5(
+	function (system, msg, mouseX, mouseY, _p0) {
+		var _p1 = _p0;
+		return msg(
+			{
+				x: A3(
+					_elm_lang$core$Basics$clamp,
+					system.x.min,
+					system.x.max,
+					A3(_user$project$Plot_Coordinate$toCartesian, _user$project$Plot_Coordinate$X, system, mouseX - _p1.left)),
+				y: A3(
+					_elm_lang$core$Basics$clamp,
+					system.y.min,
+					system.y.max,
+					A3(_user$project$Plot_Coordinate$toCartesian, _user$project$Plot_Coordinate$Y, system, mouseY - _p1.top))
+			});
+	});
+var _user$project$Plot_Attributes$position = _elm_lang$core$Json_Decode$oneOf(
+	{
+		ctor: '::',
+		_0: _debois$elm_dom$DOM$boundingClientRect,
+		_1: {
+			ctor: '::',
+			_0: _elm_lang$core$Json_Decode$lazy(
+				function (_p2) {
+					return _debois$elm_dom$DOM$parentElement(_user$project$Plot_Attributes$position);
+				}),
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$Plot_Attributes$decoder = F2(
+	function (system, msg) {
+		return A6(
+			_elm_lang$core$Json_Decode$map5,
+			_user$project$Plot_Attributes$translate,
+			_elm_lang$core$Json_Decode$succeed(system),
+			_elm_lang$core$Json_Decode$succeed(msg),
+			A2(_elm_lang$core$Json_Decode$field, 'clientX', _elm_lang$core$Json_Decode$float),
+			A2(_elm_lang$core$Json_Decode$field, 'clientY', _elm_lang$core$Json_Decode$float),
+			_debois$elm_dom$DOM$target(_user$project$Plot_Attributes$position));
+	});
+var _user$project$Plot_Attributes$on = F2(
+	function (event, msg) {
+		return _user$project$Internal_Attributes$Attribute(
+			function (system) {
+				return A2(
+					_elm_lang$svg$Svg_Events$on,
+					event,
+					A2(_user$project$Plot_Attributes$decoder, system, msg));
+			});
+	});
+var _user$project$Plot_Attributes$onMouseLeave = function (msg) {
+	return _user$project$Internal_Attributes$Attribute(
+		function (_p3) {
+			return A2(
+				_elm_lang$svg$Svg_Events$on,
+				'mouseleave',
+				_elm_lang$core$Json_Decode$succeed(msg));
+		});
+};
+var _user$project$Plot_Attributes$onMouseMove = function (msg) {
+	return _user$project$Internal_Attributes$Attribute(
+		function (system) {
+			return A2(
+				_elm_lang$svg$Svg_Events$on,
+				'mousemove',
+				A2(_user$project$Plot_Attributes$decoder, system, msg));
+		});
+};
+var _user$project$Plot_Attributes$onClick = function (msg) {
+	return _user$project$Internal_Attributes$Attribute(
+		function (system) {
+			return A2(
+				_elm_lang$svg$Svg_Events$on,
+				'click',
+				A2(_user$project$Plot_Attributes$decoder, system, msg));
+		});
+};
+var _user$project$Plot_Attributes$custom = function (attribute) {
+	return _user$project$Internal_Attributes$Attribute(
+		function (_p4) {
+			return attribute;
+		});
+};
+var _user$project$Plot_Attributes$id = function (_p5) {
+	return _user$project$Plot_Attributes$custom(
+		_elm_lang$svg$Svg_Attributes$id(_p5));
+};
+var _user$project$Plot_Attributes$background = function (_p6) {
+	return _user$project$Plot_Attributes$custom(
+		_elm_lang$svg$Svg_Attributes$fill(_p6));
+};
+var _user$project$Plot_Attributes$Point = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});

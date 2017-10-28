@@ -1,0 +1,249 @@
+var _user$project$Internal_Trend$unzip = function (points) {
+	var step = F2(
+		function (_p1, _p0) {
+			var _p2 = _p1;
+			var _p3 = _p0;
+			return {
+				ctor: '_Tuple2',
+				_0: {ctor: '::', _0: _p2.x, _1: _p3._0},
+				_1: {ctor: '::', _0: _p2.y, _1: _p3._1}
+			};
+		});
+	return A3(
+		_elm_lang$core$List$foldr,
+		step,
+		{
+			ctor: '_Tuple2',
+			_0: {ctor: '[]'},
+			_1: {ctor: '[]'}
+		},
+		points);
+};
+var _user$project$Internal_Trend$predictY = F2(
+	function (fit, x) {
+		return (fit.slope * x) + fit.intercept;
+	});
+var _user$project$Internal_Trend$mean = function (numbers) {
+	var _p4 = numbers;
+	if (_p4.ctor === '[]') {
+		return _elm_lang$core$Maybe$Nothing;
+	} else {
+		return _elm_lang$core$Maybe$Just(
+			_elm_lang$core$List$sum(numbers) / _elm_lang$core$Basics$toFloat(
+				_elm_lang$core$List$length(numbers)));
+	}
+};
+var _user$project$Internal_Trend$stddev = function (numbers) {
+	var helper = function (seriesMean) {
+		return A2(
+			_elm_lang$core$Maybe$map,
+			_elm_lang$core$Basics$sqrt,
+			_user$project$Internal_Trend$mean(
+				A2(
+					_elm_lang$core$List$map,
+					function (n) {
+						return Math.pow(n - seriesMean, 2);
+					},
+					numbers)));
+	};
+	return A2(
+		_elm_lang$core$Maybe$andThen,
+		helper,
+		_user$project$Internal_Trend$mean(numbers));
+};
+var _user$project$Internal_Trend$view = F4(
+	function (system, attributes, _p5, trend) {
+		var _p6 = _p5;
+		var _p10 = _p6.min;
+		var _p9 = _p6.max;
+		var _p7 = trend;
+		if (_p7.ctor === 'Nothing') {
+			return _elm_lang$svg$Svg$text('');
+		} else {
+			var _p8 = _p7._0;
+			var y2 = A2(_user$project$Internal_Trend$predictY, _p8, _p9);
+			var y1 = A2(_user$project$Internal_Trend$predictY, _p8, _p10);
+			return A2(
+				_elm_lang$svg$Svg$line,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					attributes,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$x1(
+							_elm_lang$core$Basics$toString(
+								A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$X, system, _p10))),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$y1(
+								_elm_lang$core$Basics$toString(
+									A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$Y, system, y1))),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$x2(
+									_elm_lang$core$Basics$toString(
+										A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$X, system, _p9))),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$y2(
+										_elm_lang$core$Basics$toString(
+											A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$Y, system, y2))),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}),
+				{ctor: '[]'});
+		}
+	});
+var _user$project$Internal_Trend$trendQuality = F2(
+	function (fit, values) {
+		var _p11 = values;
+		if (_p11.ctor === '[]') {
+			return _elm_lang$core$Maybe$Nothing;
+		} else {
+			var _p12 = _user$project$Internal_Trend$unzip(values);
+			var xs = _p12._0;
+			var ys = _p12._1;
+			var predictions = A2(
+				_elm_lang$core$List$map,
+				_user$project$Internal_Trend$predictY(fit),
+				xs);
+			var meanY = _user$project$Internal_Trend$mean(ys);
+			var sumSquareTotal = A2(
+				_elm_lang$core$Maybe$map,
+				_elm_lang$core$List$sum,
+				A2(
+					_elm_lang$core$Maybe$map,
+					function (localMean) {
+						return A2(
+							_elm_lang$core$List$map,
+							function (y) {
+								return Math.pow(y - localMean, 2);
+							},
+							ys);
+					},
+					meanY));
+			var sumSquareResiduals = _elm_lang$core$List$sum(
+				A3(
+					_elm_lang$core$List$map2,
+					F2(
+						function (actual, prediction) {
+							return Math.pow(actual - prediction, 2);
+						}),
+					ys,
+					predictions));
+			return A2(
+				_elm_lang$core$Maybe$map,
+				function (ssT) {
+					return 1 - (sumSquareResiduals / ssT);
+				},
+				sumSquareTotal);
+		}
+	});
+var _user$project$Internal_Trend$correlation = function (values) {
+	var _p13 = values;
+	if (_p13.ctor === '[]') {
+		return _elm_lang$core$Maybe$Nothing;
+	} else {
+		if (_p13._1.ctor === '[]') {
+			return _elm_lang$core$Maybe$Nothing;
+		} else {
+			var validate = function (val) {
+				return _elm_lang$core$Basics$isNaN(val) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(val);
+			};
+			var standardize = F3(
+				function (maybeMean, maybeStddev, series) {
+					return A3(
+						_elm_lang$core$Maybe$map2,
+						F2(
+							function (mean, stddev) {
+								return A2(
+									_elm_lang$core$List$map,
+									function (point) {
+										return (point - mean) / stddev;
+									},
+									series);
+							}),
+						maybeMean,
+						maybeStddev);
+				});
+			var _p14 = _user$project$Internal_Trend$unzip(values);
+			var xs = _p14._0;
+			var ys = _p14._1;
+			var summedProduct = A2(
+				_elm_lang$core$Maybe$map,
+				_elm_lang$core$List$sum,
+				A3(
+					_elm_lang$core$Maybe$map2,
+					F2(
+						function (stdX, stdY) {
+							return A3(
+								_elm_lang$core$List$map2,
+								F2(
+									function (x, y) {
+										return x * y;
+									}),
+								stdX,
+								stdY);
+						}),
+					A3(
+						standardize,
+						_user$project$Internal_Trend$mean(xs),
+						_user$project$Internal_Trend$stddev(xs),
+						xs),
+					A3(
+						standardize,
+						_user$project$Internal_Trend$mean(ys),
+						_user$project$Internal_Trend$stddev(ys),
+						ys)));
+			return A2(
+				_elm_lang$core$Maybe$andThen,
+				validate,
+				A2(
+					_elm_lang$core$Maybe$map,
+					function (sum) {
+						return sum / _elm_lang$core$Basics$toFloat(
+							_elm_lang$core$List$length(values));
+					},
+					summedProduct));
+		}
+	}
+};
+var _user$project$Internal_Trend$Trend = F2(
+	function (a, b) {
+		return {slope: a, intercept: b};
+	});
+var _user$project$Internal_Trend$trend = function (values) {
+	var _p15 = values;
+	if (_p15.ctor === '[]') {
+		return _elm_lang$core$Maybe$Nothing;
+	} else {
+		if (_p15._1.ctor === '[]') {
+			return _elm_lang$core$Maybe$Nothing;
+		} else {
+			var _p16 = _user$project$Internal_Trend$unzip(values);
+			var xs = _p16._0;
+			var ys = _p16._1;
+			var slope = A4(
+				_elm_lang$core$Maybe$map3,
+				F3(
+					function (correl, stddevY, stddevX) {
+						return (correl * stddevY) / stddevX;
+					}),
+				_user$project$Internal_Trend$correlation(values),
+				_user$project$Internal_Trend$stddev(ys),
+				_user$project$Internal_Trend$stddev(xs));
+			var intercept = A4(
+				_elm_lang$core$Maybe$map3,
+				F3(
+					function (meanY, slope, meanX) {
+						return meanY - (slope * meanX);
+					}),
+				_user$project$Internal_Trend$mean(ys),
+				slope,
+				_user$project$Internal_Trend$mean(xs));
+			return A3(_elm_lang$core$Maybe$map2, _user$project$Internal_Trend$Trend, slope, intercept);
+		}
+	}
+};

@@ -1,0 +1,273 @@
+var _user$project$Test_Runner_Node$warn = F2(
+	function (str, result) {
+		var _p0 = _elm_lang$core$Debug$log(str);
+		return result;
+	});
+var _user$project$Test_Runner_Node$runThunk = _user$project$Native_RunTest.runThunk;
+var _user$project$Test_Runner_Node$Model = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {available: a, running: b, queue: c, startTime: d, finishTime: e, completed: f, testReporter: g, autoFail: h};
+	});
+var _user$project$Test_Runner_Node$Finish = function (a) {
+	return {ctor: 'Finish', _0: a};
+};
+var _user$project$Test_Runner_Node$Complete = F5(
+	function (a, b, c, d, e) {
+		return {ctor: 'Complete', _0: a, _1: b, _2: c, _3: d, _4: e};
+	});
+var _user$project$Test_Runner_Node$Dispatch = function (a) {
+	return {ctor: 'Dispatch', _0: a};
+};
+var _user$project$Test_Runner_Node$dispatch = A2(_elm_lang$core$Task$perform, _user$project$Test_Runner_Node$Dispatch, _elm_lang$core$Time$now);
+var _user$project$Test_Runner_Node$update = F3(
+	function (emit, msg, _p1) {
+		var _p2 = _p1;
+		var _p10 = _p2.testReporter;
+		var _p9 = _p2;
+		var _p3 = msg;
+		switch (_p3.ctor) {
+			case 'Finish':
+				var duration = _p3._0 - _p9.startTime;
+				var summary = A3(_p10.reportSummary, duration, _p9.autoFail, _p9.completed);
+				var failed = _elm_lang$core$List$length(
+					A2(
+						_elm_lang$core$List$filter,
+						function (_p4) {
+							return A2(
+								_elm_lang$core$List$all,
+								F2(
+									function (x, y) {
+										return !_elm_lang$core$Native_Utils.eq(x, y);
+									})(_elm_community$elm_test$Expect$pass),
+								function (_) {
+									return _.expectations;
+								}(_p4));
+						},
+						_p9.completed));
+				var exitCode = (_elm_lang$core$Native_Utils.cmp(failed, 0) > 0) ? 2 : ((!_elm_lang$core$Native_Utils.eq(_p9.autoFail, _elm_lang$core$Maybe$Nothing)) ? 3 : 0);
+				var data = _elm_lang$core$Json_Encode$object(
+					{
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'exitCode',
+							_1: _elm_lang$core$Json_Encode$int(exitCode)
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'format',
+								_1: _elm_lang$core$Json_Encode$string(_p10.format)
+							},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'message', _1: summary},
+								_1: {ctor: '[]'}
+							}
+						}
+					});
+				return {
+					ctor: '_Tuple2',
+					_0: _p9,
+					_1: emit(
+						{ctor: '_Tuple2', _0: 'FINISHED', _1: data})
+				};
+			case 'Complete':
+				var result = {labels: _p3._1, expectations: _p3._2, duration: _p3._4 - _p3._3};
+				var newModel = _elm_lang$core$Native_Utils.update(
+					_p9,
+					{
+						completed: {ctor: '::', _0: result, _1: _p9.completed}
+					});
+				var reportCmd = function () {
+					var _p5 = _p10.reportComplete(result);
+					if (_p5.ctor === 'Just') {
+						return emit(
+							{
+								ctor: '_Tuple2',
+								_0: 'TEST_COMPLETED',
+								_1: _elm_lang$core$Json_Encode$object(
+									{
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple2',
+											_0: 'format',
+											_1: _elm_lang$core$Json_Encode$string(_p10.format)
+										},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'message', _1: _p5._0},
+											_1: {ctor: '[]'}
+										}
+									})
+							});
+					} else {
+						return _elm_lang$core$Platform_Cmd$none;
+					}
+				}();
+				return {
+					ctor: '_Tuple2',
+					_0: newModel,
+					_1: _elm_lang$core$Platform_Cmd$batch(
+						{
+							ctor: '::',
+							_0: reportCmd,
+							_1: {
+								ctor: '::',
+								_0: _user$project$Test_Runner_Node$dispatch,
+								_1: {ctor: '[]'}
+							}
+						})
+				};
+			default:
+				var _p6 = _p9.queue;
+				if (_p6.ctor === '[]') {
+					return {
+						ctor: '_Tuple2',
+						_0: _p9,
+						_1: A2(_elm_lang$core$Task$perform, _user$project$Test_Runner_Node$Finish, _elm_lang$core$Time$now)
+					};
+				} else {
+					var _p8 = _p6._0;
+					var _p7 = A2(_elm_lang$core$Dict$get, _p8, _p9.available);
+					if (_p7.ctor === 'Nothing') {
+						return A2(
+							_user$project$Test_Runner_Node$warn,
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'Could not find testId ',
+								_elm_lang$core$Basics$toString(_p8)),
+							{ctor: '_Tuple2', _0: _p9, _1: _elm_lang$core$Platform_Cmd$none});
+					} else {
+						var available = A2(_elm_lang$core$Dict$remove, _p8, _p9.available);
+						var newModel = _elm_lang$core$Native_Utils.update(
+							_p9,
+							{available: available, queue: _p6._1});
+						var expectations = _user$project$Test_Runner_Node$runThunk(_p7._0.run);
+						var complete = A4(_user$project$Test_Runner_Node$Complete, _p8, _p7._0.labels, expectations, _p3._0);
+						return {
+							ctor: '_Tuple2',
+							_0: newModel,
+							_1: A2(_elm_lang$core$Task$perform, complete, _elm_lang$core$Time$now)
+						};
+					}
+				}
+		}
+	});
+var _user$project$Test_Runner_Node$init = F2(
+	function (emit, _p11) {
+		var _p12 = _p11;
+		var testReporter = _user$project$Test_Reporter_Reporter$createReporter(_p12.report);
+		var _p13 = function () {
+			var _p14 = _p12.runners;
+			switch (_p14.ctor) {
+				case 'Plain':
+					return {
+						indexedRunners: A2(
+							_elm_lang$core$List$indexedMap,
+							F2(
+								function (v0, v1) {
+									return {ctor: '_Tuple2', _0: v0, _1: v1};
+								}),
+							_p14._0),
+						autoFail: _elm_lang$core$Maybe$Nothing
+					};
+				case 'Only':
+					return {
+						indexedRunners: A2(
+							_elm_lang$core$List$indexedMap,
+							F2(
+								function (v0, v1) {
+									return {ctor: '_Tuple2', _0: v0, _1: v1};
+								}),
+							_p14._0),
+						autoFail: _elm_lang$core$Maybe$Just('Test.only was used')
+					};
+				case 'Skipping':
+					return {
+						indexedRunners: A2(
+							_elm_lang$core$List$indexedMap,
+							F2(
+								function (v0, v1) {
+									return {ctor: '_Tuple2', _0: v0, _1: v1};
+								}),
+							_p14._0),
+						autoFail: _elm_lang$core$Maybe$Just('Test.skip was used')
+					};
+				default:
+					return {
+						indexedRunners: {ctor: '[]'},
+						autoFail: _elm_lang$core$Maybe$Just(_p14._0)
+					};
+			}
+		}();
+		var indexedRunners = _p13.indexedRunners;
+		var autoFail = _p13.autoFail;
+		var testCount = _elm_lang$core$List$length(indexedRunners);
+		var maybeReport = testReporter.reportBegin(
+			{paths: _p12.paths, fuzzRuns: _p12.fuzzRuns, testCount: testCount, initialSeed: _p12.initialSeed});
+		var reportCmd = function () {
+			var _p15 = maybeReport;
+			if (_p15.ctor === 'Just') {
+				return emit(
+					{
+						ctor: '_Tuple2',
+						_0: 'STARTED',
+						_1: _elm_lang$core$Json_Encode$object(
+							{
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'format',
+									_1: _elm_lang$core$Json_Encode$string(testReporter.format)
+								},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'message', _1: _p15._0},
+									_1: {ctor: '[]'}
+								}
+							})
+					});
+			} else {
+				return _elm_lang$core$Platform_Cmd$none;
+			}
+		}();
+		var model = {
+			available: _elm_lang$core$Dict$fromList(indexedRunners),
+			running: _elm_lang$core$Set$empty,
+			queue: A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$first, indexedRunners),
+			completed: {ctor: '[]'},
+			startTime: _p12.startTime,
+			finishTime: _elm_lang$core$Maybe$Nothing,
+			testReporter: testReporter,
+			autoFail: autoFail
+		};
+		return {
+			ctor: '_Tuple2',
+			_0: model,
+			_1: _elm_lang$core$Platform_Cmd$batch(
+				{
+					ctor: '::',
+					_0: _user$project$Test_Runner_Node$dispatch,
+					_1: {
+						ctor: '::',
+						_0: reportCmd,
+						_1: {ctor: '[]'}
+					}
+				})
+		};
+	});
+var _user$project$Test_Runner_Node$runWithOptions = F2(
+	function (options, emit) {
+		return A2(
+			_user$project$Test_Runner_Node_App$run,
+			options,
+			{
+				init: _user$project$Test_Runner_Node$init(emit),
+				update: _user$project$Test_Runner_Node$update(emit),
+				subscriptions: function (_p16) {
+					return _elm_lang$core$Platform_Sub$none;
+				}
+			});
+	});

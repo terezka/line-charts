@@ -1,0 +1,81 @@
+[
+  {
+    "name": "Round",
+    "comment": " This library empowers you to convert a `Float` to a `String` with ultimate \ncontrol how many digits after the decimal point are shown and how the remaining \ndigits are rounded. You can round, round up and round down the mathematical or \nthe commerical way. For example:\n\n    x = 3.141592653589793\n\n    round 2 x -- \"3.14\"\n    round 4 x -- \"3.1416\"\n    \n    ceiling 2 x -- \"3.15\"\n    floor 4 x -- \"3.1415\"\n\nThe number of digits after decimal point can also be negative.\n\n    x = 213.14\n\n    round -2 x -- \"200\"\n    round -1 x -- \"210\"\n    \n    ceiling -2 x -- \"300\"\n    floor -3 x -- \"0\"\n\n[Commercial \nrounding](https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero) \nmeans that negative and positive numbers are treated symmetrically. It affects \nnumbers whose last digit equals 5. For example:\n\n    x = -0.5\n\n    round 0 x -- \"0\"\n    roundCom 0 x -- \"-1\"\n\n    floor 0 x -- \"-1\"\n    floorCom 0 x -- \"0\"\n\n    ceiling 0 x -- \"0\"\n    ceilingCom 0 x -- \"-1\"\n\nHave a look at the tests for more examples!\n\nUnder the hood the `Float` is \n\n  * converted to a string\n  * normalized (if it is in scientific notation, eg `1.234e-23`)\n  * splitted at the comma.\n  * Then the part after comma is truncated to the number of desired digits + 1\n  * inserting a comma before the last digit,\n  * turning this into a `Float` again,\n  * apply a rounding function on it,\n  * attach it the part before comma again.\n  * By the way handles cases with already rounded numbers, zero and the sign.\n\nWhy aren't we just doing `x * 1000 |> round |> toFloat |> (flip (/)) 1000` in \norder to round to 3 digits after comma? Because due to floating point \narithmetic it might happen that it outputs someting like `3.1416000000001`, \nalthough we just wanted `3.1416`. Ugly.\n\n# Round to String\n@docs round, ceiling, floor, roundCom, ceilingCom, floorCom\n\n# Round to Float\n@docs roundNum, ceilingNum, floorNum, roundNumCom, ceilingNumCom, floorNumCom\n\n# Utility functions\n@docs toDecimal, truncate\n\n",
+    "aliases": [],
+    "types": [],
+    "values": [
+      {
+        "name": "ceiling",
+        "comment": " Turns a `Float` into a `String` and rounds it up to the given number of \ndigits after decimal point.\n\n    x = 3.141592653589793\n\n    ceiling 2 x -- \"3.15\"\n    ceiling 4 x -- \"3.1416\"\n\nThe number of digits after decimal point can also be negative.\n\n    x = 213.35\n\n    ceiling -2 x -- \"300\"\n    ceiling -1 x -- \"220\"\n",
+        "type": "Int -> Float -> String"
+      },
+      {
+        "name": "ceilingCom",
+        "comment": " Turns a `Float` into a `String` and rounds it up to the given number of \ndigits after decimal point the commercial way.\n\n    x = -0.5\n\n    ceiling 0 x -- \"0\"\n    ceilingCom 0 x -- \"-1\"\n\nThe number of digits after decimal point can also be negative.\n",
+        "type": "Int -> Float -> String"
+      },
+      {
+        "name": "ceilingNum",
+        "comment": " As `ceiling` but turns the resulting `String` back to a `Float`.\n",
+        "type": "Int -> Float -> Float"
+      },
+      {
+        "name": "ceilingNumCom",
+        "comment": " As `ceilingCom` but turns the resulting `String` back to a `Float`.\n",
+        "type": "Int -> Float -> Float"
+      },
+      {
+        "name": "floor",
+        "comment": " Turns a `Float` into a `String` and rounds it down to the given number of \ndigits after decimal point.\n\n    x = 3.141592653589793\n\n    floor 2 x -- \"3.14\"\n    floor 4 x -- \"3.1415\"\n\nThe number of digits after decimal point can also be negative.\n\n    x = 213.35\n\n    floor -2 x -- \"200\"\n    floor -1 x -- \"210\"\n",
+        "type": "Int -> Float -> String"
+      },
+      {
+        "name": "floorCom",
+        "comment": " Turns a `Float` into a `String` and rounds it down to the given number of \ndigits after decimal point the commercial way.\n\n    x = -0.5\n\n    floor 0 x -- \"-1\"\n    floorCom 0 x -- \"0\"\n\nThe number of digits after decimal point can also be negative.\n",
+        "type": "Int -> Float -> String"
+      },
+      {
+        "name": "floorNum",
+        "comment": " As `floor` but turns the resulting `String` back to a `Float`.\n",
+        "type": "Int -> Float -> Float"
+      },
+      {
+        "name": "floorNumCom",
+        "comment": " As `floorCom` but turns the resulting `String` back to a `Float`.\n",
+        "type": "Int -> Float -> Float"
+      },
+      {
+        "name": "round",
+        "comment": " Turns a `Float` into a `String` and rounds it to the given number of digits \nafter decimal point.\n\n    x = 3.141592653589793\n\n    round 2 x -- \"3.14\"\n    round 4 x -- \"3.1416\"\n\nThe number of digits after decimal point can also be negative.\n\n    x = 213.35\n\n    round -2 x -- \"200\"\n    round -1 x -- \"210\"\n",
+        "type": "Int -> Float -> String"
+      },
+      {
+        "name": "roundCom",
+        "comment": " Turns a `Float` into a `String` and rounds it to the given number of digits \nafter decimal point the commercial way.\n\n    x = -0.5\n\n    round 0 x -- \"0\"\n    roundCom 0 x -- \"-1\"\n\nThe number of digits after decimal point can also be negative.\n",
+        "type": "Int -> Float -> String"
+      },
+      {
+        "name": "roundNum",
+        "comment": " As `round` but turns the resulting `String` back to a `Float`.\n",
+        "type": "Int -> Float -> Float"
+      },
+      {
+        "name": "roundNumCom",
+        "comment": " As `roundCom` but turns the resulting `String` back to a `Float`.\n",
+        "type": "Int -> Float -> Float"
+      },
+      {
+        "name": "toDecimal",
+        "comment": " Transforms a `Float` in scientific notation into its decimal representation \nas a `String`.\n\n    x = 1e30\n    toDecimal x -- outputs \"1000000000000000000000000000000\"\n\n    x = 1.2345e-30\n    toDecimal x -- outputs \"0.0000000000000000000000000000012345\"\n",
+        "type": "Float -> String"
+      },
+      {
+        "name": "truncate",
+        "comment": " Like Elm's basic `truncate` but works on the full length of a float's 64 \nbits. So it's more precise.\n\n    x = 9007199254740.99\n\n    Basics.truncate x -- 652835028 (which is not correct)\n    Round.truncate x -- 9007199254740 (which is)\n",
+        "type": "Float -> Int"
+      }
+    ],
+    "generated-with-elm-version": "0.18.0"
+  }
+]

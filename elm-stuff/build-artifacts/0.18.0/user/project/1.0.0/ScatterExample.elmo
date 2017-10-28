@@ -1,0 +1,129 @@
+var _user$project$ScatterExample$circle = A3(
+	_user$project$Plot_Dot$Config,
+	_user$project$Plot_Dot$Circle,
+	{ctor: '[]'},
+	5);
+var _user$project$ScatterExample$Data2 = F2(
+	function (a, b) {
+		return {lineOfCode: a, debuggingTime: b};
+	});
+var _user$project$ScatterExample$elm = {
+	ctor: '::',
+	_0: A2(_user$project$ScatterExample$Data2, 1, 4),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$ScatterExample$Data2, 5, 7),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$ScatterExample$Data2, 3, 6),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$ScatterExample$Data2, 9, 3),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$ScatterExample$javascript = {
+	ctor: '::',
+	_0: A2(_user$project$ScatterExample$Data2, 2, 2),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$ScatterExample$Data2, 3, 4),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$ScatterExample$Data2, 4, 6),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$ScatterExample$Data2, 5, 8),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$ScatterExample$viewSimple = A3(
+	_user$project$Scatter$viewSimple,
+	function (_) {
+		return _.lineOfCode;
+	},
+	function (_) {
+		return _.debuggingTime;
+	},
+	{
+		ctor: '::',
+		_0: _user$project$ScatterExample$elm,
+		_1: {
+			ctor: '::',
+			_0: _user$project$ScatterExample$javascript,
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$ScatterExample$view = A3(
+	_user$project$Scatter$view,
+	function (_) {
+		return _.lineOfCode;
+	},
+	function (_) {
+		return _.debuggingTime;
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_user$project$Scatter$group,
+			_user$project$ScatterExample$circle(_user$project$Plot_Color$orange),
+			_user$project$ScatterExample$elm),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_user$project$Scatter$group,
+				_user$project$ScatterExample$circle(_user$project$Plot_Color$green),
+				_user$project$ScatterExample$javascript),
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$ScatterExample$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
+	A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$ScatterExample$viewSimple,
+			_1: {
+				ctor: '::',
+				_0: _user$project$ScatterExample$view,
+				_1: {ctor: '[]'}
+			}
+		}));
+var _user$project$ScatterExample$viewCustom = A2(
+	_user$project$Scatter$viewCustom,
+	{
+		container: _user$project$Plot_Container$default,
+		x: A2(
+			_user$project$Scatter$Axis,
+			_user$project$Plot_Axis$defaultLook,
+			function (_) {
+				return _.lineOfCode;
+			}),
+		y: A2(
+			_user$project$Scatter$Axis,
+			_user$project$Plot_Axis$defaultLook,
+			function (_) {
+				return _.debuggingTime;
+			}),
+		junk: _user$project$Plot_Junk$none
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_user$project$Scatter$group,
+			_user$project$ScatterExample$circle(_user$project$Plot_Color$orange),
+			_user$project$ScatterExample$elm),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_user$project$Scatter$group,
+				_user$project$ScatterExample$circle(_user$project$Plot_Color$green),
+				_user$project$ScatterExample$javascript),
+			_1: {ctor: '[]'}
+		}
+	});

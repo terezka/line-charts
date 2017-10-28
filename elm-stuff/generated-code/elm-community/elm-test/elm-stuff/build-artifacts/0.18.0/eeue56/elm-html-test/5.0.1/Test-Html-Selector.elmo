@@ -1,0 +1,67 @@
+var _eeue56$elm_html_test$Test_Html_Selector$orElseLazy = F2(
+	function (fma, mb) {
+		var _p0 = mb;
+		if (_p0.ctor === 'Err') {
+			return fma(
+				{ctor: '_Tuple0'});
+		} else {
+			return mb;
+		}
+	});
+var _eeue56$elm_html_test$Test_Html_Selector$checked = _eeue56$elm_html_test$Test_Html_Selector_Internal$namedBoolAttr('checked');
+var _eeue56$elm_html_test$Test_Html_Selector$disabled = _eeue56$elm_html_test$Test_Html_Selector_Internal$namedBoolAttr('disabled');
+var _eeue56$elm_html_test$Test_Html_Selector$selected = _eeue56$elm_html_test$Test_Html_Selector_Internal$namedBoolAttr('selected');
+var _eeue56$elm_html_test$Test_Html_Selector$text = _eeue56$elm_html_test$Test_Html_Selector_Internal$Text;
+var _eeue56$elm_html_test$Test_Html_Selector$style = function (style) {
+	return _eeue56$elm_html_test$Test_Html_Selector_Internal$Style(style);
+};
+var _eeue56$elm_html_test$Test_Html_Selector$attribute = function (attr) {
+	var _p1 = _eeue56$elm_html_test$Html_Inert$parseAttribute(attr);
+	switch (_p1.ctor) {
+		case 'Attribute':
+			var _p3 = _p1._0.value;
+			var _p2 = _p1._0.key;
+			return _elm_lang$core$Native_Utils.eq(
+				_elm_lang$core$String$toLower(_p2),
+				'class') ? _eeue56$elm_html_test$Test_Html_Selector_Internal$Classes(
+				A2(_elm_lang$core$String$split, ' ', _p3)) : A2(_eeue56$elm_html_test$Test_Html_Selector_Internal$namedAttr, _p2, _p3);
+		case 'Property':
+			var _p7 = _p1._0.value;
+			var _p6 = _p1._0.key;
+			return _elm_lang$core$Native_Utils.eq(_p6, 'className') ? _eeue56$elm_html_test$Test_Html_Selector_Internal$Classes(
+				A2(
+					_elm_lang$core$Result$withDefault,
+					{ctor: '[]'},
+					A2(
+						_elm_lang$core$Result$map,
+						_elm_lang$core$String$split(' '),
+						A2(_elm_lang$core$Json_Decode$decodeValue, _elm_lang$core$Json_Decode$string, _p7)))) : A2(
+				_elm_lang$core$Result$withDefault,
+				_eeue56$elm_html_test$Test_Html_Selector_Internal$Invalid,
+				A2(
+					_eeue56$elm_html_test$Test_Html_Selector$orElseLazy,
+					function (_p4) {
+						var _p5 = _p4;
+						return A2(
+							_elm_lang$core$Result$map,
+							_eeue56$elm_html_test$Test_Html_Selector_Internal$namedBoolAttr(_p6),
+							A2(_elm_lang$core$Json_Decode$decodeValue, _elm_lang$core$Json_Decode$bool, _p7));
+					},
+					A2(
+						_elm_lang$core$Result$map,
+						_eeue56$elm_html_test$Test_Html_Selector_Internal$namedAttr(_p6),
+						A2(_elm_lang$core$Json_Decode$decodeValue, _elm_lang$core$Json_Decode$string, _p7))));
+		case 'Styles':
+			return _eeue56$elm_html_test$Test_Html_Selector_Internal$Style(_p1._0);
+		default:
+			return _eeue56$elm_html_test$Test_Html_Selector_Internal$Invalid;
+	}
+};
+var _eeue56$elm_html_test$Test_Html_Selector$tag = function (name) {
+	return _eeue56$elm_html_test$Test_Html_Selector_Internal$Tag(name);
+};
+var _eeue56$elm_html_test$Test_Html_Selector$id = _eeue56$elm_html_test$Test_Html_Selector_Internal$namedAttr('id');
+var _eeue56$elm_html_test$Test_Html_Selector$exactClassName = _eeue56$elm_html_test$Test_Html_Selector_Internal$namedAttr('className');
+var _eeue56$elm_html_test$Test_Html_Selector$class = _eeue56$elm_html_test$Test_Html_Selector_Internal$Class;
+var _eeue56$elm_html_test$Test_Html_Selector$classes = _eeue56$elm_html_test$Test_Html_Selector_Internal$Classes;
+var _eeue56$elm_html_test$Test_Html_Selector$all = _eeue56$elm_html_test$Test_Html_Selector_Internal$All;

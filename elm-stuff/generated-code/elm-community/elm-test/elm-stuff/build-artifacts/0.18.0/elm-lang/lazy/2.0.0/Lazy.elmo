@@ -1,0 +1,92 @@
+var _elm_lang$lazy$Lazy$force = function (_p0) {
+	var _p1 = _p0;
+	return _p1._0(
+		{ctor: '_Tuple0'});
+};
+var _elm_lang$lazy$Lazy$Lazy = function (a) {
+	return {ctor: 'Lazy', _0: a};
+};
+var _elm_lang$lazy$Lazy$lazy = function (thunk) {
+	return _elm_lang$lazy$Lazy$Lazy(
+		_elm_lang$lazy$Native_Lazy.memoize(thunk));
+};
+var _elm_lang$lazy$Lazy$map = F2(
+	function (f, a) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p2) {
+				var _p3 = _p2;
+				return f(
+					_elm_lang$lazy$Lazy$force(a));
+			});
+	});
+var _elm_lang$lazy$Lazy$map2 = F3(
+	function (f, a, b) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p4) {
+				var _p5 = _p4;
+				return A2(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b));
+			});
+	});
+var _elm_lang$lazy$Lazy$map3 = F4(
+	function (f, a, b, c) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p6) {
+				var _p7 = _p6;
+				return A3(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b),
+					_elm_lang$lazy$Lazy$force(c));
+			});
+	});
+var _elm_lang$lazy$Lazy$map4 = F5(
+	function (f, a, b, c, d) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p8) {
+				var _p9 = _p8;
+				return A4(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b),
+					_elm_lang$lazy$Lazy$force(c),
+					_elm_lang$lazy$Lazy$force(d));
+			});
+	});
+var _elm_lang$lazy$Lazy$map5 = F6(
+	function (f, a, b, c, d, e) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p10) {
+				var _p11 = _p10;
+				return A5(
+					f,
+					_elm_lang$lazy$Lazy$force(a),
+					_elm_lang$lazy$Lazy$force(b),
+					_elm_lang$lazy$Lazy$force(c),
+					_elm_lang$lazy$Lazy$force(d),
+					_elm_lang$lazy$Lazy$force(e));
+			});
+	});
+var _elm_lang$lazy$Lazy$apply = F2(
+	function (f, x) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p12) {
+				var _p13 = _p12;
+				return A2(
+					_elm_lang$lazy$Lazy$force,
+					f,
+					_elm_lang$lazy$Lazy$force(x));
+			});
+	});
+var _elm_lang$lazy$Lazy$andThen = F2(
+	function (callback, a) {
+		return _elm_lang$lazy$Lazy$lazy(
+			function (_p14) {
+				var _p15 = _p14;
+				return _elm_lang$lazy$Lazy$force(
+					callback(
+						_elm_lang$lazy$Lazy$force(a)));
+			});
+	});

@@ -1,0 +1,79 @@
+var _eeue56$elm_html_in_elm$ElmHtml_ToHtml$boolAttributesToAttributes = function (_p0) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (_p1) {
+			var _p2 = _p1;
+			return A2(
+				_elm_lang$html$Html_Attributes$property,
+				_p2._0,
+				_elm_lang$core$Json_Encode$bool(_p2._1));
+		},
+		_elm_lang$core$Dict$toList(_p0));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_ToHtml$stringAttributesToAttributes = function (_p3) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (_p4) {
+			var _p5 = _p4;
+			return A2(_elm_lang$html$Html_Attributes$attribute, _p5._0, _p5._1);
+		},
+		_elm_lang$core$Dict$toList(_p3));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_ToHtml$eventsToAttributes = function (_p6) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (_p7) {
+			var _p8 = _p7;
+			return A2(_elm_lang$html$Html_Events$on, _p8._0, _p8._1);
+		},
+		_elm_lang$core$Dict$toList(_p6));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_ToHtml$stylesToAttribute = function (_p9) {
+	return _elm_lang$html$Html_Attributes$style(
+		_elm_lang$core$Dict$toList(_p9));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_ToHtml$factsToAttributes = function (facts) {
+	return _elm_lang$core$List$concat(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '::',
+				_0: _eeue56$elm_html_in_elm$ElmHtml_ToHtml$stylesToAttribute(facts.styles),
+				_1: {ctor: '[]'}
+			},
+			_1: {
+				ctor: '::',
+				_0: _eeue56$elm_html_in_elm$ElmHtml_ToHtml$eventsToAttributes(facts.events),
+				_1: {
+					ctor: '::',
+					_0: _eeue56$elm_html_in_elm$ElmHtml_ToHtml$stringAttributesToAttributes(facts.stringAttributes),
+					_1: {
+						ctor: '::',
+						_0: _eeue56$elm_html_in_elm$ElmHtml_ToHtml$boolAttributesToAttributes(facts.boolAttributes),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _eeue56$elm_html_in_elm$ElmHtml_ToHtml$toHtml = function (elmHtml) {
+	var _p10 = elmHtml;
+	switch (_p10.ctor) {
+		case 'TextTag':
+			return _elm_lang$html$Html$text(_p10._0.text);
+		case 'NodeEntry':
+			return A3(
+				_elm_lang$html$Html$node,
+				_p10._0.tag,
+				{ctor: '[]'},
+				A2(_elm_lang$core$List$map, _eeue56$elm_html_in_elm$ElmHtml_ToHtml$toHtml, _p10._0.children));
+		case 'CustomNode':
+			var _p11 = A2(_elm_lang$core$Debug$log, 'Custom node is not supported', '');
+			return _elm_lang$html$Html$text('');
+		case 'MarkdownNode':
+			var _p12 = A2(_elm_lang$core$Debug$log, 'Markdown node is not supported', '');
+			return _elm_lang$html$Html$text('');
+		default:
+			return _elm_lang$html$Html$text('');
+	}
+};

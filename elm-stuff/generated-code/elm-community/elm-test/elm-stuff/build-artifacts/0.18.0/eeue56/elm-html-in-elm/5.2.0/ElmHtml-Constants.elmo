@@ -1,0 +1,21 @@
+var _eeue56$elm_html_in_elm$ElmHtml_Constants$attributeNamespaceKey = 'ATTR_NS';
+var _eeue56$elm_html_in_elm$ElmHtml_Constants$attributeKey = 'ATTR';
+var _eeue56$elm_html_in_elm$ElmHtml_Constants$eventKey = 'EVENT';
+var _eeue56$elm_html_in_elm$ElmHtml_Constants$styleKey = 'STYLE';
+var _eeue56$elm_html_in_elm$ElmHtml_Constants$knownKeys = {
+	ctor: '::',
+	_0: _eeue56$elm_html_in_elm$ElmHtml_Constants$styleKey,
+	_1: {
+		ctor: '::',
+		_0: _eeue56$elm_html_in_elm$ElmHtml_Constants$eventKey,
+		_1: {
+			ctor: '::',
+			_0: _eeue56$elm_html_in_elm$ElmHtml_Constants$attributeKey,
+			_1: {
+				ctor: '::',
+				_0: _eeue56$elm_html_in_elm$ElmHtml_Constants$attributeNamespaceKey,
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};

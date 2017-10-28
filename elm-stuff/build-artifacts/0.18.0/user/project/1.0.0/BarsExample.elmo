@@ -1,0 +1,421 @@
+var _user$project$BarsExample$dependentAxis = function (data) {
+	return {
+		position: _elm_lang$core$Basics$always(0),
+		line: _elm_lang$core$Maybe$Nothing,
+		marks: _elm_lang$core$Basics$always(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(
+					_elm_lang$core$List$map,
+					function (_p0) {
+						return _user$project$Plot_Axis$defaultMark(
+							function (_) {
+								return _.heartattacks;
+							}(_p0));
+					},
+					data),
+				A2(
+					_elm_lang$core$List$map,
+					function (_p1) {
+						return _user$project$Plot_Axis$defaultMark(
+							function (_) {
+								return _.predicted;
+							}(_p1));
+					},
+					data))),
+		direction: _user$project$Plot_Axis$Negative
+	};
+};
+var _user$project$BarsExample$axes = function (data) {
+	return {
+		independentAxis: {
+			line: function (_) {
+				return _.line;
+			}(_user$project$Plot_Axis$defaultLook),
+			tick: _elm_lang$core$Maybe$Just(_user$project$Plot_Axis$defaultTick),
+			label: function (_p2) {
+				return _user$project$Plot_Axis$defaultStringLabel(
+					function (_) {
+						return _.label;
+					}(_p2));
+			}
+		},
+		dependentAxis: _user$project$BarsExample$dependentAxis(data)
+	};
+};
+var _user$project$BarsExample$highlighting = function (datum) {
+	return _elm_lang$core$Native_Utils.eq(datum.label, 'Trans') ? _user$project$Plot_Color$pink : _user$project$Plot_Color$orange;
+};
+var _user$project$BarsExample$container = {
+	frame: A2(
+		_user$project$Plot_Coordinate$Frame,
+		A4(_user$project$Plot_Coordinate$Margin, 40, 40, 90, 90),
+		A2(_user$project$Plot_Coordinate$Size, 1000, 600)),
+	attributes: {
+		ctor: '::',
+		_0: _user$project$Plot_Attributes$custom(
+			_elm_lang$svg$Svg_Attributes$style('font-family: monospace;')),
+		_1: {ctor: '[]'}
+	},
+	defs: {ctor: '[]'}
+};
+var _user$project$BarsExample$config = {
+	container: _user$project$BarsExample$container,
+	junk: _user$project$Plot_Junk$none,
+	barWidth: function (_p3) {
+		return A2(
+			_elm_lang$core$Basics$min,
+			90,
+			A2(
+				F2(
+					function (x, y) {
+						return x * y;
+					}),
+				0.75,
+				_p3));
+	},
+	barRounding: 0,
+	barOrientation: _user$project$Bars$Horizontal,
+	barSuperscript: _elm_lang$core$Maybe$Just(
+		function (_p4) {
+			return A4(
+				_user$project$Bars$Superscript,
+				{ctor: '[]'},
+				10,
+				28,
+				_elm_lang$core$Basics$toString(_p4));
+		}),
+	barTrendPattern: A3(_user$project$Bars$pattern, 'cool-example', 2, 1)
+};
+var _user$project$BarsExample$exampleAddSuperscriptSuperscript = function (value) {
+	return {
+		attributes: {
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$style('font-size: 10px;'),
+			_1: {ctor: '[]'}
+		},
+		xOffset: 10,
+		yOffset: 11,
+		text: _elm_lang$core$Basics$toString(value)
+	};
+};
+var _user$project$BarsExample$exampleTrendPatternConfig = _elm_lang$core$Native_Utils.update(
+	_user$project$Bars$defaultConfig,
+	{
+		barTrendPattern: A3(_user$project$Bars$pattern, 'broad-strokes', 3, 5)
+	});
+var _user$project$BarsExample$exampleChangeOrientationConfig = _elm_lang$core$Native_Utils.update(
+	_user$project$BarsExample$exampleTrendPatternConfig,
+	{barOrientation: _user$project$Bars$Horizontal});
+var _user$project$BarsExample$exampleAddRoundingConfig = _elm_lang$core$Native_Utils.update(
+	_user$project$BarsExample$exampleChangeOrientationConfig,
+	{barRounding: 5});
+var _user$project$BarsExample$exampleChangeBarWidthConfig = _elm_lang$core$Native_Utils.update(
+	_user$project$BarsExample$exampleAddRoundingConfig,
+	{
+		barWidth: _elm_lang$core$Basics$always(30)
+	});
+var _user$project$BarsExample$exampleAddSuperscriptConfig = _elm_lang$core$Native_Utils.update(
+	_user$project$BarsExample$exampleChangeBarWidthConfig,
+	{
+		barSuperscript: _elm_lang$core$Maybe$Just(_user$project$BarsExample$exampleAddSuperscriptSuperscript)
+	});
+var _user$project$BarsExample$dynamicColor = function (data) {
+	return (_elm_lang$core$Native_Utils.cmp(data.heartattacks, 6) > 0) ? _user$project$Plot_Color$pink : _user$project$Plot_Color$orange;
+};
+var _user$project$BarsExample$Data = F4(
+	function (a, b, c, d) {
+		return {magnesium: a, predicted: b, heartattacks: c, label: d};
+	});
+var _user$project$BarsExample$data = {
+	ctor: '::',
+	_0: A4(_user$project$BarsExample$Data, 4, 6, 8, 'Female'),
+	_1: {
+		ctor: '::',
+		_0: A4(_user$project$BarsExample$Data, 2, 2, 3, 'Male'),
+		_1: {
+			ctor: '::',
+			_0: A4(_user$project$BarsExample$Data, 3, 4, 6, 'Trans'),
+			_1: {
+				ctor: '::',
+				_0: A4(_user$project$BarsExample$Data, 9, 8, 3, 'Fluid'),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$BarsExample$exampleSimple = A3(
+	_user$project$Bars$viewSimple,
+	function (_) {
+		return _.label;
+	},
+	{
+		ctor: '::',
+		_0: function (_) {
+			return _.magnesium;
+		},
+		_1: {
+			ctor: '::',
+			_0: function (_) {
+				return _.heartattacks;
+			},
+			_1: {ctor: '[]'}
+		}
+	},
+	_user$project$BarsExample$data);
+var _user$project$BarsExample$exampleBarColor = A3(
+	_user$project$Bars$view,
+	function (_) {
+		return _.label;
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_user$project$Bars$bar,
+			_user$project$Plot_Color$orange,
+			function (_) {
+				return _.magnesium;
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_user$project$Bars$bar,
+				_user$project$Plot_Color$gray,
+				function (_) {
+					return _.heartattacks;
+				}),
+			_1: {ctor: '[]'}
+		}
+	},
+	_user$project$BarsExample$data);
+var _user$project$BarsExample$exampleTrend = A3(
+	_user$project$Bars$view,
+	function (_) {
+		return _.label;
+	},
+	{
+		ctor: '::',
+		_0: A4(
+			_user$project$Bars$barCustom,
+			_elm_lang$core$Basics$always(_user$project$Plot_Color$orange),
+			{ctor: '[]'},
+			function (_) {
+				return _.heartattacks;
+			},
+			_user$project$Bars$Trend(
+				function (_) {
+					return _.predicted;
+				})),
+		_1: {ctor: '[]'}
+	},
+	_user$project$BarsExample$data);
+var _user$project$BarsExample$exampleDynamicBarColor = A3(
+	_user$project$Bars$view,
+	function (_) {
+		return _.label;
+	},
+	{
+		ctor: '::',
+		_0: A4(
+			_user$project$Bars$barCustom,
+			_user$project$BarsExample$dynamicColor,
+			{ctor: '[]'},
+			function (_) {
+				return _.heartattacks;
+			},
+			_user$project$Bars$Trend(
+				function (_) {
+					return _.predicted;
+				})),
+		_1: {ctor: '[]'}
+	},
+	_user$project$BarsExample$data);
+var _user$project$BarsExample$exampleTrendPattern = A4(
+	_user$project$Bars$viewCustom,
+	_user$project$BarsExample$exampleTrendPatternConfig,
+	_user$project$Bars$defaultAxesConfig(
+		function (_) {
+			return _.label;
+		}),
+	{
+		ctor: '::',
+		_0: A4(
+			_user$project$Bars$barCustom,
+			_user$project$BarsExample$dynamicColor,
+			{ctor: '[]'},
+			function (_) {
+				return _.heartattacks;
+			},
+			_user$project$Bars$Trend(
+				function (_) {
+					return _.predicted;
+				})),
+		_1: {ctor: '[]'}
+	},
+	_user$project$BarsExample$data);
+var _user$project$BarsExample$exampleChangeOrientation = A4(
+	_user$project$Bars$viewCustom,
+	_user$project$BarsExample$exampleChangeOrientationConfig,
+	_user$project$Bars$defaultAxesConfig(
+		function (_) {
+			return _.label;
+		}),
+	{
+		ctor: '::',
+		_0: A4(
+			_user$project$Bars$barCustom,
+			_user$project$BarsExample$dynamicColor,
+			{ctor: '[]'},
+			function (_) {
+				return _.heartattacks;
+			},
+			_user$project$Bars$Trend(
+				function (_) {
+					return _.predicted;
+				})),
+		_1: {ctor: '[]'}
+	},
+	_user$project$BarsExample$data);
+var _user$project$BarsExample$exampleAddRounding = A4(
+	_user$project$Bars$viewCustom,
+	_user$project$BarsExample$exampleAddRoundingConfig,
+	_user$project$Bars$defaultAxesConfig(
+		function (_) {
+			return _.label;
+		}),
+	{
+		ctor: '::',
+		_0: A4(
+			_user$project$Bars$barCustom,
+			_user$project$BarsExample$dynamicColor,
+			{ctor: '[]'},
+			function (_) {
+				return _.heartattacks;
+			},
+			_user$project$Bars$Trend(
+				function (_) {
+					return _.predicted;
+				})),
+		_1: {ctor: '[]'}
+	},
+	_user$project$BarsExample$data);
+var _user$project$BarsExample$exampleChangeBarWidth = A4(
+	_user$project$Bars$viewCustom,
+	_user$project$BarsExample$exampleChangeBarWidthConfig,
+	_user$project$Bars$defaultAxesConfig(
+		function (_) {
+			return _.label;
+		}),
+	{
+		ctor: '::',
+		_0: A4(
+			_user$project$Bars$barCustom,
+			_user$project$BarsExample$dynamicColor,
+			{ctor: '[]'},
+			function (_) {
+				return _.heartattacks;
+			},
+			_user$project$Bars$Trend(
+				function (_) {
+					return _.predicted;
+				})),
+		_1: {ctor: '[]'}
+	},
+	_user$project$BarsExample$data);
+var _user$project$BarsExample$exampleAddSuperscript = A4(
+	_user$project$Bars$viewCustom,
+	_user$project$BarsExample$exampleAddSuperscriptConfig,
+	_user$project$Bars$defaultAxesConfig(
+		function (_) {
+			return _.label;
+		}),
+	{
+		ctor: '::',
+		_0: A4(
+			_user$project$Bars$barCustom,
+			_user$project$BarsExample$dynamicColor,
+			{ctor: '[]'},
+			function (_) {
+				return _.heartattacks;
+			},
+			_user$project$Bars$Trend(
+				function (_) {
+					return _.predicted;
+				})),
+		_1: {ctor: '[]'}
+	},
+	_user$project$BarsExample$data);
+var _user$project$BarsExample$exampleCool = A4(
+	_user$project$Bars$viewCustom,
+	_user$project$BarsExample$config,
+	_user$project$BarsExample$axes(_user$project$BarsExample$data),
+	{
+		ctor: '::',
+		_0: A4(
+			_user$project$Bars$barCustom,
+			_user$project$BarsExample$highlighting,
+			{ctor: '[]'},
+			function (_) {
+				return _.heartattacks;
+			},
+			_user$project$Bars$Trend(
+				function (_) {
+					return _.predicted;
+				})),
+		_1: {ctor: '[]'}
+	},
+	_elm_lang$core$List$reverse(_user$project$BarsExample$data));
+var _user$project$BarsExample$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
+	A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _user$project$BarsExample$exampleSimple,
+			_1: {
+				ctor: '::',
+				_0: _user$project$BarsExample$exampleBarColor,
+				_1: {
+					ctor: '::',
+					_0: _user$project$BarsExample$exampleTrend,
+					_1: {
+						ctor: '::',
+						_0: _user$project$BarsExample$exampleDynamicBarColor,
+						_1: {
+							ctor: '::',
+							_0: _user$project$BarsExample$exampleTrendPattern,
+							_1: {
+								ctor: '::',
+								_0: _user$project$BarsExample$exampleChangeOrientation,
+								_1: {
+									ctor: '::',
+									_0: _user$project$BarsExample$exampleAddRounding,
+									_1: {
+										ctor: '::',
+										_0: _user$project$BarsExample$exampleChangeBarWidth,
+										_1: {
+											ctor: '::',
+											_0: _user$project$BarsExample$exampleAddSuperscript,
+											_1: {
+												ctor: '::',
+												_0: _user$project$BarsExample$exampleCool,
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}));

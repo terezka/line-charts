@@ -1,0 +1,12 @@
+var _elm_lang$svg$Svg_Keyed$svgNamespace = A2(
+	_elm_lang$virtual_dom$VirtualDom$property,
+	'namespace',
+	_elm_lang$core$Json_Encode$string('http://www.w3.org/2000/svg'));
+var _elm_lang$svg$Svg_Keyed$node = F3(
+	function (name, attributes, children) {
+		return A3(
+			_elm_lang$virtual_dom$VirtualDom$keyedNode,
+			name,
+			{ctor: '::', _0: _elm_lang$svg$Svg_Keyed$svgNamespace, _1: attributes},
+			children);
+	});

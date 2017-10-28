@@ -1,0 +1,30 @@
+var _elm_community$elm_test$Util$lengthString = F2(
+	function (charGenerator, stringLength) {
+		return A2(
+			_mgold$elm_random_pcg$Random_Pcg$map,
+			_elm_lang$core$String$fromList,
+			A2(_mgold$elm_random_pcg$Random_Pcg$list, stringLength, charGenerator));
+	});
+var _elm_community$elm_test$Util$rangeLengthString = F3(
+	function (minLength, maxLength, charGenerator) {
+		return A2(
+			_mgold$elm_random_pcg$Random_Pcg$andThen,
+			_elm_community$elm_test$Util$lengthString(charGenerator),
+			A2(_mgold$elm_random_pcg$Random_Pcg$int, minLength, maxLength));
+	});
+var _elm_community$elm_test$Util$rangeLengthList = F3(
+	function (minLength, maxLength, generator) {
+		return A2(
+			_mgold$elm_random_pcg$Random_Pcg$andThen,
+			function (len) {
+				return A2(_mgold$elm_random_pcg$Random_Pcg$list, len, generator);
+			},
+			A2(_mgold$elm_random_pcg$Random_Pcg$int, minLength, maxLength));
+	});
+var _elm_community$elm_test$Util$rangeLengthArray = F3(
+	function (minLength, maxLength, generator) {
+		return A2(
+			_mgold$elm_random_pcg$Random_Pcg$map,
+			_elm_lang$core$Array$fromList,
+			A3(_elm_community$elm_test$Util$rangeLengthList, minLength, maxLength, generator));
+	});

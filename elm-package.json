@@ -1,0 +1,20 @@
+{
+    "version": "1.0.0",
+    "summary": "Easy opinionated SVG line plots in Elm.",
+    "repository": "https://github.com/user/project.git",
+    "license": "BSD3",
+    "source-directories": [
+        "./src"
+    ],
+    "exposed-modules": [
+        "Lines"
+    ],
+    "dependencies": {
+        "debois/elm-dom": "1.2.3 <= v < 2.0.0",
+        "elm-lang/core": "5.1.1 <= v < 6.0.0",
+        "elm-lang/html": "2.0.0 <= v < 3.0.0",
+        "elm-lang/svg": "2.0.0 <= v < 3.0.0",
+        "myrho/elm-round": "1.0.0 <= v < 2.0.0"
+    },
+    "elm-version": "0.18.0 <= v < 0.19.0"
+}

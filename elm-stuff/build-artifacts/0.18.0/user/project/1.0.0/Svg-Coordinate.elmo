@@ -1,0 +1,117 @@
+var _user$project$Svg_Coordinate$maximum = function (toValue) {
+	return function (_p0) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			1,
+			_elm_lang$core$List$maximum(
+				A2(_elm_lang$core$List$map, toValue, _p0)));
+	};
+};
+var _user$project$Svg_Coordinate$minimum = function (toValue) {
+	return function (_p1) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			0,
+			_elm_lang$core$List$minimum(
+				A2(_elm_lang$core$List$map, toValue, _p1)));
+	};
+};
+var _user$project$Svg_Coordinate$length = F2(
+	function (orientation, system) {
+		var _p2 = orientation;
+		if (_p2.ctor === 'X') {
+			return A2(_elm_lang$core$Basics$max, 1, (system.frame.size.width - system.frame.margin.left) - system.frame.margin.right);
+		} else {
+			return A2(_elm_lang$core$Basics$max, 1, (system.frame.size.height - system.frame.margin.bottom) - system.frame.margin.top);
+		}
+	});
+var _user$project$Svg_Coordinate$reach = F2(
+	function (orientation, system) {
+		var limits = function () {
+			var _p3 = orientation;
+			if (_p3.ctor === 'X') {
+				return system.x;
+			} else {
+				return system.y;
+			}
+		}();
+		var diff = limits.max - limits.min;
+		return (_elm_lang$core$Native_Utils.cmp(diff, 0) > 0) ? diff : 1;
+	});
+var _user$project$Svg_Coordinate$scaleCartesian = F3(
+	function (orientation, system, value) {
+		return (value * A2(_user$project$Svg_Coordinate$reach, orientation, system)) / A2(_user$project$Svg_Coordinate$length, orientation, system);
+	});
+var _user$project$Svg_Coordinate$scaleSVG = F3(
+	function (orientation, system, value) {
+		return (value * A2(_user$project$Svg_Coordinate$length, orientation, system)) / A2(_user$project$Svg_Coordinate$reach, orientation, system);
+	});
+var _user$project$Svg_Coordinate$toCartesian = F3(
+	function (orientation, system, value) {
+		var _p4 = orientation;
+		if (_p4.ctor === 'X') {
+			return system.x.min + A3(_user$project$Svg_Coordinate$scaleCartesian, orientation, system, value - system.frame.margin.left);
+		} else {
+			return system.y.max - A3(_user$project$Svg_Coordinate$scaleCartesian, orientation, system, value - system.frame.margin.top);
+		}
+	});
+var _user$project$Svg_Coordinate$toSVG = F3(
+	function (orientation, system, value) {
+		var _p5 = orientation;
+		if (_p5.ctor === 'X') {
+			return A3(_user$project$Svg_Coordinate$scaleSVG, orientation, system, value - system.x.min) + system.frame.margin.left;
+		} else {
+			return A3(_user$project$Svg_Coordinate$scaleSVG, orientation, system, system.y.max - value) + system.frame.margin.top;
+		}
+	});
+var _user$project$Svg_Coordinate$system = F3(
+	function (frame, xLimits, yLimits) {
+		return {frame: frame, x: xLimits, y: yLimits};
+	});
+var _user$project$Svg_Coordinate$limits = F2(
+	function (toValue, data) {
+		return {
+			min: A2(_user$project$Svg_Coordinate$minimum, toValue, data),
+			max: A2(_user$project$Svg_Coordinate$maximum, toValue, data)
+		};
+	});
+var _user$project$Svg_Coordinate$Frame = F2(
+	function (a, b) {
+		return {margin: a, size: b};
+	});
+var _user$project$Svg_Coordinate$Size = F2(
+	function (a, b) {
+		return {width: a, height: b};
+	});
+var _user$project$Svg_Coordinate$Margin = F4(
+	function (a, b, c, d) {
+		return {top: a, right: b, bottom: c, left: d};
+	});
+var _user$project$Svg_Coordinate$Limits = F2(
+	function (a, b) {
+		return {min: a, max: b};
+	});
+var _user$project$Svg_Coordinate$System = F3(
+	function (a, b, c) {
+		return {frame: a, x: b, y: c};
+	});
+var _user$project$Svg_Coordinate$Y = {ctor: 'Y'};
+var _user$project$Svg_Coordinate$X = {ctor: 'X'};
+var _user$project$Svg_Coordinate$toSVGPoint = F2(
+	function (system, point) {
+		return _elm_lang$core$Native_Utils.update(
+			point,
+			{
+				x: A3(_user$project$Svg_Coordinate$toSVG, _user$project$Svg_Coordinate$X, system, point.x),
+				y: A3(_user$project$Svg_Coordinate$toSVG, _user$project$Svg_Coordinate$Y, system, point.y)
+			});
+	});
+var _user$project$Svg_Coordinate$toCartesianPoint = F2(
+	function (system, point) {
+		return _elm_lang$core$Native_Utils.update(
+			point,
+			{
+				x: A3(_user$project$Svg_Coordinate$toCartesian, _user$project$Svg_Coordinate$X, system, point.x),
+				y: A3(_user$project$Svg_Coordinate$toCartesian, _user$project$Svg_Coordinate$Y, system, point.y)
+			});
+	});

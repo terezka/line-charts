@@ -1,0 +1,116 @@
+var _terezka$coordinates$Svg_Coordinate$maximum = function (toValue) {
+	return function (_p0) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			1,
+			_elm_lang$core$List$maximum(
+				A2(_elm_lang$core$List$map, toValue, _p0)));
+	};
+};
+var _terezka$coordinates$Svg_Coordinate$minimum = function (toValue) {
+	return function (_p1) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			0,
+			_elm_lang$core$List$minimum(
+				A2(_elm_lang$core$List$map, toValue, _p1)));
+	};
+};
+var _terezka$coordinates$Svg_Coordinate$length = F2(
+	function (frame, dimension) {
+		var _p2 = dimension.orientation;
+		if (_p2.ctor === 'Horizontal') {
+			return A2(_elm_lang$core$Basics$max, 1, (frame.size.width - frame.margin.left) - frame.margin.right);
+		} else {
+			return A2(_elm_lang$core$Basics$max, 1, (frame.size.height - frame.margin.bottom) - frame.margin.top);
+		}
+	});
+var _terezka$coordinates$Svg_Coordinate$range = function (dimension) {
+	var diff = dimension.bounds.max - dimension.bounds.min;
+	return (_elm_lang$core$Native_Utils.cmp(diff, 0) > 0) ? diff : 1;
+};
+var _terezka$coordinates$Svg_Coordinate$cartesianScale = F3(
+	function (frame, dimension, value) {
+		return (value * _terezka$coordinates$Svg_Coordinate$range(dimension)) / A2(_terezka$coordinates$Svg_Coordinate$length, frame, dimension);
+	});
+var _terezka$coordinates$Svg_Coordinate$svgScale = F3(
+	function (frame, dimension, value) {
+		return (value * A2(_terezka$coordinates$Svg_Coordinate$length, frame, dimension)) / _terezka$coordinates$Svg_Coordinate$range(dimension);
+	});
+var _terezka$coordinates$Svg_Coordinate$cartesianValue = F3(
+	function (frame, dimension, value) {
+		var _p3 = dimension.orientation;
+		if (_p3.ctor === 'Horizontal') {
+			return dimension.bounds.min + A3(_terezka$coordinates$Svg_Coordinate$cartesianScale, frame, dimension, value - frame.margin.left);
+		} else {
+			return dimension.bounds.max - A3(_terezka$coordinates$Svg_Coordinate$cartesianScale, frame, dimension, value - frame.margin.top);
+		}
+	});
+var _terezka$coordinates$Svg_Coordinate$cartesianPoint = F2(
+	function (system, point) {
+		return {
+			x: A3(_terezka$coordinates$Svg_Coordinate$cartesianValue, system.frame, system.xAxis, point.x),
+			y: A3(_terezka$coordinates$Svg_Coordinate$cartesianValue, system.frame, system.yAxis, point.y)
+		};
+	});
+var _terezka$coordinates$Svg_Coordinate$svgValue = F3(
+	function (frame, dimension, value) {
+		var _p4 = dimension.orientation;
+		if (_p4.ctor === 'Horizontal') {
+			return A3(_terezka$coordinates$Svg_Coordinate$svgScale, frame, dimension, value - dimension.bounds.min) + frame.margin.left;
+		} else {
+			return A3(_terezka$coordinates$Svg_Coordinate$svgScale, frame, dimension, dimension.bounds.max - value) + frame.margin.top;
+		}
+	});
+var _terezka$coordinates$Svg_Coordinate$svgPoint = F2(
+	function (system, point) {
+		return {
+			x: A3(_terezka$coordinates$Svg_Coordinate$svgValue, system.frame, system.xAxis, point.x),
+			y: A3(_terezka$coordinates$Svg_Coordinate$svgValue, system.frame, system.yAxis, point.y)
+		};
+	});
+var _terezka$coordinates$Svg_Coordinate$bounds = F2(
+	function (toValue, data) {
+		return {
+			min: A2(_terezka$coordinates$Svg_Coordinate$minimum, toValue, data),
+			max: A2(_terezka$coordinates$Svg_Coordinate$maximum, toValue, data)
+		};
+	});
+var _terezka$coordinates$Svg_Coordinate$Frame = F2(
+	function (a, b) {
+		return {margin: a, size: b};
+	});
+var _terezka$coordinates$Svg_Coordinate$Size = F2(
+	function (a, b) {
+		return {width: a, height: b};
+	});
+var _terezka$coordinates$Svg_Coordinate$Margin = F4(
+	function (a, b, c, d) {
+		return {top: a, right: b, bottom: c, left: d};
+	});
+var _terezka$coordinates$Svg_Coordinate$Dimension = F2(
+	function (a, b) {
+		return {orientation: a, bounds: b};
+	});
+var _terezka$coordinates$Svg_Coordinate$Bounds = F2(
+	function (a, b) {
+		return {min: a, max: b};
+	});
+var _terezka$coordinates$Svg_Coordinate$System = F3(
+	function (a, b, c) {
+		return {frame: a, xAxis: b, yAxis: c};
+	});
+var _terezka$coordinates$Svg_Coordinate$Point = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _terezka$coordinates$Svg_Coordinate$Vertical = {ctor: 'Vertical'};
+var _terezka$coordinates$Svg_Coordinate$Horizontal = {ctor: 'Horizontal'};
+var _terezka$coordinates$Svg_Coordinate$system = F3(
+	function (frame, xBounds, yBounds) {
+		return {
+			frame: frame,
+			xAxis: {orientation: _terezka$coordinates$Svg_Coordinate$Horizontal, bounds: xBounds},
+			yAxis: {orientation: _terezka$coordinates$Svg_Coordinate$Vertical, bounds: yBounds}
+		};
+	});

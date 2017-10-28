@@ -1,0 +1,76 @@
+var _eeue56$elm_html_test$Html_Inert$eventDecoder = function (eventHandler) {
+	return _eeue56$elm_html_test$Native_HtmlAsJson.eventDecoder(eventHandler);
+};
+var _eeue56$elm_html_test$Html_Inert$taggerFunction = function (tagger) {
+	return _eeue56$elm_html_test$Native_HtmlAsJson.taggerFunction(tagger);
+};
+var _eeue56$elm_html_test$Html_Inert$taggedEventDecoder = F2(
+	function (taggers, eventHandler) {
+		var _p0 = taggers;
+		if (_p0.ctor === '[]') {
+			return _eeue56$elm_html_test$Html_Inert$eventDecoder(eventHandler);
+		} else {
+			if (_p0._1.ctor === '[]') {
+				return A2(
+					_elm_lang$core$Json_Decode$map,
+					_eeue56$elm_html_test$Html_Inert$taggerFunction(_p0._0),
+					_eeue56$elm_html_test$Html_Inert$eventDecoder(eventHandler));
+			} else {
+				return A2(
+					_elm_lang$core$Json_Decode$map,
+					_eeue56$elm_html_test$Html_Inert$taggerFunction(_p0._0),
+					A2(_eeue56$elm_html_test$Html_Inert$taggedEventDecoder, _p0._1, eventHandler));
+			}
+		}
+	});
+var _eeue56$elm_html_test$Html_Inert$attributeToJson = function (attribute) {
+	return _eeue56$elm_html_test$Native_HtmlAsJson.attributeToJson(attribute);
+};
+var _eeue56$elm_html_test$Html_Inert$parseAttribute = function (attr) {
+	var _p1 = A2(
+		_elm_lang$core$Json_Decode$decodeValue,
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeAttribute,
+		_eeue56$elm_html_test$Html_Inert$attributeToJson(attr));
+	if (_p1.ctor === 'Ok') {
+		return _p1._0;
+	} else {
+		return _elm_lang$core$Native_Utils.crashCase(
+			'Html.Inert',
+			{
+				start: {line: 55, column: 5},
+				end: {line: 60, column: 131}
+			},
+			_p1)(
+			A2(_elm_lang$core$Basics_ops['++'], 'Error internally processing Attribute for testing - please report this error message as a bug: ', _p1._0));
+	}
+};
+var _eeue56$elm_html_test$Html_Inert$impossibleMessage = 'An Inert Node fired an event handler. This should never happen! Please report this bug.';
+var _eeue56$elm_html_test$Html_Inert$toElmHtml = function (_p3) {
+	var _p4 = _p3;
+	return _p4._0;
+};
+var _eeue56$elm_html_test$Html_Inert$toJson = function (node) {
+	return _eeue56$elm_html_test$Native_HtmlAsJson.toJson(node);
+};
+var _eeue56$elm_html_test$Html_Inert$Node = function (a) {
+	return {ctor: 'Node', _0: a};
+};
+var _eeue56$elm_html_test$Html_Inert$fromHtml = function (html) {
+	var _p5 = A2(
+		_elm_lang$core$Json_Decode$decodeValue,
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeElmHtml(_eeue56$elm_html_test$Html_Inert$taggedEventDecoder),
+		_eeue56$elm_html_test$Html_Inert$toJson(html));
+	if (_p5.ctor === 'Ok') {
+		return _eeue56$elm_html_test$Html_Inert$Node(_p5._0);
+	} else {
+		return _elm_lang$core$Native_Utils.crashCase(
+			'Html.Inert',
+			{
+				start: {line: 18, column: 5},
+				end: {line: 23, column: 126}
+			},
+			_p5)(
+			A2(_elm_lang$core$Basics_ops['++'], 'Error internally processing HTML for testing - please report this error message as a bug: ', _p5._0));
+	}
+};
+var _eeue56$elm_html_test$Html_Inert$fromElmHtml = _eeue56$elm_html_test$Html_Inert$Node;

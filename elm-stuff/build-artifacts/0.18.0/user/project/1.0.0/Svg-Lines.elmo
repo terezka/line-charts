@@ -1,0 +1,241 @@
+var _user$project$Svg_Lines$viewCircle = F3(
+	function (_p0, system, point) {
+		var _p1 = _p0;
+		return A2(
+			_elm_lang$svg$Svg$circle,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$cx(
+					_elm_lang$core$Basics$toString(
+						A3(_user$project$Svg_Coordinate$toSVG, _user$project$Svg_Coordinate$X, system, point.x))),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$cy(
+						_elm_lang$core$Basics$toString(
+							A3(_user$project$Svg_Coordinate$toSVG, _user$project$Svg_Coordinate$Y, system, point.y))),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$r(
+							_elm_lang$core$Basics$toString(_p1.radius)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$fill(_p1.color),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			},
+			{ctor: '[]'});
+	});
+var _user$project$Svg_Lines$viewDot = function (dot) {
+	var _p2 = dot.shape;
+	if (_p2.ctor === 'Circle') {
+		return _user$project$Svg_Lines$viewCircle(dot);
+	} else {
+		return F2(
+			function (_p4, _p3) {
+				return _elm_lang$svg$Svg$text('');
+			});
+	}
+};
+var _user$project$Svg_Lines$emptyNode = _elm_lang$svg$Svg$text('');
+var _user$project$Svg_Lines$emptyInterpolation = _elm_lang$svg$Svg$text('-- No coordinates to draw interpolation --');
+var _user$project$Svg_Lines$viewInterpolation = F5(
+	function (config, system, line, first, rest) {
+		var attributes = {
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$class('interpolation'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$stroke(line.color),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$strokeWidth(
+						_elm_lang$core$Basics$toString(line.width)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$fill('transparent'),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		};
+		var interpolation = function () {
+			var _p5 = config.interpolation;
+			if (_p5.ctor === 'Linear') {
+				return _user$project$Svg_Internal_Interpolation$linear(
+					{ctor: '::', _0: first, _1: rest});
+			} else {
+				return _user$project$Svg_Internal_Interpolation$monotone(
+					{ctor: '::', _0: first, _1: rest});
+			}
+		}();
+		var commands = {
+			ctor: '::',
+			_0: _user$project$Svg_Internal_Path$Move(first),
+			_1: interpolation
+		};
+		return A3(_user$project$Svg_Internal_Path$view, system, attributes, commands);
+	});
+var _user$project$Svg_Lines$viewLines = F3(
+	function (config, system, line) {
+		var coordinate = function (datum) {
+			return A2(
+				_user$project$Svg_Internal_Path$Point,
+				config.x.variable(datum),
+				config.y.variable(datum));
+		};
+		var coordinates = A2(_elm_lang$core$List$map, coordinate, line.data);
+		var interpolation = A2(
+			_elm_lang$core$Maybe$withDefault,
+			_user$project$Svg_Lines$emptyInterpolation,
+			A2(
+				_user$project$Svg_Internal_Utils$withFirst,
+				coordinates,
+				A3(_user$project$Svg_Lines$viewInterpolation, config, system, line)));
+		var viewDots = function (dot) {
+			return A2(
+				_elm_lang$svg$Svg$g,
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$class('dots'),
+					_1: {ctor: '[]'}
+				},
+				A2(
+					_elm_lang$core$List$map,
+					A2(_user$project$Svg_Lines$viewDot, dot, system),
+					coordinates));
+		};
+		var dots = A2(
+			_elm_lang$core$Maybe$withDefault,
+			_user$project$Svg_Lines$emptyNode,
+			A2(_elm_lang$core$Maybe$map, viewDots, line.dot));
+		return A2(
+			_elm_lang$svg$Svg$g,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$class('line'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: interpolation,
+				_1: {
+					ctor: '::',
+					_0: dots,
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Svg_Lines$view = F2(
+	function (config, lines) {
+		var data = A2(
+			_elm_lang$core$List$concatMap,
+			function (_) {
+				return _.data;
+			},
+			lines);
+		var system = {
+			frame: config.frame,
+			x: A2(_user$project$Svg_Coordinate$limits, config.x.variable, data),
+			y: A2(_user$project$Svg_Coordinate$limits, config.y.variable, data)
+		};
+		var coordinates = A2(
+			_elm_lang$core$List$map,
+			function (datum) {
+				return A2(
+					_user$project$Svg_Internal_Path$Point,
+					config.x.variable(datum),
+					config.y.variable(datum));
+			},
+			data);
+		var junk = A3(_user$project$Svg_Internal_Junk$getLayers, config.junk, coordinates, system);
+		var container = function (plot) {
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '::', _0: plot, _1: junk.html});
+		};
+		return A2(
+			_elm_lang$svg$Svg$svg,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$width(
+					_elm_lang$core$Basics$toString(config.frame.size.width)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$height(
+						_elm_lang$core$Basics$toString(config.frame.size.height)),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$g,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$class('junk--below'),
+						_1: {ctor: '[]'}
+					},
+					junk.below),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$svg$Svg$g,
+						{
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$class('lines'),
+							_1: {ctor: '[]'}
+						},
+						A2(
+							_elm_lang$core$List$map,
+							A2(_user$project$Svg_Lines$viewLines, config, system),
+							lines)),
+					_1: {
+						ctor: '::',
+						_0: A2(_user$project$Svg_Internal_Axis$viewHorizontal, system, config.x.look),
+						_1: {
+							ctor: '::',
+							_0: A2(_user$project$Svg_Internal_Axis$viewVertical, system, config.y.look),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$svg$Svg$g,
+									{
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$class('junk--above'),
+										_1: {ctor: '[]'}
+									},
+									junk.above),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			});
+	});
+var _user$project$Svg_Lines$line = F2(
+	function (_p6, data) {
+		var _p7 = _p6;
+		return {dot: _p7.dot, color: _p7.color, width: _p7.width, data: data};
+	});
+var _user$project$Svg_Lines$Config = F5(
+	function (a, b, c, d, e) {
+		return {interpolation: a, frame: b, junk: c, x: d, y: e};
+	});
+var _user$project$Svg_Lines$Dot = F3(
+	function (a, b, c) {
+		return {radius: a, color: b, shape: c};
+	});
+var _user$project$Svg_Lines$Line = F4(
+	function (a, b, c, d) {
+		return {dot: a, color: b, width: c, data: d};
+	});
+var _user$project$Svg_Lines$Monotone = {ctor: 'Monotone'};
+var _user$project$Svg_Lines$Linear = {ctor: 'Linear'};
+var _user$project$Svg_Lines$Circle = {ctor: 'Circle'};
+var _user$project$Svg_Lines$defaultDot = {radius: 5, color: 'pink', shape: _user$project$Svg_Lines$Circle};
+var _user$project$Svg_Lines$Square = {ctor: 'Square'};
+var _user$project$Svg_Lines$Diamond = {ctor: 'Diamond'};
+var _user$project$Svg_Lines$Triangle = {ctor: 'Triangle'};

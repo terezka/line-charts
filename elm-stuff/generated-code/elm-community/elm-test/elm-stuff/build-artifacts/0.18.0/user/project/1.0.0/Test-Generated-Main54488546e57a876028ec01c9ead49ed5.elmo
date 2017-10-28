@@ -1,0 +1,35 @@
+var _user$project$Test_Generated_Main54488546e57a876028ec01c9ead49ed5$emit = _elm_lang$core$Native_Platform.outgoingPort(
+	'emit',
+	function (v) {
+		return [v._0, v._1];
+	});
+var _user$project$Test_Generated_Main54488546e57a876028ec01c9ead49ed5$main = A3(
+	_user$project$Test_Runner_Node$runWithOptions,
+	{
+		runs: _elm_lang$core$Maybe$Nothing,
+		reporter: _elm_lang$core$Maybe$Nothing,
+		seed: _elm_lang$core$Maybe$Nothing,
+		paths: {ctor: '[]'}
+	},
+	_user$project$Test_Generated_Main54488546e57a876028ec01c9ead49ed5$emit,
+	_elm_community$elm_test$Test$concat(
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_community$elm_test$Test$describe,
+				'Coordinates',
+				{
+					ctor: '::',
+					_0: _user$project$Coordinates$coordinates,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Coordinates$horizontal,
+						_1: {
+							ctor: '::',
+							_0: _user$project$Coordinates$vertical,
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		}))(_elm_lang$core$Json_Decode$value);

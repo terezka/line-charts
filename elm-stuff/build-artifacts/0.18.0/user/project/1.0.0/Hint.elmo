@@ -1,0 +1,269 @@
+var _user$project$Hint$transform = function (transformers) {
+	return _elm_lang$svg$Svg_Attributes$transform(
+		A2(_elm_lang$core$String$join, ', ', transformers));
+};
+var _user$project$Hint$translateWithOffset = F4(
+	function (system, _p0, offsetX, offsetY) {
+		var _p1 = _p0;
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'translate(',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(
+					A3(_user$project$Coordinate$toSVG, _user$project$Coordinate$X, system, _p1.x) + offsetX),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					', ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(
+							A3(_user$project$Coordinate$toSVG, _user$project$Coordinate$Y, system, _p1.y) + offsetY),
+						')'))));
+	});
+var _user$project$Hint$placeWithOffset = F4(
+	function (system, point, offsetX, offsetY) {
+		return _user$project$Hint$transform(
+			{
+				ctor: '::',
+				_0: A4(_user$project$Hint$translateWithOffset, system, point, offsetX, offsetY),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Hint$translate = F2(
+	function (system, _p2) {
+		var _p3 = _p2;
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'translate(',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(
+					A3(_user$project$Coordinate$toSVG, _user$project$Coordinate$X, system, _p3.x)),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					', ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(
+							A3(_user$project$Coordinate$toSVG, _user$project$Coordinate$Y, system, _p3.y)),
+						')'))));
+	});
+var _user$project$Hint$place = F2(
+	function (system, point) {
+		return _user$project$Hint$transform(
+			{
+				ctor: '::',
+				_0: A2(_user$project$Hint$translate, system, point),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Hint$viewJust = F2(
+	function (view, maybe) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$html$Html$text(''),
+			A2(_elm_lang$core$Maybe$map, view, maybe));
+	});
+var _user$project$Hint$junk = function (mouseCoordinates) {
+	return A2(
+		_user$project$Junk$withHint,
+		_user$project$Junk$findNearest(mouseCoordinates),
+		F2(
+			function (system, hint) {
+				var viewHint = function (hint) {
+					return A2(
+						_elm_lang$svg$Svg$g,
+						{
+							ctor: '::',
+							_0: A2(
+								_user$project$Hint$place,
+								system,
+								{x: hint.x, y: hint.y}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$svg$Svg$text_,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$svg$Svg$tspan,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													'( ',
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														_elm_lang$core$Basics$toString(hint.x),
+														A2(
+															_elm_lang$core$Basics_ops['++'],
+															', ',
+															A2(
+																_elm_lang$core$Basics_ops['++'],
+																_elm_lang$core$Basics$toString(hint.y),
+																' )'))))),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						});
+				};
+				return {
+					below: {ctor: '[]'},
+					above: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$core$Maybe$withDefault,
+							_elm_lang$html$Html$text(''),
+							A2(_elm_lang$core$Maybe$map, viewHint, hint)),
+						_1: {ctor: '[]'}
+					},
+					html: {ctor: '[]'}
+				};
+			}));
+};
+var _user$project$Hint$update = F2(
+	function (msg, model) {
+		var _p4 = msg;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{hovering: _p4._0});
+	});
+var _user$project$Hint$initialModel = {hovering: _elm_lang$core$Maybe$Nothing};
+var _user$project$Hint$Point = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _user$project$Hint$Model = function (a) {
+	return {hovering: a};
+};
+var _user$project$Hint$Data = F2(
+	function (a, b) {
+		return {magnesium: a, heartattacks: b};
+	});
+var _user$project$Hint$data = {
+	ctor: '::',
+	_0: A2(_user$project$Hint$Data, 1, 4),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$Hint$Data, 2, 7),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$Hint$Data, 3, 6),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$Hint$Data, 9, 3),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$Hint$data2 = {
+	ctor: '::',
+	_0: A2(_user$project$Hint$Data, 2, 2),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$Hint$Data, 3, 4),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$Hint$Data, 4, 6),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$Hint$Data, 5, 8),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$Hint$data3 = {
+	ctor: '::',
+	_0: A2(_user$project$Hint$Data, 2, 5),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$Hint$Data, 3, 2),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$Hint$Data, 4, 8),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$Hint$Data, 5, 4),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$Hint$Hover = function (a) {
+	return {ctor: 'Hover', _0: a};
+};
+var _user$project$Hint$view = function (model) {
+	return A2(
+		_user$project$Lines$view,
+		{
+			frame: A2(
+				_user$project$Coordinate$Frame,
+				A4(_user$project$Coordinate$Margin, 20, 20, 20, 20),
+				A2(_user$project$Coordinate$Size, 300, 300)),
+			attributes: {
+				ctor: '::',
+				_0: _user$project$Attributes$onMouseMove(
+					function (_p5) {
+						return _user$project$Hint$Hover(
+							_elm_lang$core$Maybe$Just(_p5));
+					}),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Attributes$onMouseLeave(
+						_user$project$Hint$Hover(_elm_lang$core$Maybe$Nothing)),
+					_1: {ctor: '[]'}
+				}
+			},
+			junk: A2(
+				_elm_lang$core$Maybe$withDefault,
+				_user$project$Junk$none,
+				A2(_elm_lang$core$Maybe$map, _user$project$Hint$junk, model.hovering)),
+			interpolation: _user$project$Lines$Monotone,
+			x: _user$project$Axis$defaultAxis(
+				function (_) {
+					return _.magnesium;
+				}),
+			y: _user$project$Axis$defaultAxis(
+				function (_) {
+					return _.heartattacks;
+				})
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_user$project$Lines$line,
+				{dot: _elm_lang$core$Maybe$Nothing, width: 1, color: 'green'},
+				_user$project$Hint$data),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_user$project$Lines$line,
+					{dot: _elm_lang$core$Maybe$Nothing, width: 2, color: 'blue'},
+					_user$project$Hint$data2),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_user$project$Lines$line,
+						{
+							dot: _elm_lang$core$Maybe$Just(_user$project$Lines$defaultDot),
+							width: 3,
+							color: 'pink'
+						},
+						_user$project$Hint$data3),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$Hint$main = _elm_lang$html$Html$beginnerProgram(
+	{model: _user$project$Hint$initialModel, update: _user$project$Hint$update, view: _user$project$Hint$view})();

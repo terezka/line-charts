@@ -1,0 +1,386 @@
+var _eeue56$elm_html_query$ElmHtml_Query$containsAll = F2(
+	function (a, b) {
+		return _elm_lang$core$List$isEmpty(
+			A3(
+				_elm_lang$core$List$foldl,
+				F2(
+					function (i, acc) {
+						return A2(
+							_elm_lang$core$List$filter,
+							F2(
+								function (x, y) {
+									return !_elm_lang$core$Native_Utils.eq(x, y);
+								})(i),
+							acc);
+					}),
+				a,
+				b));
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$classnames = function (facts) {
+	return A2(
+		_elm_lang$core$String$split,
+		' ',
+		A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			A2(_elm_lang$core$Dict$get, 'className', facts.stringAttributes)));
+};
+var _eeue56$elm_html_query$ElmHtml_Query$hasStyle = F2(
+	function (style, facts) {
+		return A2(
+			_eeue56$elm_html_query$ElmHtml_Query$containsAll,
+			style,
+			_elm_lang$core$Dict$toList(facts.styles));
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$hasClasses = F2(
+	function (classList, facts) {
+		return A2(
+			_eeue56$elm_html_query$ElmHtml_Query$containsAll,
+			classList,
+			_eeue56$elm_html_query$ElmHtml_Query$classnames(facts));
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$hasClass = F2(
+	function (query, facts) {
+		return A2(
+			_elm_lang$core$List$member,
+			query,
+			_eeue56$elm_html_query$ElmHtml_Query$classnames(facts));
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$hasBoolAttribute = F3(
+	function (attribute, value, facts) {
+		var _p0 = A2(_elm_lang$core$Dict$get, attribute, facts.boolAttributes);
+		if (_p0.ctor === 'Just') {
+			return _elm_lang$core$Native_Utils.eq(_p0._0, value);
+		} else {
+			return false;
+		}
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$hasAttribute = F3(
+	function (attribute, query, facts) {
+		var _p1 = A2(_elm_lang$core$Dict$get, attribute, facts.stringAttributes);
+		if (_p1.ctor === 'Just') {
+			return _elm_lang$core$Native_Utils.eq(_p1._0, query);
+		} else {
+			return false;
+		}
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$predicateFromSelector = F2(
+	function (selector, html) {
+		var _p2 = html;
+		switch (_p2.ctor) {
+			case 'NodeEntry':
+				return A2(_eeue56$elm_html_query$ElmHtml_Query$nodeRecordPredicate, selector, _p2._0);
+			case 'MarkdownNode':
+				return A2(_eeue56$elm_html_query$ElmHtml_Query$markdownPredicate, selector, _p2._0);
+			default:
+				return false;
+		}
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$markdownPredicate = function (selector) {
+	var _p3 = selector;
+	switch (_p3.ctor) {
+		case 'Id':
+			return function (_p4) {
+				return A3(
+					_eeue56$elm_html_query$ElmHtml_Query$hasAttribute,
+					'id',
+					_p3._0,
+					function (_) {
+						return _.facts;
+					}(_p4));
+			};
+		case 'ClassName':
+			return function (_p5) {
+				return A2(
+					_eeue56$elm_html_query$ElmHtml_Query$hasClass,
+					_p3._0,
+					function (_) {
+						return _.facts;
+					}(_p5));
+			};
+		case 'ClassList':
+			return function (_p6) {
+				return A2(
+					_eeue56$elm_html_query$ElmHtml_Query$hasClasses,
+					_p3._0,
+					function (_) {
+						return _.facts;
+					}(_p6));
+			};
+		case 'Tag':
+			return _elm_lang$core$Basics$always(false);
+		case 'Attribute':
+			return function (_p7) {
+				return A3(
+					_eeue56$elm_html_query$ElmHtml_Query$hasAttribute,
+					_p3._0,
+					_p3._1,
+					function (_) {
+						return _.facts;
+					}(_p7));
+			};
+		case 'BoolAttribute':
+			return function (_p8) {
+				return A3(
+					_eeue56$elm_html_query$ElmHtml_Query$hasBoolAttribute,
+					_p3._0,
+					_p3._1,
+					function (_) {
+						return _.facts;
+					}(_p8));
+			};
+		case 'Style':
+			return function (_p9) {
+				return A2(
+					_eeue56$elm_html_query$ElmHtml_Query$hasStyle,
+					_p3._0,
+					function (_) {
+						return _.facts;
+					}(_p9));
+			};
+		case 'ContainsText':
+			return function (_p10) {
+				return A2(
+					_elm_lang$core$String$contains,
+					_p3._0,
+					function (_) {
+						return _.markdown;
+					}(
+						function (_) {
+							return _.model;
+						}(_p10)));
+			};
+		default:
+			return function (_p11) {
+				return A2(
+					_eeue56$elm_html_query$ElmHtml_Query$hasAllSelectors,
+					_p3._0,
+					_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$MarkdownNode(_p11));
+			};
+	}
+};
+var _eeue56$elm_html_query$ElmHtml_Query$hasAllSelectors = F2(
+	function (selectors, record) {
+		return A2(
+			_elm_lang$core$List$all,
+			_elm_lang$core$Basics$identity,
+			A2(
+				_elm_lang$core$List$map,
+				function (selector) {
+					return selector(record);
+				},
+				A2(_elm_lang$core$List$map, _eeue56$elm_html_query$ElmHtml_Query$predicateFromSelector, selectors)));
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$nodeRecordPredicate = function (selector) {
+	var _p12 = selector;
+	switch (_p12.ctor) {
+		case 'Id':
+			return function (_p13) {
+				return A3(
+					_eeue56$elm_html_query$ElmHtml_Query$hasAttribute,
+					'id',
+					_p12._0,
+					function (_) {
+						return _.facts;
+					}(_p13));
+			};
+		case 'ClassName':
+			return function (_p14) {
+				return A2(
+					_eeue56$elm_html_query$ElmHtml_Query$hasClass,
+					_p12._0,
+					function (_) {
+						return _.facts;
+					}(_p14));
+			};
+		case 'ClassList':
+			return function (_p15) {
+				return A2(
+					_eeue56$elm_html_query$ElmHtml_Query$hasClasses,
+					_p12._0,
+					function (_) {
+						return _.facts;
+					}(_p15));
+			};
+		case 'Tag':
+			return function (_p16) {
+				return A2(
+					F2(
+						function (x, y) {
+							return _elm_lang$core$Native_Utils.eq(x, y);
+						}),
+					_p12._0,
+					function (_) {
+						return _.tag;
+					}(_p16));
+			};
+		case 'Attribute':
+			return function (_p17) {
+				return A3(
+					_eeue56$elm_html_query$ElmHtml_Query$hasAttribute,
+					_p12._0,
+					_p12._1,
+					function (_) {
+						return _.facts;
+					}(_p17));
+			};
+		case 'BoolAttribute':
+			return function (_p18) {
+				return A3(
+					_eeue56$elm_html_query$ElmHtml_Query$hasBoolAttribute,
+					_p12._0,
+					_p12._1,
+					function (_) {
+						return _.facts;
+					}(_p18));
+			};
+		case 'Style':
+			return function (_p19) {
+				return A2(
+					_eeue56$elm_html_query$ElmHtml_Query$hasStyle,
+					_p12._0,
+					function (_) {
+						return _.facts;
+					}(_p19));
+			};
+		case 'ContainsText':
+			return _elm_lang$core$Basics$always(false);
+		default:
+			return function (_p20) {
+				return A2(
+					_eeue56$elm_html_query$ElmHtml_Query$hasAllSelectors,
+					_p12._0,
+					_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NodeEntry(_p20));
+			};
+	}
+};
+var _eeue56$elm_html_query$ElmHtml_Query$queryInNodeHelp = F3(
+	function (maxDescendantDepth, selector, node) {
+		var _p21 = node;
+		switch (_p21.ctor) {
+			case 'NodeEntry':
+				var childEntries = A3(_eeue56$elm_html_query$ElmHtml_Query$descendInQuery, maxDescendantDepth, selector, _p21._0.children);
+				return A2(_eeue56$elm_html_query$ElmHtml_Query$predicateFromSelector, selector, node) ? {ctor: '::', _0: node, _1: childEntries} : childEntries;
+			case 'TextTag':
+				var _p22 = selector;
+				if (_p22.ctor === 'ContainsText') {
+					return A2(_elm_lang$core$String$contains, _p22._0, _p21._0.text) ? {
+						ctor: '::',
+						_0: node,
+						_1: {ctor: '[]'}
+					} : {ctor: '[]'};
+				} else {
+					return {ctor: '[]'};
+				}
+			case 'MarkdownNode':
+				return A2(_eeue56$elm_html_query$ElmHtml_Query$predicateFromSelector, selector, node) ? {
+					ctor: '::',
+					_0: node,
+					_1: {ctor: '[]'}
+				} : {ctor: '[]'};
+			default:
+				return {ctor: '[]'};
+		}
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$descendInQuery = F3(
+	function (maxDescendantDepth, selector, children) {
+		var _p23 = maxDescendantDepth;
+		if (_p23.ctor === 'Nothing') {
+			return A2(
+				_elm_lang$core$List$concatMap,
+				A2(_eeue56$elm_html_query$ElmHtml_Query$queryInNodeHelp, _elm_lang$core$Maybe$Nothing, selector),
+				children);
+		} else {
+			var _p24 = _p23._0;
+			return (_elm_lang$core$Native_Utils.cmp(_p24, 0) > 0) ? A2(
+				_elm_lang$core$List$concatMap,
+				A2(
+					_eeue56$elm_html_query$ElmHtml_Query$queryInNodeHelp,
+					_elm_lang$core$Maybe$Just(_p24 - 1),
+					selector),
+				children) : {ctor: '[]'};
+		}
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$getChildren = function (elmHtml) {
+	var _p25 = elmHtml;
+	if (_p25.ctor === 'NodeEntry') {
+		return _p25._0.children;
+	} else {
+		return {ctor: '[]'};
+	}
+};
+var _eeue56$elm_html_query$ElmHtml_Query$queryChildren = _eeue56$elm_html_query$ElmHtml_Query$queryInNodeHelp(
+	_elm_lang$core$Maybe$Just(1));
+var _eeue56$elm_html_query$ElmHtml_Query$queryInNode = _eeue56$elm_html_query$ElmHtml_Query$queryInNodeHelp(_elm_lang$core$Maybe$Nothing);
+var _eeue56$elm_html_query$ElmHtml_Query$query = function (selector) {
+	return _eeue56$elm_html_query$ElmHtml_Query$queryInNode(selector);
+};
+var _eeue56$elm_html_query$ElmHtml_Query$Multiple = function (a) {
+	return {ctor: 'Multiple', _0: a};
+};
+var _eeue56$elm_html_query$ElmHtml_Query$queryAll = function (selectors) {
+	return _eeue56$elm_html_query$ElmHtml_Query$query(
+		_eeue56$elm_html_query$ElmHtml_Query$Multiple(selectors));
+};
+var _eeue56$elm_html_query$ElmHtml_Query$queryChildrenAll = function (selectors) {
+	return A2(
+		_eeue56$elm_html_query$ElmHtml_Query$queryInNodeHelp,
+		_elm_lang$core$Maybe$Just(1),
+		_eeue56$elm_html_query$ElmHtml_Query$Multiple(selectors));
+};
+var _eeue56$elm_html_query$ElmHtml_Query$ContainsText = function (a) {
+	return {ctor: 'ContainsText', _0: a};
+};
+var _eeue56$elm_html_query$ElmHtml_Query$Style = function (a) {
+	return {ctor: 'Style', _0: a};
+};
+var _eeue56$elm_html_query$ElmHtml_Query$queryByStyle = function (style) {
+	return _eeue56$elm_html_query$ElmHtml_Query$query(
+		_eeue56$elm_html_query$ElmHtml_Query$Style(style));
+};
+var _eeue56$elm_html_query$ElmHtml_Query$BoolAttribute = F2(
+	function (a, b) {
+		return {ctor: 'BoolAttribute', _0: a, _1: b};
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$queryByBoolAttribute = F2(
+	function (key, value) {
+		return _eeue56$elm_html_query$ElmHtml_Query$query(
+			A2(_eeue56$elm_html_query$ElmHtml_Query$BoolAttribute, key, value));
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$Attribute = F2(
+	function (a, b) {
+		return {ctor: 'Attribute', _0: a, _1: b};
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$queryByAttribute = F2(
+	function (key, value) {
+		return _eeue56$elm_html_query$ElmHtml_Query$query(
+			A2(_eeue56$elm_html_query$ElmHtml_Query$Attribute, key, value));
+	});
+var _eeue56$elm_html_query$ElmHtml_Query$Tag = function (a) {
+	return {ctor: 'Tag', _0: a};
+};
+var _eeue56$elm_html_query$ElmHtml_Query$queryByTagName = function (tagname) {
+	return _eeue56$elm_html_query$ElmHtml_Query$query(
+		_eeue56$elm_html_query$ElmHtml_Query$Tag(tagname));
+};
+var _eeue56$elm_html_query$ElmHtml_Query$ClassList = function (a) {
+	return {ctor: 'ClassList', _0: a};
+};
+var _eeue56$elm_html_query$ElmHtml_Query$queryByClassList = function (classList) {
+	return _eeue56$elm_html_query$ElmHtml_Query$query(
+		_eeue56$elm_html_query$ElmHtml_Query$ClassList(classList));
+};
+var _eeue56$elm_html_query$ElmHtml_Query$ClassName = function (a) {
+	return {ctor: 'ClassName', _0: a};
+};
+var _eeue56$elm_html_query$ElmHtml_Query$queryByClassName = function (classname) {
+	return _eeue56$elm_html_query$ElmHtml_Query$query(
+		_eeue56$elm_html_query$ElmHtml_Query$ClassName(classname));
+};
+var _eeue56$elm_html_query$ElmHtml_Query$Id = function (a) {
+	return {ctor: 'Id', _0: a};
+};
+var _eeue56$elm_html_query$ElmHtml_Query$queryById = function (id) {
+	return _eeue56$elm_html_query$ElmHtml_Query$query(
+		_eeue56$elm_html_query$ElmHtml_Query$Id(id));
+};

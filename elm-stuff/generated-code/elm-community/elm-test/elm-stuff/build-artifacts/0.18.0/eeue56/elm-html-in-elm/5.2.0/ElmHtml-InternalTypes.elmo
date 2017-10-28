@@ -1,0 +1,616 @@
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$escapableRawTextElements = {
+	ctor: '::',
+	_0: 'textarea',
+	_1: {
+		ctor: '::',
+		_0: 'title',
+		_1: {ctor: '[]'}
+	}
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$rawTextElements = {
+	ctor: '::',
+	_0: 'script',
+	_1: {
+		ctor: '::',
+		_0: 'style',
+		_1: {ctor: '[]'}
+	}
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$voidElements = {
+	ctor: '::',
+	_0: 'area',
+	_1: {
+		ctor: '::',
+		_0: 'base',
+		_1: {
+			ctor: '::',
+			_0: 'br',
+			_1: {
+				ctor: '::',
+				_0: 'col',
+				_1: {
+					ctor: '::',
+					_0: 'embed',
+					_1: {
+						ctor: '::',
+						_0: 'hr',
+						_1: {
+							ctor: '::',
+							_0: 'img',
+							_1: {
+								ctor: '::',
+								_0: 'input',
+								_1: {
+									ctor: '::',
+									_0: 'link',
+									_1: {
+										ctor: '::',
+										_0: 'meta',
+										_1: {
+											ctor: '::',
+											_0: 'param',
+											_1: {
+												ctor: '::',
+												_0: 'source',
+												_1: {
+													ctor: '::',
+													_0: 'track',
+													_1: {
+														ctor: '::',
+														_0: 'wbr',
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$elmListDecoderHelp = F2(
+	function (itemDecoder, items) {
+		return A2(
+			_elm_lang$core$Json_Decode$andThen,
+			function (ctor) {
+				var _p0 = ctor;
+				switch (_p0) {
+					case '[]':
+						return _elm_lang$core$Json_Decode$succeed(items);
+					case '::':
+						return A2(
+							_elm_lang$core$Json_Decode$andThen,
+							function (value) {
+								return A2(
+									_elm_lang$core$Json_Decode$field,
+									'_1',
+									A2(
+										_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$elmListDecoderHelp,
+										itemDecoder,
+										{ctor: '::', _0: value, _1: items}));
+							},
+							A2(_elm_lang$core$Json_Decode$field, '_0', itemDecoder));
+					default:
+						return _elm_lang$core$Json_Decode$fail(
+							A2(_elm_lang$core$Basics_ops['++'], 'Unrecognized constructor for an Elm List: ', ctor));
+				}
+			},
+			A2(_elm_lang$core$Json_Decode$field, 'ctor', _elm_lang$core$Json_Decode$string));
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$elmListDecoder = function (itemDecoder) {
+	return A2(
+		_elm_lang$core$Json_Decode$map,
+		_elm_lang$core$List$reverse,
+		A2(
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$elmListDecoderHelp,
+			itemDecoder,
+			{ctor: '[]'}));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeOptions = A3(
+	_elm_lang$core$Json_Decode$map2,
+	_elm_lang$html$Html_Events$Options,
+	A2(_elm_lang$core$Json_Decode$field, 'stopPropagation', _elm_lang$core$Json_Decode$bool),
+	A2(_elm_lang$core$Json_Decode$field, 'preventDefault', _elm_lang$core$Json_Decode$bool));
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$emptyFacts = {styles: _elm_lang$core$Dict$empty, events: _elm_lang$core$Dict$empty, attributeNamespace: _elm_lang$core$Maybe$Nothing, stringAttributes: _elm_lang$core$Dict$empty, boolAttributes: _elm_lang$core$Dict$empty};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeEvents = function (taggedEventDecoder) {
+	return _elm_lang$core$Json_Decode$oneOf(
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$core$Json_Decode$field,
+				_eeue56$elm_html_in_elm$ElmHtml_Constants$eventKey,
+				_elm_lang$core$Json_Decode$dict(
+					A2(_elm_lang$core$Json_Decode$map, taggedEventDecoder, _elm_lang$core$Json_Decode$value))),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Dict$empty),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeDictFilterMap = function (decoder) {
+	return A2(
+		_elm_lang$core$Json_Decode$map,
+		function (_p1) {
+			return _elm_lang$core$Dict$fromList(
+				A2(
+					_elm_lang$core$List$filterMap,
+					function (_p2) {
+						var _p3 = _p2;
+						var _p4 = A2(_elm_lang$core$Json_Decode$decodeValue, decoder, _p3._1);
+						if (_p4.ctor === 'Err') {
+							return _elm_lang$core$Maybe$Nothing;
+						} else {
+							return _elm_lang$core$Maybe$Just(
+								{ctor: '_Tuple2', _0: _p3._0, _1: _p4._0});
+						}
+					},
+					_elm_lang$core$Dict$toList(_p1)));
+		},
+		_elm_lang$core$Json_Decode$dict(_elm_lang$core$Json_Decode$value));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeAttributes = function (decoder) {
+	return _elm_lang$core$Json_Decode$oneOf(
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$core$Json_Decode$field,
+				_eeue56$elm_html_in_elm$ElmHtml_Constants$attributeKey,
+				_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeDictFilterMap(decoder)),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Dict$empty),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeOthers = function (otherDecoder) {
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (attributes) {
+			return A2(
+				_elm_lang$core$Json_Decode$map,
+				function (_p5) {
+					return A2(
+						_elm_lang$core$Dict$union,
+						attributes,
+						_eeue56$elm_html_in_elm$ElmHtml_Helpers$filterKnownKeys(_p5));
+				},
+				_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeDictFilterMap(otherDecoder));
+		},
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeAttributes(otherDecoder));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$encodeStyles = function (stylesDict) {
+	var encodedDict = A2(
+		_elm_lang$core$List$map,
+		function (_p6) {
+			var _p7 = _p6;
+			return {
+				ctor: '_Tuple2',
+				_0: _p7._0,
+				_1: _elm_lang$core$Json_Encode$string(_p7._1)
+			};
+		},
+		_elm_lang$core$Dict$toList(stylesDict));
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: _eeue56$elm_html_in_elm$ElmHtml_Constants$styleKey,
+				_1: _elm_lang$core$Json_Encode$object(encodedDict)
+			},
+			_1: {ctor: '[]'}
+		});
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeStyles = _elm_lang$core$Json_Decode$oneOf(
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$core$Json_Decode$field,
+			_eeue56$elm_html_in_elm$ElmHtml_Constants$styleKey,
+			_elm_lang$core$Json_Decode$dict(_elm_lang$core$Json_Decode$string)),
+		_1: {
+			ctor: '::',
+			_0: _elm_lang$core$Json_Decode$succeed(_elm_lang$core$Dict$empty),
+			_1: {ctor: '[]'}
+		}
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$encodeNodeRecord = function (record) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'tag',
+				_1: _elm_lang$core$Json_Encode$string(record.tag)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'descendantsCount',
+					_1: _elm_lang$core$Json_Encode$int(record.descendantsCount)
+				},
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$encodeTextTag = function (_p8) {
+	var _p9 = _p8;
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'text',
+				_1: _elm_lang$core$Json_Encode$string(_p9.text)
+			},
+			_1: {ctor: '[]'}
+		});
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeTextTag = A2(
+	_elm_lang$core$Json_Decode$field,
+	'text',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (text) {
+			return _elm_lang$core$Json_Decode$succeed(
+				{text: text});
+		},
+		_elm_lang$core$Json_Decode$string));
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$TextTagRecord = function (a) {
+	return {text: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NodeRecord = F4(
+	function (a, b, c, d) {
+		return {tag: a, children: b, facts: c, descendantsCount: d};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$MarkdownNodeRecord = F2(
+	function (a, b) {
+		return {facts: a, model: b};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$CustomNodeRecord = F2(
+	function (a, b) {
+		return {facts: a, model: b};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Facts = F5(
+	function (a, b, c, d, e) {
+		return {styles: a, events: b, attributeNamespace: c, stringAttributes: d, boolAttributes: e};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeFacts = function (_p10) {
+	var _p11 = _p10;
+	return A6(
+		_elm_lang$core$Json_Decode$map5,
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Facts,
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeStyles,
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeEvents(
+			_p11._1(_p11._0)),
+		_elm_lang$core$Json_Decode$maybe(
+			A2(_elm_lang$core$Json_Decode$field, _eeue56$elm_html_in_elm$ElmHtml_Constants$attributeNamespaceKey, _elm_lang$core$Json_Decode$value)),
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeOthers(_elm_lang$core$Json_Decode$string),
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeOthers(_elm_lang$core$Json_Decode$bool));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeCustomNodeRecord = function (context) {
+	return A3(
+		_elm_lang$core$Json_Decode$map2,
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$CustomNodeRecord,
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'facts',
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeFacts(context)),
+		A2(_elm_lang$core$Json_Decode$field, 'model', _elm_lang$core$Json_Decode$value));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeMarkdownNodeRecord = function (context) {
+	return A3(
+		_elm_lang$core$Json_Decode$map2,
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$MarkdownNodeRecord,
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'facts',
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeFacts(context)),
+		A2(_elm_lang$core$Json_Decode$field, 'model', _eeue56$elm_html_in_elm$ElmHtml_Markdown$decodeMarkdownModel));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$AttributeRecord = F2(
+	function (a, b) {
+		return {key: a, value: b};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NamespacedAttributeRecord = F3(
+	function (a, b, c) {
+		return {key: a, value: b, namespace: c};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$PropertyRecord = F2(
+	function (a, b) {
+		return {key: a, value: b};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$EventRecord = F3(
+	function (a, b, c) {
+		return {key: a, decoder: b, options: c};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NoOp = {ctor: 'NoOp'};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$MarkdownNode = function (a) {
+	return {ctor: 'MarkdownNode', _0: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$CustomNode = function (a) {
+	return {ctor: 'CustomNode', _0: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeCustomNode = function (context) {
+	return _elm_lang$core$Json_Decode$oneOf(
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$core$Json_Decode$map,
+				_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$MarkdownNode,
+				_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeMarkdownNodeRecord(context)),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$core$Json_Decode$map,
+					_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$CustomNode,
+					_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeCustomNodeRecord(context)),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NodeEntry = function (a) {
+	return {ctor: 'NodeEntry', _0: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$TextTag = function (a) {
+	return {ctor: 'TextTag', _0: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NormalElements = {ctor: 'NormalElements'};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$ForeignElements = {ctor: 'ForeignElements'};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$EscapableRawTextElements = {ctor: 'EscapableRawTextElements'};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$RawTextElements = {ctor: 'RawTextElements'};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$VoidElements = {ctor: 'VoidElements'};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$toElementKind = function (element) {
+	return A2(_elm_lang$core$List$member, element, _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$voidElements) ? _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$VoidElements : (A2(_elm_lang$core$List$member, element, _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$rawTextElements) ? _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$RawTextElements : (A2(_elm_lang$core$List$member, element, _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$escapableRawTextElements) ? _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$EscapableRawTextElements : _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NormalElements));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$HtmlContext = F2(
+	function (a, b) {
+		return {ctor: 'HtmlContext', _0: a, _1: b};
+	});
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeTagger = function (_p12) {
+	var _p13 = _p12;
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (tagger) {
+			var nodeDecoder = _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$contextDecodeElmHtml(
+				A2(
+					_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$HtmlContext,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_p13._0,
+						{
+							ctor: '::',
+							_0: tagger,
+							_1: {ctor: '[]'}
+						}),
+					_p13._1));
+			return _elm_lang$core$Json_Decode$oneOf(
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$core$Json_Decode$at,
+						{
+							ctor: '::',
+							_0: 'node',
+							_1: {ctor: '[]'}
+						},
+						nodeDecoder),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$core$Json_Decode$at,
+							{
+								ctor: '::',
+								_0: 'text',
+								_1: {ctor: '[]'}
+							},
+							nodeDecoder),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$core$Json_Decode$at,
+								{
+									ctor: '::',
+									_0: 'custom',
+									_1: {ctor: '[]'}
+								},
+								nodeDecoder),
+							_1: {ctor: '[]'}
+						}
+					}
+				});
+		},
+		A2(_elm_lang$core$Json_Decode$field, 'tagger', _elm_lang$core$Json_Decode$value));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$contextDecodeElmHtml = function (context) {
+	return A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (typeString) {
+			var _p14 = typeString;
+			switch (_p14) {
+				case 'text':
+					return A2(_elm_lang$core$Json_Decode$map, _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$TextTag, _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeTextTag);
+				case 'keyed-node':
+					return A2(
+						_elm_lang$core$Json_Decode$map,
+						_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NodeEntry,
+						_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeKeyedNode(context));
+				case 'node':
+					return A2(
+						_elm_lang$core$Json_Decode$map,
+						_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NodeEntry,
+						_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeNode(context));
+				case 'custom':
+					return _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeCustomNode(context);
+				case 'tagger':
+					return _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeTagger(context);
+				case 'thunk':
+					return A2(
+						_elm_lang$core$Json_Decode$field,
+						'node',
+						_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$contextDecodeElmHtml(context));
+				default:
+					return _elm_lang$core$Json_Decode$fail(
+						A2(_elm_lang$core$Basics_ops['++'], 'No such type as ', typeString));
+			}
+		},
+		A2(_elm_lang$core$Json_Decode$field, 'type', _elm_lang$core$Json_Decode$string));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeKeyedNode = function (context) {
+	var decodeSecondNode = A2(
+		_elm_lang$core$Json_Decode$field,
+		'_1',
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$contextDecodeElmHtml(context));
+	return A5(
+		_elm_lang$core$Json_Decode$map4,
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NodeRecord,
+		A2(_elm_lang$core$Json_Decode$field, 'tag', _elm_lang$core$Json_Decode$string),
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'children',
+			_elm_lang$core$Json_Decode$list(decodeSecondNode)),
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'facts',
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeFacts(context)),
+		A2(_elm_lang$core$Json_Decode$field, 'descendantsCount', _elm_lang$core$Json_Decode$int));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeNode = function (context) {
+	return A5(
+		_elm_lang$core$Json_Decode$map4,
+		_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NodeRecord,
+		A2(_elm_lang$core$Json_Decode$field, 'tag', _elm_lang$core$Json_Decode$string),
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'children',
+			_elm_lang$core$Json_Decode$list(
+				_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$contextDecodeElmHtml(context))),
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'facts',
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeFacts(context)),
+		A2(_elm_lang$core$Json_Decode$field, 'descendantsCount', _elm_lang$core$Json_Decode$int));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeElmHtml = function (eventDecoder) {
+	return _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$contextDecodeElmHtml(
+		A2(
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$HtmlContext,
+			{ctor: '[]'},
+			eventDecoder));
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Event = function (a) {
+	return {ctor: 'Event', _0: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Styles = function (a) {
+	return {ctor: 'Styles', _0: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Property = function (a) {
+	return {ctor: 'Property', _0: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NamespacedAttribute = function (a) {
+	return {ctor: 'NamespacedAttribute', _0: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Attribute = function (a) {
+	return {ctor: 'Attribute', _0: a};
+};
+var _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeAttribute = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (key) {
+		return _elm_lang$core$Native_Utils.eq(key, _eeue56$elm_html_in_elm$ElmHtml_Constants$attributeKey) ? A2(
+			_elm_lang$core$Json_Decode$map,
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Attribute,
+			A3(
+				_elm_lang$core$Json_Decode$map2,
+				_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$AttributeRecord,
+				A2(_elm_lang$core$Json_Decode$field, 'realKey', _elm_lang$core$Json_Decode$string),
+				A2(_elm_lang$core$Json_Decode$field, 'value', _elm_lang$core$Json_Decode$string))) : (_elm_lang$core$Native_Utils.eq(key, _eeue56$elm_html_in_elm$ElmHtml_Constants$attributeNamespaceKey) ? A2(
+			_elm_lang$core$Json_Decode$map,
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NamespacedAttribute,
+			A4(
+				_elm_lang$core$Json_Decode$map3,
+				_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$NamespacedAttributeRecord,
+				A2(_elm_lang$core$Json_Decode$field, 'realKey', _elm_lang$core$Json_Decode$string),
+				A2(
+					_elm_lang$core$Json_Decode$at,
+					{
+						ctor: '::',
+						_0: 'value',
+						_1: {
+							ctor: '::',
+							_0: 'value',
+							_1: {ctor: '[]'}
+						}
+					},
+					_elm_lang$core$Json_Decode$string),
+				A2(
+					_elm_lang$core$Json_Decode$at,
+					{
+						ctor: '::',
+						_0: 'value',
+						_1: {
+							ctor: '::',
+							_0: 'namespace',
+							_1: {ctor: '[]'}
+						}
+					},
+					_elm_lang$core$Json_Decode$string))) : (_elm_lang$core$Native_Utils.eq(key, _eeue56$elm_html_in_elm$ElmHtml_Constants$styleKey) ? A2(
+			_elm_lang$core$Json_Decode$map,
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Styles,
+			A2(
+				_elm_lang$core$Json_Decode$field,
+				'value',
+				_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$elmListDecoder(
+					A3(
+						_elm_lang$core$Json_Decode$map2,
+						F2(
+							function (v0, v1) {
+								return {ctor: '_Tuple2', _0: v0, _1: v1};
+							}),
+						A2(_elm_lang$core$Json_Decode$field, '_0', _elm_lang$core$Json_Decode$string),
+						A2(_elm_lang$core$Json_Decode$field, '_1', _elm_lang$core$Json_Decode$string))))) : (_elm_lang$core$Native_Utils.eq(key, _eeue56$elm_html_in_elm$ElmHtml_Constants$eventKey) ? A2(
+			_elm_lang$core$Json_Decode$map,
+			_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Event,
+			A4(
+				_elm_lang$core$Json_Decode$map3,
+				_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$EventRecord,
+				A2(_elm_lang$core$Json_Decode$field, 'realKey', _elm_lang$core$Json_Decode$string),
+				A2(
+					_elm_lang$core$Json_Decode$at,
+					{
+						ctor: '::',
+						_0: 'value',
+						_1: {
+							ctor: '::',
+							_0: 'decoder',
+							_1: {ctor: '[]'}
+						}
+					},
+					_elm_lang$core$Json_Decode$value),
+				A2(
+					_elm_lang$core$Json_Decode$at,
+					{
+						ctor: '::',
+						_0: 'value',
+						_1: {
+							ctor: '::',
+							_0: 'options',
+							_1: {ctor: '[]'}
+						}
+					},
+					_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$decodeOptions))) : A2(
+			_elm_lang$core$Json_Decode$map,
+			function (_p15) {
+				return _eeue56$elm_html_in_elm$ElmHtml_InternalTypes$Property(
+					A2(_eeue56$elm_html_in_elm$ElmHtml_InternalTypes$PropertyRecord, key, _p15));
+			},
+			A2(_elm_lang$core$Json_Decode$field, 'value', _elm_lang$core$Json_Decode$value)))));
+	},
+	A2(_elm_lang$core$Json_Decode$field, 'key', _elm_lang$core$Json_Decode$string));

@@ -1,0 +1,175 @@
+var _user$project$Example$yAxis = {
+	direction: _user$project$Svg_Coordinates$Vertical,
+	bounds: A2(_user$project$Svg_Coordinates$Bounds, 0, 10)
+};
+var _user$project$Example$xAxis = {
+	direction: _user$project$Svg_Coordinates$Horizontal,
+	bounds: A2(_user$project$Svg_Coordinates$Bounds, 0, 10)
+};
+var _user$project$Example$frame = {
+	margin: A4(_user$project$Svg_Coordinates$Margin, 0, 0, 0, 0),
+	size: A2(_user$project$Svg_Coordinates$Size, 100, 100)
+};
+var _user$project$Example$coordinates = A2(
+	_elm_community$elm_test$Test$describe,
+	'Cartesian translation',
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_community$elm_test$Test$test,
+			'toSvg - horizontal',
+			function (_p0) {
+				var _p1 = _p0;
+				return A2(
+					_elm_community$elm_test$Expect$equal,
+					28,
+					A3(_user$project$Svg_Coordinates$toSvg, _user$project$Example$frame, _user$project$Example$xAxis, 1));
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_community$elm_test$Test$test,
+				'toSvg - vertical',
+				function (_p2) {
+					var _p3 = _p2;
+					return A2(
+						_elm_community$elm_test$Expect$equal,
+						90,
+						A3(_user$project$Svg_Coordinates$toSvg, _user$project$Example$frame, _user$project$Example$yAxis, 1));
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_community$elm_test$Test$test,
+					'toSvg - horizontal with lower margin',
+					function (_p4) {
+						var _p5 = _p4;
+						return A2(
+							_elm_community$elm_test$Expect$equal,
+							28,
+							A3(
+								_user$project$Svg_Coordinates$toSvg,
+								_elm_lang$core$Native_Utils.update(
+									_user$project$Example$frame,
+									{
+										margin: A4(_user$project$Svg_Coordinates$Margin, 0, 0, 0, 20)
+									}),
+								_user$project$Example$xAxis,
+								1));
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_community$elm_test$Test$test,
+						'toSvg - horizontal with upper margin',
+						function (_p6) {
+							var _p7 = _p6;
+							return A2(
+								_elm_community$elm_test$Expect$equal,
+								8,
+								A3(
+									_user$project$Svg_Coordinates$toSvg,
+									_elm_lang$core$Native_Utils.update(
+										_user$project$Example$frame,
+										{
+											margin: A4(_user$project$Svg_Coordinates$Margin, 0, 20, 0, 0)
+										}),
+									_user$project$Example$xAxis,
+									1));
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_community$elm_test$Test$test,
+							'toSvg - vertical with lower margin',
+							function (_p8) {
+								var _p9 = _p8;
+								return A2(
+									_elm_community$elm_test$Expect$equal,
+									92,
+									A3(
+										_user$project$Svg_Coordinates$toSvg,
+										_elm_lang$core$Native_Utils.update(
+											_user$project$Example$frame,
+											{
+												margin: A4(_user$project$Svg_Coordinates$Margin, 0, 0, 20, 0)
+											}),
+										_user$project$Example$yAxis,
+										1));
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_community$elm_test$Test$test,
+								'toSvg - vertical with upper margin',
+								function (_p10) {
+									var _p11 = _p10;
+									return A2(
+										_elm_community$elm_test$Expect$equal,
+										90,
+										A3(
+											_user$project$Svg_Coordinates$toSvg,
+											_elm_lang$core$Native_Utils.update(
+												_user$project$Example$frame,
+												{
+													margin: A4(_user$project$Svg_Coordinates$Margin, 20, 0, 0, 0)
+												}),
+											_user$project$Example$yAxis,
+											1));
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_community$elm_test$Test$test,
+									'Length should default to 1',
+									function (_p12) {
+										var _p13 = _p12;
+										return A2(
+											_elm_community$elm_test$Expect$equal,
+											0.9,
+											A3(
+												_user$project$Svg_Coordinates$toSvg,
+												_elm_lang$core$Native_Utils.update(
+													_user$project$Example$frame,
+													{
+														size: A2(_user$project$Svg_Coordinates$Size, 0, 0)
+													}),
+												_user$project$Example$yAxis,
+												1));
+									}),
+								_1: {
+									ctor: '::',
+									_0: A3(
+										_elm_community$elm_test$Test$fuzz,
+										_elm_community$elm_test$Fuzz$float,
+										'x-coordinate produced should always be a number',
+										function (number) {
+											return A2(
+												_elm_community$elm_test$Expect$false,
+												'Coordinate should always be a number!',
+												_elm_lang$core$Basics$isNaN(
+													A3(_user$project$Svg_Coordinates$toSvg, _user$project$Example$frame, _user$project$Example$xAxis, number)));
+										}),
+									_1: {
+										ctor: '::',
+										_0: A3(
+											_elm_community$elm_test$Test$fuzz,
+											_elm_community$elm_test$Fuzz$float,
+											'y-coordinate produced should always be a number',
+											function (number) {
+												return A2(
+													_elm_community$elm_test$Expect$false,
+													'Coordinate should always be a number!',
+													_elm_lang$core$Basics$isNaN(
+														A3(_user$project$Svg_Coordinates$toSvg, _user$project$Example$frame, _user$project$Example$yAxis, number)));
+											}),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});

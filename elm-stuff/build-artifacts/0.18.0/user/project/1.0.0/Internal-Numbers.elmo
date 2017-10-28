@@ -1,0 +1,97 @@
+var _user$project$Internal_Numbers$getDecentInterval = F3(
+	function (min, max, total) {
+		var range = _elm_lang$core$Basics$abs(max - min);
+		var delta0 = range / _elm_lang$core$Basics$toFloat(total);
+		var mag = _elm_lang$core$Basics$floor(
+			A2(_elm_lang$core$Basics$logBase, 10, delta0));
+		var magPow = _elm_lang$core$Basics$toFloat(
+			Math.pow(10, mag));
+		var magMsd = _elm_lang$core$Basics$round(delta0 / magPow);
+		var magMsdFinal = (_elm_lang$core$Native_Utils.cmp(magMsd, 5) > 0) ? 10 : ((_elm_lang$core$Native_Utils.cmp(magMsd, 2) > 0) ? 5 : ((_elm_lang$core$Native_Utils.cmp(magMsd, 1) > 0) ? 1 : magMsd));
+		return _elm_lang$core$Basics$toFloat(magMsdFinal) * magPow;
+	});
+var _user$project$Internal_Numbers$offset = F2(
+	function (precision, value) {
+		return _elm_lang$core$Basics$toFloat(
+			_elm_lang$core$Basics$floor(value / precision)) * precision;
+	});
+var _user$project$Internal_Numbers$getFirstValue = F3(
+	function (delta, min, intersection) {
+		return min + ((intersection - min) - A2(_user$project$Internal_Numbers$offset, delta, intersection - min));
+	});
+var _user$project$Internal_Numbers$deltaPrecision = function (delta) {
+	return _elm_lang$core$Basics$abs(
+		A2(
+			_elm_lang$core$Basics$min,
+			0,
+			A2(
+				F2(
+					function (x, y) {
+						return x - y;
+					}),
+				1,
+				_elm_lang$core$String$length(
+					A2(
+						_elm_lang$core$Maybe$withDefault,
+						'',
+						_elm_lang$core$List$head(
+							A2(
+								_elm_lang$core$List$map,
+								function (_) {
+									return _.match;
+								},
+								A3(
+									_elm_lang$core$Regex$find,
+									_elm_lang$core$Regex$AtMost(1),
+									_elm_lang$core$Regex$regex('\\.[0-9]*'),
+									_elm_lang$core$Basics$toString(delta)))))))));
+};
+var _user$project$Internal_Numbers$position = F3(
+	function (delta, firstValue, index) {
+		return A2(
+			_elm_lang$core$Result$withDefault,
+			0,
+			_elm_lang$core$String$toFloat(
+				A2(
+					_myrho$elm_round$Round$round,
+					_user$project$Internal_Numbers$deltaPrecision(delta),
+					firstValue + (_elm_lang$core$Basics$toFloat(index) * delta))));
+	});
+var _user$project$Internal_Numbers$customInterval = F3(
+	function (intersection, delta, limits) {
+		var firstValue = A3(_user$project$Internal_Numbers$getFirstValue, delta, limits.min, intersection);
+		var ticks = F2(
+			function (result, index) {
+				ticks:
+				while (true) {
+					var next = A3(_user$project$Internal_Numbers$position, delta, firstValue, index);
+					if (_elm_lang$core$Native_Utils.cmp(next, limits.max) < 1) {
+						var _v0 = A2(
+							_elm_lang$core$Basics_ops['++'],
+							result,
+							{
+								ctor: '::',
+								_0: next,
+								_1: {ctor: '[]'}
+							}),
+							_v1 = index + 1;
+						result = _v0;
+						index = _v1;
+						continue ticks;
+					} else {
+						return result;
+					}
+				}
+			});
+		return A2(
+			ticks,
+			{ctor: '[]'},
+			0);
+	});
+var _user$project$Internal_Numbers$defaultInterval = function (limits) {
+	return A3(
+		_user$project$Internal_Numbers$customInterval,
+		limits.min,
+		A3(_user$project$Internal_Numbers$getDecentInterval, limits.min, limits.max, 10),
+		limits);
+};

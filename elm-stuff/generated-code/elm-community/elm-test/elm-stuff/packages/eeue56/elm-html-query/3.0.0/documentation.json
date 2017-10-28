@@ -1,0 +1,140 @@
+[
+  {
+    "name": "ElmHtml.Query",
+    "comment": "\nQuery things using ElmHtml\n\n@docs Selector\n@docs query, queryAll, queryChildren, queryChildrenAll, queryInNode\n@docs queryById, queryByClassName, queryByClassList, queryByStyle, queryByTagName, queryByAttribute, queryByBoolAttribute\n@docs getChildren\n",
+    "aliases": [],
+    "types": [
+      {
+        "name": "Selector",
+        "comment": " Selectors to query a Html element\n- Id, classname, classlist, tag are all what you'd expect\n- Attribute and bool attribute are attributes\n- ConainsText just searches inside for the given text\n",
+        "args": [],
+        "cases": [
+          [
+            "Id",
+            [
+              "String"
+            ]
+          ],
+          [
+            "ClassName",
+            [
+              "String"
+            ]
+          ],
+          [
+            "ClassList",
+            [
+              "List String"
+            ]
+          ],
+          [
+            "Tag",
+            [
+              "String"
+            ]
+          ],
+          [
+            "Attribute",
+            [
+              "String",
+              "String"
+            ]
+          ],
+          [
+            "BoolAttribute",
+            [
+              "String",
+              "Bool"
+            ]
+          ],
+          [
+            "Style",
+            [
+              "List ( String, String )"
+            ]
+          ],
+          [
+            "ContainsText",
+            [
+              "String"
+            ]
+          ],
+          [
+            "Multiple",
+            [
+              "List ElmHtml.Query.Selector"
+            ]
+          ]
+        ]
+      }
+    ],
+    "values": [
+      {
+        "name": "getChildren",
+        "comment": " Returns just the immediate children of an ElmHtml node\n",
+        "type": "ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "query",
+        "comment": " Query an ElmHtml element using a selector, searching all children.\n",
+        "type": "ElmHtml.Query.Selector -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryAll",
+        "comment": " Query an ElmHtml node using multiple selectors, considering both the node itself\nas well as all of its descendants.\n",
+        "type": "List ElmHtml.Query.Selector -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryByAttribute",
+        "comment": " Query for a node with a given attribute in a Html element\n",
+        "type": "String -> String -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryByBoolAttribute",
+        "comment": " Query for a node with a given attribute in a Html element\n",
+        "type": "String -> Bool -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryByClassList",
+        "comment": " Query for a node with all the given classnames in a Html element\n",
+        "type": "List String -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryByClassName",
+        "comment": " Query for a node with a given classname in a Html element\n",
+        "type": "String -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryById",
+        "comment": " Query for a node with a given id in a Html element\n",
+        "type": "String -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryByStyle",
+        "comment": " Query for a node with the given style in a Html element\n",
+        "type": "List ( String, String ) -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryByTagName",
+        "comment": " Query for a node with a given tag in a Html element\n",
+        "type": "String -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryChildren",
+        "comment": " Query an ElmHtml node using a selector, considering both the node itself\nas well as all of its descendants.\n",
+        "type": "ElmHtml.Query.Selector -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryChildrenAll",
+        "comment": " Query to ensure an ElmHtml node has all selectors given, without considering\nany descendants lower than its immediate children.\n",
+        "type": "List ElmHtml.Query.Selector -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      },
+      {
+        "name": "queryInNode",
+        "comment": " Query an ElmHtml node using a selector, considering both the node itself\nas well as all of its descendants.\n",
+        "type": "ElmHtml.Query.Selector -> ElmHtml.InternalTypes.ElmHtml msg -> List (ElmHtml.InternalTypes.ElmHtml msg)"
+      }
+    ],
+    "generated-with-elm-version": "0.18.0"
+  }
+]

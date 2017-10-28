@@ -1,0 +1,17 @@
+{
+    "version": "0.0.1",
+    "summary": "Benchmarking suite for Random.Pcg",
+    "repository": "https://github.com/user/project.git",
+    "license": "BSD3",
+    "source-directories": [
+        ".",
+        "../../src"
+    ],
+    "exposed-modules": [],
+    "native-modules": true,
+    "dependencies": {
+        "elm-lang/core": "4.0.0 <= v < 5.0.0",
+        "elm-lang/html": "1.1.0 <= v < 2.0.0"
+    },
+    "elm-version": "0.17.0 <= v < 0.18.0"
+}

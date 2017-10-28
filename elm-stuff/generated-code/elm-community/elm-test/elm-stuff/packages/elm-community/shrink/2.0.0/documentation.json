@@ -1,0 +1,160 @@
+[
+  {
+    "name": "Shrink",
+    "comment": " Library containing a collection of basic shrinking strategies and\nhelper functions to help you construct shrinking strategies.\n\n# Shrinking Basics\n@docs Shrinker, shrink\n\n# Shrinkers\n@docs noShrink, unit, bool, order, int, atLeastInt, float, atLeastFloat, char, atLeastChar, character, string, maybe, result, lazylist, list, array, tuple, tuple3, tuple4, tuple5\n\n# Functions on Shrinkers\n@docs convert, keepIf, dropIf, merge, map, andMap\n\n",
+    "aliases": [
+      {
+        "name": "Shrinker",
+        "comment": " The shrinker type.\nA shrinker is a function that takes a value and returns a list of values that\nare in some sense \"smaller\" than the given value. If there are no such values\nconceptually, then the shrinker should just return the empty list.\n",
+        "args": [
+          "a"
+        ],
+        "type": "a -> Lazy.List.LazyList a"
+      }
+    ],
+    "types": [],
+    "values": [
+      {
+        "name": "andMap",
+        "comment": " Apply a lazy list of functions on a lazy list of values.\n\nThe argument order is so that it is easy to use in `|>` chains.\n",
+        "type": "Lazy.List.LazyList a -> Lazy.List.LazyList (a -> b) -> Lazy.List.LazyList b"
+      },
+      {
+        "name": "array",
+        "comment": " Array shrinker constructor.\nTakes a shrinker of values and returns a shrinker of Arrays.\n",
+        "type": "Shrink.Shrinker a -> Shrink.Shrinker (Array.Array a)"
+      },
+      {
+        "name": "atLeastChar",
+        "comment": " Construct a shrinker of chars which considers the given char to\nbe most minimal.\n",
+        "type": "Char -> Shrink.Shrinker Char"
+      },
+      {
+        "name": "atLeastFloat",
+        "comment": " Construct a shrinker of floats which considers the given float to\nbe most minimal.\n",
+        "type": "Float -> Shrink.Shrinker Float"
+      },
+      {
+        "name": "atLeastInt",
+        "comment": " Construct a shrinker of ints which considers the given int to\nbe most minimal.\n",
+        "type": "Int -> Shrink.Shrinker Int"
+      },
+      {
+        "name": "bool",
+        "comment": " Shrinker of bools.\n",
+        "type": "Shrink.Shrinker Bool"
+      },
+      {
+        "name": "char",
+        "comment": " Shrinker of chars.\n",
+        "type": "Shrink.Shrinker Char"
+      },
+      {
+        "name": "character",
+        "comment": " Shrinker of chars which considers the empty space as the most\nminimal char and omits the control key codes.\n\nEquivalent to:\n\n    atLeastChar (Char.fromCode 32)\n",
+        "type": "Shrink.Shrinker Char"
+      },
+      {
+        "name": "convert",
+        "comment": " Convert a Shrinker of a's into a Shrinker of b's using two inverse functions.\n\nIf you use this function as follows:\n\n    shrinkerB = f g shrinkerA\n\nMake sure that\n\n    `f(g(x)) == x` for all x\n\nOr else this process will generate garbage.\n",
+        "type": "(a -> b) -> (b -> a) -> Shrink.Shrinker a -> Shrink.Shrinker b"
+      },
+      {
+        "name": "dropIf",
+        "comment": " Filter out the results of a shrinker. The resulting shrinker\nwill only throw away shrinks which satisfy the given predicate.\n",
+        "type": "(a -> Bool) -> Shrink.Shrinker a -> Shrink.Shrinker a"
+      },
+      {
+        "name": "float",
+        "comment": " Shrinker of floats.\n",
+        "type": "Shrink.Shrinker Float"
+      },
+      {
+        "name": "int",
+        "comment": " Shrinker of integers.\n",
+        "type": "Shrink.Shrinker Int"
+      },
+      {
+        "name": "keepIf",
+        "comment": " Filter out the results of a shrinker. The resulting shrinker\nwill only produce shrinks which satisfy the given predicate.\n",
+        "type": "(a -> Bool) -> Shrink.Shrinker a -> Shrink.Shrinker a"
+      },
+      {
+        "name": "lazylist",
+        "comment": " Lazy List shrinker constructor. Takes a shrinker of values and returns a\nshrinker of Lazy Lists. The lazy list being shrunk must be finite. (I mean\nreally, how do you shrink infinity?)\n",
+        "type": "Shrink.Shrinker a -> Shrink.Shrinker (Lazy.List.LazyList a)"
+      },
+      {
+        "name": "list",
+        "comment": " List shrinker constructor.\nTakes a shrinker of values and returns a shrinker of Lists.\n",
+        "type": "Shrink.Shrinker a -> Shrink.Shrinker (List a)"
+      },
+      {
+        "name": "map",
+        "comment": " Re-export of `Lazy.List.map`\nThis is useful in order to compose shrinkers, especially when used in\nconjunction with `andMap`. For example:\n\n    type alias Vector =\n      { x : Float\n      , y : Float\n      , z : Float\n      }\n\n    vector : Shrinker Vector\n    vector {x,y,z} =\n      Vector\n        `map`    float x\n        `andMap` float y\n        `andMap` float z\n",
+        "type": "(a -> b) -> Lazy.List.LazyList a -> Lazy.List.LazyList b"
+      },
+      {
+        "name": "maybe",
+        "comment": " Maybe shrinker constructor.\nTakes a shrinker of values and returns a shrinker of Maybes.\n",
+        "type": "Shrink.Shrinker a -> Shrink.Shrinker (Maybe.Maybe a)"
+      },
+      {
+        "name": "merge",
+        "comment": " Merge two shrinkers. Generates all the values in the first\nshrinker, and then all the non-duplicated values in the second\nshrinker.\n",
+        "type": "Shrink.Shrinker a -> Shrink.Shrinker a -> Shrink.Shrinker a"
+      },
+      {
+        "name": "noShrink",
+        "comment": " Perform no shrinking. Equivalent to the empty lazy list.\n",
+        "type": "Shrink.Shrinker a"
+      },
+      {
+        "name": "order",
+        "comment": " Shrinker of `Order` values.\n",
+        "type": "Shrink.Shrinker Basics.Order"
+      },
+      {
+        "name": "result",
+        "comment": " Result shrinker constructor. Takes a shrinker of errors and a shrinker of\nvalues and returns a shrinker of Results.\n",
+        "type": "Shrink.Shrinker error -> Shrink.Shrinker value -> Shrink.Shrinker (Result.Result error value)"
+      },
+      {
+        "name": "shrink",
+        "comment": " Perform shrinking. Takes a predicate that returns `True` if you want\nshrinking to continue (e.g. the test failed). Also takes a shrinker and a value\nto shrink. It returns the shrunken value, or the input value if no shrunken\nvalues that satisfy the predicate are found.\n",
+        "type": "(a -> Bool) -> Shrink.Shrinker a -> a -> a"
+      },
+      {
+        "name": "string",
+        "comment": " Shrinker of strings. Considers the empty string to be the most\nminimal string and the space to be the most minimal char.\n\nEquivalent to:\n\n    convert String.fromList String.toList (list character)\n",
+        "type": "Shrink.Shrinker String"
+      },
+      {
+        "name": "tuple",
+        "comment": " 2-Tuple shrinker constructor.\nTakes a tuple of shrinkers and returns a shrinker of tuples.\n",
+        "type": "( Shrink.Shrinker a, Shrink.Shrinker b ) -> Shrink.Shrinker ( a, b )"
+      },
+      {
+        "name": "tuple3",
+        "comment": " 3-Tuple shrinker constructor.\nTakes a tuple of shrinkers and returns a shrinker of tuples.\n",
+        "type": "( Shrink.Shrinker a, Shrink.Shrinker b, Shrink.Shrinker c ) -> Shrink.Shrinker ( a, b, c )"
+      },
+      {
+        "name": "tuple4",
+        "comment": " 4-Tuple shrinker constructor.\nTakes a tuple of shrinkers and returns a shrinker of tuples.\n",
+        "type": "( Shrink.Shrinker a , Shrink.Shrinker b , Shrink.Shrinker c , Shrink.Shrinker d ) -> Shrink.Shrinker ( a, b, c, d )"
+      },
+      {
+        "name": "tuple5",
+        "comment": " 5-Tuple shrinker constructor.\nTakes a tuple of shrinkers and returns a shrinker of tuples.\n",
+        "type": "( Shrink.Shrinker a , Shrink.Shrinker b , Shrink.Shrinker c , Shrink.Shrinker d , Shrink.Shrinker e ) -> Shrink.Shrinker ( a, b, c, d, e )"
+      },
+      {
+        "name": "unit",
+        "comment": " Shrink the empty tuple. Equivalent to `noShrink`.\n",
+        "type": "Shrink.Shrinker ()"
+      }
+    ],
+    "generated-with-elm-version": "0.18.0"
+  }
+]

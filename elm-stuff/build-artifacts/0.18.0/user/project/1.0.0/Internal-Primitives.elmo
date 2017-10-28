@@ -1,0 +1,333 @@
+var _user$project$Internal_Primitives$verticalBarCommands = F4(
+	function (system, borderRadius, width, _p0) {
+		var _p1 = _p0;
+		var _p3 = _p1.y;
+		var _p2 = _p1.x;
+		var b = _elm_lang$core$Basics$toFloat(borderRadius);
+		var rx = A3(_user$project$Plot_Coordinate$scaleCartesian, _user$project$Plot_Coordinate$X, system, b);
+		var ry = A3(_user$project$Plot_Coordinate$scaleCartesian, _user$project$Plot_Coordinate$Y, system, b);
+		return {
+			ctor: '::',
+			_0: _user$project$Internal_Path$Move(
+				A2(_user$project$Plot_Coordinate$Point, _p2, 0)),
+			_1: {
+				ctor: '::',
+				_0: _user$project$Internal_Path$Line(
+					A2(_user$project$Plot_Coordinate$Point, _p2, _p3 - ry)),
+				_1: {
+					ctor: '::',
+					_0: A6(
+						_user$project$Internal_Path$Arc,
+						b,
+						b,
+						-45,
+						false,
+						true,
+						A2(_user$project$Plot_Coordinate$Point, _p2 + rx, _p3)),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Internal_Path$Line(
+							A2(_user$project$Plot_Coordinate$Point, (_p2 + width) - rx, _p3)),
+						_1: {
+							ctor: '::',
+							_0: A6(
+								_user$project$Internal_Path$Arc,
+								b,
+								b,
+								-45,
+								false,
+								true,
+								A2(_user$project$Plot_Coordinate$Point, _p2 + width, _p3 - ry)),
+							_1: {
+								ctor: '::',
+								_0: _user$project$Internal_Path$Line(
+									A2(_user$project$Plot_Coordinate$Point, _p2 + width, 0)),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		};
+	});
+var _user$project$Internal_Primitives$horizontalBarCommands = F4(
+	function (system, borderRadius, width, _p4) {
+		var _p5 = _p4;
+		var _p7 = _p5.y;
+		var _p6 = _p5.x;
+		var b = _elm_lang$core$Basics$toFloat(borderRadius);
+		var rx = A3(_user$project$Plot_Coordinate$scaleCartesian, _user$project$Plot_Coordinate$X, system, b);
+		var ry = A3(_user$project$Plot_Coordinate$scaleCartesian, _user$project$Plot_Coordinate$Y, system, b);
+		return {
+			ctor: '::',
+			_0: _user$project$Internal_Path$Move(
+				A2(_user$project$Plot_Coordinate$Point, 0, _p7)),
+			_1: {
+				ctor: '::',
+				_0: _user$project$Internal_Path$Line(
+					A2(_user$project$Plot_Coordinate$Point, _p6 - rx, _p7)),
+				_1: {
+					ctor: '::',
+					_0: A6(
+						_user$project$Internal_Path$Arc,
+						b,
+						b,
+						-45,
+						false,
+						true,
+						A2(_user$project$Plot_Coordinate$Point, _p6, _p7 - ry)),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Internal_Path$Line(
+							A2(_user$project$Plot_Coordinate$Point, _p6, (_p7 - width) + ry)),
+						_1: {
+							ctor: '::',
+							_0: A6(
+								_user$project$Internal_Path$Arc,
+								b,
+								b,
+								45,
+								false,
+								true,
+								A2(_user$project$Plot_Coordinate$Point, _p6 - rx, _p7 - width)),
+							_1: {
+								ctor: '::',
+								_0: _user$project$Internal_Path$Line(
+									A2(_user$project$Plot_Coordinate$Point, 0, _p7 - width)),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		};
+	});
+var _user$project$Internal_Primitives$yTick = F5(
+	function (system, width, userAttributes, x, y) {
+		var attributes = A3(
+			_user$project$Internal_Utils$concat,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$class('tick'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Plot_Color$gray),
+					_1: {ctor: '[]'}
+				}
+			},
+			userAttributes,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$x1(
+					_elm_lang$core$Basics$toString(
+						A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$X, system, x))),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$x2(
+						_elm_lang$core$Basics$toString(
+							A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$X, system, x) - _elm_lang$core$Basics$toFloat(width))),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$y1(
+							_elm_lang$core$Basics$toString(
+								A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$Y, system, y))),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$y2(
+								_elm_lang$core$Basics$toString(
+									A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$Y, system, y))),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+		return A2(
+			_elm_lang$svg$Svg$line,
+			attributes,
+			{ctor: '[]'});
+	});
+var _user$project$Internal_Primitives$yTicks = F5(
+	function (system, width, userAttributes, x, ys) {
+		return A2(
+			_elm_lang$svg$Svg$g,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$class('y-ticks'),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				A4(_user$project$Internal_Primitives$yTick, system, width, userAttributes, x),
+				ys));
+	});
+var _user$project$Internal_Primitives$xTick = F5(
+	function (system, height, userAttributes, y, x) {
+		var attributes = A3(
+			_user$project$Internal_Utils$concat,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Plot_Color$gray),
+				_1: {ctor: '[]'}
+			},
+			userAttributes,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$x1(
+					_elm_lang$core$Basics$toString(
+						A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$X, system, x))),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$x2(
+						_elm_lang$core$Basics$toString(
+							A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$X, system, x))),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$y1(
+							_elm_lang$core$Basics$toString(
+								A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$Y, system, y))),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$y2(
+								_elm_lang$core$Basics$toString(
+									A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$Y, system, y) + _elm_lang$core$Basics$toFloat(height))),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+		return A2(
+			_elm_lang$svg$Svg$line,
+			attributes,
+			{ctor: '[]'});
+	});
+var _user$project$Internal_Primitives$xTicks = F5(
+	function (system, height, userAttributes, y, xs) {
+		return A2(
+			_elm_lang$svg$Svg$g,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$class('x-ticks'),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				A4(_user$project$Internal_Primitives$xTick, system, height, userAttributes, y),
+				xs));
+	});
+var _user$project$Internal_Primitives$vertical = F5(
+	function (system, userAttributes, x, y1, y2) {
+		var attributes = A3(
+			_user$project$Internal_Utils$concat,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Plot_Color$gray),
+				_1: {ctor: '[]'}
+			},
+			userAttributes,
+			{ctor: '[]'});
+		return A3(
+			_user$project$Internal_Path$view,
+			system,
+			attributes,
+			{
+				ctor: '::',
+				_0: _user$project$Internal_Path$Move(
+					{x: x, y: y1}),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Internal_Path$Line(
+						{x: x, y: y1}),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Internal_Path$Line(
+							{x: x, y: y2}),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
+var _user$project$Internal_Primitives$horizontal = F5(
+	function (system, userAttributes, y, x1, x2) {
+		var attributes = A3(
+			_user$project$Internal_Utils$concat,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Plot_Color$gray),
+				_1: {ctor: '[]'}
+			},
+			userAttributes,
+			{ctor: '[]'});
+		return A3(
+			_user$project$Internal_Path$view,
+			system,
+			attributes,
+			{
+				ctor: '::',
+				_0: _user$project$Internal_Path$Move(
+					{x: x1, y: y}),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Internal_Path$Line(
+						{x: x1, y: y}),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Internal_Path$Line(
+							{x: x2, y: y}),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
+var _user$project$Internal_Primitives$outlineAttributes = function (outline) {
+	var _p8 = outline;
+	if (_p8.ctor === 'Just') {
+		var _p9 = _p8._0;
+		return {
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$stroke(_p9.color),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$strokeWidth(
+					_elm_lang$core$Basics$toString(_p9.width)),
+				_1: {ctor: '[]'}
+			}
+		};
+	} else {
+		return {ctor: '[]'};
+	}
+};
+var _user$project$Internal_Primitives$viewCircle = F5(
+	function (color, radius, outline, system, point) {
+		return A2(
+			_elm_lang$svg$Svg$circle,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$cx(
+						_elm_lang$core$Basics$toString(
+							A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$X, system, point.x))),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$cy(
+							_elm_lang$core$Basics$toString(
+								A3(_user$project$Plot_Coordinate$toSVG, _user$project$Plot_Coordinate$Y, system, point.y))),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$r(
+								_elm_lang$core$Basics$toString(radius)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$fill(color),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_user$project$Internal_Primitives$outlineAttributes(outline)),
+			{ctor: '[]'});
+	});
+var _user$project$Internal_Primitives$OutlineConfig = F2(
+	function (a, b) {
+		return {color: a, width: b};
+	});

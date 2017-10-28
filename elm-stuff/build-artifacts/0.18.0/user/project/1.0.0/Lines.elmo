@@ -1,0 +1,250 @@
+var _user$project$Lines$viewDots = F3(
+	function (system, _p0, points) {
+		var _p1 = _p0;
+		return A2(
+			_elm_lang$svg$Svg$g,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$class('dots'),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				A2(_user$project$Internal_Dot$view, _p1._0.dot, system),
+				points));
+	});
+var _user$project$Lines$viewInterpolation = F4(
+	function (config, system, _p2, points) {
+		var _p3 = _p2;
+		var _p6 = _p3._0;
+		var attributes = {
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$class('interpolation'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$stroke(_p6.color),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$strokeWidth(
+						_elm_lang$core$Basics$toString(_p6.width)),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$fill('transparent'),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		};
+		var interpolationCommands = function () {
+			var _p4 = config.interpolation;
+			if (_p4.ctor === 'Linear') {
+				return _user$project$Internal_Interpolation$linear(points);
+			} else {
+				return _user$project$Internal_Interpolation$monotone(points);
+			}
+		}();
+		var commands = function () {
+			var _p5 = points;
+			if (_p5.ctor === '::') {
+				return {
+					ctor: '::',
+					_0: _user$project$Internal_Path$Move(_p5._0),
+					_1: interpolationCommands
+				};
+			} else {
+				return {ctor: '[]'};
+			}
+		}();
+		return A3(_user$project$Internal_Path$view, system, attributes, commands);
+	});
+var _user$project$Lines$viewLine = F4(
+	function (config, system, line, points) {
+		return A2(
+			_elm_lang$svg$Svg$g,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$class('line'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A4(_user$project$Lines$viewInterpolation, config, system, line, points),
+				_1: {
+					ctor: '::',
+					_0: A3(_user$project$Lines$viewDots, system, line, points),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Lines$lineConfig = function (_p7) {
+	var _p8 = _p7;
+	return _p8._0;
+};
+var _user$project$Lines$viewCustom = F2(
+	function (config, lines) {
+		var point = function (datum) {
+			return A2(
+				_user$project$Plot_Coordinate$Point,
+				config.x.variable(datum),
+				config.y.variable(datum));
+		};
+		var points = A2(
+			_elm_lang$core$List$map,
+			function (_p9) {
+				return A2(
+					_elm_lang$core$List$map,
+					point,
+					function (_) {
+						return _.data;
+					}(
+						_user$project$Lines$lineConfig(_p9)));
+			},
+			lines);
+		var allPoints = _elm_lang$core$List$concat(points);
+		var system = {
+			frame: config.container.frame,
+			x: A2(
+				_user$project$Internal_Coordinate$limits,
+				function (_) {
+					return _.x;
+				},
+				allPoints),
+			y: A2(
+				_user$project$Internal_Coordinate$limits,
+				function (_) {
+					return _.y;
+				},
+				allPoints)
+		};
+		var attributes = A2(
+			_elm_lang$core$List$append,
+			A2(_user$project$Internal_Attributes$toSvgAttributes, system, config.container.attributes),
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$width(
+					_elm_lang$core$Basics$toString(system.frame.size.width)),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$height(
+						_elm_lang$core$Basics$toString(system.frame.size.height)),
+					_1: {ctor: '[]'}
+				}
+			});
+		var junk = A3(_user$project$Internal_Junk$getLayers, config.junk, allPoints, system);
+		var container = function (plot) {
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '::', _0: plot, _1: junk.html});
+		};
+		var viewLines = A3(
+			_elm_lang$core$List$map2,
+			A2(_user$project$Lines$viewLine, config, system),
+			lines,
+			points);
+		return container(
+			A2(
+				_elm_lang$svg$Svg$svg,
+				attributes,
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$svg$Svg$defs,
+						{ctor: '[]'},
+						config.container.defs),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$svg$Svg$g,
+							{
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$class('junk--below'),
+								_1: {ctor: '[]'}
+							},
+							junk.below),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$svg$Svg$g,
+								{
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$class('lines'),
+									_1: {ctor: '[]'}
+								},
+								viewLines),
+							_1: {
+								ctor: '::',
+								_0: A2(_user$project$Internal_Axis$viewHorizontal, system, config.x.look),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Internal_Axis$viewVertical, system, config.y.look),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$svg$Svg$g,
+											{
+												ctor: '::',
+												_0: _elm_lang$svg$Svg_Attributes$class('junk--above'),
+												_1: {ctor: '[]'}
+											},
+											junk.above),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}
+				}));
+	});
+var _user$project$Lines$Config = F5(
+	function (a, b, c, d, e) {
+		return {container: a, junk: b, x: c, y: d, interpolation: e};
+	});
+var _user$project$Lines$Axis = F2(
+	function (a, b) {
+		return {look: a, variable: b};
+	});
+var _user$project$Lines$LineConfig = F4(
+	function (a, b, c, d) {
+		return {color: a, width: b, dot: c, data: d};
+	});
+var _user$project$Lines$Monotone = {ctor: 'Monotone'};
+var _user$project$Lines$Linear = {ctor: 'Linear'};
+var _user$project$Lines$view = F2(
+	function (toX, toY) {
+		return _user$project$Lines$viewCustom(
+			{
+				container: _user$project$Plot_Container$default,
+				x: A2(_user$project$Lines$Axis, _user$project$Plot_Axis$defaultLook, toX),
+				y: A2(_user$project$Lines$Axis, _user$project$Plot_Axis$defaultLook, toY),
+				junk: _user$project$Plot_Junk$none,
+				interpolation: _user$project$Lines$Linear
+			});
+	});
+var _user$project$Lines$Line = function (a) {
+	return {ctor: 'Line', _0: a};
+};
+var _user$project$Lines$line = F4(
+	function (color, width, dot, data) {
+		return _user$project$Lines$Line(
+			A4(_user$project$Lines$LineConfig, color, width, dot, data));
+	});
+var _user$project$Lines$defaultConfig = F2(
+	function (color, data) {
+		return _user$project$Lines$Line(
+			{
+				dot: _user$project$Plot_Dot$Dot(
+					_user$project$Internal_Dot$default(color)),
+				color: color,
+				width: 2,
+				data: data
+			});
+	});
+var _user$project$Lines$viewSimple = F3(
+	function (toX, toY, datas) {
+		return A3(
+			_user$project$Lines$view,
+			toX,
+			toY,
+			A3(_elm_lang$core$List$map2, _user$project$Lines$defaultConfig, _user$project$Plot_Color$defaults, datas));
+	});

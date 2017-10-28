@@ -1,0 +1,128 @@
+var _elm_community$elm_test$Test_Message$verticalBar = F3(
+	function (comparison, expected, actual) {
+		return A2(
+			_elm_lang$core$String$join,
+			'\n',
+			{
+				ctor: '::',
+				_0: actual,
+				_1: {
+					ctor: '::',
+					_0: '╷',
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$core$Basics_ops['++'], '│ ', comparison),
+						_1: {
+							ctor: '::',
+							_0: '╵',
+							_1: {
+								ctor: '::',
+								_0: expected,
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			});
+	});
+var _elm_community$elm_test$Test_Message$failureMessage = function (_p0) {
+	var _p1 = _p0;
+	var _p5 = _p1.description;
+	var _p2 = _p1.reason;
+	switch (_p2.ctor) {
+		case 'Custom':
+			return _p5;
+		case 'Equals':
+			return A3(_elm_community$elm_test$Test_Message$verticalBar, _p5, _p2._0, _p2._1);
+		case 'Comparison':
+			return A3(_elm_community$elm_test$Test_Message$verticalBar, _p5, _p2._0, _p2._1);
+		case 'TODO':
+			return _p5;
+		case 'Invalid':
+			if (_p2._0.ctor === 'BadDescription') {
+				return _elm_lang$core$Native_Utils.eq(_p5, '') ? 'The empty string is not a valid test description.' : A2(_elm_lang$core$Basics_ops['++'], 'This is an invalid test description: ', _p5);
+			} else {
+				return _p5;
+			}
+		case 'ListDiff':
+			return A2(
+				_elm_lang$core$String$join,
+				'',
+				{
+					ctor: '::',
+					_0: A3(_elm_community$elm_test$Test_Message$verticalBar, _p5, _p2._0, _p2._1),
+					_1: {
+						ctor: '::',
+						_0: '\n\nThe first diff is at index index ',
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$core$Basics$toString(_p2._2._0),
+							_1: {
+								ctor: '::',
+								_0: ': it was `',
+								_1: {
+									ctor: '::',
+									_0: _p2._2._2,
+									_1: {
+										ctor: '::',
+										_0: '`, but `',
+										_1: {
+											ctor: '::',
+											_0: _p2._2._1,
+											_1: {
+												ctor: '::',
+												_0: '` was expected.',
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				});
+		default:
+			var _p4 = _p2._0.missing;
+			var _p3 = _p2._0.extra;
+			var missingStr = _elm_lang$core$List$isEmpty(_p4) ? '' : A2(
+				_elm_lang$core$Basics_ops['++'],
+				'\nThese keys are missing: ',
+				function (d) {
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						'[ ',
+						A2(_elm_lang$core$Basics_ops['++'], d, ' ]'));
+				}(
+					A2(_elm_lang$core$String$join, ', ', _p4)));
+			var extraStr = _elm_lang$core$List$isEmpty(_p3) ? '' : A2(
+				_elm_lang$core$Basics_ops['++'],
+				'\nThese keys are extra: ',
+				function (d) {
+					return A2(
+						_elm_lang$core$Basics_ops['++'],
+						'[ ',
+						A2(_elm_lang$core$Basics_ops['++'], d, ' ]'));
+				}(
+					A2(_elm_lang$core$String$join, ', ', _p3)));
+			return A2(
+				_elm_lang$core$String$join,
+				'',
+				{
+					ctor: '::',
+					_0: A3(_elm_community$elm_test$Test_Message$verticalBar, _p5, _p2._0.expected, _p2._0.actual),
+					_1: {
+						ctor: '::',
+						_0: '\n',
+						_1: {
+							ctor: '::',
+							_0: extraStr,
+							_1: {
+								ctor: '::',
+								_0: missingStr,
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				});
+	}
+};

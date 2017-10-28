@@ -1,0 +1,101 @@
+var _user$project$Internal_Interpolation$sign = function (x) {
+	return (_elm_lang$core$Native_Utils.cmp(x, 0) < 0) ? -1 : 1;
+};
+var _user$project$Internal_Interpolation$slope2 = F3(
+	function (point0, point1, t) {
+		var h = point1.x - point0.x;
+		return (!_elm_lang$core$Native_Utils.eq(h, 0)) ? ((((3 * (point1.y - point0.y)) / h) - t) / 2) : t;
+	});
+var _user$project$Internal_Interpolation$toH = F2(
+	function (h0, h1) {
+		return _elm_lang$core$Native_Utils.eq(h0, 0) ? ((_elm_lang$core$Native_Utils.cmp(h1, 0) < 0) ? (0 * -1) : h1) : h0;
+	});
+var _user$project$Internal_Interpolation$slope3 = F3(
+	function (point0, point1, point2) {
+		var h1 = point2.x - point1.x;
+		var h0 = point1.x - point0.x;
+		var s0h = A2(_user$project$Internal_Interpolation$toH, h0, h1);
+		var s0 = (point1.y - point0.y) / s0h;
+		var s1h = A2(_user$project$Internal_Interpolation$toH, h1, h0);
+		var s1 = (point2.y - point1.y) / s1h;
+		var p = ((s0 * h1) + (s1 * h0)) / (h0 + h1);
+		var slope = (_user$project$Internal_Interpolation$sign(s0) + _user$project$Internal_Interpolation$sign(s1)) * A2(
+			_elm_lang$core$Basics$min,
+			A2(
+				_elm_lang$core$Basics$min,
+				_elm_lang$core$Basics$abs(s0),
+				_elm_lang$core$Basics$abs(s1)),
+			0.5 * _elm_lang$core$Basics$abs(p));
+		return _elm_lang$core$Basics$isNaN(slope) ? 0 : slope;
+	});
+var _user$project$Internal_Interpolation$monotoneCurve = F4(
+	function (point0, point1, tangent0, tangent1) {
+		var dx = (point1.x - point0.x) / 3;
+		return {
+			ctor: '::',
+			_0: A3(
+				_user$project$Internal_Path$CubicBeziers,
+				{x: point0.x + dx, y: point0.y + (dx * tangent0)},
+				{x: point1.x - dx, y: point1.y - (dx * tangent1)},
+				point1),
+			_1: {ctor: '[]'}
+		};
+	});
+var _user$project$Internal_Interpolation$monotoneNext = F2(
+	function (points, previousTangent) {
+		var _p0 = points;
+		if ((_p0.ctor === '::') && (_p0._1.ctor === '::')) {
+			if (_p0._1._1.ctor === '::') {
+				var _p3 = _p0._1._1._0;
+				var _p2 = _p0._1._0;
+				var _p1 = _p0._0;
+				var nextTangent = A3(_user$project$Internal_Interpolation$slope3, _p1, _p2, _p3);
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					A4(_user$project$Internal_Interpolation$monotoneCurve, _p1, _p2, previousTangent, nextTangent),
+					A2(
+						_user$project$Internal_Interpolation$monotoneNext,
+						{
+							ctor: '::',
+							_0: _p2,
+							_1: {ctor: '::', _0: _p3, _1: _p0._1._1._1}
+						},
+						nextTangent));
+			} else {
+				var _p5 = _p0._1._0;
+				var _p4 = _p0._0;
+				return A4(
+					_user$project$Internal_Interpolation$monotoneCurve,
+					_p4,
+					_p5,
+					previousTangent,
+					A3(_user$project$Internal_Interpolation$slope3, _p4, _p5, _p5));
+			}
+		} else {
+			return {ctor: '[]'};
+		}
+	});
+var _user$project$Internal_Interpolation$monotone = function (points) {
+	var _p6 = points;
+	if (((_p6.ctor === '::') && (_p6._1.ctor === '::')) && (_p6._1._1.ctor === '::')) {
+		var _p9 = _p6._1._1._0;
+		var _p8 = _p6._1._0;
+		var _p7 = _p6._0;
+		var nextTangent = A3(_user$project$Internal_Interpolation$slope3, _p7, _p8, _p9);
+		var previousTangent = A3(_user$project$Internal_Interpolation$slope2, _p7, _p8, nextTangent);
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			A4(_user$project$Internal_Interpolation$monotoneCurve, _p7, _p8, previousTangent, nextTangent),
+			A2(
+				_user$project$Internal_Interpolation$monotoneNext,
+				{
+					ctor: '::',
+					_0: _p8,
+					_1: {ctor: '::', _0: _p9, _1: _p6._1._1._1}
+				},
+				nextTangent));
+	} else {
+		return {ctor: '[]'};
+	}
+};
+var _user$project$Internal_Interpolation$linear = _elm_lang$core$List$map(_user$project$Internal_Path$Line);
