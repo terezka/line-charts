@@ -29,7 +29,6 @@ import Internal.Attributes as Attributes
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
 import Internal.Axis as Axis
-import Internal.Dot as Dot
 import Internal.Junk
 
 
@@ -164,7 +163,7 @@ lineConfig (Line lineConfig) =
 defaultConfig : Color.Color -> List data -> Line data msg
 defaultConfig color data =
   Line
-    { dot = Dot.Dot (Dot.default color)
+    { dot = Dot.dot (Dot.default color)
     , color = color
     , width = 2
     , data = data
@@ -212,5 +211,5 @@ viewInterpolation config system (Line line) points =
 viewDots : Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
 viewDots system (Line line) points =
    Svg.g
-     [ Svg.Attributes.class "dots" ]
-     (List.map (Dot.view line.dot system) points)
+    [ Svg.Attributes.class "dots" ] <|
+    List.map (Dot.view system line.dot) points

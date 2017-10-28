@@ -1,14 +1,15 @@
 module HintExample exposing (main)
 
 import Lines as Lines exposing (..)
-import Plot.Attributes as Attributes
-import Plot.Junk as Junk exposing (..)
-import Plot.Color as Color
-import Plot.Dot as Dot
-import Plot.Axis as Axis
-import Plot.Coordinate as Coordinate exposing (..)
+import Lines.Junk as Junk exposing (..)
+import Lines.Color as Color
+import Lines.Dot as Dot
+import Lines.Axis as Axis
+import Lines.Container as Container
+import Lines.Coordinate as Coordinate exposing (..)
 import Html exposing (Html, div, h1, node, p, text)
 import Svg exposing (Svg, Attribute, text_, tspan, g)
+
 
 
 -- MODEL
@@ -46,16 +47,12 @@ update msg model =
 view : Model -> Svg Msg
 view model =
   Lines.viewCustom
-    { frame = Frame (Margin 20 20 20 20) (Size 300 300)
-    , attributes =
-        [ Attributes.onMouseMove (Just >> Hover)
-        , Attributes.onMouseLeave (Hover Nothing)
-        ]
+    { container = Container.default
     , junk =
         Maybe.map junk model.hovering
           |> Maybe.withDefault Junk.none
-    , y = Axis.defaultAxis .heartattacks
-    , x = Axis.defaultAxis .magnesium
+    , y = Lines.Axis Axis.defaultLook .heartattacks
+    , x = Lines.Axis Axis.defaultLook .magnesium
     , interpolation = Monotone
     }
     [ Lines.line Color.gray 1 Dot.none data1
@@ -66,7 +63,7 @@ view model =
 
 pinkDot : Dot.Dot msg
 pinkDot =
-  Dot.dot <| Dot.Config Dot.Circle [] 5 Color.pink
+  Dot.dot <| Dot.Config Dot.Circle [] 5 Color.pink (Just Dot.defaultBorder)
 
 
 junk : Point -> Junk.Junk Msg

@@ -1,15 +1,16 @@
-module Lines.Dot exposing (Dot(..), Config, Shape(..), Outline(..), none, dot)
+module Lines.Dot exposing (Dot, Config, Shape(..),default, none, dot, view, defaultBorder)
 
 {-| -}
 
-import Svg
+import Svg exposing (Svg)
 import Lines.Color as Color
+import Lines.Coordinate as Coordinate
+import Internal.Primitives as Primitives
 
 
-{-| TODO: Make opaque -- also.. None? -}
+{-| -}
 type Dot msg
-  = Dot (Config msg)
-  | None
+  = Dot (Maybe (Config msg))
 
 
 {-| -}
@@ -17,22 +18,10 @@ type Shape
   = Triangle
   | Diamond
   | Square
-  | Circle Outline
+  | Circle
   | Cross
   | Plus
   | Star
-
-
-{-| -}
-type Outline
-  = NoOutline
-  | Outline OutlineConfig
-
-
-type alias OutlineConfig =
-  { color : Color.Color
-  , width : Int
-  }
 
 
 {-| -}
@@ -41,16 +30,60 @@ type alias Config msg =
   , events : List (Svg.Attribute msg)
   , size : Int
   , color : Color.Color
+  , border : Maybe Border
   }
 
 
 {-| -}
 none : Dot msg
 none =
-  None
+  Dot Nothing
 
 
 {-| -}
 dot : Config msg -> Dot msg
-dot =
-  Dot
+dot config =
+  Dot (Just config)
+
+
+{-| -}
+default : Color.Color -> Config msg
+default color =
+  Config Circle [] 5 color Nothing
+
+
+{-| -}
+type alias Border =
+  { color : Color.Color
+  , width : Int
+  }
+
+
+{-| -}
+defaultBorder : Border
+defaultBorder =
+  { color = Color.black
+  , width = 1
+  }
+
+
+
+{-| -}
+view : Coordinate.System -> Dot msg -> Coordinate.Point -> Svg msg
+view system (Dot config) point =
+  Maybe.map (viewConfig system point) config
+    |> Maybe.withDefault (Svg.text "")
+
+
+
+-- INTERNAL
+
+
+viewConfig : Coordinate.System -> Coordinate.Point -> Config msg -> Svg msg
+viewConfig system point config =
+  case config.shape of
+    Circle ->
+      Primitives.viewCircle config.color config.size config.border system point -- TODO: Add event attributes
+
+    _ ->
+      Svg.text "" -- TODO
