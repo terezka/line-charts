@@ -1,8 +1,0 @@
-{
-    "elm-lang/virtual-dom": "2.0.4",
-    "elm-lang/html": "2.0.0",
-    "myrho/elm-round": "1.0.2",
-    "elm-lang/svg": "2.0.0",
-    "debois/elm-dom": "1.2.3",
-    "elm-lang/core": "5.1.1"
-}

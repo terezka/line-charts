@@ -1,8 +1,0 @@
-elm-stuff
-elm.js
-index.html
-documentation.json
-
-test/dieharder/elm*.txt
-test/dieharder/generate_files.js
-test/dieharder/raw_out.js
