@@ -64,7 +64,7 @@ type Line data msg =
   Line (LineConfig data msg)
 
 
-{-| TODO: Should Color be the same as the dot? -}
+{-| -}
 line : Color.Color -> Int -> Dot.Dot msg -> List data -> Line data msg
 line color width dot data =
   Line <| LineConfig color width dot data
@@ -212,4 +212,4 @@ viewDots : Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
 viewDots system (Line line) points =
    Svg.g
     [ Svg.Attributes.class "dots" ] <|
-    List.map (Dot.view system line.dot) points
+    List.map (Dot.view system line.color line.dot) points

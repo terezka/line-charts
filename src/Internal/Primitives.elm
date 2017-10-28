@@ -8,33 +8,35 @@ import Lines.Color as Color
 import Internal.Path as Path exposing (..)
 
 
-viewCircle : String -> Int -> Maybe OutlineConfig -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewCircle color radius outline system point =
-  Svg.circle
-    ([ Attributes.cx (toString <| toSVG X system <| point.x)
-    , Attributes.cy (toString <| toSVG Y system <| point.y)
-    , Attributes.r (toString radius)
-    , Attributes.fill color
-    ] ++ outlineAttributes outline)
-    []
+{-| -}
+type Coloring
+  = Bordered Int
+  | Filled
 
 
-outlineAttributes : Maybe OutlineConfig -> List (Attribute msg)
-outlineAttributes outline =
-  case outline of
-    Just outline ->
-        [ Attributes.stroke outline.color
-        , Attributes.strokeWidth (toString outline.width)
-        ]
+viewCircle : Color.Color -> Coloring -> Int -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewCircle color coloring radius system point =
+  let
+    attributes =
+      [ Attributes.cx (toString <| toSVG X system <| point.x)
+      , Attributes.cy (toString <| toSVG Y system <| point.y)
+      , Attributes.r (toString radius)
+      ]
 
-    Nothing ->
-      []
+    colorAttributes =
+      case coloring of
+        Bordered width ->
+          [ Attributes.stroke color
+          , Attributes.strokeWidth (toString width)
+          , Attributes.fill "white"
+          ]
 
+        Filled ->
+          [ Attributes.fill color ]
 
-type alias OutlineConfig =
-  { color : Color.Color
-  , width : Int
-  }
+  in
+  Svg.circle (attributes ++ colorAttributes) []
+
 
 
 -- AXIS

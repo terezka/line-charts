@@ -48,9 +48,7 @@ view : Model -> Svg Msg
 view model =
   Lines.viewCustom
     { container = Container.default
-    , junk =
-        Maybe.map junk model.hovering
-          |> Maybe.withDefault Junk.none
+    , junk = Junk.none
     , y = Lines.Axis Axis.defaultLook .heartattacks
     , x = Lines.Axis Axis.defaultLook .magnesium
     , interpolation = Monotone
@@ -63,7 +61,7 @@ view model =
 
 pinkDot : Dot.Dot msg
 pinkDot =
-  Dot.dot <| Dot.Config Dot.Circle [] 5 Color.pink (Just Dot.defaultBorder)
+  Dot.dot <| Dot.Config Dot.Circle [] 5 (Dot.bordered 2)
 
 
 junk : Point -> Junk.Junk Msg

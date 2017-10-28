@@ -1,4 +1,4 @@
-module Lines.Dot exposing (Dot, Config, Shape(..),default, none, dot, view, defaultBorder)
+module Lines.Dot exposing (Dot, Config, Shape(..),default, none, dot, view, bordered, filled)
 
 {-| -}
 
@@ -29,9 +29,13 @@ type alias Config msg =
   { shape : Shape
   , events : List (Svg.Attribute msg)
   , size : Int
-  , color : Color.Color
-  , border : Maybe Border
+  , coloring : Coloring
   }
+
+
+{-| -}
+type alias Coloring
+  = Primitives.Coloring
 
 
 {-| -}
@@ -49,29 +53,25 @@ dot config =
 {-| -}
 default : Color.Color -> Config msg
 default color =
-  Config Circle [] 5 color Nothing
+  Config Circle [] 5 filled
 
 
 {-| -}
-type alias Border =
-  { color : Color.Color
-  , width : Int
-  }
+filled : Coloring
+filled =
+  Primitives.Filled
 
 
 {-| -}
-defaultBorder : Border
-defaultBorder =
-  { color = Color.black
-  , width = 1
-  }
-
+bordered : Int -> Coloring
+bordered =
+  Primitives.Bordered
 
 
 {-| -}
-view : Coordinate.System -> Dot msg -> Coordinate.Point -> Svg msg
-view system (Dot config) point =
-  Maybe.map (viewConfig system point) config
+view : Coordinate.System -> Color.Color -> Dot msg -> Coordinate.Point -> Svg msg
+view system color (Dot config) point =
+  Maybe.map (viewConfig system color point) config
     |> Maybe.withDefault (Svg.text "")
 
 
@@ -79,11 +79,11 @@ view system (Dot config) point =
 -- INTERNAL
 
 
-viewConfig : Coordinate.System -> Coordinate.Point -> Config msg -> Svg msg
-viewConfig system point config =
+viewConfig : Coordinate.System -> Color.Color -> Coordinate.Point -> Config msg -> Svg msg
+viewConfig system color point config =
   case config.shape of
     Circle ->
-      Primitives.viewCircle config.color config.size config.border system point -- TODO: Add event attributes
+      Primitives.viewCircle color config.coloring config.size system point -- TODO: Add event attributes
 
     _ ->
       Svg.text "" -- TODO
