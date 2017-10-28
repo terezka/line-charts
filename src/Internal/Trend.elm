@@ -16,7 +16,7 @@ _Thanks for doing the math, Brian!_
 
 import Svg exposing (Svg)
 import Svg.Attributes as A
-import Plot.Coordinate as Coordinate exposing (..)
+import Lines.Coordinate as Coordinate exposing (..)
 
 
 

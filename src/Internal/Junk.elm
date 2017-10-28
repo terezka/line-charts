@@ -3,7 +3,7 @@ module Internal.Junk exposing (..)
 
 import Svg exposing (Svg)
 import Html exposing (Html)
-import Plot.Coordinate as Coordinate  exposing (..)
+import Lines.Coordinate as Coordinate  exposing (..)
 
 
 {-| -}

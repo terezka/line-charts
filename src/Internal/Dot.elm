@@ -1,9 +1,9 @@
 module Internal.Dot exposing (view, viewConfig, default)
 
 import Svg
-import Plot.Dot as Dot
-import Plot.Color as Color
-import Plot.Coordinate as Coordinate
+import Lines.Dot as Dot
+import Lines.Color as Color
+import Lines.Coordinate as Coordinate
 import Internal.Primitives as Primitives
 
 

@@ -1,10 +1,10 @@
 module Internal.Axis exposing (..)
 
 
-import Plot.Axis as Axis exposing (Mark)
+import Lines.Axis as Axis exposing (Mark)
 import Internal.Utils exposing (..)
 import Internal.Primitives exposing (..)
-import Plot.Coordinate as Coordinate  exposing (..)
+import Lines.Coordinate as Coordinate  exposing (..)
 import Svg exposing (Attribute, Svg, g)
 import Svg.Attributes as Attributes exposing (class, fill, style, x1, x2, y1, y2, stroke, d)
 

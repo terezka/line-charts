@@ -3,7 +3,7 @@ module Internal.Attributes exposing (Attribute(..), toSvgAttributes)
 {-| -}
 
 import Svg
-import Plot.Coordinate as Coordinate
+import Lines.Coordinate as Coordinate
 
 
 {-| -}

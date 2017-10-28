@@ -1,6 +1,6 @@
 module Internal.Coordinate exposing (limits, minimum, minimumOrZero, maximum)
 
-import Plot.Coordinate as Coordinate exposing (..)
+import Lines.Coordinate as Coordinate exposing (..)
 
 
 {-| -}

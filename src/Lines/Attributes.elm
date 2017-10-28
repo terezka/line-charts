@@ -1,11 +1,11 @@
-module Plot.Attributes exposing (..)
+module Lines.Attributes exposing (..)
 
 import Svg
 import Svg.Attributes
 import Svg.Events
 import DOM
 import Json.Decode as Json
-import Plot.Coordinate as Coordinate exposing (Orientation(..))
+import Lines.Coordinate as Coordinate exposing (Orientation(..))
 import Internal.Attributes exposing (Attribute(..))
 
 

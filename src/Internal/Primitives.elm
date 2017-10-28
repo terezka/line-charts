@@ -3,8 +3,8 @@ module Internal.Primitives exposing (..)
 import Internal.Utils exposing (..)
 import Svg exposing (Attribute, Svg, g)
 import Svg.Attributes as Attributes exposing (class, fill, style, x1, x2, y1, y2, stroke, d)
-import Plot.Coordinate as Coordinate exposing (..)
-import Plot.Color as Color
+import Lines.Coordinate as Coordinate exposing (..)
+import Lines.Color as Color
 import Internal.Path as Path exposing (..)
 
 

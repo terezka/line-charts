@@ -1,4 +1,4 @@
-module Plot.Axis exposing (..)
+module Lines.Axis exposing (..)
 
 {-| # Axis
 
@@ -9,8 +9,8 @@ module Plot.Axis exposing (..)
 
 import Svg exposing (..)
 import Svg.Attributes exposing (stroke, style)
-import Plot.Coordinate as Coordinate exposing (..)
-import Plot.Color as Color
+import Lines.Coordinate as Coordinate exposing (..)
+import Lines.Color as Color
 import Internal.Numbers as Numbers
 
 

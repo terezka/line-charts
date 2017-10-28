@@ -2,7 +2,7 @@ module Internal.Interpolation exposing (linear, monotone)
 
 
 import Internal.Path as Path exposing (..)
-import Plot.Coordinate as Coordinate  exposing (..)
+import Lines.Coordinate as Coordinate  exposing (..)
 
 
 -- LINEAR INTERPOLATION

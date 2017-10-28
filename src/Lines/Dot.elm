@@ -1,9 +1,9 @@
-module Plot.Dot exposing (Dot(..), Config, Shape(..), Outline(..), none, dot)
+module Lines.Dot exposing (Dot(..), Config, Shape(..), Outline(..), none, dot)
 
 {-| -}
 
 import Svg
-import Plot.Color as Color
+import Lines.Color as Color
 
 
 {-| TODO: Make opaque -- also.. None? -}

@@ -1,9 +1,9 @@
-module Plot.Junk exposing (Junk, Layers, none, withoutHint, withHint, Searcher, findNearest, findWithin, findNearestX, findWithinX)
+module Lines.Junk exposing (Junk, Layers, none, withoutHint, withHint, Searcher, findNearest, findWithin, findNearestX, findWithinX)
 
 
 import Svg exposing (Svg)
 import Html exposing (Html)
-import Plot.Coordinate as Coordinate exposing (Point)
+import Lines.Coordinate as Coordinate exposing (Point)
 import Internal.Junk
 import Internal.Utils as Utils exposing (withFirst)
 

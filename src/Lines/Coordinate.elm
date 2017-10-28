@@ -1,4 +1,4 @@
-module Plot.Coordinate exposing
+module Lines.Coordinate exposing
   ( Frame, Size, Margin
   , Orientation(..), Limits, System
   , toSVG, toCartesian

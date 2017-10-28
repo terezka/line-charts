@@ -18,12 +18,12 @@ module Lines exposing (Config, Axis, Interpolation(..), line, viewSimple, view, 
 import Html
 import Svg
 import Svg.Attributes
-import Plot.Color as Color
-import Plot.Axis as Axis
-import Plot.Junk as Junk
-import Plot.Dot as Dot
-import Plot.Coordinate as Coordinate exposing (..)
-import Plot.Container as Container
+import Lines.Color as Color
+import Lines.Axis as Axis
+import Lines.Junk as Junk
+import Lines.Dot as Dot
+import Lines.Coordinate as Coordinate exposing (..)
+import Lines.Container as Container
 import Internal.Coordinate as Coordinate
 import Internal.Attributes as Attributes
 import Internal.Interpolation as Interpolation

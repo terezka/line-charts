@@ -1,4 +1,4 @@
-module Plot.Color exposing (Color, pink, blue, green, orange, gray, transparent, black, defaults)
+module Lines.Color exposing (Color, pink, blue, green, orange, gray, transparent, black, defaults)
 
 {-| -}
 

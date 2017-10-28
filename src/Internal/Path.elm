@@ -8,7 +8,7 @@ module Internal.Path exposing (Command(..), view)
 
 import Svg exposing (Svg, Attribute)
 import Svg.Attributes exposing (d)
-import Plot.Coordinate as Coordinate exposing (..)
+import Lines.Coordinate as Coordinate exposing (..)
 
 
 {-| -}

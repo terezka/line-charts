@@ -2,7 +2,7 @@ module Internal.Numbers exposing (customInterval, defaultInterval)
 
 import Regex
 import Round
-import Plot.Coordinate as Coordinate exposing (..)
+import Lines.Coordinate as Coordinate exposing (..)
 
 
 {-| -}

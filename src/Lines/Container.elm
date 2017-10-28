@@ -1,8 +1,8 @@
-module Plot.Container exposing (Config, default)
+module Lines.Container exposing (Config, default)
 
 import Svg exposing (Svg)
-import Plot.Coordinate as Coordinate exposing (..)
-import Plot.Attributes as Attributes
+import Lines.Coordinate as Coordinate exposing (..)
+import Lines.Attributes as Attributes
 
 
 type alias Config msg =

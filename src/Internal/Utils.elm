@@ -2,7 +2,7 @@ module Internal.Utils exposing (..)
 
 import Html exposing (Attribute, Html)
 import Svg exposing (Svg, text, g)
-import Plot.Coordinate as Coordinate exposing (..)
+import Lines.Coordinate as Coordinate exposing (..)
 
 
 -- GENERAL
