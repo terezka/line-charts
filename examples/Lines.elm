@@ -26,7 +26,7 @@ main =
 
 pinkDot : Dot.Dot msg
 pinkDot =
-  Dot.dot <| Dot.Config Dot.Circle [] 3 (Dot.bordered 2)
+  Dot.circle [] 3 (Dot.bordered 2)
 
 
 -- DATA

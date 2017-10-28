@@ -1,41 +1,21 @@
-module Lines.Dot exposing (Dot, Config, Shape(..),default, none, dot, view, bordered, filled)
+module Lines.Dot exposing (Dot, default, none, view, bordered, filled, circle)
 
-{-| -}
+{-| TODO: Triangle, Diamond, Square, Circle, Cross, Plus, Star
+-}
 
 import Svg exposing (Svg)
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate
-import Internal.Primitives as Primitives
+import Svg.Attributes as Attributes exposing (class, fill, style, x1, x2, y1, y2, stroke, d)
+import Lines.Coordinate as Coordinate exposing (..)
+
+
+-- CONFIG
 
 
 {-| -}
 type Dot msg
-  = Dot (Maybe (Config msg))
-
-
-{-| -}
-type Shape
-  = Triangle
-  | Diamond
-  | Square
-  | Circle
-  | Cross
-  | Plus
-  | Star
-
-
-{-| -}
-type alias Config msg =
-  { shape : Shape
-  , events : List (Svg.Attribute msg)
-  , size : Int
-  , coloring : Coloring
-  }
-
-
-{-| -}
-type alias Coloring
-  = Primitives.Coloring
+  = Dot (Maybe (View msg))
 
 
 {-| -}
@@ -45,45 +25,82 @@ none =
 
 
 {-| -}
-dot : Config msg -> Dot msg
-dot config =
-  Dot (Just config)
+default : Dot msg
+default =
+  circle [] 3 filled
+
+
+
+-- SHAPES
 
 
 {-| -}
-default : Color.Color -> Config msg
-default color =
-  Config Circle [] 5 filled
+circle : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+circle events radius coloring =
+  Dot <| Just <| viewCircle events radius coloring
+
+
+
+-- COLORING
+
+
+{-| -}
+type Coloring
+  = Bordered Int
+  | Filled
 
 
 {-| -}
 filled : Coloring
 filled =
-  Primitives.Filled
+  Filled
 
 
 {-| -}
 bordered : Int -> Coloring
 bordered =
-  Primitives.Bordered
+  Bordered
 
 
 {-| -}
-view : Coordinate.System -> Color.Color -> Dot msg -> Coordinate.Point -> Svg msg
-view system color (Dot config) point =
-  Maybe.map (viewConfig system color point) config
-    |> Maybe.withDefault (Svg.text "")
+view : Dot msg -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+view (Dot view) =
+  case view of
+    Just view ->
+      view
+
+    Nothing ->
+      \_ _ _ -> Svg.text ""
 
 
 
 -- INTERNAL
 
 
-viewConfig : Coordinate.System -> Color.Color -> Coordinate.Point -> Config msg -> Svg msg
-viewConfig system color point config =
-  case config.shape of
-    Circle ->
-      Primitives.viewCircle color config.coloring config.size system point -- TODO: Add event attributes
+{-| -}
+type alias View msg =
+  Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
 
-    _ ->
-      Svg.text "" -- TODO
+
+viewCircle : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewCircle events radius coloring color system point =
+  let
+    attributes =
+      [ Attributes.cx (toString <| toSVG X system <| point.x)
+      , Attributes.cy (toString <| toSVG Y system <| point.y)
+      , Attributes.r (toString radius)
+      ]
+
+    colorAttributes =
+      case coloring of
+        Bordered width ->
+          [ Attributes.stroke color
+          , Attributes.strokeWidth (toString width)
+          , Attributes.fill "white"
+          ]
+
+        Filled ->
+          [ Attributes.fill color ]
+
+  in
+  Svg.circle (events ++ attributes ++ colorAttributes) []

@@ -163,7 +163,7 @@ lineConfig (Line lineConfig) =
 defaultConfig : Color.Color -> List data -> Line data msg
 defaultConfig color data =
   Line
-    { dot = Dot.dot (Dot.default color)
+    { dot = Dot.default
     , color = color
     , width = 2
     , data = data
@@ -212,4 +212,4 @@ viewDots : Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
 viewDots system (Line line) points =
    Svg.g
     [ Svg.Attributes.class "dots" ] <|
-    List.map (Dot.view system line.color line.dot) points
+    List.map (Dot.view line.dot line.color system) points
