@@ -1,11 +1,11 @@
 module Lines.Dot exposing
   ( Dot, default1, default2, default3, none
-  , circle, triangle, square, diamond
+  , circle, triangle, square, diamond, plus
   , bordered, disconnected, full
   , view
   )
 
-{-| TODO: Cross, Plus, Star
+{-| TODO: Cross, Star
 -}
 
 import Svg exposing (Svg)
@@ -47,6 +47,7 @@ default3 =
   circle [] 3 (full)
 
 
+
 -- SHAPES
 
 
@@ -73,6 +74,11 @@ diamond : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
 diamond events radius coloring =
   Dot <| Just <| viewDiamond events radius coloring
 
+
+{-| -}
+plus : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+plus events radius coloring =
+  Dot <| Just <| viewPlus events radius coloring
 
 
 -- COLORING
@@ -206,6 +212,43 @@ viewDiamond events radiusInt coloring color system cartesianPoint =
       ]
   in
   Svg.rect (events ++ attributes ++ colorAttributes color coloring) []
+
+
+viewPlus : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewPlus events radiusInt coloring color system cartesianPoint =
+  let
+    radius =
+      toFloat radiusInt
+
+    r3 =
+      radius / 3
+
+    r6 =
+      r3 / 2
+
+    point =
+      toSVGPoint system cartesianPoint
+
+    commands =
+      [ "M" ++ toString (point.x - r6) ++ " " ++ toString (point.y - r3 - r6)
+      , "v" ++ toString r3
+      , "h" ++ toString -r3
+      , "v" ++ toString r3
+      , "h" ++ toString r3
+      , "v" ++ toString r3
+      , "h" ++ toString r3
+      , "v" ++ toString -r3
+      , "h" ++ toString r3
+      , "v" ++ toString -r3
+      , "h" ++ toString -r3
+      , "v" ++ toString -r3
+      , "h" ++ toString -r3
+      ]
+
+    attributes =
+      [ Attributes.d <| String.join " " commands ]
+  in
+  Svg.path (events ++ attributes ++ colorAttributes color coloring) []
 
 
 colorAttributes : Color.Color -> Coloring -> List (Svg.Attribute msg)

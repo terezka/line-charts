@@ -15,6 +15,8 @@ import Lines.Coordinate as Coordinate exposing (..)
 type Command
   = Move Point
   | Line Point
+  | Horizontal Float
+  | Vertical Float
   | CubicBeziers Point Point Point
   | CubicBeziersShort Point Point
   | QuadraticBeziers Point Point
@@ -57,6 +59,12 @@ toString command =
     Line p ->
       "L" ++ point p
 
+    Horizontal x ->
+      "H" ++ Basics.toString x
+
+    Vertical y ->
+      "V" ++ Basics.toString y
+
     CubicBeziers c1 c2 p ->
       "C" ++ points [ c1, c2, p ]
 
@@ -93,6 +101,12 @@ translate system command =
     Line p ->
       Line
         (toSVGPoint system p)
+
+    Horizontal x ->
+        Horizontal (toSVG X system x)
+
+    Vertical y ->
+        Vertical (toSVG Y system y)
 
     CubicBeziers c1 c2 p ->
       CubicBeziers

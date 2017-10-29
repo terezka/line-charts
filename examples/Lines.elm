@@ -24,7 +24,7 @@ main =
 
 diamond : Dot.Dot msg
 diamond =
-  Dot.square [] 7 (Dot.full)
+  Dot.plus [] 10 (Dot.disconnected 2)
 
 
 -- DATA
