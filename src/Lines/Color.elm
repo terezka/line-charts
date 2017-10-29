@@ -1,4 +1,4 @@
-module Lines.Color exposing (Color, pink, blue, green, orange, gray, transparent, black, defaults)
+module Lines.Color exposing (Color, pink, blue, orange, gray, transparent, black, defaults)
 
 {-| -}
 
@@ -11,25 +11,19 @@ type alias Color =
 {-| -}
 pink : Color
 pink =
-  "#ff9edf"
-
-
-{-| -}
-blue : Color
-blue =
-  "#aec9ff"
-
-
-{-| -}
-green : Color
-green =
-  "#a5e6a0"
+  "#f569d7"
 
 
 {-| -}
 orange : Color
 orange =
-  "#ffcc91"
+  "#cd913c"
+
+
+{-| -}
+blue : Color
+blue =
+  "#28ebc7"
 
 
 {-| -}
@@ -56,5 +50,4 @@ defaults =
   [ pink
   , blue
   , orange
-  , green
   ]

@@ -18,7 +18,7 @@ main =
     , x = Lines.Axis Axis.defaultLook .magnesium
     , interpolation = Lines.Monotone
     }
-    [ Lines.line Color.gray 1 Dot.none data1
+    [ Lines.line Color.orange 1 Dot.none data1
     , Lines.line Color.blue 2 Dot.none data2
     , Lines.line Color.pink 2 pinkDot data3
     ]
