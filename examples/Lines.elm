@@ -18,16 +18,25 @@ main =
     , x = Lines.Axis Axis.defaultLook .magnesium
     , interpolation = Lines.Monotone
     }
-    [ Lines.line Color.orange 1 Dot.none data1
-    , Lines.line Color.blue 2 Dot.none data2
-    , Lines.line Color.pink 2 pinkDot data3
+    [ Lines.line Color.orange 2 disconnected data1
+    , Lines.line Color.blue 2 bordered data2
+    , Lines.line Color.pink 2 full data3
     ]
 
 
-pinkDot : Dot.Dot msg
-pinkDot =
+disconnected : Dot.Dot msg
+disconnected =
+  Dot.circle [] 4 (Dot.disconnected 2)
+
+
+bordered : Dot.Dot msg
+bordered =
   Dot.circle [] 3 (Dot.bordered 2)
 
+
+full : Dot.Dot msg
+full =
+  Dot.circle [] 3 (Dot.full)
 
 -- DATA
 

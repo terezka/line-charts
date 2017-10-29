@@ -1,4 +1,4 @@
-module Lines.Dot exposing (Dot, default, none, view, bordered, filled, circle)
+module Lines.Dot exposing (Dot, default, none, view, bordered, disconnected, full, circle)
 
 {-| TODO: Triangle, Diamond, Square, Circle, Cross, Plus, Star
 -}
@@ -27,7 +27,7 @@ none =
 {-| -}
 default : Dot msg
 default =
-  circle [] 3 filled
+  circle [] 3 (disconnected 3)
 
 
 
@@ -47,19 +47,26 @@ circle events radius coloring =
 {-| -}
 type Coloring
   = Bordered Int
-  | Filled
-
-
-{-| -}
-filled : Coloring
-filled =
-  Filled
+  | Disconnected Int
+  | Full
 
 
 {-| -}
 bordered : Int -> Coloring
 bordered =
   Bordered
+
+
+{-| -}
+disconnected : Int -> Coloring
+disconnected =
+  Disconnected
+
+
+{-| -}
+full : Coloring
+full =
+  Full
 
 
 {-| -}
@@ -99,8 +106,13 @@ viewCircle events radius coloring color system point =
           , Attributes.fill "white"
           ]
 
-        Filled ->
-          [ Attributes.fill color ]
+        Disconnected width ->
+          [ Attributes.stroke "white"
+          , Attributes.strokeWidth (toString width)
+          , Attributes.fill color
+          ]
 
+        Full ->
+          [ Attributes.fill color ]
   in
   Svg.circle (events ++ attributes ++ colorAttributes) []
