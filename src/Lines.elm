@@ -81,7 +81,7 @@ line color width dot data =
 {-| -}
 viewSimple : (data -> Float) -> (data -> Float) -> List (List data) -> Svg.Svg msg
 viewSimple toX toY datas =
-  view toX toY (List.map2 defaultConfig Color.defaults datas)
+  view toX toY (List.map3 defaultConfig defaultDots defaultColors datas)
 
 
 {-| -}
@@ -165,10 +165,10 @@ lineConfig (Line lineConfig) =
   lineConfig
 
 
-defaultConfig : Color.Color -> List data -> Line data msg
-defaultConfig color data =
+defaultConfig : Dot.Dot msg -> Color.Color -> List data -> Line data msg
+defaultConfig dot color data =
   Line
-    { dot = Dot.default
+    { dot = dot
     , color = color
     , width = 2
     , data = data
@@ -215,6 +215,25 @@ viewInterpolation config system (Line line) points =
 
 viewDots : Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
 viewDots system (Line line) points =
-   Svg.g
-    [ SvgA.class "dots" ] <|
+   Svg.g [ SvgA.class "dots" ] <|
     List.map (Dot.view line.dot line.color system) points
+
+
+
+-- DEFAULTS
+
+
+defaultColors : List Color.Color
+defaultColors =
+  [ Color.pink
+  , Color.blue
+  , Color.orange
+  ]
+
+
+defaultDots : List (Dot.Dot msg)
+defaultDots =
+  [ Dot.default1
+  , Dot.default2
+  , Dot.default3
+  ]

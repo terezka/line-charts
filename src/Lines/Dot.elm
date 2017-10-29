@@ -1,4 +1,4 @@
-module Lines.Dot exposing (Dot, default, none, view, bordered, disconnected, full, circle)
+module Lines.Dot exposing (Dot, default2, default3, default1, none, view, bordered, disconnected, full, circle)
 
 {-| TODO: Triangle, Diamond, Square, Circle, Cross, Plus, Star
 -}
@@ -25,10 +25,21 @@ none =
 
 
 {-| -}
-default : Dot msg
-default =
-  circle [] 3 (disconnected 3)
+default1 : Dot msg
+default1 =
+  circle [] 4 (disconnected 2)
 
+
+{-| -}
+default2 : Dot msg
+default2 =
+  circle [] 3 (bordered 2)
+
+
+{-| -}
+default3 : Dot msg
+default3 =
+  circle [] 3 (full)
 
 
 -- SHAPES

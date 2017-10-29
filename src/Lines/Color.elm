@@ -1,4 +1,4 @@
-module Lines.Color exposing (Color, pink, blue, orange, gray, transparent, black, defaults)
+module Lines.Color exposing (Color, pink, blue, orange, gray, transparent, black)
 
 {-| -}
 
@@ -42,13 +42,3 @@ transparent =
 black : Color
 black =
   "black"
-
-
-{-| -}
-defaults : List Color
-defaults =
-  [ pink
-  , blue
-  , orange
-  , black
-  ]
