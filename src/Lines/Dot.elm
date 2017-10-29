@@ -1,11 +1,29 @@
 module Lines.Dot exposing
-  ( Dot, default1, default2, default3, none
+  ( Dot, none, default1, default2, default3
   , circle, triangle, square, diamond, plus, cross
   , bordered, disconnected, full
   , view
   )
 
-{-| TODO: Star
+{-| # Dots
+
+# Quick start
+@docs Dot, none, default1, default2, default3
+
+# Customizing dots
+_Note:_ When chosing a size for your dot, be aware that
+even though the shapes have the same radius, they might
+look bigger or smaller in terms of volume depending on
+their shape.
+
+@docs circle, triangle, square, diamond, plus, cross
+@docs bordered, disconnected, full
+
+# View
+I do this for you when drawing your line, this is only if you want
+to use it else where.
+@docs view
+
 -}
 
 import Svg exposing (Svg)
@@ -13,6 +31,7 @@ import Lines.Color as Color
 import Lines.Coordinate as Coordinate
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate exposing (..)
+
 
 
 -- CONFIG
@@ -32,19 +51,19 @@ none =
 {-| -}
 default1 : Dot msg
 default1 =
-  circle [] 4 (disconnected 3)
+  circle [] 4 (disconnected 2)
 
 
 {-| -}
 default2 : Dot msg
 default2 =
-  circle [] 3 (bordered 2)
+  triangle [] 6 (disconnected 2)
 
 
 {-| -}
 default3 : Dot msg
 default3 =
-  circle [] 3 (full)
+  cross [] 10 (disconnected 2)
 
 
 
@@ -114,6 +133,10 @@ disconnected =
 full : Coloring
 full =
   Full
+
+
+
+-- VIEW
 
 
 {-| -}
@@ -279,7 +302,6 @@ plusPath radiusInt point =
       ]
   in
   Attributes.d <| String.join " " commands
-
 
 
 colorAttributes : Color.Color -> Coloring -> List (Svg.Attribute msg)
