@@ -1,11 +1,11 @@
 module Lines.Dot exposing
   ( Dot, default1, default2, default3, none
-  , circle, triangle, square, diamond, plus
+  , circle, triangle, square, diamond, plus, cross
   , bordered, disconnected, full
   , view
   )
 
-{-| TODO: Cross, Star
+{-| TODO: Star
 -}
 
 import Svg exposing (Svg)
@@ -79,6 +79,13 @@ diamond events radius coloring =
 plus : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
 plus events radius coloring =
   Dot <| Just <| viewPlus events radius coloring
+
+
+{-| -}
+cross : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+cross events radius coloring =
+  Dot <| Just <| viewCross events radius coloring
+
 
 
 -- COLORING
@@ -217,6 +224,35 @@ viewDiamond events radiusInt coloring color system cartesianPoint =
 viewPlus : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
 viewPlus events radiusInt coloring color system cartesianPoint =
   let
+    point =
+      toSVGPoint system cartesianPoint
+
+    attributes =
+      [ plusPath radiusInt point ]
+  in
+  Svg.path (events ++ attributes ++ colorAttributes color coloring) []
+
+
+viewCross : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewCross events radiusInt coloring color system cartesianPoint =
+  let
+    point =
+      toSVGPoint system cartesianPoint
+
+    rotation =
+      "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
+
+    attributes =
+      [ plusPath radiusInt point
+      , Attributes.transform rotation
+      ]
+  in
+  Svg.path (events ++ attributes ++ colorAttributes color coloring) []
+
+
+plusPath : Int -> Point -> Svg.Attribute msg
+plusPath radiusInt point =
+  let
     radius =
       toFloat radiusInt
 
@@ -225,9 +261,6 @@ viewPlus events radiusInt coloring color system cartesianPoint =
 
     r6 =
       r3 / 2
-
-    point =
-      toSVGPoint system cartesianPoint
 
     commands =
       [ "M" ++ toString (point.x - r6) ++ " " ++ toString (point.y - r3 - r6)
@@ -244,11 +277,9 @@ viewPlus events radiusInt coloring color system cartesianPoint =
       , "v" ++ toString -r3
       , "h" ++ toString -r3
       ]
-
-    attributes =
-      [ Attributes.d <| String.join " " commands ]
   in
-  Svg.path (events ++ attributes ++ colorAttributes color coloring) []
+  Attributes.d <| String.join " " commands
+
 
 
 colorAttributes : Color.Color -> Coloring -> List (Svg.Attribute msg)

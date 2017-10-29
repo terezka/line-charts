@@ -18,13 +18,19 @@ main =
     , x = Lines.Axis Axis.defaultLook .magnesium
     , interpolation = Lines.Monotone
     }
-    [ Lines.line Color.pink 1 diamond (data3 ++ data5)
+    [ Lines.line Color.pink 1 triangle data1
+    , Lines.line Color.pink 1 cross data2
     ]
 
 
-diamond : Dot.Dot msg
-diamond =
-  Dot.plus [] 10 (Dot.disconnected 2)
+triangle : Dot.Dot msg
+triangle =
+  Dot.triangle [] 5 (Dot.disconnected 2)
+
+
+cross : Dot.Dot msg
+cross =
+  Dot.cross [] 10 (Dot.disconnected 2)
 
 
 -- DATA
