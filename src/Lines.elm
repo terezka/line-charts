@@ -17,16 +17,16 @@ module Lines exposing (Config, Axis, Interpolation(..), line, viewSimple, view, 
 
 import Html
 import Svg
-import Svg.Attributes
-import Lines.Color as Color
+import Svg.Attributes as SvgA
+import Lines.Dot as Dot
 import Lines.Axis as Axis
 import Lines.Junk as Junk
-import Lines.Dot as Dot
-import Lines.Coordinate as Coordinate exposing (..)
+import Lines.Color as Color
 import Lines.Container as Container
-import Internal.Coordinate as Coordinate
-import Internal.Attributes as Attributes
+import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Interpolation as Interpolation
+import Internal.Coordinate as Coordinate
+import Internal.Attributes as IntA
 import Internal.Path as Path
 import Internal.Axis as Axis
 import Internal.Junk
@@ -123,10 +123,11 @@ viewCustom config lines =
       Html.div [] (plot :: junk.html)
 
     attributes =
-      List.append
-        (Attributes.toSvgAttributes system config.container.attributes)
-        [ Svg.Attributes.width <| toString system.frame.size.width
-        , Svg.Attributes.height <| toString system.frame.size.height
+      List.concat
+        [ IntA.toSvgAttributes system config.container.attributes
+        , [ SvgA.width <| toString system.frame.size.width
+          , SvgA.height <| toString system.frame.size.height
+          ]
         ]
 
     viewLines =
@@ -135,11 +136,11 @@ viewCustom config lines =
   container <|
     Svg.svg attributes
       [ Svg.defs [] config.container.defs
-      , Svg.g [ Svg.Attributes.class "junk--below" ] junk.below
-      , Svg.g [ Svg.Attributes.class "lines" ] viewLines
+      , Svg.g [ SvgA.class "junk--below" ] junk.below
+      , Svg.g [ SvgA.class "lines" ] viewLines
       , Axis.viewHorizontal system config.x.look
       , Axis.viewVertical system config.y.look
-      , Svg.g [ Svg.Attributes.class "junk--above" ] junk.above
+      , Svg.g [ SvgA.class "junk--above" ] junk.above
       ]
 
 
@@ -173,7 +174,7 @@ defaultConfig color data =
 viewLine : Config data msg -> Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
 viewLine config system line points =
   Svg.g
-    [ Svg.Attributes.class "line" ]
+    [ SvgA.class "line" ]
     [ viewInterpolation config system line points
     , viewDots system line points
     ]
@@ -199,10 +200,10 @@ viewInterpolation config system (Line line) points =
           []
 
     attributes =
-      [ Svg.Attributes.class "interpolation"
-      , Svg.Attributes.stroke line.color
-      , Svg.Attributes.strokeWidth (toString line.width)
-      , Svg.Attributes.fill "transparent"
+      [ SvgA.class "interpolation"
+      , SvgA.stroke line.color
+      , SvgA.strokeWidth (toString line.width)
+      , SvgA.fill "transparent"
       ]
   in
   Path.view system attributes commands
@@ -211,5 +212,5 @@ viewInterpolation config system (Line line) points =
 viewDots : Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
 viewDots system (Line line) points =
    Svg.g
-    [ Svg.Attributes.class "dots" ] <|
+    [ SvgA.class "dots" ] <|
     List.map (Dot.view line.dot line.color system) points
