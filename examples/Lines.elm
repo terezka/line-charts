@@ -19,7 +19,7 @@ main =
     , interpolation = Lines.Linear
     }
     [ Lines.line Color.pink 1 Dot.default1 data3
-    , Lines.dash Color.pink 2 Dot.default1 "15, 10, 5, 10, 15" data5
+    , Lines.dash Color.pink 2 Dot.default1 "1 4 3" data5
     , Lines.line Color.pink 4 default1Bang data4
     ]
 

@@ -16,6 +16,6 @@ type alias Config msg =
 default : Config msg
 default =
   { frame = Frame (Margin 40 40 90 90) (Size 500 400)
-  , attributes = [ Attributes.custom <| style "font-family: monospace;" ]
+  , attributes = [ Attributes.custom <| style "font-family: monospace;" ] -- TODO
   , defs = []
   }
