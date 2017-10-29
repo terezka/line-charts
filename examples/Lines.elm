@@ -16,13 +16,17 @@ main =
     , junk = Junk.none
     , y = Lines.Axis Axis.defaultLook .heartattacks
     , x = Lines.Axis Axis.defaultLook .magnesium
-    , interpolation = Lines.Monotone
+    , interpolation = Lines.Linear
     }
-    [ Lines.line Color.orange 2 Dot.default1 data1
-    , Lines.line Color.blue 2 Dot.default2 data2
-    , Lines.line Color.pink 2 Dot.default3 data3
+    [ Lines.line Color.pink 1 Dot.default1 data3
+    , Lines.dash Color.pink 2 Dot.default1 "15, 10, 5, 10, 15" data5
+    , Lines.line Color.pink 4 default1Bang data4
     ]
 
+
+default1Bang : Dot.Dot msg
+default1Bang =
+  Dot.circle [] 5 (Dot.disconnected 3)
 
 
 -- DATA
@@ -57,14 +61,19 @@ data3 =
   [ Data 2 5
   , Data 3 2
   , Data 4 8
-  , Data 5 4
+  , Data 5 6
   ]
 
 
 data4 : List Data
 data4 =
-  [ Data 1 2
-  , Data 3.4 3
-  , Data 4.5 6
-  , Data 5.6 5
+  [ Data 5 6
+  , Data 6 9
+  ]
+
+
+data5 : List Data
+data5 =
+  [ Data 6 9
+  , Data 7 3
   ]

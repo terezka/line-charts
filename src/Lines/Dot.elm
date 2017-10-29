@@ -27,7 +27,7 @@ none =
 {-| -}
 default1 : Dot msg
 default1 =
-  circle [] 4 (disconnected 2)
+  circle [] 4 (disconnected 3)
 
 
 {-| -}

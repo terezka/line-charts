@@ -1,6 +1,6 @@
 module Lines exposing
   ( viewSimple
-  , view, line
+  , view, line, dash
   , viewCustom, Config, Axis, Interpolation(..)
   )
 
@@ -12,7 +12,7 @@ module Lines exposing
 @docs viewSimple
 
 ## Customize individual lines
-@docs view, line
+@docs view, line, dash
 
 ## Customize plot
 @docs viewCustom, Config, Axis, Interpolation
@@ -46,7 +46,7 @@ type alias Config data msg =
   }
 
 
-{-| -}
+{-| TODO: Move to Axis module -}
 type alias Axis data msg =
   { look : Axis.Look msg
   , variable : data -> Float
@@ -71,7 +71,13 @@ type Line data msg =
 {-| -}
 line : Color.Color -> Int -> Dot.Dot msg -> List data -> Line data msg
 line color width dot data =
-  Line <| LineConfig color width dot data
+  Line <| LineConfig color width dot "" data
+
+
+{-| -}
+dash : Color.Color -> Int -> Dot.Dot msg -> String -> List data -> Line data msg
+dash color width dot dashing data =
+  Line <| LineConfig color width dot dashing data
 
 
 
@@ -156,6 +162,7 @@ type alias LineConfig data msg =
   { color : Color.Color
   , width : Int
   , dot : Dot.Dot msg
+  , dashing : String
   , data : List data
   }
 
@@ -171,6 +178,7 @@ defaultConfig dot color data =
     { dot = dot
     , color = color
     , width = 2
+    , dashing = ""
     , data = data
     }
 
@@ -207,6 +215,7 @@ viewInterpolation config system (Line line) points =
       [ SvgA.class "interpolation"
       , SvgA.stroke line.color
       , SvgA.strokeWidth (toString line.width)
+      , SvgA.strokeDasharray line.dashing
       , SvgA.fill "transparent"
       ]
   in
