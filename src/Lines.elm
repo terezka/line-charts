@@ -1,4 +1,8 @@
-module Lines exposing (Config, Axis, Interpolation(..), line, viewSimple, view, viewCustom)
+module Lines exposing
+  ( viewSimple
+  , view, line
+  , viewCustom, Config, Axis, Interpolation(..)
+  )
 
 {-|
 
