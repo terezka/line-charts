@@ -80,7 +80,10 @@ dash color width dot dashing data =
 {-| -}
 viewSimple : (data -> Float) -> (data -> Float) -> List (List data) -> Svg.Svg msg
 viewSimple toX toY datas =
-  view toX toY (List.map3 defaultConfig defaultDots defaultColors datas)
+  if List.length datas > 3 then
+    Html.div [] [ Html.text "If you have more than three data sets, you must use `view` or `viewCustom`!" ]
+  else
+    view toX toY (List.map3 defaultConfig defaultDots defaultColors datas)
 
 
 {-| -}

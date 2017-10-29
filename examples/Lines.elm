@@ -11,7 +11,7 @@ import Lines.Container as Container
 
 main : Svg msg
 main =
-  -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3]
+  -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3 ]
   Lines.viewCustom
     { container = Container.default
     , junk = Junk.none
