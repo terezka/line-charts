@@ -1,4 +1,9 @@
-module Lines.Dot exposing (Dot, default2, default3, default1, none, view, bordered, disconnected, full, circle, triangle, square, diamond)
+module Lines.Dot exposing
+  ( Dot, default1, default2, default3, none
+  , circle, triangle, square, diamond
+  , bordered, disconnected, full
+  , view
+  )
 
 {-| TODO: Cross, Plus, Star
 -}
