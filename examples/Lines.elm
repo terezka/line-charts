@@ -72,3 +72,12 @@ data3 =
   , Data 4 8
   , Data 5 4
   ]
+
+
+data4 : List Data
+data4 =
+  [ Data 1 2
+  , Data 3.4 3
+  , Data 4.5 6
+  , Data 5.6 5
+  ]

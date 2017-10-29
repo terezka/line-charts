@@ -50,4 +50,5 @@ defaults =
   [ pink
   , blue
   , orange
+  , black
   ]
