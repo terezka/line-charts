@@ -11,8 +11,18 @@ import Lines.Container as Container
 
 main : Svg msg
 main =
-  Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3]
-  
+  -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3]
+  Lines.viewCustom
+    { container = Container.default
+    , junk = Junk.none
+    , x = Axis.defaultAxis .magnesium
+    , y = Axis.defaultAxis .heartattacks
+    , interpolation = Lines.Monotone
+    }
+    [ Lines.line Color.blue 1 triangle data1
+    , Lines.line Color.pink 1 diamond data2
+    , Lines.line Color.orange 1 cross data3
+    ]
 
 
 triangle : Dot.Dot msg
@@ -28,6 +38,7 @@ diamond =
 cross : Dot.Dot msg
 cross =
   Dot.cross [] 10 (Dot.disconnected 2)
+
 
 
 -- DATA

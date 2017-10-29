@@ -1,7 +1,7 @@
 module Lines exposing
   ( viewSimple
   , view, line, dash
-  , viewCustom, Config, Axis, Interpolation(..)
+  , viewCustom, Config, Interpolation(..)
   )
 
 {-|
@@ -15,7 +15,7 @@ module Lines exposing
 @docs view, line, dash
 
 ## Customize plot
-@docs viewCustom, Config, Axis, Interpolation
+@docs viewCustom, Config, Interpolation
 
 -}
 
@@ -40,16 +40,9 @@ import Internal.Junk
 type alias Config data msg =
   { container : Container.Config msg
   , junk : Junk.Junk msg
-  , x : Axis data msg
-  , y : Axis data msg
+  , x : Axis.Axis data msg
+  , y : Axis.Axis data msg
   , interpolation : Interpolation
-  }
-
-
-{-| TODO: Move to Axis module -}
-type alias Axis data msg =
-  { look : Axis.Look msg
-  , variable : data -> Float
   }
 
 
@@ -95,8 +88,8 @@ view : (data -> Float) -> (data -> Float) -> List (Line data msg) -> Svg.Svg msg
 view toX toY =
   viewCustom
     { container = Container.default
-    , x = Axis Axis.defaultLook toX
-    , y = Axis Axis.defaultLook toY
+    , x = Axis.Axis Axis.defaultLook toX
+    , y = Axis.Axis Axis.defaultLook toY
     , junk = Junk.none
     , interpolation = Linear
     }

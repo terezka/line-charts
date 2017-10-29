@@ -1,9 +1,27 @@
-module Lines.Axis exposing (..)
+module Lines.Axis exposing
+  ( defaultAxis
+  , Axis, Look, Line, Mark, Tick, Direction(..)
+  , defaultLook
+  , towardsZero
+  , defaultLine
+  , defaultMark, defaultInterval, customInterval
+  , defaultTick, defaultLabel
+  )
 
 {-| # Axis
 
-## Config
+## Quick start
+@docs defaultAxis
 
+## What is an axis?
+@docs Axis, Look, Line, Mark, Tick, Direction
+
+## Defaults
+@docs defaultLook
+@docs towardsZero
+@docs defaultLine
+@docs defaultMark, defaultInterval, customInterval
+@docs defaultTick, defaultLabel
 
 -}
 
@@ -12,6 +30,13 @@ import Svg.Attributes exposing (stroke, style, fill)
 import Lines.Coordinate as Coordinate exposing (..)
 import Lines.Color as Color
 import Internal.Numbers as Numbers
+
+
+{-| -}
+type alias Axis data msg =
+  { look : Look msg
+  , variable : data -> Float
+  }
 
 
 {-| -}
@@ -55,6 +80,14 @@ type Direction
 
 
 -- DEFAULTS
+
+
+{-| -}
+defaultAxis : (data -> Float) -> Axis data msg
+defaultAxis variable =
+  { variable = variable
+  , look = defaultLook
+  }
 
 
 {-| -}
