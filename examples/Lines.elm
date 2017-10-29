@@ -16,17 +16,15 @@ main =
     , junk = Junk.none
     , y = Lines.Axis Axis.defaultLook .heartattacks
     , x = Lines.Axis Axis.defaultLook .magnesium
-    , interpolation = Lines.Linear
+    , interpolation = Lines.Monotone
     }
-    [ Lines.line Color.pink 1 Dot.default1 data3
-    , Lines.dash Color.pink 2 Dot.default1 "1 4 3" data5
-    , Lines.line Color.pink 4 default1Bang data4
+    [ Lines.line Color.pink 1 triangle (data3 ++ data5)
     ]
 
 
-default1Bang : Dot.Dot msg
-default1Bang =
-  Dot.circle [] 5 (Dot.disconnected 3)
+triangle : Dot.Dot msg
+triangle =
+  Dot.triangle [] 5 (Dot.disconnected 1)
 
 
 -- DATA

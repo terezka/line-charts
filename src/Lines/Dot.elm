@@ -1,4 +1,4 @@
-module Lines.Dot exposing (Dot, default2, default3, default1, none, view, bordered, disconnected, full, circle)
+module Lines.Dot exposing (Dot, default2, default3, default1, none, view, bordered, disconnected, full, circle, triangle)
 
 {-| TODO: Triangle, Diamond, Square, Circle, Cross, Plus, Star
 -}
@@ -51,6 +51,12 @@ circle events radius coloring =
   Dot <| Just <| viewCircle events radius coloring
 
 
+{-| -}
+triangle : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+triangle events radius coloring =
+  Dot <| Just <| viewTriangle events radius coloring
+
+
 
 -- COLORING
 
@@ -101,29 +107,62 @@ type alias View msg =
 
 
 viewCircle : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewCircle events radius coloring color system point =
+viewCircle events radius coloring color system cartesianPoint =
   let
+    point =
+      toSVGPoint system cartesianPoint
+
     attributes =
-      [ Attributes.cx (toString <| toSVG X system <| point.x)
-      , Attributes.cy (toString <| toSVG Y system <| point.y)
+      [ Attributes.cx (toString point.x)
+      , Attributes.cy (toString point.y)
       , Attributes.r (toString radius)
       ]
-
-    colorAttributes =
-      case coloring of
-        Bordered width ->
-          [ Attributes.stroke color
-          , Attributes.strokeWidth (toString width)
-          , Attributes.fill "white"
-          ]
-
-        Disconnected width ->
-          [ Attributes.stroke "white"
-          , Attributes.strokeWidth (toString width)
-          , Attributes.fill color
-          ]
-
-        Full ->
-          [ Attributes.fill color ]
   in
-  Svg.circle (events ++ attributes ++ colorAttributes) []
+  Svg.circle (events ++ attributes ++ colorAttributes color coloring) []
+
+
+viewTriangle : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewTriangle events radiusInt coloring color system cartesianPoint =
+  let
+    radius =
+      toFloat radiusInt
+
+    point =
+      toSVGPoint system cartesianPoint
+
+    -- "200,90 210,105 190,105" for Point 200 100
+    shapePoints =
+      [ point.x
+      , point.y - radius
+      , point.x + radius
+      , point.y + radius / 2
+      , point.x - radius
+      , point.y + radius / 2
+      ]
+
+    shape =
+      String.join " " <| List.map toString shapePoints
+
+    attributes =
+      [ Attributes.points shape ]
+  in
+  Svg.polygon (events ++ attributes ++ colorAttributes color coloring) []
+
+
+colorAttributes : Color.Color -> Coloring -> List (Svg.Attribute msg)
+colorAttributes color coloring =
+  case coloring of
+    Bordered width ->
+      [ Attributes.stroke color
+      , Attributes.strokeWidth (toString width)
+      , Attributes.fill "white"
+      ]
+
+    Disconnected width ->
+      [ Attributes.stroke "white"
+      , Attributes.strokeWidth (toString width)
+      , Attributes.fill color
+      ]
+
+    Full ->
+      [ Attributes.fill color ]
