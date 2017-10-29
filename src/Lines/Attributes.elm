@@ -49,8 +49,7 @@ onMouseMove msg =
   Attribute <| \system -> Svg.Events.on "mousemove" (decoder system msg)
 
 
-{-| TODO: Should this be together with mousemove somehow?
--}
+{-| -}
 onMouseLeave : msg -> Attribute msg
 onMouseLeave msg =
   Attribute <| \_ -> Svg.Events.on "mouseleave" (Json.succeed msg)
