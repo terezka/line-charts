@@ -8,7 +8,7 @@ module Lines.Axis exposing (..)
 -}
 
 import Svg exposing (..)
-import Svg.Attributes exposing (stroke, style)
+import Svg.Attributes exposing (stroke, style, fill)
 import Lines.Coordinate as Coordinate exposing (..)
 import Lines.Color as Color
 import Internal.Numbers as Numbers
@@ -60,9 +60,9 @@ type Direction
 {-| -}
 defaultLook : Look msg
 defaultLook =
-  { offset = 0
+  { offset = 20
   , position = towardsZero
-  , line = Just (defaultLine [ stroke Color.black ])
+  , line = Just (defaultLine [ stroke Color.gray ])
   , marks = List.map defaultMark << defaultInterval
   , direction = Negative
   }
@@ -87,7 +87,7 @@ defaultMark position =
 defaultTick : Tick msg
 defaultTick =
   { length = 5
-  , attributes = [ stroke Color.black ]
+  , attributes = [ stroke Color.gray ]
   }
 
 
@@ -95,12 +95,6 @@ defaultTick =
 defaultLabel : Float -> Svg msg
 defaultLabel position =
   text_ [] [ tspan [] [ text (toString position) ] ]
-
-
-{-| -}
-defaultStringLabel : String -> Svg msg
-defaultStringLabel position =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text position ] ]
 
 
 {-| -}
