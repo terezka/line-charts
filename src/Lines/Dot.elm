@@ -1,12 +1,12 @@
-module Lines.Dot exposing (Dot, default2, default3, default1, none, view, bordered, disconnected, full, circle, triangle)
+module Lines.Dot exposing (Dot, default2, default3, default1, none, view, bordered, disconnected, full, circle, triangle, square, diamond)
 
-{-| TODO: Triangle, Diamond, Square, Circle, Cross, Plus, Star
+{-| TODO: Cross, Plus, Star
 -}
 
 import Svg exposing (Svg)
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate
-import Svg.Attributes as Attributes exposing (class, fill, style, x1, x2, y1, y2, stroke, d)
+import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate exposing (..)
 
 
@@ -55,6 +55,18 @@ circle events radius coloring =
 triangle : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
 triangle events radius coloring =
   Dot <| Just <| viewTriangle events radius coloring
+
+
+{-| -}
+square : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+square events radius coloring =
+  Dot <| Just <| viewSquare events radius coloring
+
+
+{-| -}
+diamond : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+diamond events radius coloring =
+  Dot <| Just <| viewDiamond events radius coloring
 
 
 
@@ -147,6 +159,48 @@ viewTriangle events radiusInt coloring color system cartesianPoint =
       [ Attributes.points shape ]
   in
   Svg.polygon (events ++ attributes ++ colorAttributes color coloring) []
+
+
+viewSquare : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewSquare events radiusInt coloring color system cartesianPoint =
+  let
+    radius =
+      toFloat radiusInt
+
+    point =
+      toSVGPoint system cartesianPoint
+
+    attributes =
+      [ Attributes.x <| toString (point.x - radius / 2)
+      , Attributes.y <| toString (point.y - radius / 2)
+      , Attributes.width <| toString radius
+      , Attributes.height <| toString radius
+      ]
+  in
+  Svg.rect (events ++ attributes ++ colorAttributes color coloring) []
+
+
+viewDiamond : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewDiamond events radiusInt coloring color system cartesianPoint =
+  let
+    radius =
+      toFloat radiusInt
+
+    point =
+      toSVGPoint system cartesianPoint
+
+    rotation =
+      "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
+
+    attributes =
+      [ Attributes.x <| toString (point.x - radius / 2)
+      , Attributes.y <| toString (point.y - radius / 2)
+      , Attributes.width <| toString radius
+      , Attributes.height <| toString radius
+      , Attributes.transform rotation
+      ]
+  in
+  Svg.rect (events ++ attributes ++ colorAttributes color coloring) []
 
 
 colorAttributes : Color.Color -> Coloring -> List (Svg.Attribute msg)
