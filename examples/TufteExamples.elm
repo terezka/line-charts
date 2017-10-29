@@ -3,12 +3,12 @@ module TufteExamples exposing (main)
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes
 import Svg exposing (Svg, Attribute, text_, tspan, g)
-import Scatter exposing (..)
-import Plot.Junk as Junk exposing (..)
-import Plot.Color as Color
-import Plot.Dot as Dot
-import Plot.Axis as Axis exposing (defaultLook)
-import Plot.Container as Container
+import Lines exposing (..)
+import Lines.Junk as Junk exposing (..)
+import Lines.Color as Color
+import Lines.Dot as Dot
+import Lines.Axis as Axis exposing (defaultLook)
+import Lines.Container as Container
 
 main : Html msg
 main =
@@ -23,43 +23,54 @@ view : Svg msg
 view =
   Html.div
     [ Html.Attributes.style [ ( "font-family", "monospace" ) ] ]
-    [ viewScatter ]
-
-
-viewScatter : Html msg
-viewScatter =
-  Scatter.viewCustom
-    { container = Container.default
-    , junk = Junk.none
-    , x = Scatter.Axis { defaultLook | offset = 20 } .x
-    , y = Scatter.Axis { defaultLook | offset = 20 } .y
-    }
-    [ Scatter.groupCustom full (trend { defaultTrendConfig | space = 0 }) data1
-    , Scatter.groupCustom empty (trend defaultTrendConfig) data2
+    [ exampleSimple
+    , exampleCustomizeLines
+    , exampleInterpolation
     ]
 
 
-
--- DOTS
-
-
-full : Dot.Config msg
-full =
-  Dot.Config (Dot.Circle Dot.NoOutline) [] 3 Color.black
+exampleSimple : Html msg
+exampleSimple =
+  Lines.viewSimple .x .y [ data1, data2, data3 ]
 
 
-empty : Dot.Config msg
-empty =
-  Dot.Config (Dot.Circle outline) [] 3 Color.transparent
+exampleCustomizeLines : Html msg
+exampleCustomizeLines =
+  Lines.view .x .y
+    [ Lines.dash "#7c4dff" 1 plus "1 2" data1
+    , Lines.line "#f27c21" 2 square data2
+    , Lines.line "#00848f" 3 circle data3
+    ]
 
 
-outline : Dot.Outline
-outline =
-  Dot.Outline
-    { color = Color.black
-    , width = 1
+plus : Dot.Dot msg
+plus =
+  Dot.plus [] 10 (Dot.disconnected 2)
+
+
+square : Dot.Dot msg
+square =
+  Dot.square [] 7 (Dot.disconnected 2)
+
+
+circle : Dot.Dot msg
+circle =
+  Dot.circle [] 3 (Dot.disconnected 2)
+
+
+exampleInterpolation : Html msg
+exampleInterpolation =
+  Lines.viewCustom
+    { container = Container.default
+    , junk = Junk.none
+    , x = Axis.defaultAxis .x
+    , y = Axis.defaultAxis .y
+    , interpolation = Lines.Monotone
     }
-
+    [ Lines.line Color.blue 1 plus data1
+    , Lines.line Color.pink 1 square data2
+    , Lines.line Color.orange 1 circle data3
+    ]
 
 
 -- DATA
@@ -75,28 +86,42 @@ data1 : List Data
 data1 =
   [ Data 1 3
   , Data 2 4
-  , Data 2.4 4.5
-  , Data 3 5
-  , Data 3.5 4.3
-  , Data 4 4.5
+  , Data 3 4.5
+  , Data 4 5
+  , Data 5 4.3
+  , Data 6 5
+  , Data 7 6.4
+  , Data 8 6.7
+  , Data 9 6.9
+  , Data 10 9
   ]
 
 
 data2 : List Data
 data2 =
-  [ Data 4 5
-  , Data 5 5.7
-  , Data 5.5 5.2
-  , Data 6 6
-  , Data 6.5 5.8
-  , Data 7 5.2
+  [ Data 1 1
+  , Data 2 2
+  , Data 3 4
+  , Data 4 7
+  , Data 5 8
+  , Data 6 8.2
+  , Data 7 7
+  , Data 8 4
+  , Data 9 3
+  , Data 10 6
   ]
 
 
 data3 : List Data
 data3 =
-  [ Data 2 5
-  , Data 3 2
-  , Data 4 8
-  , Data 5 4
+  [ Data 1 5
+  , Data 2 5.7
+  , Data 3 5.2
+  , Data 4 6
+  , Data 5 5.8
+  , Data 6 5.2
+  , Data 7 4
+  , Data 8 3.6
+  , Data 9 6
+  , Data 10 7
   ]
