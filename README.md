@@ -1,2 +1,3 @@
-# graphics
-SVG graphics in Elm
+# Lines
+
+A opinionated library for plotting lines graphs in SVG.
