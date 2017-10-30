@@ -5,10 +5,12 @@ import Lines.Junk as Junk exposing (..)
 import Lines.Color as Color
 import Lines.Dot as Dot
 import Lines.Axis as Axis
-import Lines.Container as Container
+import Lines.Legends as Legends
+import Lines.Attributes as Attributes
 import Lines.Coordinate as Coordinate exposing (..)
 import Html exposing (Html, div, h1, node, p, text)
 import Svg exposing (Svg, Attribute, text_, tspan, g)
+import Svg.Attributes as SvgA
 
 
 
@@ -47,21 +49,40 @@ update msg model =
 view : Model -> Svg Msg
 view model =
   Lines.viewCustom
-    { container = Container.default
-    , junk = Junk.none
-    , y = Lines.Axis Axis.defaultLook .heartattacks
-    , x = Lines.Axis Axis.defaultLook .magnesium
-    , interpolation = Monotone
+    { container =
+        { frame = Frame (Margin 40 150 90 150) (Size 650 400)
+        , attributes =
+            [ Attributes.onMouseMove (Just >> Hover)
+            , Attributes.onMouseLeave (Hover Nothing)
+            , Attributes.custom <| SvgA.style "font-family: monospace;"
+            ]
+        , defs = []
+        }
+    , junk = Maybe.withDefault Junk.none (Maybe.map junk model.hovering)
+    , x = Axis.defaultAxis (Axis.defaultTitle "Year" 0 3) (.x >> (+) 1990)
+    , y = Axis.defaultAxis (Axis.defaultTitle "Cats" 0 0) .y
+    , interpolation = Lines.Monotone
+    , legends = Legends.byEnding Legends.defaultLabel
     }
-    [ Lines.line Color.gray 1 Dot.none data1
-    , Lines.line Color.blue 2 Dot.none data2
-    , Lines.line Color.pink 3 pinkDot data3
+    [ Lines.line Color.blue 1 plus "Non-binary" data1
+    , Lines.line Color.orange 1 circle "Women" data3
+    , Lines.line Color.pink 1 square "Men" data2
     ]
 
 
-pinkDot : Dot.Dot msg
-pinkDot =
-  Dot.dot <| Dot.Config Dot.Circle [] 5 (Dot.bordered 2)
+plus : Dot.Dot msg
+plus =
+  Dot.plus [ SvgA.style "cursor: default;" ] 10 (Dot.disconnected 2)
+
+
+square : Dot.Dot msg
+square =
+  Dot.square [ SvgA.style "cursor: default;" ]  7 (Dot.disconnected 2)
+
+
+circle : Dot.Dot msg
+circle =
+  Dot.circle [ SvgA.style "cursor: default;" ]  3 (Dot.disconnected 2)
 
 
 junk : Point -> Junk.Junk Msg
@@ -69,20 +90,14 @@ junk hoverSvgCoordinates =
   Junk.withHint (Junk.findNearest hoverSvgCoordinates) <|
       \system hint ->
           let
-            viewHint hint =
-              g [ place system hint.x hint.y ]
-                [ text_ []
-                  [ tspan []
-                      [ text <| "( " ++ toString hint.x ++ ", " ++ toString hint.y ++ " )"
-                      ]
-                  ]
+            viewHint hint = -- TODO as html
+              Svg.g [ placeWithOffset system hint.x hint.y 5 20 ]
+                [ Svg.rect [ SvgA.fill "white", SvgA.y "-12", SvgA.width "80", SvgA.height "18", SvgA.opacity "0.5" ] []
+                , text_ [] [ tspan [] [ text <| toString ( hint.x, hint.y ) ] ]
                 ]
           in
           { below = []
-          , above =
-              [ Maybe.map viewHint hint
-                  |> Maybe.withDefault (text "")
-              ]
+          , above = [ Maybe.map viewHint hint |> Maybe.withDefault (text "") ]
           , html = []
           }
 
@@ -92,36 +107,55 @@ junk hoverSvgCoordinates =
 
 
 type alias Data =
-  { magnesium : Float
-  , heartattacks : Float
+  { x : Float
+  , y : Float
   }
 
 
 data1 : List Data
 data1 =
-  [ Data 1 4
-  , Data 2 7
-  , Data 3 6
-  , Data 9 3
+  [ Data 1 3
+  , Data 2 4
+  , Data 3 4.5
+  , Data 4 5
+  , Data 5 4.3
+  , Data 6 5
+  , Data 7 6.4
+  , Data 8 6.7
+  , Data 9 6.9
+  , Data 10 9
   ]
 
 
 data2 : List Data
 data2 =
-  [ Data 2 2
+  [ Data 1 1
+  , Data 2 2
   , Data 3 4
-  , Data 4 6
+  , Data 4 7
   , Data 5 8
+  , Data 6 8.2
+  , Data 7 7
+  , Data 8 4
+  , Data 9 3
+  , Data 10 6
   ]
 
 
 data3 : List Data
 data3 =
-  [ Data 2 5
-  , Data 3 2
-  , Data 4 8
-  , Data 5 4
+  [ Data 1 5
+  , Data 2 5.7
+  , Data 3 5.2
+  , Data 4 6
+  , Data 5 5.8
+  , Data 6 5.2
+  , Data 7 4
+  , Data 8 3.6
+  , Data 9 6
+  , Data 10 7
   ]
+
 
 
 -- Boring stuff

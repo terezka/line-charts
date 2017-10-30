@@ -228,7 +228,8 @@ viewInterpolation config system (Line line) points =
           []
 
     attributes =
-      [ SvgA.class "interpolation"
+      [ SvgA.style "pointer-events: none;"
+      , SvgA.class "interpolation"
       , SvgA.stroke line.color
       , SvgA.strokeWidth (toString line.width)
       , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)

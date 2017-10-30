@@ -106,6 +106,12 @@ cross events radius coloring =
   Dot <| Just <| viewCross events radius coloring
 
 
+{-| TODO -}
+custom : (Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg) -> Dot msg
+custom =
+  Dot << Just
+
+
 
 -- COLORING
 

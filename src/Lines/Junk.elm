@@ -53,6 +53,12 @@ type Searcher hint =
   Searcher (List Point -> Coordinate.System -> hint)
 
 
+{-| TODO: Make this -}
+translate : Point -> Searcher (Maybe Point)
+translate searched =
+  Searcher (findNearestHelp searched)
+
+
 {-| -}
 findNearest : Point -> Searcher (Maybe Point)
 findNearest searched =
