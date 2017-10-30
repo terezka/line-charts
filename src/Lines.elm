@@ -272,13 +272,12 @@ toLegendConfig system sampleWidth (Line line) =
 
 viewSample : Coordinate.System -> Float -> LineConfig data msg -> Svg msg
 viewSample system sampleWidth line =
-  Svg.g []
+  Svg.g [ SvgA.class "sample" ]
     [ Svg.line
         [ SvgA.x1 "0"
         , SvgA.y1 "0"
         , SvgA.x2 <| toString sampleWidth
         , SvgA.y2 "0"
-        , SvgA.class "interpolation"
         , SvgA.stroke line.color
         , SvgA.strokeWidth (toString line.width)
         , SvgA.strokeDasharray line.dashing
