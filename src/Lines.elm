@@ -1,7 +1,7 @@
 module Lines exposing
   ( viewSimple
   , view, line, dash
-  , viewCustom, Config, Interpolation(..)
+  , viewCustom, Config, Interpolation(..), Ledgends(..), defaultLegends, defaultStringLabel
   )
 
 {-|
@@ -15,12 +15,12 @@ module Lines exposing
 @docs view, line, dash
 
 ## Customize plot
-@docs viewCustom, Config, Interpolation
+@docs viewCustom, Config, Interpolation, Ledgends, defaultLegends, defaultStringLabel
 
 -}
 
 import Html
-import Svg
+import Svg exposing (Svg)
 import Svg.Attributes as SvgA
 import Lines.Dot as Dot
 import Lines.Axis as Axis
@@ -43,6 +43,7 @@ type alias Config data msg =
   , x : Axis.Axis data msg
   , y : Axis.Axis data msg
   , interpolation : Interpolation
+  , legends : Ledgends msg
   }
 
 
@@ -50,6 +51,46 @@ type alias Config data msg =
 type Interpolation
   = Linear
   | Monotone
+
+
+{-| -}
+type Ledgends msg
+  = Free (String -> Svg msg)
+  | Contained (Coordinate.System -> List (LineLegend msg) -> Svg msg)
+
+
+{-| -}
+type alias LineLegend msg =
+  { sample : Svg msg
+  , label : String
+  }
+
+
+{-| -}
+defaultLegends : Ledgends msg
+defaultLegends =
+  Contained <| \system legends ->
+    Svg.g
+      [ place system system.x.max (system.y.min + 1) ]
+      (List.indexedMap viewLegend legends)
+
+
+viewLegend : Int -> LineLegend msg -> Svg msg
+viewLegend index { sample, label } =
+   Svg.g
+    [ transform [ translateFree 20 (toFloat index * 15) ] ]
+    [ sample
+    , Svg.g
+        [ transform [ translateFree 40 4 ] ]
+        [ defaultStringLabel label ]
+    ]
+
+
+
+{-| -}
+defaultStringLabel : String -> Svg msg
+defaultStringLabel label =
+  Svg.text_ [] [ Svg.tspan [] [ Svg.text label ] ]
 
 
 
@@ -62,15 +103,15 @@ type Line data msg =
 
 
 {-| -}
-line : Color.Color -> Int -> Dot.Dot msg -> List data -> Line data msg
-line color width dot data =
-  Line <| LineConfig color width dot "" data
+line : Color.Color -> Int -> Dot.Dot msg -> String -> List data -> Line data msg
+line color width dot label data =
+  Line <| LineConfig color width dot "" label data
 
 
 {-| -}
-dash : Color.Color -> Int -> Dot.Dot msg -> String -> List data -> Line data msg
-dash color width dot dashing data =
-  Line <| LineConfig color width dot dashing data
+dash : Color.Color -> Int -> Dot.Dot msg -> String -> String -> List data -> Line data msg
+dash color width dot label dashing data =
+  Line <| LineConfig color width dot dashing label data
 
 
 
@@ -83,7 +124,7 @@ viewSimple toX toY datas =
   if List.length datas > 3 then
     Html.div [] [ Html.text "If you have more than three data sets, you must use `view` or `viewCustom`!" ]
   else
-    view toX toY (List.map3 defaultConfig defaultDots defaultColors datas)
+    view toX toY (List.map4 defaultConfig defaultDots defaultColors defaultLabel datas)
 
 
 {-| -}
@@ -95,6 +136,7 @@ view toX toY =
     , y = Axis.Axis Axis.defaultLook toY
     , junk = Junk.none
     , interpolation = Linear
+    , legends = defaultLegends
     }
 
 
@@ -138,6 +180,14 @@ viewCustom config lines =
 
     viewLines =
       List.map2 (viewLine config system) lines points
+
+    viewLegends =
+      case config.legends of
+        Free view ->
+          Svg.g [ SvgA.class "legends" ] <| List.map2 (viewFreeLegend system view) lines points
+
+        Contained toContainer ->
+          toContainer system <| List.map (toLegendConfig system) lines
   in
   container <|
     Svg.svg attributes
@@ -146,6 +196,7 @@ viewCustom config lines =
       , Svg.g [ SvgA.class "lines" ] viewLines
       , Axis.viewHorizontal system config.x.look
       , Axis.viewVertical system config.y.look
+      , viewLegends
       , Svg.g [ SvgA.class "junk--above" ] junk.above
       ]
 
@@ -159,6 +210,7 @@ type alias LineConfig data msg =
   , width : Int
   , dot : Dot.Dot msg
   , dashing : String
+  , label : String
   , data : List data
   }
 
@@ -168,14 +220,15 @@ lineConfig (Line lineConfig) =
   lineConfig
 
 
-defaultConfig : Dot.Dot msg -> Color.Color -> List data -> Line data msg
-defaultConfig dot color data =
+defaultConfig : Dot.Dot msg -> Color.Color -> String -> List data -> Line data msg
+defaultConfig dot color label data =
   Line
     { dot = dot
     , color = color
     , width = 2
     , dashing = ""
     , data = data
+    , label = label
     }
 
 
@@ -224,6 +277,41 @@ viewDots system (Line line) points =
     List.map (Dot.view line.dot line.color system) points
 
 
+viewFreeLegend : Coordinate.System -> (String -> Svg msg) -> Line data msg -> List Point -> Svg.Svg msg
+viewFreeLegend system view (Line line) points =
+  case List.reverse points of
+    [] ->
+      Svg.text ""
+
+    last :: rest ->
+      Svg.g [ placeWithOffset system last.x last.y 10 3 ] [ view line.label ]
+
+
+toLegendConfig : Coordinate.System -> Line data msg -> LineLegend msg
+toLegendConfig system (Line line) =
+  { sample = viewSample system line
+  , label = line.label
+  }
+
+
+viewSample : Coordinate.System -> LineConfig data msg -> Svg msg
+viewSample system line =
+  Svg.g []
+    [ Svg.line
+        [ SvgA.x1 "0"
+        , SvgA.y1 "0"
+        , SvgA.x2 "30"
+        , SvgA.y2 "0"
+        , SvgA.class "interpolation"
+        , SvgA.stroke line.color
+        , SvgA.strokeWidth (toString line.width)
+        , SvgA.strokeDasharray line.dashing
+        , SvgA.fill "transparent"
+        ]
+        []
+    , Dot.view line.dot line.color system (toCartesianPoint system <| Point 15 0)
+    ]
+
 
 -- DEFAULTS
 
@@ -241,4 +329,12 @@ defaultDots =
   [ Dot.default1
   , Dot.default2
   , Dot.default3
+  ]
+
+
+defaultLabel : List String
+defaultLabel =
+  [ "Series 1"
+  , "Series 2"
+  , "Series 3"
   ]

@@ -4,7 +4,7 @@ module Lines.Coordinate exposing
   , toSVG, toCartesian
   , Point, toSVGPoint, toCartesianPoint
   , scaleSVG, scaleCartesian
-  , translate, translateWithOffset, transform, place, placeWithOffset
+  , translate, translateWithOffset, translateFree, transform, place, placeWithOffset
   )
 
 {-|
@@ -31,7 +31,7 @@ module Lines.Coordinate exposing
 @docs scaleSVG, scaleCartesian
 
 ## Placing
-@docs translate, translateWithOffset, transform, place, placeWithOffset
+@docs translate, translateWithOffset, translateFree, transform, place, placeWithOffset
 
 -}
 
@@ -175,6 +175,16 @@ translateWithOffset system x y offsetX offsetY =
       ++ (toString <| toSVG X system x + offsetX)
       ++ ", "
       ++ (toString <| toSVG Y system y + offsetY)
+      ++ ")"
+
+
+{-| TODO -}
+translateFree : Float -> Float -> String
+translateFree offsetX offsetY =
+    "translate("
+      ++ (toString offsetX)
+      ++ ", "
+      ++ (toString offsetY)
       ++ ")"
 
 
