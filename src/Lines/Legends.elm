@@ -15,10 +15,12 @@ module Lines.Legends exposing
 
 ## Free legends
 The ones hanging my the line.
+
 @docs byEnding, byBeginning, defaultLabel
 
 ## Bucketed legends
 The ones gathered in one spot.
+
 @docs bucketed, bucketedCustom
 
 -}
@@ -101,6 +103,7 @@ bucketed toX toY =
 bucketedCustom : (Coordinate.System -> List (Pieces msg) -> Svg msg) -> Legends msg
 bucketedCustom =
   Legends.Bucketed
+
 
 
 -- INTERNAL
