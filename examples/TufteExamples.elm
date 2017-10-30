@@ -39,8 +39,8 @@ exampleSimple =
 exampleCustomizeLines : Html msg
 exampleCustomizeLines =
   Lines.view .x .y
-    [ Lines.dash "#7c4dff" 1 square "First" "1 2" data1
-    , Lines.dash "#f27c21" 2 Dot.none "Second" "4 2 2 2" data2
+    [ Lines.dash "#7c4dff" 1 square "First" [ 1, 2 ] data1
+    , Lines.dash "#f27c21" 2 Dot.none "Second" [ 4, 2, 2, 5 ] data2
     , Lines.line "#00848f" 3 plus "Third" data3
     ]
 

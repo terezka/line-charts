@@ -69,11 +69,11 @@ type Line data msg =
 {-| -}
 line : Color.Color -> Int -> Dot.Dot msg -> String -> List data -> Line data msg
 line color width dot label data =
-  Line <| LineConfig color width dot "" label data
+  Line <| LineConfig color width dot [] label data
 
 
 {-| -}
-dash : Color.Color -> Int -> Dot.Dot msg -> String -> String -> List data -> Line data msg
+dash : Color.Color -> Int -> Dot.Dot msg -> String -> List Float -> List data -> Line data msg
 dash color width dot label dashing data =
   Line <| LineConfig color width dot dashing label data
 
@@ -176,7 +176,7 @@ type alias LineConfig data msg =
   { color : Color.Color
   , width : Int
   , dot : Dot.Dot msg
-  , dashing : String
+  , dashing : List Float
   , label : String
   , data : List data
   }
@@ -193,7 +193,7 @@ defaultConfig dot color label data =
     { dot = dot
     , color = color
     , width = 2
-    , dashing = ""
+    , dashing = []
     , data = data
     , label = label
     }
@@ -231,7 +231,7 @@ viewInterpolation config system (Line line) points =
       [ SvgA.class "interpolation"
       , SvgA.stroke line.color
       , SvgA.strokeWidth (toString line.width)
-      , SvgA.strokeDasharray line.dashing
+      , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)
       , SvgA.fill "transparent"
       ]
   in
@@ -280,7 +280,7 @@ viewSample system sampleWidth line =
         , SvgA.y2 "0"
         , SvgA.stroke line.color
         , SvgA.strokeWidth (toString line.width)
-        , SvgA.strokeDasharray line.dashing
+        , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)
         , SvgA.fill "transparent"
         ]
         []
