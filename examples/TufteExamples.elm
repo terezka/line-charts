@@ -65,8 +65,8 @@ exampleInterpolation =
   Lines.viewCustom
     { container = Container.default
     , junk = Junk.none
-    , x = Axis.defaultAxis (.x >> (+) 1990)
-    , y = Axis.defaultAxis .y
+    , x = Axis.defaultAxis (Axis.defaultTitle "Year" 0 3) (.x >> (+) 1990)
+    , y = Axis.defaultAxis (Axis.defaultTitle "Assults" 0 0) .y
     , interpolation = Lines.Monotone
     , legends = Legends.byEnding Legends.defaultLabel
     }

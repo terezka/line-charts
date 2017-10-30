@@ -32,7 +32,8 @@ viewHorizontal system axis =
             ]
     in
     g [ class "axis--horizontal" ]
-      [ viewMaybe axis.line (apply system.x >> viewAxisLine)
+      [ viewHorizontalTitle system at axis
+      , viewMaybe axis.line (apply system.x >> viewAxisLine)
       , g [ class "marks" ] (List.map viewMark (apply system.x axis.marks))
       ]
 
@@ -56,9 +57,40 @@ viewVertical system axis =
             ]
     in
     g [ class "axis--vertical" ]
-      [ viewMaybe axis.line (apply system.y >> viewAxisLine)
+      [ viewVerticalTitle system at axis
+      , viewMaybe axis.line (apply system.y >> viewAxisLine)
       , g [ class "marks" ] (List.map viewMark (apply system.y axis.marks))
       ]
+
+
+
+-- VIEW TITLE
+
+
+viewHorizontalTitle : Coordinate.System -> (Float -> Point) -> Axis.Look msg -> Svg msg
+viewHorizontalTitle system at { title } =
+  let
+    position =
+      at (title.position system.x)
+
+    transform =
+      placeWithOffset system position.x position.y title.xOffset (title.yOffset + 40)
+  in
+  g [ class "title", style "text-anchor: middle;", transform ]
+    [ title.view ]
+
+
+viewVerticalTitle : Coordinate.System -> (Float -> Point) -> Axis.Look msg -> Svg msg
+viewVerticalTitle system at { title } =
+  let
+    position =
+      at (title.position system.y)
+
+    transform =
+      placeWithOffset system position.x position.y (title.xOffset - 5) (title.yOffset - 15)
+  in
+  g [ class "title", style "text-anchor: middle;", transform ]
+    [ title.view ]
 
 
 

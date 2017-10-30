@@ -96,8 +96,8 @@ view : (data -> Float) -> (data -> Float) -> List (Line data msg) -> Svg.Svg msg
 view toX toY =
   viewCustom
     { container = Container.default
-    , x = Axis.Axis Axis.defaultLook toX
-    , y = Axis.Axis Axis.defaultLook toY
+    , x = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toX
+    , y = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toY
     , junk = Junk.none
     , interpolation = Linear
     , legends = Legends.bucketed .max (.min >> (+) 1)

@@ -4,6 +4,7 @@ module Lines.Axis exposing
   , defaultLook
   , towardsZero
   , defaultLine
+  , defaultTitle
   , defaultMark, defaultInterval, customInterval
   , defaultTick, defaultLabel
   )
@@ -17,11 +18,7 @@ module Lines.Axis exposing
 @docs Axis, Look, Line, Mark, Tick, Direction
 
 ## Defaults
-@docs defaultLook
-@docs towardsZero
-@docs defaultLine
-@docs defaultMark, defaultInterval, customInterval
-@docs defaultTick, defaultLabel
+@docs defaultLook, defaultTitle, towardsZero, defaultLine, defaultMark, defaultInterval, customInterval, defaultTick, defaultLabel
 
 -}
 
@@ -41,12 +38,22 @@ type alias Axis data msg =
 
 {-| -}
 type alias Look msg =
-  { offset : Float
+  { title : Title msg
+  , offset : Float
   , position : Limits -> Float
   , line : Maybe (Limits -> Line msg)
   , marks : Limits -> List (Mark msg)
   , direction : Direction
   }
+
+
+{-| -}
+type alias Title msg =
+    { position : Limits -> Float
+    , view : Svg msg
+    , xOffset : Float
+    , yOffset : Float
+    }
 
 
 {-| -}
@@ -83,22 +90,29 @@ type Direction
 
 
 {-| -}
-defaultAxis : (data -> Float) -> Axis data msg
-defaultAxis variable =
+defaultAxis : Title msg -> (data -> Float) -> Axis data msg
+defaultAxis title variable =
   { variable = variable
-  , look = defaultLook
+  , look = defaultLook title
   }
 
 
 {-| -}
-defaultLook : Look msg
-defaultLook =
-  { offset = 20
+defaultLook : Title msg -> Look msg
+defaultLook title =
+  { title = title
+  , offset = 20
   , position = towardsZero
   , line = Just (defaultLine [ stroke Color.gray ])
   , marks = List.map defaultMark << defaultInterval
   , direction = Negative
   }
+
+
+{-| -}
+defaultTitle : String -> Float -> Float -> Title msg
+defaultTitle title xOffset yOffset =
+  Title .max (text_ [] [ tspan [] [ text title ] ]) 0 0
 
 
 {-| -}
