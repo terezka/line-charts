@@ -65,13 +65,13 @@ exampleInterpolation =
   Lines.viewCustom
     { container = Container.default
     , junk = Junk.none
-    , x = Axis.defaultAxis .x
+    , x = Axis.defaultAxis (.x >> (+) 1990)
     , y = Axis.defaultAxis .y
     , interpolation = Lines.Monotone
     , legends = Legends.byEnding Legends.defaultLabel
     }
-    [ Lines.line Color.blue 1 plus "Women" data1
-    , Lines.line Color.orange 1 circle "Non-binary" data3
+    [ Lines.line Color.blue 1 plus "Non-binary" data1
+    , Lines.line Color.orange 1 circle "Women" data3
     , Lines.line Color.pink 1 square "Men" data2
     ]
 
