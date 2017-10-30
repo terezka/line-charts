@@ -93,14 +93,14 @@ defaultLabel label =
 {-| -}
 bucketed : (Coordinate.Limits -> Float) -> (Coordinate.Limits -> Float) -> Legends msg
 bucketed toX toY =
-  Legends.Bucketed <| \system legends ->
+  Legends.Bucketed 30 <| \system legends ->
     Svg.g
       [ place system (toX system.x) (toY system.y) ]
       (List.indexedMap viewLegend legends)
 
 
 {-| -}
-bucketedCustom : (Coordinate.System -> List (Pieces msg) -> Svg msg) -> Legends msg
+bucketedCustom : Float -> (Coordinate.System -> List (Pieces msg) -> Svg msg) -> Legends msg
 bucketedCustom =
   Legends.Bucketed
 

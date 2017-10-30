@@ -8,7 +8,7 @@ import Lines.Coordinate as Coordinate exposing (..)
 type Legends msg
   = None
   | Free Placement (String -> Svg msg)
-  | Bucketed (Coordinate.System -> List (Pieces msg) -> Svg msg)
+  | Bucketed Float (Coordinate.System -> List (Pieces msg) -> Svg msg)
 
 
 {-| -}

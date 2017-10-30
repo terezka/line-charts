@@ -150,8 +150,8 @@ viewCustom config lines =
         Internal.Legends.Free placement view ->
           Svg.g [ SvgA.class "legends" ] <| List.map2 (viewLegendFree system placement view) lines points
 
-        Internal.Legends.Bucketed toContainer ->
-          toContainer system <| List.map (toLegendConfig system) lines
+        Internal.Legends.Bucketed sampleWidth toContainer ->
+          toContainer system <| List.map (toLegendConfig system sampleWidth) lines
 
         Internal.Legends.None ->
           Svg.text ""
@@ -263,20 +263,20 @@ viewLegendFree system placement view (Line line) points =
       [ view line.label ]
 
 
-toLegendConfig : Coordinate.System -> Line data msg -> Legends.Pieces msg
-toLegendConfig system (Line line) =
-  { sample = viewSample system line
+toLegendConfig : Coordinate.System -> Float -> Line data msg -> Legends.Pieces msg
+toLegendConfig system sampleWidth (Line line) =
+  { sample = viewSample system sampleWidth line
   , label = line.label
   }
 
 
-viewSample : Coordinate.System -> LineConfig data msg -> Svg msg
-viewSample system line =
+viewSample : Coordinate.System -> Float -> LineConfig data msg -> Svg msg
+viewSample system sampleWidth line =
   Svg.g []
     [ Svg.line
         [ SvgA.x1 "0"
         , SvgA.y1 "0"
-        , SvgA.x2 "30"
+        , SvgA.x2 <| toString sampleWidth
         , SvgA.y2 "0"
         , SvgA.class "interpolation"
         , SvgA.stroke line.color
@@ -285,7 +285,8 @@ viewSample system line =
         , SvgA.fill "transparent"
         ]
         []
-    , Dot.view line.dot line.color system (toCartesianPoint system <| Point 15 0)
+    , Dot.view line.dot line.color system <|
+        toCartesianPoint system <| Point (sampleWidth / 2) 0
     ]
 
 
