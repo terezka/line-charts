@@ -1,7 +1,7 @@
 module Lines exposing
   ( viewSimple
   , view, line, dash
-  , viewCustom, Config, Interpolation(..), Ledgends(..), defaultLegends, defaultStringLabel
+  , viewCustom, Config, Interpolation(..)
   )
 
 {-|
@@ -15,7 +15,7 @@ module Lines exposing
 @docs view, line, dash
 
 ## Customize plot
-@docs viewCustom, Config, Interpolation, Ledgends, defaultLegends, defaultStringLabel
+@docs viewCustom, Config, Interpolation
 
 -}
 
@@ -26,8 +26,10 @@ import Lines.Dot as Dot
 import Lines.Axis as Axis
 import Lines.Junk as Junk
 import Lines.Color as Color
+import Lines.Legends as Legends
 import Lines.Container as Container
 import Lines.Coordinate as Coordinate exposing (..)
+import Internal.Legends
 import Internal.Interpolation as Interpolation
 import Internal.Coordinate as Coordinate
 import Internal.Attributes as IntA
@@ -43,7 +45,7 @@ type alias Config data msg =
   , x : Axis.Axis data msg
   , y : Axis.Axis data msg
   , interpolation : Interpolation
-  , legends : Ledgends msg
+  , legends : Legends.Legends msg
   }
 
 
@@ -51,46 +53,6 @@ type alias Config data msg =
 type Interpolation
   = Linear
   | Monotone
-
-
-{-| -}
-type Ledgends msg
-  = Free (String -> Svg msg)
-  | Contained (Coordinate.System -> List (LineLegend msg) -> Svg msg)
-
-
-{-| -}
-type alias LineLegend msg =
-  { sample : Svg msg
-  , label : String
-  }
-
-
-{-| -}
-defaultLegends : Ledgends msg
-defaultLegends =
-  Contained <| \system legends ->
-    Svg.g
-      [ place system system.x.max (system.y.min + 1) ]
-      (List.indexedMap viewLegend legends)
-
-
-viewLegend : Int -> LineLegend msg -> Svg msg
-viewLegend index { sample, label } =
-   Svg.g
-    [ transform [ translateFree 20 (toFloat index * 15) ] ]
-    [ sample
-    , Svg.g
-        [ transform [ translateFree 40 4 ] ]
-        [ defaultStringLabel label ]
-    ]
-
-
-
-{-| -}
-defaultStringLabel : String -> Svg msg
-defaultStringLabel label =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text label ] ]
 
 
 
@@ -136,7 +98,7 @@ view toX toY =
     , y = Axis.Axis Axis.defaultLook toY
     , junk = Junk.none
     , interpolation = Linear
-    , legends = defaultLegends
+    , legends = Legends.bucketed .max (.min >> (+) 1)
     }
 
 
@@ -183,11 +145,14 @@ viewCustom config lines =
 
     viewLegends =
       case config.legends of
-        Free view ->
-          Svg.g [ SvgA.class "legends" ] <| List.map2 (viewFreeLegend system view) lines points
+        Internal.Legends.Free placement view ->
+          Svg.g [ SvgA.class "legends" ] <| List.map2 (viewLegendFree system view) lines points
 
-        Contained toContainer ->
+        Internal.Legends.Bucketed toContainer ->
           toContainer system <| List.map (toLegendConfig system) lines
+
+        Internal.Legends.None ->
+          Svg.text ""
   in
   container <|
     Svg.svg attributes
@@ -277,8 +242,8 @@ viewDots system (Line line) points =
     List.map (Dot.view line.dot line.color system) points
 
 
-viewFreeLegend : Coordinate.System -> (String -> Svg msg) -> Line data msg -> List Point -> Svg.Svg msg
-viewFreeLegend system view (Line line) points =
+viewLegendFree : Coordinate.System -> (String -> Svg msg) -> Line data msg -> List Point -> Svg.Svg msg
+viewLegendFree system view (Line line) points =
   case List.reverse points of
     [] ->
       Svg.text ""
@@ -287,7 +252,7 @@ viewFreeLegend system view (Line line) points =
       Svg.g [ placeWithOffset system last.x last.y 10 3 ] [ view line.label ]
 
 
-toLegendConfig : Coordinate.System -> Line data msg -> LineLegend msg
+toLegendConfig : Coordinate.System -> Line data msg -> Legends.Pieces msg
 toLegendConfig system (Line line) =
   { sample = viewSample system line
   , label = line.label

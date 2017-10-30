@@ -9,6 +9,8 @@ import Lines.Color as Color
 import Lines.Dot as Dot
 import Lines.Axis as Axis exposing (defaultLook)
 import Lines.Container as Container
+import Lines.Legends as Legends
+
 
 main : Html msg
 main =
@@ -66,7 +68,7 @@ exampleInterpolation =
     , x = Axis.defaultAxis .x
     , y = Axis.defaultAxis .y
     , interpolation = Lines.Monotone
-    , legends = Lines.defaultLegends
+    , legends = Legends.default
     }
     [ Lines.line Color.blue 1 plus "Women" data1
     , Lines.line Color.orange 1 circle "Non-binary" data3
