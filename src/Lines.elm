@@ -100,7 +100,7 @@ view toX toY =
     , y = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toY
     , junk = Junk.none
     , interpolation = Linear
-    , legends = Legends.bucketed .max (.min >> (+) 1)
+    , legends = Legends.bucketed .max (.min >> (+) 1) -- TODO
     }
 
 
