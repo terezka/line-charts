@@ -33,9 +33,11 @@ import Internal.Legends
 import Internal.Interpolation as Interpolation
 import Internal.Coordinate as Coordinate
 import Internal.Attributes as IntA
+import Internal.Utils as Utils
 import Internal.Path as Path
 import Internal.Axis as Axis
 import Internal.Junk
+
 
 
 {-| -}
@@ -146,7 +148,7 @@ viewCustom config lines =
     viewLegends =
       case config.legends of
         Internal.Legends.Free placement view ->
-          Svg.g [ SvgA.class "legends" ] <| List.map2 (viewLegendFree system view) lines points
+          Svg.g [ SvgA.class "legends" ] <| List.map2 (viewLegendFree system placement view) lines points
 
         Internal.Legends.Bucketed toContainer ->
           toContainer system <| List.map (toLegendConfig system) lines
@@ -242,14 +244,23 @@ viewDots system (Line line) points =
     List.map (Dot.view line.dot line.color system) points
 
 
-viewLegendFree : Coordinate.System -> (String -> Svg msg) -> Line data msg -> List Point -> Svg.Svg msg
-viewLegendFree system view (Line line) points =
-  case List.reverse points of
-    [] ->
-      Svg.text ""
+viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data msg -> List Point -> Svg.Svg msg
+viewLegendFree system placement view (Line line) points =
+  let
+    ( orderedPoints, anchor, xOffset ) =
+        case placement of
+          Internal.Legends.Beginning ->
+            ( points, "end", -10 )
 
-    last :: rest ->
-      Svg.g [ placeWithOffset system last.x last.y 10 3 ] [ view line.label ]
+          Internal.Legends.Ending ->
+            ( List.reverse points, "start", 10 )
+  in
+  Utils.viewMaybe (List.head orderedPoints) <| \point ->
+    Svg.g
+      [ placeWithOffset system point.x point.y xOffset 3
+      , SvgA.style <| "text-anchor: " ++ anchor ++ ";"
+      ]
+      [ view line.label ]
 
 
 toLegendConfig : Coordinate.System -> Line data msg -> Legends.Pieces msg

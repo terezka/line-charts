@@ -40,8 +40,8 @@ exampleCustomizeLines : Html msg
 exampleCustomizeLines =
   Lines.view .x .y
     [ Lines.dash "#7c4dff" 1 square "First" "1 2" data1
-    , Lines.line "#f27c21" 2 circle "Second" data2
-    , Lines.dash "#00848f" 3 plus "Third" "4 2 2 2" data3
+    , Lines.dash "#f27c21" 2 Dot.none "Second" "4 2 2 2" data2
+    , Lines.line "#00848f" 3 plus "Third" data3
     ]
 
 
@@ -68,7 +68,7 @@ exampleInterpolation =
     , x = Axis.defaultAxis .x
     , y = Axis.defaultAxis .y
     , interpolation = Lines.Monotone
-    , legends = Legends.default
+    , legends = Legends.byEnding Legends.defaultLabel
     }
     [ Lines.line Color.blue 1 plus "Women" data1
     , Lines.line Color.orange 1 circle "Non-binary" data3

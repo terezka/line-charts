@@ -1,4 +1,27 @@
-module Lines.Legends exposing (..)
+module Lines.Legends exposing
+  ( none, default
+  , Legends, Pieces
+  , byEnding, byBeginning, defaultLabel
+  , bucketed, bucketedCustom
+  )
+
+{-| # Legends
+
+## Quick start
+@docs none, default
+
+## What are my options?
+@docs Legends, Pieces
+
+## Free legends
+The ones hanging my the line.
+@docs byEnding, byBeginning, defaultLabel
+
+## Bucketed legends
+The ones gathered in one spot.
+@docs bucketed, bucketedCustom
+
+-}
 
 import Svg exposing (Svg)
 import Lines.Coordinate as Coordinate exposing (..)
@@ -17,6 +40,7 @@ type alias Pieces msg =
   { sample : Svg msg
   , label : String
   }
+
 
 
 -- NONE
@@ -65,12 +89,6 @@ defaultLabel label =
 
 
 {-| -}
-bucketedCustom : (Coordinate.System -> List (Pieces msg) -> Svg msg) -> Legends msg
-bucketedCustom =
-  Legends.Bucketed
-
-
-{-| -}
 bucketed : (Coordinate.Limits -> Float) -> (Coordinate.Limits -> Float) -> Legends msg
 bucketed toX toY =
   Legends.Bucketed <| \system legends ->
@@ -78,6 +96,11 @@ bucketed toX toY =
       [ place system (toX system.x) (toY system.y) ]
       (List.indexedMap viewLegend legends)
 
+
+{-| -}
+bucketedCustom : (Coordinate.System -> List (Pieces msg) -> Svg msg) -> Legends msg
+bucketedCustom =
+  Legends.Bucketed
 
 
 -- INTERNAL
