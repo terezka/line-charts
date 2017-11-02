@@ -7,6 +7,7 @@ import Internal.Primitives exposing (..)
 import Lines.Coordinate as Coordinate  exposing (..)
 import Svg exposing (Attribute, Svg, g)
 import Svg.Attributes as Attributes exposing (class, fill, style, x1, x2, y1, y2, stroke, d)
+import Lines.Junk as Junk exposing (..)
 
 
 

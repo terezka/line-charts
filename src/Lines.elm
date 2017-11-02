@@ -26,23 +26,25 @@ import Lines.Dot as Dot
 import Lines.Axis as Axis
 import Lines.Junk as Junk
 import Lines.Color as Color
+import Lines.Events as Events
 import Lines.Legends as Legends
 import Lines.Container as Container
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Legends
 import Internal.Interpolation as Interpolation
 import Internal.Coordinate as Coordinate
-import Internal.Attributes as IntA
 import Internal.Utils as Utils
 import Internal.Path as Path
 import Internal.Axis as Axis
 import Internal.Junk
+import Internal.Events
 
 
 
 {-| -}
 type alias Config data msg =
   { container : Container.Config msg
+  , events : List (Events.Event msg)
   , junk : Junk.Junk msg
   , x : Axis.Axis data msg
   , y : Axis.Axis data msg
@@ -96,6 +98,7 @@ view : (data -> Float) -> (data -> Float) -> List (Line data msg) -> Svg.Svg msg
 view toX toY =
   viewCustom
     { container = Container.default
+    , events = []
     , x = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toX
     , y = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toY
     , junk = Junk.none
@@ -136,7 +139,8 @@ viewCustom config lines =
 
     attributes =
       List.concat
-        [ IntA.toSvgAttributes system config.container.attributes
+        [ config.container.attributes
+        , Internal.Events.toSvgAttributes allPoints system config.events
         , [ SvgA.width <| toString system.frame.size.width
           , SvgA.height <| toString system.frame.size.height
           ]
@@ -258,7 +262,7 @@ viewLegendFree system placement view (Line line) points =
   in
   Utils.viewMaybe (List.head orderedPoints) <| \point ->
     Svg.g
-      [ placeWithOffset system point.x point.y xOffset 3
+      [ Junk.placeWithOffset system point.x point.y xOffset 3
       , SvgA.style <| "text-anchor: " ++ anchor ++ ";"
       ]
       [ view line.label ]

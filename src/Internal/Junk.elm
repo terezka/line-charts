@@ -6,7 +6,7 @@ import Html exposing (Html)
 import Lines.Coordinate as Coordinate  exposing (..)
 
 
-{-| -}
+{-| TODO remove points -}
 type Junk msg =
   Junk (List Point -> Coordinate.System -> Layers msg)
 

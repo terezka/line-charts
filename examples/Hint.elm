@@ -6,7 +6,7 @@ import Lines.Color as Color
 import Lines.Dot as Dot
 import Lines.Axis as Axis
 import Lines.Legends as Legends
-import Lines.Attributes as Attributes
+import Lines.Events as Events
 import Lines.Coordinate as Coordinate exposing (..)
 import Html exposing (Html, div, h1, node, p, text)
 import Svg exposing (Svg, Attribute, text_, tspan, g)
@@ -51,13 +51,10 @@ view model =
   Lines.viewCustom
     { container =
         { frame = Frame (Margin 40 150 90 150) (Size 650 400)
-        , attributes =
-            [ Attributes.onMouseMove (Just >> Hover)
-            , Attributes.onMouseLeave (Hover Nothing)
-            , Attributes.custom <| SvgA.style "font-family: monospace;"
-            ]
+        , attributes = [ SvgA.style "font-family: monospace;" ]
         , defs = []
         }
+    , events = Events.simple Hover
     , junk = Maybe.withDefault Junk.none (Maybe.map junk model.hovering)
     , x = Axis.defaultAxis (Axis.defaultTitle "Year" 0 3) (.x >> (+) 1990)
     , y = Axis.defaultAxis (Axis.defaultTitle "Cats" 0 0) .y
@@ -77,29 +74,28 @@ plus =
 
 square : Dot.Dot msg
 square =
-  Dot.square [ SvgA.style "cursor: default;" ]  7 (Dot.disconnected 2)
+  Dot.square [ SvgA.style "cursor: default;" ] 7 (Dot.disconnected 2)
 
 
 circle : Dot.Dot msg
 circle =
-  Dot.circle [ SvgA.style "cursor: default;" ]  3 (Dot.disconnected 2)
+  Dot.circle [ SvgA.style "cursor: default;" ] 3 (Dot.disconnected 2)
 
 
 junk : Point -> Junk.Junk Msg
-junk hoverSvgCoordinates =
-  Junk.withHint (Junk.findNearest hoverSvgCoordinates) <|
-      \system hint ->
-          let
-            viewHint hint = -- TODO as html
-              Svg.g [ placeWithOffset system hint.x hint.y 5 20 ]
-                [ Svg.rect [ SvgA.fill "white", SvgA.y "-12", SvgA.width "80", SvgA.height "18", SvgA.opacity "0.5" ] []
-                , text_ [] [ tspan [] [ text <| toString ( hint.x, hint.y ) ] ]
-                ]
-          in
-          { below = []
-          , above = [ Maybe.map viewHint hint |> Maybe.withDefault (text "") ]
-          , html = []
-          }
+junk hint =
+  Junk.custom <| \system ->
+    let
+      viewHint = -- TODO as html
+        Svg.g [ placeWithOffset system hint.x hint.y 5 20 ]
+          [ Svg.rect [ SvgA.fill "white", SvgA.y "-12", SvgA.width "80", SvgA.height "18", SvgA.opacity "0.5" ] []
+          , text_ [] [ tspan [] [ text <| toString ( hint.x, hint.y ) ] ]
+          ]
+    in
+    { below = []
+    , above = [ viewHint ]
+    , html = []
+    }
 
 
 

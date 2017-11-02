@@ -1,11 +1,21 @@
-module Lines.Junk exposing (Junk, Layers, none, withoutHint, withHint, Searcher, findNearest, findWithin, findNearestX, findWithinX)
+module Lines.Junk exposing
+  ( Junk, Layers, none, custom
+  , translate, translateWithOffset, translateFree, transform, place, placeWithOffset
+  )
 
 
-import Svg exposing (Svg)
+{-|
+
+## Placing
+@docs translate, translateWithOffset, translateFree, transform, place, placeWithOffset
+
+-}
+
+import Svg exposing (Svg, Attribute, g)
+import Svg.Attributes as Attributes
 import Html exposing (Html)
-import Lines.Coordinate as Coordinate exposing (Point)
+import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Junk
-import Internal.Utils as Utils exposing (withFirst)
 
 
 {-| -}
@@ -24,116 +34,59 @@ type alias Layers msg =
 {-| -}
 none : Junk msg
 none =
-  withoutHint (\_ -> Layers [] [] [])
+  Internal.Junk.Junk (\_ _ -> Layers [] [] [])
 
 
 {-| -}
-withoutHint : (Coordinate.System -> Layers msg) -> Junk msg
-withoutHint toLayers =
-  Internal.Junk.Junk (always toLayers)
+custom : (Coordinate.System -> Layers msg) -> Junk msg
+custom toJunk =
+  Internal.Junk.Junk (\_ -> toJunk)
+
+
+
+-- PLACING
 
 
 {-| -}
-withHint : Searcher hint -> (Coordinate.System -> hint -> Layers msg) -> Junk msg
-withHint (Searcher searcher) toLayers =
-  Internal.Junk.Junk <| \points system ->
-    let
-      hint =
-        searcher points system
-    in
-      toLayers system hint
-
-
-
--- SEARCHERS
+translate : Coordinate.System -> Float -> Float -> String
+translate system x y =
+  "translate(" ++ (toString <| toSVG X system x) ++ ", " ++ (toString <| toSVG Y system y) ++ ")"
 
 
 {-| -}
-type Searcher hint =
-  Searcher (List Point -> Coordinate.System -> hint)
+translateWithOffset : System -> Float -> Float -> Float -> Float -> String
+translateWithOffset system x y offsetX offsetY =
+  "translate("
+    ++ (toString <| toSVG X system x + offsetX)
+    ++ ", "
+    ++ (toString <| toSVG Y system y + offsetY)
+    ++ ")"
 
 
-{-| TODO: Make this -}
-translate : Point -> Searcher (Maybe Point)
-translate searched =
-  Searcher (findNearestHelp searched)
-
-
-{-| -}
-findNearest : Point -> Searcher (Maybe Point)
-findNearest searched =
-  Searcher (findNearestHelp searched)
-
-
-{-| -}
-findWithin : Float -> Point -> Searcher (Maybe Point)
-findWithin radius searched =
-  Searcher <| \points system ->
-    let
-        keepIfEligible closest =
-            if Utils.withinRadius system radius searched closest then
-                Just closest
-            else
-                Nothing
-    in
-    findNearestHelp searched points system
-        |> Maybe.andThen keepIfEligible
+{-| TODO -}
+translateFree : Float -> Float -> String
+translateFree offsetX offsetY =
+  "translate("
+    ++ (toString offsetX)
+    ++ ", "
+    ++ (toString offsetY)
+    ++ ")"
 
 
 {-| -}
-findNearestX : Point -> Searcher (List Point)
-findNearestX searched =
-  Searcher (findNearestXHelp searched)
+transform : List String -> Attribute msg
+transform transformers =
+  Attributes.transform <|
+    String.join ", " transformers
 
 
 {-| -}
-findWithinX : Float -> Point -> Searcher (List Point)
-findWithinX radius searched =
-  Searcher <| \points system ->
-    let
-        keepIfEligible =
-            Utils.withinRadiusX system radius searched
-    in
-    findNearestXHelp searched points system
-      |> List.filter keepIfEligible
+place : System -> Float -> Float -> Attribute msg
+place system x y =
+  transform [ translate system x y ]
 
 
-
--- INTERNAL
-
-
-findNearestHelp : Point -> List Point -> Coordinate.System ->  Maybe Point
-findNearestHelp searched points system =
-  let
-      distance =
-          Utils.distance system searched
-
-      getClosest point closest =
-          if distance closest < distance point then
-              closest
-          else
-              point
-  in
-  withFirst points (List.foldl getClosest)
-
-
-findNearestXHelp : Point -> List Point -> Coordinate.System -> List Point
-findNearestXHelp searched points system =
-  let
-      distanceX =
-          Utils.distanceX system searched
-
-      getClosest point allClosest =
-        case List.head allClosest of
-          Just closest ->
-              if closest.x == point.x then
-                point :: allClosest
-              else if distanceX closest > distanceX point then
-                [ point ]
-              else
-                allClosest
-
-          Nothing ->
-            [ point ]
-  in
-  List.foldl getClosest [] points
+{-| -}
+placeWithOffset : System -> Float -> Float -> Float -> Float -> Attribute msg
+placeWithOffset system x y offsetX offsetY =
+  transform [ translateWithOffset system x y offsetX offsetY ]

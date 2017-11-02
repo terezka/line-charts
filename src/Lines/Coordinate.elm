@@ -4,7 +4,6 @@ module Lines.Coordinate exposing
   , toSVG, toCartesian
   , Point, toSVGPoint, toCartesianPoint
   , scaleSVG, scaleCartesian
-  , translate, translateWithOffset, translateFree, transform, place, placeWithOffset
   )
 
 {-|
@@ -30,13 +29,8 @@ module Lines.Coordinate exposing
 ## Scale
 @docs scaleSVG, scaleCartesian
 
-## Placing
-@docs translate, translateWithOffset, translateFree, transform, place, placeWithOffset
 
 -}
-
-import Svg exposing (Attribute, g)
-import Svg.Attributes as Attributes
 
 
 {-| Specifies the size and margins of your graphic.
@@ -157,54 +151,6 @@ toCartesianPoint system point =
   { x = toCartesian X system point.x
   , y = toCartesian Y system point.y
   }
-
-
--- PLACING
-
-
-{-| -}
-translate : System -> Float -> Float -> String
-translate system x y =
-    "translate(" ++ (toString <| toSVG X system x) ++ ", " ++ (toString <| toSVG Y system y) ++ ")"
-
-
-{-| -}
-translateWithOffset : System -> Float -> Float -> Float -> Float -> String
-translateWithOffset system x y offsetX offsetY =
-    "translate("
-      ++ (toString <| toSVG X system x + offsetX)
-      ++ ", "
-      ++ (toString <| toSVG Y system y + offsetY)
-      ++ ")"
-
-
-{-| TODO -}
-translateFree : Float -> Float -> String
-translateFree offsetX offsetY =
-    "translate("
-      ++ (toString offsetX)
-      ++ ", "
-      ++ (toString offsetY)
-      ++ ")"
-
-
-{-| -}
-transform : List String -> Attribute msg
-transform transformers =
-  Attributes.transform <|
-    String.join ", " transformers
-
-
-{-| -}
-place : System -> Float -> Float -> Attribute msg
-place system x y =
-    transform [ translate system x y ]
-
-
-{-| -}
-placeWithOffset : System -> Float -> Float -> Float -> Float -> Attribute msg
-placeWithOffset system x y offsetX offsetY =
-    transform [ translateWithOffset system x y offsetX offsetY ]
 
 
 

@@ -24,6 +24,7 @@ The ones gathered in one spot.
 -}
 
 import Svg exposing (Svg)
+import Lines.Junk as Junk
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Legends as Legends
 
@@ -93,7 +94,7 @@ bucketed : (Coordinate.Limits -> Float) -> (Coordinate.Limits -> Float) -> Legen
 bucketed toX toY =
   Legends.Bucketed 30 <| \system legends ->
     Svg.g
-      [ place system (toX system.x) (toY system.y) ]
+      [ Junk.place system (toX system.x) (toY system.y) ]
       (List.indexedMap viewLegend legends)
 
 
@@ -110,9 +111,9 @@ bucketedCustom =
 viewLegend : Int -> Pieces msg -> Svg msg
 viewLegend index { sample, label } =
    Svg.g
-    [ transform [ translateFree 20 (toFloat index * 15) ] ]
+    [ Junk.transform [ Junk.translateFree 20 (toFloat index * 15) ] ]
     [ sample
     , Svg.g
-        [ transform [ translateFree 40 4 ] ]
+        [ Junk.transform [ Junk.translateFree 40 4 ] ]
         [ defaultLabel label ]
     ]
