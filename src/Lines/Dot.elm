@@ -67,7 +67,7 @@ default3 =
 
 
 
--- SHAPES
+-- SHAPES TODO: Use shape type again (?) and base funcs on coloring
 
 
 {-| -}
@@ -140,6 +140,8 @@ full : Coloring
 full =
   Full
 
+
+-- TODO add aura
 
 
 -- VIEW
