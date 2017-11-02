@@ -69,21 +69,17 @@ view model =
 
 plus : Dot.Dot msg
 plus =
-  Dot.plus [] 10 (Dot.disconnected 2)
+  Dot.plus [ SvgA.style "cursor: default;" ] 10 (Dot.disconnected 2)
 
 
 square : Dot.Dot msg
 square =
-  Dot.square [] 7 (Dot.disconnected 2)
+  Dot.square [ SvgA.style "cursor: default;" ] 7 (Dot.disconnected 2)
 
 
-circle : Maybe Point -> Dot.Dot msg
-circle hover =
-  Dot.irregular \data ->
-    if hover == Just data then
-      Dot.circle [] 3 (Dot.aura 5)
-    else
-      Dot.circle [] 3 (Dot.disconnected 2)
+circle : Dot.Dot msg
+circle =
+  Dot.circle [ SvgA.style "cursor: default;" ] 3 (Dot.disconnected 2)
 
 
 junk : Point -> Junk.Junk Msg
@@ -95,15 +91,9 @@ junk hint =
           [ Svg.rect [ SvgA.fill "white", SvgA.y "-12", SvgA.width "80", SvgA.height "18", SvgA.opacity "0.5" ] []
           , text_ [] [ tspan [] [ text <| toString ( hint.x, hint.y ) ] ]
           ]
-
-      dot =
-        Dot.circle [ SvgA.style "cursor: default;" ] 3 (Dot.disconnected 0)
     in
     { below = []
-    , above =
-        [ viewHint
-        , Dot.view dot Color.pink system hint
-        ]
+    , above = [ viewHint ]
     , html = []
     }
 
