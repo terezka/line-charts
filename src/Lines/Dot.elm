@@ -42,20 +42,22 @@ import Internal.Coordinate as Coordinate exposing (..)
 {-| -}
 type Dot data msg
   = Dot
-      { normal : Maybe (View msg)
-      , hovered : data -> Maybe (View msg)
+      { isHovered : data -> Bool
+      , normal : Maybe (View msg)
+      , hovered : Maybe (View msg)
       }
 
 
 type alias DotConfig data msg =
-  { hovered : data -> Maybe (View msg)
+  { isHovered : data -> Bool
+  , hovered : Maybe (View msg)
   , normal : Maybe (View msg)
   }
 
 
 unhovered : Maybe (View msg) -> DotConfig data msg
 unhovered =
-  DotConfig (always Nothing)
+  DotConfig (always False) Nothing
 
 
 {-| -}
@@ -176,12 +178,9 @@ hoverable isHovered { normal, hovered } =
       config.normal
   in
   Dot <|
-    { normal = unpack normal
-    , hovered = \data ->
-        if isHovered data then
-          unpack hovered
-        else
-          unpack normal
+    { isHovered = isHovered
+    , normal = unpack normal
+    , hovered = unpack hovered
     }
 
 
@@ -191,8 +190,15 @@ hoverable isHovered { normal, hovered } =
 
 {-| -}
 view : Dot data msg -> Color.Color -> Coordinate.System -> Coordinate.DataPoint data -> Svg msg
-view (Dot view) color system dataPoint =
-  case view.hovered dataPoint.data of
+view (Dot config) color system dataPoint =
+  let
+    view =
+      if config.isHovered dataPoint.data then
+        config.hovered
+      else
+        config.normal
+  in
+  case view of
     Just view ->
       view color system dataPoint.point
 

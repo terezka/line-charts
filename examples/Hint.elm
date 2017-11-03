@@ -18,12 +18,12 @@ import Svg.Attributes as SvgA
 
 
 type alias Model =
-    { hovering : Maybe Data }
+    { hovering : List Data }
 
 
 initialModel : Model
 initialModel =
-    { hovering = Nothing }
+    { hovering = [] }
 
 
 
@@ -31,14 +31,14 @@ initialModel =
 
 
 type Msg
-    = Hover (Maybe Data)
+    = Hover (List Data)
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Hover point ->
-            { model | hovering = point }
+        Hover points ->
+            { model | hovering = points }
 
 
 
@@ -54,8 +54,11 @@ view model =
         , attributes = [ SvgA.style "font-family: monospace;" ]
         , defs = []
         }
-    , events = Events.simple Hover
-    , junk = Maybe.withDefault Junk.none (Maybe.map junk model.hovering)
+    , events =
+        [ Events.onMouseMove (Events.findWithinX 10) Hover
+        , Events.onMouseLeave (Hover [])
+        ]
+    , junk = junk model.hovering
     , x = Axis.defaultAxis (Axis.defaultTitle "Year" 0 3) .year
     , y = Axis.defaultAxis (Axis.defaultTitle "Cats" 0 0) .cats
     , interpolation = Lines.Monotone
@@ -71,7 +74,7 @@ plus : Model -> Dot.Dot Data msg
 plus model =
   Dot.hoverable (isHovered model)
     { normal = Dot.triangle [] 5 (Dot.disconnected 2)
-    , hovered = Dot.triangle [] 5 (Dot.aura 5 0.5)
+    , hovered = Dot.triangle [] 4 (Dot.aura 5 0.5)
     }
 
 
@@ -93,25 +96,23 @@ circle model =
 
 isHovered : Model -> Data -> Bool
 isHovered model data =
-  Just data == model.hovering
+  List.member data model.hovering
 
 
-junk : Data -> Junk.Junk Msg
-junk hint =
+junk : List Data -> Junk.Junk Msg
+junk hints =
   Junk.custom <| \system ->
     let
-      viewHint = -- TODO as html
-        Svg.g [ placeWithOffset system hint.year hint.cats 5 20 ]
-          [ Svg.rect [ SvgA.fill "white", SvgA.y "-12", SvgA.width "80", SvgA.height "18", SvgA.opacity "0.5" ] []
-          , text_ [] [ tspan [] [ text <| toString ( hint.year, hint.cats ) ] ]
-          ]
+      viewHint hint = -- TODO as html
+        Svg.g
+          [ placeWithOffset system hint.year hint.cats 5 20 ]
+          [ text_ [] [ tspan [] [ text <| toString ( hint.year, hint.cats ) ] ] ]
 
       dot =
         Dot.circle [ SvgA.style "cursor: default;" ] 3 (Dot.disconnected 0)
     in
     { below = []
-    , above =
-        [ viewHint ]
+    , above = List.map viewHint hints
     , html = []
     }
 

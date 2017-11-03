@@ -13,9 +13,9 @@ import Json.Decode as Json
 
 
 {-| -}
-simple : (Maybe data -> msg) -> List (Event data msg)
-simple msg =
-    [ onMouseMove Events.findNearest msg
+default : (Maybe data -> msg) -> List (Event data msg)
+default msg =
+    [ onMouseMove findNearest msg
     , onMouseLeave (msg Nothing)
     ]
 
@@ -75,6 +75,22 @@ findNearest =
   Events.findNearest
 
 
+{-| -}
+findWithin : Float -> Searcher data (Maybe data)
+findWithin =
+    Events.findWithin
+
+
+{-| -}
+findNearestX : Searcher data (List data)
+findNearestX =
+  Events.findNearestX
+
+
+{-| -}
+findWithinX : Float -> Searcher data (List data)
+findWithinX =
+  Events.findWithinX
 
 
 {-| -}
