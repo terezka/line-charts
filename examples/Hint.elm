@@ -11,19 +11,19 @@ import Lines.Coordinate as Coordinate exposing (..)
 import Html exposing (Html, div, h1, node, p, text)
 import Svg exposing (Svg, Attribute, text_, tspan, g)
 import Svg.Attributes as SvgA
-
+import Internal.Primitives exposing (vertical) -- TODO
 
 
 -- MODEL
 
 
 type alias Model =
-    { hovering : List Data }
+    { hovering : Maybe Data }
 
 
 initialModel : Model
 initialModel =
-    { hovering = [] }
+    { hovering = Nothing }
 
 
 
@@ -31,14 +31,14 @@ initialModel =
 
 
 type Msg
-    = Hover (List Data)
+    = Hover (Maybe Data)
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Hover points ->
-            { model | hovering = points }
+        Hover point ->
+            { model | hovering = point }
 
 
 
@@ -49,17 +49,12 @@ update msg model =
 view : Model -> Svg Msg
 view model =
   Lines.viewCustom
-    { container =
-        { frame = Frame (Margin 40 150 90 150) (Size 650 400)
-        , attributes = [ SvgA.style "font-family: monospace;" ]
-        , defs = []
-        }
-    , events =
-        [ Events.onMouseMove (Events.findWithinX 10) Hover
-        , Events.onMouseLeave (Hover [])
-        ]
-    , junk = junk model.hovering
-    , x = Axis.defaultAxis (Axis.defaultTitle "Year" 0 3) .year
+    { frame = Frame (Margin 40 150 90 150) (Size 650 400)
+    , attributes = [ SvgA.style "font-family: monospace;" ]
+    , defs = []
+    , events = Events.default Hover
+    , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
+    , x = Axis.defaultAxis (Axis.defaultTitle "Year" 0 0) .year
     , y = Axis.defaultAxis (Axis.defaultTitle "Cats" 0 0) .cats
     , interpolation = Lines.Monotone
     , legends = Legends.default
@@ -73,46 +68,52 @@ view model =
 plus : Model -> Dot.Dot Data msg
 plus model =
   Dot.hoverable (isHovered model)
-    { normal = Dot.triangle [] 5 (Dot.disconnected 2)
-    , hovered = Dot.triangle [] 4 (Dot.aura 5 0.5)
+    { normal = Dot.circle [] 4 (Dot.disconnected 2)
+    , hovered = Dot.cross [] 12 (Dot.disconnected 2)
     }
 
 
 square : Model -> Dot.Dot Data msg
 square model =
   Dot.hoverable (isHovered model)
-    { normal = Dot.square [] 7 (Dot.disconnected 2)
-    , hovered = Dot.square [] 7 (Dot.aura 5 0.5)
+    { normal = Dot.circle [] 4 (Dot.disconnected 2)
+    , hovered = Dot.cross [] 12 (Dot.disconnected 2)
     }
 
 
 circle : Model -> Dot.Dot Data msg
 circle model =
   Dot.hoverable (isHovered model)
-    { normal =  Dot.circle [] 4 (Dot.disconnected 2)
-    , hovered = Dot.circle [] 4 (Dot.aura 5 0.5)
+    { normal = Dot.circle [] 4 (Dot.disconnected 2)
+    , hovered = Dot.cross [] 12 (Dot.disconnected 2)
     }
 
 
 isHovered : Model -> Data -> Bool
 isHovered model data =
-  List.member data model.hovering
+  Just data == model.hovering
 
 
-junk : List Data -> Junk.Junk Msg
-junk hints =
+junk : Data -> Junk.Junk Msg
+junk hint =
   Junk.custom <| \system ->
     let
+      ( xOffset, styles ) =
+        if hint.year < system.x.min + ((system.x.max - system.x.min) / 2) then
+          ( 5, "text-anchor: start;" )
+        else
+          ( -5, "text-anchor: end;" )
+
       viewHint hint = -- TODO as html
         Svg.g
-          [ placeWithOffset system hint.year hint.cats 5 20 ]
+          [ placeWithOffset system hint.year hint.cats xOffset 20, SvgA.style styles ]
           [ text_ [] [ tspan [] [ text <| toString ( hint.year, hint.cats ) ] ] ]
 
-      dot =
-        Dot.circle [ SvgA.style "cursor: default;" ] 3 (Dot.disconnected 0)
+      line =
+        vertical system [] hint.year system.y.min system.y.max
     in
     { below = []
-    , above = List.map viewHint hints
+    , above = [ viewHint hint ]
     , html = []
     }
 

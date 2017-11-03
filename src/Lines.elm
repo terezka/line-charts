@@ -28,7 +28,6 @@ import Lines.Junk as Junk
 import Lines.Color as Color
 import Lines.Events as Events
 import Lines.Legends as Legends
-import Lines.Container as Container
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Legends
@@ -44,7 +43,9 @@ import Internal.Events
 
 {-| -}
 type alias Config data msg =
-  { container : Container.Config msg
+  { frame : Coordinate.Frame
+  , attributes : List (Svg.Attribute msg)
+  , defs : List (Svg msg)
   , events : List (Events.Event data msg)
   , junk : Junk.Junk msg
   , x : Axis.Axis data msg
@@ -98,7 +99,9 @@ viewSimple toX toY datas =
 view : (data -> Float) -> (data -> Float) -> List (Line data msg) -> Svg.Svg msg
 view toX toY =
   viewCustom
-    { container = Container.default
+    { frame = Frame (Margin 40 150 90 150) (Size 650 400)
+    , attributes = [ SvgA.style "font-family: monospace;" ] -- TODO: Maybe remove
+    , defs = []
     , events = []
     , x = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toX
     , y = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toY
@@ -133,7 +136,7 @@ viewCustom config lines =
       List.concat points
 
     system =
-      { frame = config.container.frame
+      { frame = config.frame
       , x = Coordinate.limits .x allPoints
       , y = Coordinate.limits .y allPoints
       }
@@ -147,7 +150,7 @@ viewCustom config lines =
 
     attributes =
       List.concat
-        [ config.container.attributes
+        [ config.attributes
         , Internal.Events.toSvgAttributes dataPoints system config.events
         , [ SvgA.width <| toString system.frame.size.width
           , SvgA.height <| toString system.frame.size.height
@@ -172,7 +175,7 @@ viewCustom config lines =
   in
   container <|
     Svg.svg attributes
-      [ Svg.defs [] config.container.defs
+      [ Svg.defs [] config.defs
       , Svg.g [ SvgA.class "junk--below" ] junk.below
       , Svg.g [ SvgA.class "lines" ] viewLines
       , Axis.viewHorizontal system config.x.look
