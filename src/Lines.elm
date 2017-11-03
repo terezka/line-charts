@@ -30,6 +30,7 @@ import Lines.Events as Events
 import Lines.Legends as Legends
 import Lines.Container as Container
 import Lines.Coordinate as Coordinate exposing (..)
+import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Legends
 import Internal.Interpolation as Interpolation
 import Internal.Coordinate as Coordinate
@@ -44,7 +45,7 @@ import Internal.Events
 {-| -}
 type alias Config data msg =
   { container : Container.Config msg
-  , events : List (Events.Event msg)
+  , events : List (Events.Event data msg)
   , junk : Junk.Junk msg
   , x : Axis.Axis data msg
   , y : Axis.Axis data msg
@@ -69,13 +70,13 @@ type Line data msg =
 
 
 {-| -}
-line : Color.Color -> Int -> Dot.Dot msg -> String -> List data -> Line data msg
+line : Color.Color -> Int -> Dot.Dot data msg -> String -> List data -> Line data msg
 line color width dot label data =
   Line <| LineConfig color width dot [] label data
 
 
 {-| -}
-dash : Color.Color -> Int -> Dot.Dot msg -> String -> List Float -> List data -> Line data msg
+dash : Color.Color -> Int -> Dot.Dot data msg -> String -> List Float -> List data -> Line data msg
 dash color width dot label dashing data =
   Line <| LineConfig color width dot dashing label data
 
@@ -120,6 +121,13 @@ viewCustom config lines =
         (config.x.variable datum)
         (config.y.variable datum)
 
+    -- Data points
+    dataPoints =
+      List.concat <| List.map (List.map dataPoint << .data << lineConfig) lines
+
+    dataPoint datum =
+      DataPoint datum (point datum)
+
     -- System
     allPoints =
       List.concat points
@@ -140,7 +148,7 @@ viewCustom config lines =
     attributes =
       List.concat
         [ config.container.attributes
-        , Internal.Events.toSvgAttributes allPoints system config.events
+        , Internal.Events.toSvgAttributes dataPoints system config.events
         , [ SvgA.width <| toString system.frame.size.width
           , SvgA.height <| toString system.frame.size.height
           ]
@@ -152,10 +160,12 @@ viewCustom config lines =
     viewLegends =
       case config.legends of
         Internal.Legends.Free placement view ->
-          Svg.g [ SvgA.class "legends" ] <| List.map2 (viewLegendFree system placement view) lines points
+          Svg.g [ SvgA.class "legends" ] <|
+            List.map2 (viewLegendFree system placement view) lines points
 
         Internal.Legends.Bucketed sampleWidth toContainer ->
-          toContainer system <| List.map (toLegendConfig system sampleWidth) lines
+          toContainer system <|
+            List.map (toLegendConfig system sampleWidth) lines
 
         Internal.Legends.None ->
           Svg.text ""
@@ -179,7 +189,7 @@ viewCustom config lines =
 type alias LineConfig data msg =
   { color : Color.Color
   , width : Int
-  , dot : Dot.Dot msg
+  , dot : Dot.Dot data msg
   , dashing : List Float
   , label : String
   , data : List data
@@ -191,7 +201,7 @@ lineConfig (Line lineConfig) =
   lineConfig
 
 
-defaultConfig : Dot.Dot msg -> Color.Color -> String -> List data -> Line data msg
+defaultConfig : Dot.Dot data msg -> Color.Color -> String -> List data -> Line data msg
 defaultConfig dot color label data =
   Line
     { dot = dot
@@ -208,7 +218,7 @@ viewLine config system line points =
   Svg.g
     [ SvgA.class "line" ]
     [ viewInterpolation config system line points
-    , viewDots system line points
+    , viewDots config system line points
     ]
 
 
@@ -243,10 +253,10 @@ viewInterpolation config system (Line line) points =
   Path.view system attributes commands
 
 
-viewDots : Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
-viewDots system (Line line) points =
-   Svg.g [ SvgA.class "dots" ] <|
-    List.map (Dot.view line.dot line.color system) points
+viewDots : Config data msg -> Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
+viewDots config system (Line line) points =
+  Svg.g [ SvgA.class "dots" ] <|
+    List.map2 (\datum point -> Dot.view line.dot line.color system <| DataPoint datum point) line.data points
 
 
 viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data msg -> List Point -> Svg.Svg msg
@@ -289,7 +299,7 @@ viewSample system sampleWidth line =
         , SvgA.fill "transparent"
         ]
         []
-    , Dot.view line.dot line.color system <|
+    , Dot.viewNormal line.dot line.color system <|
         toCartesianPoint system <| Point (sampleWidth / 2) 0
     ]
 
@@ -305,7 +315,7 @@ defaultColors =
   ]
 
 
-defaultDots : List (Dot.Dot msg)
+defaultDots : List (Dot.Dot data msg)
 defaultDots =
   [ Dot.default1
   , Dot.default2

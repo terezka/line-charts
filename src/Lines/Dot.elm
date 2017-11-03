@@ -1,8 +1,9 @@
 module Lines.Dot exposing
   ( Dot, none, default1, default2, default3
   , circle, triangle, square, diamond, plus, cross
-  , bordered, disconnected, full
-  , view
+  , bordered, disconnected, aura, full
+  , hoverable
+  , view, viewNormal
   )
 
 {-| # Dots
@@ -31,6 +32,7 @@ import Lines.Color as Color
 import Lines.Coordinate as Coordinate
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate exposing (..)
+import Internal.Coordinate as Coordinate exposing (..)
 
 
 
@@ -38,30 +40,44 @@ import Lines.Coordinate as Coordinate exposing (..)
 
 
 {-| -}
-type Dot msg
-  = Dot (Maybe (View msg))
+type Dot data msg
+  = Dot
+      { normal : Maybe (View msg)
+      , hovered : data -> Maybe (View msg)
+      }
+
+
+type alias DotConfig data msg =
+  { hovered : data -> Maybe (View msg)
+  , normal : Maybe (View msg)
+  }
+
+
+unhovered : Maybe (View msg) -> DotConfig data msg
+unhovered =
+  DotConfig (always Nothing)
 
 
 {-| -}
-none : Dot msg
+none : Dot data msg
 none =
-  Dot Nothing
+  Dot (unhovered Nothing)
 
 
 {-| -}
-default1 : Dot msg
+default1 : Dot data msg
 default1 =
   circle [] 4 (disconnected 2)
 
 
 {-| -}
-default2 : Dot msg
+default2 : Dot data msg
 default2 =
   triangle [] 6 (disconnected 2)
 
 
 {-| -}
-default3 : Dot msg
+default3 : Dot data msg
 default3 =
   cross [] 10 (disconnected 2)
 
@@ -71,45 +87,45 @@ default3 =
 
 
 {-| -}
-circle : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+circle : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
 circle events radius coloring =
-  Dot <| Just <| viewCircle events radius coloring
+  Dot <| unhovered <| Just <| viewCircle events radius coloring
 
 
 {-| -}
-triangle : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+triangle : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
 triangle events radius coloring =
-  Dot <| Just <| viewTriangle events radius coloring
+  Dot <| unhovered <| Just <| viewTriangle events radius coloring
 
 
 {-| -}
-square : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+square : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
 square events radius coloring =
-  Dot <| Just <| viewSquare events radius coloring
+  Dot <| unhovered <| Just <| viewSquare events radius coloring
 
 
 {-| -}
-diamond : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+diamond : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
 diamond events radius coloring =
-  Dot <| Just <| viewDiamond events radius coloring
+  Dot <| unhovered <| Just <| viewDiamond events radius coloring
 
 
 {-| -}
-plus : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+plus : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
 plus events radius coloring =
-  Dot <| Just <| viewPlus events radius coloring
+  Dot <| unhovered <| Just <| viewPlus events radius coloring
 
 
 {-| -}
-cross : List (Svg.Attribute msg) -> Int -> Coloring -> Dot msg
+cross : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
 cross events radius coloring =
-  Dot <| Just <| viewCross events radius coloring
+  Dot <| unhovered <| Just <| viewCross events radius coloring
 
 
 {-| TODO -}
-custom : (Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg) -> Dot msg
+custom : (Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg) -> Dot data msg
 custom =
-  Dot << Just
+  Dot << unhovered << Just
 
 
 
@@ -120,6 +136,7 @@ custom =
 type Coloring
   = Bordered Int
   | Disconnected Int
+  | Aura Int Float
   | Full
 
 
@@ -136,26 +153,61 @@ disconnected =
 
 
 {-| -}
+aura : Int -> Float -> Coloring
+aura =
+  Aura
+
+
+{-| -}
 full : Coloring
 full =
   Full
 
 
--- TODO add aura
+
+
+-- IRREGULAR
+
+
+hoverable : (data -> Bool) -> { normal : Dot data msg, hovered : Dot data msg } -> Dot data msg
+hoverable isHovered { normal, hovered } =
+  let
+    unpack (Dot config) =
+      config.normal
+  in
+  Dot <|
+    { normal = unpack normal
+    , hovered = \data ->
+        if isHovered data then
+          unpack hovered
+        else
+          unpack normal
+    }
+
 
 
 -- VIEW
 
 
 {-| -}
-view : Dot msg -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-view (Dot view) =
-  case view of
+view : Dot data msg -> Color.Color -> Coordinate.System -> Coordinate.DataPoint data -> Svg msg
+view (Dot view) color system dataPoint =
+  case view.hovered dataPoint.data of
     Just view ->
-      view
+      view color system dataPoint.point
 
     Nothing ->
-      \_ _ _ -> Svg.text ""
+      Svg.text ""
+
+
+viewNormal : Dot data msg -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewNormal (Dot view) color system point =
+  case view.normal of
+    Just view ->
+      view color system point
+
+    Nothing ->
+      Svg.text ""
 
 
 
@@ -319,6 +371,13 @@ colorAttributes color coloring =
       [ Attributes.stroke color
       , Attributes.strokeWidth (toString width)
       , Attributes.fill "white"
+      ]
+
+    Aura width opacity ->
+      [ Attributes.stroke color
+      , Attributes.strokeWidth (toString width)
+      , Attributes.strokeOpacity (toString opacity)
+      , Attributes.fill color
       ]
 
     Disconnected width ->

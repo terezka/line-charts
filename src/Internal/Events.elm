@@ -2,84 +2,53 @@ module Internal.Events exposing (..)
 
 import Svg
 import Lines.Coordinate as Coordinate exposing (..)
-import Internal.Utils as Utils exposing (withFirst)
+import Internal.Coordinate as Coordinate exposing (..)
+import Internal.Utils exposing (withFirst)
 
 
 {-| -}
-type Event msg
-    = Event (List Coordinate.Point -> Coordinate.System -> Svg.Attribute msg)
+type Event data msg
+    = Event (List (DataPoint data) -> Coordinate.System -> Svg.Attribute msg)
 
 
 {-| -}
-toSvgAttributes : List Coordinate.Point -> Coordinate.System -> List (Event msg) -> List (Svg.Attribute msg)
-toSvgAttributes points system =
-    List.map (\(Event attribute) -> attribute points system)
+toSvgAttributes : List (DataPoint data) -> Coordinate.System -> List (Event data msg) -> List (Svg.Attribute msg)
+toSvgAttributes dataPoints system =
+    List.map (\(Event attribute) -> attribute dataPoints system)
 
 
 {-| -}
-applySearcher : Searcher hint -> List Point -> System -> Point -> hint
-applySearcher (Searcher searcher) points system searched =
-  searcher points system searched
+applySearcher : Searcher data hint -> List (DataPoint data) -> System -> Point -> hint
+applySearcher (Searcher searcher) dataPoints system searched =
+  searcher dataPoints system searched
 
 
 {-| -}
-type Searcher hint =
-  Searcher (List Point -> System -> Point -> hint)
+type Searcher data hint =
+  Searcher (List (DataPoint data) -> System -> Point -> hint)
 
 
 {-| TODO: Make this -}
-svg : Searcher (Maybe Point)
+svg : Searcher data (Maybe data)
 svg =
   Searcher findNearestHelp
 
 
 {-| TODO: Make this -}
-cartesian : Searcher (Maybe Point)
+cartesian : Searcher data (Maybe data)
 cartesian =
   Searcher findNearestHelp
 
 
 {-| -}
-findNearest : Searcher (Maybe Point)
+findNearest : Searcher data (Maybe data)
 findNearest =
   Searcher findNearestHelp
 
 
-{-| -}
-findWithin : Float -> Searcher (Maybe Point)
-findWithin radius =
-  Searcher <| \points system searched ->
-    let
-        keepIfEligible closest =
-            if withinRadius system radius searched closest then
-                Just closest
-            else
-                Nothing
-    in
-    findNearestHelp points system searched
-        |> Maybe.andThen keepIfEligible
-
-
-{-| -}
-findNearestX : Searcher (List Point)
-findNearestX =
-  Searcher findNearestXHelp
-
-
-{-| -}
-findWithinX : Float -> Searcher (List Point)
-findWithinX radius =
-  Searcher <| \points system searched ->
-    let
-        keepIfEligible =
-            withinRadiusX system radius searched
-    in
-    findNearestXHelp points system searched
-      |> List.filter keepIfEligible
-
 
 {-| TODO: Should it exist -}
-custom : (System -> Point -> hint) -> Searcher hint
+custom : (System -> Point -> hint) -> Searcher data hint
 custom toHint =
   Searcher (\_ -> toHint)
 
@@ -88,41 +57,24 @@ custom toHint =
 -- INTERNAL
 
 
-findNearestHelp : List Point -> System -> Point -> Maybe Point
+findNearestHelp : List (DataPoint data) -> System -> Point -> Maybe data
 findNearestHelp points system searched =
   let
       distance_ =
           distance system searched
 
       getClosest point closest =
-          if distance_ closest < distance_ point then
+          if distance_ closest.point < distance_ point.point then
               closest
           else
               point
   in
-  withFirst points (List.foldl getClosest)
+  withFirst points (List.foldl getClosest) |> Maybe.map .data
 
 
-findNearestXHelp : List Point -> System -> Point -> List Point
+findNearestXHelp : List (DataPoint data) -> System -> Point -> List data
 findNearestXHelp points system searched =
-  let
-      distanceX_ =
-          distanceX system searched
-
-      getClosest point allClosest =
-        case List.head allClosest of
-          Just closest ->
-              if closest.x == point.x then
-                point :: allClosest
-              else if distanceX_ closest > distanceX_ point then
-                [ point ]
-              else
-                allClosest
-
-          Nothing ->
-            [ point ]
-  in
-  List.foldl getClosest [] points
+  []
 
 
 

@@ -1,6 +1,13 @@
-module Internal.Coordinate exposing (limits, minimum, minimumOrZero, maximum)
+module Internal.Coordinate exposing (DataPoint, limits, minimum, minimumOrZero, maximum)
 
 import Lines.Coordinate as Coordinate exposing (..)
+
+
+{-| -}
+type alias DataPoint data =
+  { data : data
+  , point : Coordinate.Point
+  }
 
 
 {-| -}

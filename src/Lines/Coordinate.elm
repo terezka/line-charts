@@ -29,7 +29,6 @@ module Lines.Coordinate exposing
 ## Scale
 @docs scaleSVG, scaleCartesian
 
-
 -}
 
 

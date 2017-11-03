@@ -18,7 +18,7 @@ import Svg.Attributes as SvgA
 
 
 type alias Model =
-    { hovering : Maybe Point }
+    { hovering : Maybe Data }
 
 
 initialModel : Model
@@ -31,7 +31,7 @@ initialModel =
 
 
 type Msg
-    = Hover (Maybe Point)
+    = Hover (Maybe Data)
 
 
 update : Msg -> Model -> Model
@@ -56,44 +56,54 @@ view model =
         }
     , events = Events.simple Hover
     , junk = Maybe.withDefault Junk.none (Maybe.map junk model.hovering)
-    , x = Axis.defaultAxis (Axis.defaultTitle "Year" 0 3) (.x >> (+) 1990)
-    , y = Axis.defaultAxis (Axis.defaultTitle "Cats" 0 0) .y
+    , x = Axis.defaultAxis (Axis.defaultTitle "Year" 0 3) .year
+    , y = Axis.defaultAxis (Axis.defaultTitle "Cats" 0 0) .cats
     , interpolation = Lines.Monotone
-    , legends = Legends.byEnding Legends.defaultLabel
+    , legends = Legends.default
     }
-    [ Lines.line Color.blue 1 plus "Non-binary" data1
-    , Lines.line Color.orange 1 circle "Women" data3
-    , Lines.line Color.pink 1 square "Men" data2
+    [ Lines.line Color.blue 1 (plus model) "Non-binary" data1
+    , Lines.line Color.orange 1 (circle model) "Women" data3
+    , Lines.line Color.pink 1 (square model) "Men" data2
     ]
 
 
-plus : Dot.Dot msg
-plus =
-  Dot.plus [] 10 (Dot.disconnected 2)
+plus : Model -> Dot.Dot Data msg
+plus model =
+  Dot.hoverable (isHovered model)
+    { normal = Dot.triangle [] 5 (Dot.disconnected 2)
+    , hovered = Dot.triangle [] 5 (Dot.aura 5 0.5)
+    }
 
 
-square : Dot.Dot msg
-square =
-  Dot.square [] 7 (Dot.disconnected 2)
+square : Model -> Dot.Dot Data msg
+square model =
+  Dot.hoverable (isHovered model)
+    { normal = Dot.square [] 7 (Dot.disconnected 2)
+    , hovered = Dot.square [] 7 (Dot.aura 5 0.5)
+    }
 
 
-circle : Maybe Point -> Dot.Dot msg
-circle hover =
-  Dot.irregular \data ->
-    if hover == Just data then
-      Dot.circle [] 3 (Dot.aura 5)
-    else
-      Dot.circle [] 3 (Dot.disconnected 2)
+circle : Model -> Dot.Dot Data msg
+circle model =
+  Dot.hoverable (isHovered model)
+    { normal =  Dot.circle [] 4 (Dot.disconnected 2)
+    , hovered = Dot.circle [] 4 (Dot.aura 5 0.5)
+    }
 
 
-junk : Point -> Junk.Junk Msg
+isHovered : Model -> Data -> Bool
+isHovered model data =
+  Just data == model.hovering
+
+
+junk : Data -> Junk.Junk Msg
 junk hint =
   Junk.custom <| \system ->
     let
       viewHint = -- TODO as html
-        Svg.g [ placeWithOffset system hint.x hint.y 5 20 ]
+        Svg.g [ placeWithOffset system hint.year hint.cats 5 20 ]
           [ Svg.rect [ SvgA.fill "white", SvgA.y "-12", SvgA.width "80", SvgA.height "18", SvgA.opacity "0.5" ] []
-          , text_ [] [ tspan [] [ text <| toString ( hint.x, hint.y ) ] ]
+          , text_ [] [ tspan [] [ text <| toString ( hint.year, hint.cats ) ] ]
           ]
 
       dot =
@@ -101,9 +111,7 @@ junk hint =
     in
     { below = []
     , above =
-        [ viewHint
-        , Dot.view dot Color.pink system hint
-        ]
+        [ viewHint ]
     , html = []
     }
 
@@ -113,8 +121,8 @@ junk hint =
 
 
 type alias Data =
-  { x : Float
-  , y : Float
+  { year : Float
+  , cats : Float
   }
 
 
