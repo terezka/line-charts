@@ -23,6 +23,7 @@ import Html
 import Svg exposing (Svg)
 import Svg.Attributes as SvgA
 import Lines.Dot as Dot
+import Lines.Line as Line
 import Lines.Axis as Axis
 import Lines.Junk as Junk
 import Lines.Color as Color
@@ -45,13 +46,16 @@ import Internal.Events
 type alias Config data msg =
   { frame : Coordinate.Frame
   , attributes : List (Svg.Attribute msg)
-  , defs : List (Svg msg)
   , events : List (Events.Event data msg)
   , junk : Junk.Junk msg
   , x : Axis.Axis data msg
   , y : Axis.Axis data msg
   , interpolation : Interpolation
   , legends : Legends.Legends msg
+  , look :
+      { line : Line.Look data
+      , dot : Dot.Look data
+      }
   }
 
 
@@ -61,25 +65,24 @@ type Interpolation
   | Monotone
 
 
-
 -- LINE
 
 
 {-| -}
-type Line data msg =
-  Line (LineConfig data msg)
+type Line data =
+  Line (LineConfig data)
 
 
 {-| -}
-line : Color.Color -> Int -> Dot.Dot data msg -> String -> List data -> Line data msg
-line color width dot label data =
-  Line <| LineConfig color width dot [] label data
+line : Color.Color -> Dot.Shape -> String -> List data -> Line data
+line color shape label data =
+  Line <| LineConfig color shape [] label data
 
 
 {-| -}
-dash : Color.Color -> Int -> Dot.Dot data msg -> String -> List Float -> List data -> Line data msg
-dash color width dot label dashing data =
-  Line <| LineConfig color width dot dashing label data
+dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
+dash color shape label dashing data =
+  Line <| LineConfig color shape dashing label data
 
 
 
@@ -92,27 +95,27 @@ viewSimple toX toY datas =
   if List.length datas > 3 then
     Html.div [] [ Html.text "If you have more than three data sets, you must use `view` or `viewCustom`!" ]
   else
-    view toX toY (List.map4 defaultConfig defaultDots defaultColors defaultLabel datas)
+    view toX toY (List.map4 defaultConfig defaultShapes defaultColors defaultLabel datas)
 
 
 {-| -}
-view : (data -> Float) -> (data -> Float) -> List (Line data msg) -> Svg.Svg msg
+view : (data -> Float) -> (data -> Float) -> List (Line data) -> Svg.Svg msg
 view toX toY =
   viewCustom
     { frame = Frame (Margin 40 150 90 150) (Size 650 400)
     , attributes = [ SvgA.style "font-family: monospace;" ] -- TODO: Maybe remove
-    , defs = []
     , events = []
     , x = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toX
     , y = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toY
     , junk = Junk.none
     , interpolation = Linear
     , legends = Legends.bucketed .max (.min >> (+) 1) -- TODO
+    , look = { dot = Dot.default, line = Line.default }
     }
 
 
 {-| -}
-viewCustom : Config data msg -> List (Line data msg) -> Svg.Svg msg
+viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
 viewCustom config lines =
   let
     -- Points
@@ -168,15 +171,14 @@ viewCustom config lines =
 
         Internal.Legends.Bucketed sampleWidth toContainer ->
           toContainer system <|
-            List.map (toLegendConfig system sampleWidth) lines
+            List.map (toLegendConfig config system sampleWidth) lines
 
         Internal.Legends.None ->
           Svg.text ""
   in
   container <|
     Svg.svg attributes
-      [ Svg.defs [] config.defs
-      , Svg.g [ SvgA.class "junk--below" ] junk.below
+      [ Svg.g [ SvgA.class "junk--below" ] junk.below
       , Svg.g [ SvgA.class "lines" ] viewLines
       , Axis.viewHorizontal system config.x.look
       , Axis.viewVertical system config.y.look
@@ -189,34 +191,32 @@ viewCustom config lines =
 -- INTERNAL
 
 
-type alias LineConfig data msg =
+type alias LineConfig data =
   { color : Color.Color
-  , width : Int
-  , dot : Dot.Dot data msg
+  , shape : Dot.Shape
   , dashing : List Float
   , label : String
   , data : List data
   }
 
 
-lineConfig : Line data msg -> LineConfig data msg
+lineConfig : Line data -> LineConfig data
 lineConfig (Line lineConfig) =
   lineConfig
 
 
-defaultConfig : Dot.Dot data msg -> Color.Color -> String -> List data -> Line data msg
-defaultConfig dot color label data =
+defaultConfig : Dot.Shape -> Color.Color -> String -> List data -> Line data
+defaultConfig shape color label data =
   Line
-    { dot = dot
+    { shape = shape
     , color = color
-    , width = 2
     , dashing = []
     , data = data
     , label = label
     }
 
 
-viewLine : Config data msg -> Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
+viewLine : Config data msg -> Coordinate.System -> Line data -> List Point -> Svg.Svg msg
 viewLine config system line points =
   Svg.g
     [ SvgA.class "line" ]
@@ -225,7 +225,7 @@ viewLine config system line points =
     ]
 
 
-viewInterpolation : Config data msg -> Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
+viewInterpolation : Config data msg -> Coordinate.System -> Line data -> List Point -> Svg.Svg msg
 viewInterpolation config system (Line line) points =
   let
     interpolationCommands =
@@ -244,11 +244,26 @@ viewInterpolation config system (Line line) points =
         [] ->
           []
 
+    isEmphasized =
+      config.look.line.isEmphasized line.data
+
+    width =
+      if isEmphasized then
+        config.look.line.emphasized.width
+      else
+        config.look.line.normal.width
+
+    toColor =
+      if isEmphasized then
+        config.look.line.emphasized.color
+      else
+        config.look.line.normal.color
+
     attributes =
       [ SvgA.style "pointer-events: none;"
       , SvgA.class "interpolation"
-      , SvgA.stroke line.color
-      , SvgA.strokeWidth (toString line.width)
+      , SvgA.stroke (toColor line.color)
+      , SvgA.strokeWidth (toString width)
       , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)
       , SvgA.fill "transparent"
       ]
@@ -256,13 +271,13 @@ viewInterpolation config system (Line line) points =
   Path.view system attributes commands
 
 
-viewDots : Config data msg -> Coordinate.System -> Line data msg -> List Point -> Svg.Svg msg
+viewDots : Config data msg -> Coordinate.System -> Line data -> List Point -> Svg.Svg msg
 viewDots config system (Line line) points =
   Svg.g [ SvgA.class "dots" ] <|
-    List.map2 (\datum point -> Dot.view line.dot line.color system <| DataPoint datum point) line.data points
+    List.map2 (\datum point -> Dot.view config.look.dot line.shape line.color system <| DataPoint datum point) line.data points
 
 
-viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data msg -> List Point -> Svg.Svg msg
+viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data -> List Point -> Svg.Svg msg
 viewLegendFree system placement view (Line line) points =
   let
     ( orderedPoints, anchor, xOffset ) =
@@ -281,15 +296,15 @@ viewLegendFree system placement view (Line line) points =
       [ view line.label ]
 
 
-toLegendConfig : Coordinate.System -> Float -> Line data msg -> Legends.Pieces msg
-toLegendConfig system sampleWidth (Line line) =
-  { sample = viewSample system sampleWidth line
+toLegendConfig : Config data msg -> Coordinate.System -> Float -> Line data -> Legends.Pieces msg
+toLegendConfig config system sampleWidth (Line line) =
+  { sample = viewSample config system sampleWidth line
   , label = line.label
   }
 
 
-viewSample : Coordinate.System -> Float -> LineConfig data msg -> Svg msg
-viewSample system sampleWidth line =
+viewSample : Config data msg -> Coordinate.System -> Float -> LineConfig data -> Svg msg
+viewSample config system sampleWidth line =
   Svg.g [ SvgA.class "sample" ]
     [ Svg.line
         [ SvgA.x1 "0"
@@ -297,14 +312,15 @@ viewSample system sampleWidth line =
         , SvgA.x2 <| toString sampleWidth
         , SvgA.y2 "0"
         , SvgA.stroke line.color
-        , SvgA.strokeWidth (toString line.width)
+        , SvgA.strokeWidth (toString config.look.line.normal.width)
         , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)
         , SvgA.fill "transparent"
         ]
         []
-    , Dot.viewNormal line.dot line.color system <|
+    , Dot.viewNormal config.look.dot line.shape line.color system <|
         toCartesianPoint system <| Point (sampleWidth / 2) 0
     ]
+
 
 
 -- DEFAULTS
@@ -318,8 +334,8 @@ defaultColors =
   ]
 
 
-defaultDots : List (Dot.Dot data msg)
-defaultDots =
+defaultShapes : List Dot.Shape
+defaultShapes =
   [ Dot.default1
   , Dot.default2
   , Dot.default3

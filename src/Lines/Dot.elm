@@ -1,9 +1,8 @@
 module Lines.Dot exposing
-  ( Dot, none, default1, default2, default3
+  ( Shape, none, default1, default2, default3
   , circle, triangle, square, diamond, plus, cross
   , bordered, disconnected, aura, full
-  , hoverable
-  , view, viewNormal
+  , view, viewNormal, default, custom, Style, Look
   )
 
 {-| # Dots
@@ -40,102 +39,116 @@ import Internal.Coordinate as Coordinate exposing (..)
 
 
 {-| -}
-type Dot data msg
-  = Dot
-      { isHovered : data -> Bool
-      , normal : Maybe (View msg)
-      , hovered : Maybe (View msg)
-      }
-
-
-type alias DotConfig data msg =
-  { isHovered : data -> Bool
-  , hovered : Maybe (View msg)
-  , normal : Maybe (View msg)
+type alias Look data =
+  { normal : Style
+  , emphasized : Style
+  , isEmphasized : data -> Bool
   }
 
 
-unhovered : Maybe (View msg) -> DotConfig data msg
-unhovered =
-  DotConfig (always False) Nothing
+type alias Style =
+  { size : Int -- TODO Float
+  , variety : Variety
+  }
+
+
+default : Look data
+default =
+  { normal = Style 4 (disconnected 2)
+  , emphasized = Style 4 (aura 4 0.5)
+  , isEmphasized = always False
+  }
+
+
+custom : Style -> Look data
+custom style =
+  { normal = style
+  , emphasized = Style 4 (aura 4 0.5)
+  , isEmphasized = always False
+  }
 
 
 {-| -}
-none : Dot data msg
+type Shape
+  = None
+  | Circle
+  | Triangle
+  | Square
+  | Diamond
+  | Cross
+  | Plus
+
+
+{-| -}
+none : Shape
 none =
-  Dot (unhovered Nothing)
+  None
 
 
 {-| -}
-default1 : Dot data msg
+circle : Shape
+circle =
+  Circle
+
+
+{-| -}
+triangle : Shape
+triangle =
+  Triangle
+
+
+{-| -}
+square : Shape
+square =
+  Square
+
+
+{-| -}
+diamond : Shape
+diamond =
+  Diamond
+
+
+{-| -}
+plus : Shape
+plus =
+  Plus
+
+
+{-| -}
+cross : Shape
+cross =
+  Cross
+
+
+
+-- DEFAULTS
+
+
+{-| -}
+default1 : Shape
 default1 =
-  circle [] 4 (disconnected 2)
+  circle
 
 
 {-| -}
-default2 : Dot data msg
+default2 : Shape
 default2 =
-  triangle [] 6 (disconnected 2)
+  triangle
 
 
 {-| -}
-default3 : Dot data msg
+default3 : Shape
 default3 =
-  cross [] 10 (disconnected 2)
+  cross
 
 
 
--- SHAPES TODO: Use shape type again (?) and base funcs on coloring
-
-
-{-| -}
-circle : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
-circle events radius coloring =
-  Dot <| unhovered <| Just <| viewCircle events radius coloring
+-- VARIETY
 
 
 {-| -}
-triangle : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
-triangle events radius coloring =
-  Dot <| unhovered <| Just <| viewTriangle events radius coloring
-
-
-{-| -}
-square : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
-square events radius coloring =
-  Dot <| unhovered <| Just <| viewSquare events radius coloring
-
-
-{-| -}
-diamond : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
-diamond events radius coloring =
-  Dot <| unhovered <| Just <| viewDiamond events radius coloring
-
-
-{-| -}
-plus : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
-plus events radius coloring =
-  Dot <| unhovered <| Just <| viewPlus events radius coloring
-
-
-{-| -}
-cross : List (Svg.Attribute msg) -> Int -> Coloring -> Dot data msg
-cross events radius coloring =
-  Dot <| unhovered <| Just <| viewCross events radius coloring
-
-
-{-| TODO -}
-custom : (Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg) -> Dot data msg
-custom =
-  Dot << unhovered << Just
-
-
-
--- COLORING
-
-
-{-| -}
-type Coloring
+type Variety
   = Bordered Int
   | Disconnected Int
   | Aura Int Float
@@ -143,45 +156,27 @@ type Coloring
 
 
 {-| -}
-bordered : Int -> Coloring
+bordered : Int -> Variety
 bordered =
   Bordered
 
 
 {-| -}
-disconnected : Int -> Coloring
+disconnected : Int -> Variety
 disconnected =
   Disconnected
 
 
 {-| -}
-aura : Int -> Float -> Coloring
+aura : Int -> Float -> Variety
 aura =
   Aura
 
 
 {-| -}
-full : Coloring
+full : Variety
 full =
   Full
-
-
-
-
--- IRREGULAR
-
-
-hoverable : (data -> Bool) -> { normal : Dot data msg, hovered : Dot data msg } -> Dot data msg
-hoverable isHovered { normal, hovered } =
-  let
-    unpack (Dot config) =
-      config.normal
-  in
-  Dot <|
-    { isHovered = isHovered
-    , normal = unpack normal
-    , hovered = unpack hovered
-    }
 
 
 
@@ -189,31 +184,46 @@ hoverable isHovered { normal, hovered } =
 
 
 {-| -}
-view : Dot data msg -> Color.Color -> Coordinate.System -> Coordinate.DataPoint data -> Svg msg
-view (Dot config) color system dataPoint =
+view : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.DataPoint data -> Svg msg
+view config shape color system dataPoint =
   let
-    view =
-      if config.isHovered dataPoint.data then
-        config.hovered
+    style =
+      if config.isEmphasized dataPoint.data then
+        config.emphasized
       else
         config.normal
   in
-  case view of
-    Just view ->
-      view color system dataPoint.point
-
-    Nothing ->
-      Svg.text ""
+  viewShape shape style.size style.variety color system dataPoint.point
 
 
-viewNormal : Dot data msg -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewNormal (Dot view) color system point =
-  case view.normal of
-    Just view ->
-      view color system point
+viewShape : Shape -> Int -> Variety -> Color.Color -> Coordinate.System -> Point -> Svg msg
+viewShape shape =
+  case shape of
+    Circle ->
+      viewCircle []
 
-    Nothing ->
-      Svg.text ""
+    Triangle ->
+      viewTriangle []
+
+    Square ->
+      viewSquare []
+
+    Diamond ->
+      viewDiamond []
+
+    Cross ->
+      viewCross []
+
+    Plus ->
+      viewPlus []
+
+    None ->
+      \_ _ _ _ _ -> Svg.text ""
+
+
+viewNormal : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewNormal config shape =
+    viewShape shape config.normal.size config.normal.variety
 
 
 
@@ -221,12 +231,15 @@ viewNormal (Dot view) color system point =
 
 
 {-| -}
-type alias View msg =
-  Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+type alias DotConfig data =
+  { normal : Style
+  , emphasized : Style
+  , isEmphasized : data -> Bool
+  }
 
 
-viewCircle : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewCircle events radius coloring color system cartesianPoint =
+viewCircle : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewCircle events diameter variety color system cartesianPoint =
   let
     point =
       toSVGPoint system cartesianPoint
@@ -234,14 +247,14 @@ viewCircle events radius coloring color system cartesianPoint =
     attributes =
       [ Attributes.cx (toString point.x)
       , Attributes.cy (toString point.y)
-      , Attributes.r (toString radius)
+      , Attributes.r (toString (toFloat diameter / 2))
       ]
   in
-  Svg.circle (events ++ attributes ++ colorAttributes color coloring) []
+  Svg.circle (events ++ attributes ++ varietyAttributes color variety) []
 
 
-viewTriangle : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewTriangle events radiusInt coloring color system cartesianPoint =
+viewTriangle : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewTriangle events radiusInt variety color system cartesianPoint =
   let
     radius =
       toFloat radiusInt
@@ -265,11 +278,11 @@ viewTriangle events radiusInt coloring color system cartesianPoint =
     attributes =
       [ Attributes.points shape ]
   in
-  Svg.polygon (events ++ attributes ++ colorAttributes color coloring) []
+  Svg.polygon (events ++ attributes ++ varietyAttributes color variety) []
 
 
-viewSquare : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewSquare events radiusInt coloring color system cartesianPoint =
+viewSquare : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewSquare events radiusInt variety color system cartesianPoint =
   let
     radius =
       toFloat radiusInt
@@ -284,11 +297,11 @@ viewSquare events radiusInt coloring color system cartesianPoint =
       , Attributes.height <| toString radius
       ]
   in
-  Svg.rect (events ++ attributes ++ colorAttributes color coloring) []
+  Svg.rect (events ++ attributes ++ varietyAttributes color variety) []
 
 
-viewDiamond : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewDiamond events radiusInt coloring color system cartesianPoint =
+viewDiamond : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewDiamond events radiusInt variety color system cartesianPoint =
   let
     radius =
       toFloat radiusInt
@@ -307,11 +320,11 @@ viewDiamond events radiusInt coloring color system cartesianPoint =
       , Attributes.transform rotation
       ]
   in
-  Svg.rect (events ++ attributes ++ colorAttributes color coloring) []
+  Svg.rect (events ++ attributes ++ varietyAttributes color variety) []
 
 
-viewPlus : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewPlus events radiusInt coloring color system cartesianPoint =
+viewPlus : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewPlus events radiusInt variety color system cartesianPoint =
   let
     point =
       toSVGPoint system cartesianPoint
@@ -319,11 +332,11 @@ viewPlus events radiusInt coloring color system cartesianPoint =
     attributes =
       [ plusPath radiusInt point ]
   in
-  Svg.path (events ++ attributes ++ colorAttributes color coloring) []
+  Svg.path (events ++ attributes ++ varietyAttributes color variety) []
 
 
-viewCross : List (Svg.Attribute msg) -> Int -> Coloring -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewCross events radiusInt coloring color system cartesianPoint =
+viewCross : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewCross events radiusInt variety color system cartesianPoint =
   let
     point =
       toSVGPoint system cartesianPoint
@@ -336,7 +349,7 @@ viewCross events radiusInt coloring color system cartesianPoint =
       , Attributes.transform rotation
       ]
   in
-  Svg.path (events ++ attributes ++ colorAttributes color coloring) []
+  Svg.path (events ++ attributes ++ varietyAttributes color variety) []
 
 
 plusPath : Int -> Point -> Svg.Attribute msg
@@ -365,14 +378,15 @@ plusPath radiusInt point =
       , "h" ++ toString -r3
       , "v" ++ toString -r3
       , "h" ++ toString -r3
+      , "v" ++ toString r3
       ]
   in
   Attributes.d <| String.join " " commands
 
 
-colorAttributes : Color.Color -> Coloring -> List (Svg.Attribute msg)
-colorAttributes color coloring =
-  case coloring of
+varietyAttributes : Color.Color -> Variety -> List (Svg.Attribute msg)
+varietyAttributes color variety =
+  case variety of
     Bordered width ->
       [ Attributes.stroke color
       , Attributes.strokeWidth (toString width)
