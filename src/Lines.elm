@@ -263,7 +263,7 @@ viewInterpolation config system (Line line) points =
       [ SvgA.style "pointer-events: none;"
       , SvgA.class "interpolation"
       , SvgA.stroke (toColor line.color)
-      , SvgA.strokeWidth (toString width)
+      , SvgA.strokeWidth (toString (toFloat width / 2))
       , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)
       , SvgA.fill "transparent"
       ]
@@ -312,7 +312,7 @@ viewSample config system sampleWidth line =
         , SvgA.x2 <| toString sampleWidth
         , SvgA.y2 "0"
         , SvgA.stroke line.color
-        , SvgA.strokeWidth (toString config.look.line.normal.width)
+        , SvgA.strokeWidth (toString (toFloat config.look.line.normal.width / 2))
         , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)
         , SvgA.fill "transparent"
         ]

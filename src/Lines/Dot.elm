@@ -239,72 +239,72 @@ type alias DotConfig data =
 
 
 viewCircle : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewCircle events diameter variety color system cartesianPoint =
+viewCircle events size variety color system cartesianPoint =
   let
+    radius =
+      sqrt (toFloat size / pi)
+
     point =
       toSVGPoint system cartesianPoint
 
     attributes =
       [ Attributes.cx (toString point.x)
       , Attributes.cy (toString point.y)
-      , Attributes.r (toString (toFloat diameter / 2))
+      , Attributes.r (toString radius)
       ]
   in
   Svg.circle (events ++ attributes ++ varietyAttributes color variety) []
 
 
 viewTriangle : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewTriangle events radiusInt variety color system cartesianPoint =
+viewTriangle events size variety color system cartesianPoint =
   let
-    radius =
-      toFloat radiusInt
+    side =
+      sqrt <| toFloat size * 4 / (sqrt 3)
 
     point =
       toSVGPoint system cartesianPoint
 
-    -- "200,90 210,105 190,105" for Point 200 100
-    shapePoints =
-      [ point.x
-      , point.y - radius
-      , point.x + radius
-      , point.y + radius / 2
-      , point.x - radius
-      , point.y + radius / 2
-      ]
+    height =
+      (sqrt 3) * side / 2
 
-    shape =
-      String.join " " <| List.map toString shapePoints
+    fromMiddle =
+       height - tan (degrees 30) * side / 2
 
-    attributes =
-      [ Attributes.points shape ]
+    path =
+      Attributes.d <| String.join " "
+        [ "M" ++ toString point.x ++ " " ++ toString (point.y - fromMiddle)
+        , "l" ++ toString (-side / 2) ++ " " ++ toString height
+        , "h" ++ toString side
+        ]
   in
-  Svg.polygon (events ++ attributes ++ varietyAttributes color variety) []
+  Svg.path (events ++ [ path ] ++ varietyAttributes color variety) []
 
 
 viewSquare : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewSquare events radiusInt variety color system cartesianPoint =
+viewSquare events size variety color system cartesianPoint =
   let
-    radius =
-      toFloat radiusInt
+    side =
+      sqrt <| toFloat size
 
     point =
       toSVGPoint system cartesianPoint
 
     attributes =
-      [ Attributes.x <| toString (point.x - radius / 2)
-      , Attributes.y <| toString (point.y - radius / 2)
-      , Attributes.width <| toString radius
-      , Attributes.height <| toString radius
+      [ Attributes.x <| toString (point.x - side / 2)
+      , Attributes.y <| toString (point.y - side / 2)
+      , Attributes.width <| toString side
+      , Attributes.height <| toString side
       ]
   in
   Svg.rect (events ++ attributes ++ varietyAttributes color variety) []
 
 
 viewDiamond : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewDiamond events radiusInt variety color system cartesianPoint =
+viewDiamond events size variety color system cartesianPoint =
   let
-    radius =
-      toFloat radiusInt
+    side =
+      sqrt <| toFloat size
 
     point =
       toSVGPoint system cartesianPoint
@@ -313,10 +313,10 @@ viewDiamond events radiusInt variety color system cartesianPoint =
       "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
 
     attributes =
-      [ Attributes.x <| toString (point.x - radius / 2)
-      , Attributes.y <| toString (point.y - radius / 2)
-      , Attributes.width <| toString radius
-      , Attributes.height <| toString radius
+      [ Attributes.x <| toString (point.x - side / 2)
+      , Attributes.y <| toString (point.y - side / 2)
+      , Attributes.width <| toString side
+      , Attributes.height <| toString side
       , Attributes.transform rotation
       ]
   in
@@ -324,19 +324,19 @@ viewDiamond events radiusInt variety color system cartesianPoint =
 
 
 viewPlus : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewPlus events radiusInt variety color system cartesianPoint =
+viewPlus events size variety color system cartesianPoint =
   let
     point =
       toSVGPoint system cartesianPoint
 
     attributes =
-      [ plusPath radiusInt point ]
+      [ plusPath size point ]
   in
   Svg.path (events ++ attributes ++ varietyAttributes color variety) []
 
 
 viewCross : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewCross events radiusInt variety color system cartesianPoint =
+viewCross events size variety color system cartesianPoint =
   let
     point =
       toSVGPoint system cartesianPoint
@@ -345,7 +345,7 @@ viewCross events radiusInt variety color system cartesianPoint =
       "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
 
     attributes =
-      [ plusPath radiusInt point
+      [ plusPath size point
       , Attributes.transform rotation
       ]
   in
@@ -353,16 +353,16 @@ viewCross events radiusInt variety color system cartesianPoint =
 
 
 plusPath : Int -> Point -> Svg.Attribute msg
-plusPath radiusInt point =
+plusPath size point =
   let
-    radius =
-      toFloat radiusInt
+    side =
+      sqrt (toFloat size / 5)
 
     r3 =
-      radius / 3
+      side
 
     r6 =
-      r3 / 2
+      side / 2
 
     commands =
       [ "M" ++ toString (point.x - r6) ++ " " ++ toString (point.y - r3 - r6)

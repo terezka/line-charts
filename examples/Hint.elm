@@ -61,19 +61,19 @@ view model =
         , look =
             { line =
                 { normal = Line.Style 1 identity
-                , emphasized = Line.Style 2 (always Color.black)
+                , emphasized = Line.Style 2 identity
                 , isEmphasized = \data -> Maybe.map (flip List.member data) model.hovering |> Maybe.withDefault False
                 }
             , dot =
-                { normal = Dot.Style 10 (Dot.disconnected 2)
-                , emphasized = Dot.Style 4 (Dot.aura 4 0.5)
+                { normal = Dot.Style 20 (Dot.full)
+                , emphasized = Dot.Style 25 (Dot.full)
                 , isEmphasized = \datum -> Just datum == model.hovering
                 }
             }
         }
-        [ Lines.line Color.blue Dot.triangle "Non-binary" data1
+        [ Lines.line Color.blue Dot.plus "Non-binary" data1
         , Lines.line Color.orange Dot.circle "Women" data3
-        , Lines.line Color.pink Dot.square "Men" data2
+        , Lines.line Color.pink Dot.diamond "Men" data2
         ]
 
 
