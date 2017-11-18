@@ -39,7 +39,7 @@ import Internal.Path as Path
 import Internal.Axis as Axis
 import Internal.Junk
 import Internal.Events
-
+import Internal.Dot
 
 
 {-| -}
@@ -273,7 +273,7 @@ viewInterpolation config system (Line line) points =
 viewDots : Config data msg -> Coordinate.System -> Line data -> List Point -> Svg.Svg msg
 viewDots config system (Line line) points =
   Svg.g [ SvgA.class "dots" ] <|
-    List.map2 (\datum point -> Dot.view config.dot line.shape line.color system <| DataPoint datum point) line.data points
+    List.map2 (\datum point -> Internal.Dot.view config.dot line.shape line.color system <| DataPoint datum point) line.data points
 
 
 viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data -> List Point -> Svg.Svg msg
@@ -316,7 +316,7 @@ viewSample config system sampleWidth line =
         , SvgA.fill "transparent"
         ]
         []
-    , Dot.viewNormal config.dot line.shape line.color system <|
+    , Internal.Dot.viewNormal config.dot line.shape line.color system <|
         toCartesianPoint system <| Point (sampleWidth / 2) 0
     ]
 
