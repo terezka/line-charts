@@ -293,6 +293,7 @@ viewTriangle events size variety color system cartesianPoint =
         [ "M" ++ toString point.x ++ " " ++ toString (point.y - fromMiddle)
         , "l" ++ toString (-side / 2) ++ " " ++ toString height
         , "h" ++ toString side
+        , "z"
         ]
   in
   Svg.path (events ++ [ path ] ++ varietyAttributes color variety) []
