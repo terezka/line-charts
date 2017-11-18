@@ -2,57 +2,61 @@ module Internal.Events exposing (..)
 
 import Svg
 import Lines.Coordinate as Coordinate exposing (..)
-import Internal.Utils as Utils exposing (withFirst)
+import Internal.Coordinate as Coordinate exposing (..)
+import Internal.Utils exposing (withFirst)
 
 
 {-| -}
-type Event msg
-    = Event (List Coordinate.Point -> Coordinate.System -> Svg.Attribute msg)
+type Event data msg
+    = Event (List (DataPoint data) -> Coordinate.System -> Svg.Attribute msg)
 
 
 {-| -}
-toSvgAttributes : List Coordinate.Point -> Coordinate.System -> List (Event msg) -> List (Svg.Attribute msg)
-toSvgAttributes points system =
-    List.map (\(Event attribute) -> attribute points system)
+toSvgAttributes : List (DataPoint data) -> Coordinate.System -> List (Event data msg) -> List (Svg.Attribute msg)
+toSvgAttributes dataPoints system =
+    List.map (\(Event attribute) -> attribute dataPoints system)
 
 
 {-| -}
-applySearcher : Searcher hint -> List Point -> System -> Point -> hint
-applySearcher (Searcher searcher) points system searched =
-  searcher points system searched
+applySearcher : Searcher data hint -> List (DataPoint data) -> System -> Point -> hint
+applySearcher (Searcher searcher) dataPoints system searched =
+  searcher dataPoints system searched
 
 
 {-| -}
-type Searcher hint =
-  Searcher (List Point -> System -> Point -> hint)
+type Searcher data hint =
+  Searcher (List (DataPoint data) -> System -> Point -> hint)
 
 
 {-| TODO: Make this -}
-svg : Searcher (Maybe Point)
+svg : Searcher data (Maybe data)
 svg =
-  Searcher findNearestHelp
+  Searcher <| \points system searched ->
+   findNearestHelp points system searched |> Maybe.map .data
 
 
 {-| TODO: Make this -}
-cartesian : Searcher (Maybe Point)
+cartesian : Searcher data (Maybe data)
 cartesian =
-  Searcher findNearestHelp
+  Searcher <| \points system searched ->
+   findNearestHelp points system searched |> Maybe.map .data
 
 
 {-| -}
-findNearest : Searcher (Maybe Point)
+findNearest : Searcher data (Maybe data)
 findNearest =
-  Searcher findNearestHelp
+  Searcher <| \points system searched ->
+   findNearestHelp points system searched |> Maybe.map .data
 
 
 {-| -}
-findWithin : Float -> Searcher (Maybe Point)
+findWithin : Float -> Searcher data (Maybe data)
 findWithin radius =
   Searcher <| \points system searched ->
     let
         keepIfEligible closest =
-            if withinRadius system radius searched closest then
-                Just closest
+            if withinRadius system radius searched closest.point then
+                Just closest.data
             else
                 Nothing
     in
@@ -61,25 +65,29 @@ findWithin radius =
 
 
 {-| -}
-findNearestX : Searcher (List Point)
+findNearestX : Searcher data (List data)
 findNearestX =
-  Searcher findNearestXHelp
+  Searcher <| \points system searched ->
+    findNearestXHelp points system searched |> List.map .data
+
 
 
 {-| -}
-findWithinX : Float -> Searcher (List Point)
+findWithinX : Float -> Searcher data (List data)
 findWithinX radius =
   Searcher <| \points system searched ->
     let
         keepIfEligible =
-            withinRadiusX system radius searched
+            withinRadiusX system radius searched << .point
     in
     findNearestXHelp points system searched
       |> List.filter keepIfEligible
+      |> List.map .data
+
 
 
 {-| TODO: Should it exist -}
-custom : (System -> Point -> hint) -> Searcher hint
+custom : (System -> Point -> hint) -> Searcher data hint
 custom toHint =
   Searcher (\_ -> toHint)
 
@@ -88,14 +96,14 @@ custom toHint =
 -- INTERNAL
 
 
-findNearestHelp : List Point -> System -> Point -> Maybe Point
+findNearestHelp : List (DataPoint data) -> System -> Point -> Maybe (DataPoint data)
 findNearestHelp points system searched =
   let
       distance_ =
           distance system searched
 
       getClosest point closest =
-          if distance_ closest < distance_ point then
+          if distance_ closest.point < distance_ point.point then
               closest
           else
               point
@@ -103,7 +111,7 @@ findNearestHelp points system searched =
   withFirst points (List.foldl getClosest)
 
 
-findNearestXHelp : List Point -> System -> Point -> List Point
+findNearestXHelp : List (DataPoint data) -> System -> Point -> List (DataPoint data)
 findNearestXHelp points system searched =
   let
       distanceX_ =
@@ -112,9 +120,9 @@ findNearestXHelp points system searched =
       getClosest point allClosest =
         case List.head allClosest of
           Just closest ->
-              if closest.x == point.x then
+              if closest.point.x == point.point.x then
                 point :: allClosest
-              else if distanceX_ closest > distanceX_ point then
+              else if distanceX_ closest.point > distanceX_ point.point then
                 [ point ]
               else
                 allClosest
