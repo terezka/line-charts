@@ -1,7 +1,8 @@
 module Lines exposing
   ( viewSimple
   , view, line, dash
-  , viewCustom, Config, Interpolation(..)
+  , viewCustom, Config
+  , Interpolation, linear, monotone
   )
 
 {-|
@@ -15,7 +16,10 @@ module Lines exposing
 @docs view, line, dash
 
 ## Customize plot
-@docs viewCustom, Config, Interpolation
+@docs viewCustom, Config
+
+### Interpolations
+@docs Interpolation, linear, monotone
 
 -}
 
@@ -35,7 +39,6 @@ import Internal.Legends
 import Internal.Interpolation as Interpolation
 import Internal.Coordinate as Coordinate
 import Internal.Utils as Utils
-import Internal.Path as Path
 import Internal.Axis as Axis
 import Internal.Junk
 import Internal.Events
@@ -58,10 +61,26 @@ type alias Config data msg =
   }
 
 
+
+-- INTERPOLATIONS
+
+
 {-| -}
-type Interpolation
-  = Linear
-  | Monotone
+type alias Interpolation =
+  Interpolation.Interpolation
+
+
+{-| -}
+linear : Interpolation
+linear =
+  Interpolation.Linear
+
+
+{-| -}
+monotone : Interpolation
+monotone =
+  Interpolation.Monotone
+
 
 
 -- LINE
@@ -107,7 +126,7 @@ view toX toY =
     , x = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toX
     , y = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toY
     , junk = Junk.none
-    , interpolation = Linear
+    , interpolation = linear
     , legends = Legends.bucketed .max (.min >> (+) 1) -- TODO
     , line = Line.default
     , dot = Dot.default
@@ -217,43 +236,16 @@ defaultConfig shape color label data =
 
 
 viewLine : Config data msg -> Coordinate.System -> Line data -> List Point -> Svg.Svg msg
-viewLine config system line points =
+viewLine config system (Line line) points =
+  let
+    viewDot datum point =
+      Internal.Dot.view config.dot line.shape line.color system <| DataPoint datum point
+  in
   Svg.g
     [ SvgA.class "line" ]
-    [ viewInterpolation config system line points
-    , viewDots config system line points
+    [ Internal.Line.view config.line config.interpolation system line.color line.dashing line.data points
+    , Svg.g [ SvgA.class "dots" ] <| List.map2 viewDot line.data points
     ]
-
-
-viewInterpolation : Config data msg -> Coordinate.System -> Line data -> List Point -> Svg.Svg msg
-viewInterpolation config system (Line line) points =
-  let
-    interpolationCommands =
-      case config.interpolation of
-        Linear ->
-          Interpolation.linear points
-
-        Monotone ->
-          Interpolation.monotone points
-
-    commands =
-      case points of
-        first :: rest ->
-          Path.Move first :: interpolationCommands
-
-        [] ->
-          []
-
-    attributes =
-      Internal.Line.toAttributes config.line line.color line.dashing line.data
-  in
-  Path.view system attributes commands
-
-
-viewDots : Config data msg -> Coordinate.System -> Line data -> List Point -> Svg.Svg msg
-viewDots config system (Line line) points =
-  Svg.g [ SvgA.class "dots" ] <|
-    List.map2 (\datum point -> Internal.Dot.view config.dot line.shape line.color system <| DataPoint datum point) line.data points
 
 
 viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data -> List Point -> Svg.Svg msg

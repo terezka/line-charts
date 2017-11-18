@@ -1,14 +1,34 @@
-module Internal.Interpolation exposing (linear, monotone)
+module Internal.Interpolation exposing (Interpolation(..), toCommands)
 
 
 import Internal.Path as Path exposing (..)
 import Lines.Coordinate as Coordinate  exposing (..)
 
 
--- LINEAR INTERPOLATION
+{-| -}
+type Interpolation
+  = Linear
+  | Monotone
 
 
 {-| -}
+toCommands : Interpolation -> List Point -> List Command
+toCommands interpolation =
+  case interpolation of
+    Linear ->
+      linear
+
+    Monotone ->
+      monotone
+
+
+
+-- INTERNAL
+
+
+-- LINEAR INTERPOLATION
+
+
 linear : List Point -> List Command
 linear =
   List.map Line
@@ -18,7 +38,6 @@ linear =
 -- MONOTONE INTERPOLATION
 
 
-{-| -}
 monotone : List Point -> List Command
 monotone points =
   case points of

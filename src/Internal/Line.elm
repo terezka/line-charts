@@ -1,10 +1,13 @@
-module Internal.Line exposing (Look, Style, style, look, toAttributes, viewSample)
+module Internal.Line exposing (Look, Style, style, look, view, viewSample)
 
 {-| -}
 
 import Svg
 import Svg.Attributes
 import Lines.Color as Color
+import Lines.Coordinate as Coordinate exposing (..)
+import Internal.Interpolation as Interpolation
+import Internal.Path as Path
 
 
 
@@ -42,6 +45,26 @@ look config =
 
 
 {-| -}
+view : Look data -> Interpolation.Interpolation -> Coordinate.System -> Color.Color -> List Float -> List data -> List Point -> Svg.Svg msg
+view look interpolation system mainColor dashing data points =
+  let
+    interpolationCommands =
+      Interpolation.toCommands interpolation points
+
+    commands =
+      case points of
+        first :: rest ->
+          Path.Move first :: interpolationCommands
+
+        [] ->
+          []
+
+    attributes =
+      toAttributes look mainColor dashing data
+  in
+  Path.view system attributes commands
+
+
 toAttributes : Look data -> Color.Color -> List Float -> List data -> List (Svg.Attribute msg)
 toAttributes (Look look) mainColor dashing data =
   let
