@@ -7,7 +7,9 @@
         "./src"
     ],
     "exposed-modules": [
-        "Lines"
+        "Lines",
+        "Lines.Dot",
+        "Lines.Events"
     ],
     "dependencies": {
         "debois/elm-dom": "1.2.3 <= v < 2.0.0",

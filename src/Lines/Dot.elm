@@ -10,16 +10,16 @@ module Lines.Dot exposing
 # Dots
 
 ## Quick start
-@docs Dot, none, default1, default2, default3
+@docs Shape, none, default1, default2, default3
 
 ## Customizing dot shape
 @docs circle, triangle, square, diamond, plus, cross
 
 ## Customizing dot style
-@docs static, emphasizable, isMaybe
+@docs Look, default, static, emphasizable, isMaybe
 
 ### Styles
-@docs full, disconnected, bordered, aura
+@docs Style, full, disconnected, bordered, aura
 
 -}
 
