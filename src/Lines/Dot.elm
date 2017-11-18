@@ -64,8 +64,8 @@ type alias Style =
 
 default : Look data
 default =
-  { normal = Style 4 (disconnected 2)
-  , emphasized = Style 4 (aura 4 0.5)
+  { normal = disconnected 4 2
+  , emphasized = aura 4 4 0.5
   , isEmphasized = always False
   }
 
@@ -73,7 +73,7 @@ default =
 custom : Style -> Look data
 custom style =
   { normal = style
-  , emphasized = Style 4 (aura 4 0.5)
+  , emphasized = aura 20 4 0.5
   , isEmphasized = always False
   }
 
@@ -166,27 +166,27 @@ type Variety
 
 
 {-| -}
-bordered : Int -> Variety
-bordered =
-  Bordered
+bordered : Int -> Int -> Style
+bordered size border =
+  Style size (Bordered border)
 
 
 {-| -}
-disconnected : Int -> Variety
-disconnected =
-  Disconnected
+disconnected : Int -> Int -> Style
+disconnected size border =
+  Style size (Disconnected border)
 
 
 {-| -}
-aura : Int -> Float -> Variety
-aura =
-  Aura
+aura : Int -> Int -> Float -> Style
+aura size aura opacity =
+  Style size (Aura aura opacity)
 
 
 {-| -}
-full : Variety
-full =
-  Full
+full : Int -> Style
+full size =
+  Style size Full
 
 
 -- Hover helpers
