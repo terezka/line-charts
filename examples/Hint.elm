@@ -58,31 +58,13 @@ view model =
         , interpolation = Lines.Monotone
         , events = Events.default Hover
         , legends = Legends.default
-        , look =
-            { line =
-                { normal = Line.Style 1 identity
-                , emphasized = Line.Style 2 identity
-                , isEmphasized = \data -> Maybe.map (flip List.member data) model.hovering |> Maybe.withDefault False
-                }
-            , dot =
-                { normal = Dot.Style 20 (Dot.full)
-                , emphasized = Dot.Style 25 (Dot.full)
-                , isEmphasized = \datum -> Just datum == model.hovering
-                }
-            }
+        , line = Line.normal 1
+        , dot = Dot.emphasized (Dot.Style 20 (Dot.disconnected 2)) (Dot.Style 10 (Dot.aura 10 0.5)) (Dot.isMaybe model.hovering)
         }
-        [ Lines.line Color.blue Dot.plus "Non-binary" data1
-        , Lines.line Color.orange Dot.circle "Women" data3
-        , Lines.line Color.pink Dot.diamond "Men" data2
+        [ Lines.line Color.blue Dot.circle "Non-binary" data1
+        , Lines.line Color.orange Dot.triangle "Women" data3
+        , Lines.line Color.pink Dot.square "Men" data2
         ]
-
-
-lineColor : List Data -> Maybe Data -> Color.Color -> Color.Color -> Color.Color
-lineColor data hovered normalc hoverc =
-    if Maybe.map (\hovered -> List.member hovered data) hovered |> Maybe.withDefault False then
-        hoverc
-    else
-        normalc
 
 
 junk : Data -> Junk.Junk Msg
@@ -90,23 +72,20 @@ junk hint =
     Junk.custom <|
         \system ->
             let
-                ( xOffset, styles ) =
-                    if hint.year < system.x.min + ((system.x.max - system.x.min) / 2) then
-                        ( 5, "text-anchor: start;" )
-                    else
-                        ( -5, "text-anchor: end;" )
-
                 viewHint =
-                    -- TODO as html
                     Svg.g
-                        [ placeWithOffset system hint.year hint.cats xOffset 10, SvgA.style styles ]
-                        [ text_ [] [ tspan [] [ text <| toString ( hint.year, hint.cats ) ] ] ]
+                        [ placeWithOffset system system.x.max (system.y.max - 1) 20 10 ]
+                        [ text_ []
+                            [ tspan [ SvgA.x "0", SvgA.dy "1em" ] [ text <| "Year: " ++ toString hint.year ]
+                            , tspan [ SvgA.x "0", SvgA.dy "1em" ] [ text <| "Cats: " ++ toString hint.cats ]
+                            ]
+                        ]
 
                 line =
                     vertical system [] hint.year system.y.min system.y.max
             in
             { below = []
-            , above = []
+            , above = [ viewHint ]
             , html = []
             }
 

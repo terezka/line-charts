@@ -52,10 +52,8 @@ type alias Config data msg =
   , y : Axis.Axis data msg
   , interpolation : Interpolation
   , legends : Legends.Legends msg
-  , look :
-      { line : Line.Look data
-      , dot : Dot.Look data
-      }
+  , line : Line.Look data
+  , dot : Dot.Look data
   }
 
 
@@ -110,7 +108,8 @@ view toX toY =
     , junk = Junk.none
     , interpolation = Linear
     , legends = Legends.bucketed .max (.min >> (+) 1) -- TODO
-    , look = { dot = Dot.default, line = Line.default }
+    , line = Line.default
+    , dot = Dot.default
     }
 
 
@@ -245,19 +244,19 @@ viewInterpolation config system (Line line) points =
           []
 
     isEmphasized =
-      config.look.line.isEmphasized line.data
+      config.line.isEmphasized line.data
 
     width =
       if isEmphasized then
-        config.look.line.emphasized.width
+        config.line.emphasized.width
       else
-        config.look.line.normal.width
+        config.line.normal.width
 
     toColor =
       if isEmphasized then
-        config.look.line.emphasized.color
+        config.line.emphasized.color
       else
-        config.look.line.normal.color
+        config.line.normal.color
 
     attributes =
       [ SvgA.style "pointer-events: none;"
@@ -274,7 +273,7 @@ viewInterpolation config system (Line line) points =
 viewDots : Config data msg -> Coordinate.System -> Line data -> List Point -> Svg.Svg msg
 viewDots config system (Line line) points =
   Svg.g [ SvgA.class "dots" ] <|
-    List.map2 (\datum point -> Dot.view config.look.dot line.shape line.color system <| DataPoint datum point) line.data points
+    List.map2 (\datum point -> Dot.view config.dot line.shape line.color system <| DataPoint datum point) line.data points
 
 
 viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data -> List Point -> Svg.Svg msg
@@ -312,12 +311,12 @@ viewSample config system sampleWidth line =
         , SvgA.x2 <| toString sampleWidth
         , SvgA.y2 "0"
         , SvgA.stroke line.color
-        , SvgA.strokeWidth (toString (toFloat config.look.line.normal.width / 2))
+        , SvgA.strokeWidth (toString (toFloat config.line.normal.width / 2))
         , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)
         , SvgA.fill "transparent"
         ]
         []
-    , Dot.viewNormal config.look.dot line.shape line.color system <|
+    , Dot.viewNormal config.dot line.shape line.color system <|
         toCartesianPoint system <| Point (sampleWidth / 2) 0
     ]
 

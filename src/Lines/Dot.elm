@@ -3,6 +3,7 @@ module Lines.Dot exposing
   , circle, triangle, square, diamond, plus, cross
   , bordered, disconnected, aura, full
   , view, viewNormal, default, custom, Style, Look
+  , isMaybe, emphasized
   )
 
 {-| # Dots
@@ -36,6 +37,15 @@ import Internal.Coordinate as Coordinate exposing (..)
 
 
 -- CONFIG
+
+
+{-| -}
+emphasized : Style -> Style -> (data -> Bool) -> Look data
+emphasized normal emphasized isEmphasized =
+  { normal = normal
+  , emphasized = emphasized
+  , isEmphasized = isEmphasized
+  }
 
 
 {-| -}
@@ -178,6 +188,13 @@ full : Variety
 full =
   Full
 
+
+-- Hover helpers
+
+
+isMaybe : Maybe data -> data -> Bool
+isMaybe hovering datum =
+  Just datum == hovering
 
 
 -- VIEW
