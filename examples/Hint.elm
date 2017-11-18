@@ -59,7 +59,7 @@ view model =
         , events = Events.default Hover
         , legends = Legends.default
         , line = Line.wider 2
-        , dot = Dot.emphasizable (Dot.disconnected 20 2) (Dot.aura 10 10 0.5) (Dot.isMaybe model.hovering)
+        , dot = Dot.emphasizable (Dot.disconnected 30 2) (Dot.aura 20 5 0.25) (Dot.isMaybe model.hovering)
         }
         [ Lines.line Color.blue Dot.circle "Non-binary" data1
         , Lines.line Color.orange Dot.triangle "Women" data3

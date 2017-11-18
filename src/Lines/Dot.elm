@@ -41,8 +41,8 @@ type alias Style =
 default : Look data
 default =
   Dot.Look
-    { normal = disconnected 4 2
-    , emphasized = aura 4 4 0.5
+    { normal = disconnected 30 2
+    , emphasized = aura 20 4 0.5
     , isEmphasized = always False
     }
 
