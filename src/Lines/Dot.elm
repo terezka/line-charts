@@ -42,40 +42,46 @@ import Internal.Coordinate as Coordinate exposing (..)
 {-| -}
 emphasized : Style -> Style -> (data -> Bool) -> Look data
 emphasized normal emphasized isEmphasized =
-  { normal = normal
-  , emphasized = emphasized
-  , isEmphasized = isEmphasized
-  }
+  Look
+    { normal = normal
+    , emphasized = emphasized
+    , isEmphasized = isEmphasized
+    }
 
 
 {-| -}
-type alias Look data =
-  { normal : Style
-  , emphasized : Style
-  , isEmphasized : data -> Bool
-  }
+type Look data =
+  Look
+    { normal : Style
+    , emphasized : Style
+    , isEmphasized : data -> Bool
+    }
 
 
-type alias Style =
-  { size : Int -- TODO Float
-  , variety : Variety
-  }
+{-| -}
+type Style =
+  Style
+    { size : Int -- TODO Float
+    , variety : Variety
+    }
 
 
 default : Look data
 default =
-  { normal = disconnected 4 2
-  , emphasized = aura 4 4 0.5
-  , isEmphasized = always False
-  }
+  Look
+    { normal = disconnected 4 2
+    , emphasized = aura 4 4 0.5
+    , isEmphasized = always False
+    }
 
 
 custom : Style -> Look data
 custom style =
-  { normal = style
-  , emphasized = aura 20 4 0.5
-  , isEmphasized = always False
-  }
+  Look
+    { normal = style
+    , emphasized = aura 20 4 0.5
+    , isEmphasized = always False
+    }
 
 
 {-| -}
@@ -168,25 +174,25 @@ type Variety
 {-| -}
 bordered : Int -> Int -> Style
 bordered size border =
-  Style size (Bordered border)
+  Style { size = size, variety = Bordered border }
 
 
 {-| -}
 disconnected : Int -> Int -> Style
 disconnected size border =
-  Style size (Disconnected border)
+  Style { size = size, variety = Disconnected border }
 
 
 {-| -}
 aura : Int -> Int -> Float -> Style
 aura size aura opacity =
-  Style size (Aura aura opacity)
+  Style { size = size, variety = Aura aura opacity }
 
 
 {-| -}
 full : Int -> Style
 full size =
-  Style size Full
+  Style { size = size, variety = Full }
 
 
 -- Hover helpers
@@ -197,14 +203,15 @@ isMaybe hovering datum =
   Just datum == hovering
 
 
+
 -- VIEW
 
 
 {-| -}
 view : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.DataPoint data -> Svg msg
-view config shape color system dataPoint =
+view (Look config) shape color system dataPoint =
   let
-    style =
+    (Style style) =
       if config.isEmphasized dataPoint.data then
         config.emphasized
       else
@@ -239,8 +246,8 @@ viewShape shape =
 
 
 viewNormal : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewNormal config shape =
-    viewShape shape config.normal.size config.normal.variety
+viewNormal (Look config) shape =
+    viewShape shape (getSize config.normal) (getVariety config.normal)
 
 
 
@@ -253,6 +260,16 @@ type alias DotConfig data =
   , emphasized : Style
   , isEmphasized : data -> Bool
   }
+
+
+getSize : Style -> Int
+getSize (Style style) =
+  style.size
+
+
+getVariety : Style -> Variety
+getVariety (Style style) =
+  style.variety
 
 
 viewCircle : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
