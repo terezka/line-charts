@@ -72,56 +72,30 @@ view (Look config) shape color system dataPoint =
   viewShape shape style.size style.variety color system dataPoint.point
 
 
-viewShape : Shape -> Int -> Variety -> Color.Color -> Coordinate.System -> Point -> Svg msg
-viewShape shape =
-  case shape of
-    Circle ->
-      viewCircle []
-
-    Triangle ->
-      viewTriangle []
-
-    Square ->
-      viewSquare []
-
-    Diamond ->
-      viewDiamond []
-
-    Cross ->
-      viewCross []
-
-    Plus ->
-      viewPlus []
-
-    None ->
-      \_ _ _ _ _ -> Svg.text ""
-
-
+{-| -}
 viewNormal : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
 viewNormal (Look config) shape =
-    viewShape shape (getSize config.normal) (getVariety config.normal)
+  let
+    (Style normal) =
+      config.normal
+  in
+  viewShape shape normal.size normal.variety
 
 
 
 -- VIEW / INTERNAL
 
 
-{-| -}
-type alias DotConfig data =
-  { normal : Style
-  , emphasized : Style
-  , isEmphasized : data -> Bool
-  }
-
-
-getSize : Style -> Int
-getSize (Style style) =
-  style.size
-
-
-getVariety : Style -> Variety
-getVariety (Style style) =
-  style.variety
+viewShape : Shape -> Int -> Variety -> Color.Color -> Coordinate.System -> Point -> Svg msg
+viewShape shape =
+  case shape of
+    Circle -> viewCircle []
+    Triangle -> viewTriangle []
+    Square -> viewSquare []
+    Diamond -> viewDiamond []
+    Cross -> viewCross []
+    Plus -> viewPlus []
+    None -> \_ _ _ _ _ -> Svg.text ""
 
 
 viewCircle : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
