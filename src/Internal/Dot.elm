@@ -1,4 +1,4 @@
-module Internal.Dot exposing (Look(..), Shape(..), Style(..), Variety(..), view, viewNormal)
+module Internal.Dot exposing (Look(..), Shape(..), Style, style, Variety(..), view, viewNormal)
 
 {-| -}
 
@@ -46,7 +46,17 @@ type Shape
   | Plus
 
 
+{-| -}
+style : Int -> Variety -> Style
+style size variety =
+  Style
+    { size = size
+    , variety = variety
+    }
 
+
+
+-- VIEW
 
 
 {-| -}
@@ -93,7 +103,7 @@ viewNormal (Look config) shape =
 
 
 
--- INTERNAL
+-- VIEW / INTERNAL
 
 
 {-| -}

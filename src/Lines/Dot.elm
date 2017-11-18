@@ -27,14 +27,12 @@ import Internal.Dot as Dot exposing (Look, Style, Shape)
 
 
 
+-- LOOK
+
+
 {-| -}
 type alias Look data =
   Dot.Look data
-
-
-{-| -}
-type alias Style =
-  Dot.Style
 
 
 {-| -}
@@ -67,7 +65,7 @@ emphasizable normal emphasized isEmphasized =
     }
 
 
-{-| -}
+{-| Helper for `emphasizable`. -}
 isMaybe : Maybe data -> data -> Bool
 isMaybe hovering datum =
   Just datum == hovering
@@ -151,24 +149,29 @@ default3 =
 
 
 {-| -}
+type alias Style =
+  Dot.Style
+
+
+{-| -}
 bordered : Int -> Int -> Style
 bordered size border =
-  Dot.Style { size = size, variety = Dot.Bordered border }
+  Dot.style size (Dot.Bordered border)
 
 
 {-| -}
 disconnected : Int -> Int -> Style
 disconnected size border =
-  Dot.Style { size = size, variety = Dot.Disconnected border }
+  Dot.style size (Dot.Disconnected border)
 
 
 {-| -}
 aura : Int -> Int -> Float -> Style
 aura size aura opacity =
-  Dot.Style { size = size, variety = Dot.Aura aura opacity }
+  Dot.style size (Dot.Aura aura opacity)
 
 
 {-| -}
 full : Int -> Style
 full size =
-  Dot.Style { size = size, variety = Dot.Full }
+  Dot.style size Dot.Full
