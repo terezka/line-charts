@@ -1,15 +1,34 @@
-module Lines.Events exposing (..)
+module Lines.Events exposing
+  ( default
+  , Event, onClick, onMouseMove, onMouseLeave, on
+  , Searcher, findNearest, findNearestX, findWithin, findWithinX, cartesian, searcher
+  )
 
-{-| -}
+{-|
 
+# Events
 
+## Quick start
+@docs default
+
+## Events
+@docs Event, onClick, onMouseMove, onMouseLeave, on
+
+## Searchers
+@docs Searcher, findNearest, findNearestX, findWithin, findWithinX, cartesian, searcher
+
+-}
+
+import DOM
 import Svg.Events
+import Json.Decode as Json
+import Internal.Events as Events
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Coordinate as Coordinate exposing (..)
-import Internal.Events as Events
-import DOM
-import Json.Decode as Json
 
+
+
+-- QUICK START
 
 
 {-| -}
