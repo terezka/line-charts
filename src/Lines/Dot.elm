@@ -1,12 +1,13 @@
 module Lines.Dot exposing
-  ( Shape, none, default1, default2, default3
-  , circle, triangle, square, diamond, plus, cross
-  , bordered, disconnected, aura, full
-  , default, custom, Style, Look
-  , isMaybe, emphasized
+  ( Look, default, static, emphasizable, isMaybe
+  , Shape, default1, default2, default3
+  , none, circle, triangle, square, diamond, plus, cross
+  , Style, bordered, disconnected, aura, full
   )
 
-{-| # Dots
+{-|
+
+# Dots
 
 ## Quick start
 @docs Dot, none, default1, default2, default3
@@ -15,26 +16,15 @@ module Lines.Dot exposing
 @docs circle, triangle, square, diamond, plus, cross
 
 ## Customizing dot style
-@docs full, disconnected, bordered, aura
+@docs static, emphasizable, isMaybe
 
+### Styles
+@docs full, disconnected, bordered, aura
 
 -}
 
 import Internal.Dot as Dot exposing (Look, Style, Shape)
 
-
-
--- CONFIG
-
-
-{-| -}
-emphasized : Style -> Style -> (data -> Bool) -> Look data
-emphasized normal emphasized isEmphasized =
-  Dot.Look
-    { normal = normal
-    , emphasized = emphasized
-    , isEmphasized = isEmphasized
-    }
 
 
 {-| -}
@@ -47,6 +37,7 @@ type alias Style =
   Dot.Style
 
 
+{-| -}
 default : Look data
 default =
   Dot.Look
@@ -56,13 +47,34 @@ default =
     }
 
 
-custom : Style -> Look data
-custom style =
+{-| -}
+static : Style -> Look data
+static style =
   Dot.Look
     { normal = style
     , emphasized = aura 20 4 0.5
     , isEmphasized = always False
     }
+
+
+{-| -}
+emphasizable : Style -> Style -> (data -> Bool) -> Look data
+emphasizable normal emphasized isEmphasized =
+  Dot.Look
+    { normal = normal
+    , emphasized = emphasized
+    , isEmphasized = isEmphasized
+    }
+
+
+{-| -}
+isMaybe : Maybe data -> data -> Bool
+isMaybe hovering datum =
+  Just datum == hovering
+
+
+
+-- SHAPES
 
 
 {-| -}
@@ -113,7 +125,7 @@ cross =
 
 
 
--- DEFAULTS
+-- SHAPES / DEFAULTS
 
 
 {-| -}
@@ -135,7 +147,7 @@ default3 =
 
 
 
--- STYLE
+-- STYLES
 
 
 {-| -}
@@ -160,12 +172,3 @@ aura size aura opacity =
 full : Int -> Style
 full size =
   Dot.Style { size = size, variety = Dot.Full }
-
-
-
--- Hover helpers
-
-
-isMaybe : Maybe data -> data -> Bool
-isMaybe hovering datum =
-  Just datum == hovering
