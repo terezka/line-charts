@@ -39,6 +39,7 @@ import Internal.Path as Path
 import Internal.Axis as Axis
 import Internal.Junk
 import Internal.Events
+import Internal.Line
 import Internal.Dot
 
 
@@ -243,29 +244,8 @@ viewInterpolation config system (Line line) points =
         [] ->
           []
 
-    isEmphasized =
-      config.line.isEmphasized line.data
-
-    width =
-      if isEmphasized then
-        config.line.emphasized.width
-      else
-        config.line.normal.width
-
-    toColor =
-      if isEmphasized then
-        config.line.emphasized.color
-      else
-        config.line.normal.color
-
     attributes =
-      [ SvgA.style "pointer-events: none;"
-      , SvgA.class "interpolation"
-      , SvgA.stroke (toColor line.color)
-      , SvgA.strokeWidth (toString (toFloat width / 2))
-      , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)
-      , SvgA.fill "transparent"
-      ]
+      Internal.Line.toAttributes config.line line.color line.dashing line.data
   in
   Path.view system attributes commands
 
@@ -304,20 +284,14 @@ toLegendConfig config system sampleWidth (Line line) =
 
 viewSample : Config data msg -> Coordinate.System -> Float -> LineConfig data -> Svg msg
 viewSample config system sampleWidth line =
-  Svg.g [ SvgA.class "sample" ]
-    [ Svg.line
-        [ SvgA.x1 "0"
-        , SvgA.y1 "0"
-        , SvgA.x2 <| toString sampleWidth
-        , SvgA.y2 "0"
-        , SvgA.stroke line.color
-        , SvgA.strokeWidth (toString (toFloat config.line.normal.width / 2))
-        , SvgA.strokeDasharray <| String.join " " (List.map toString line.dashing)
-        , SvgA.fill "transparent"
-        ]
-        []
-    , Internal.Dot.viewNormal config.dot line.shape line.color system <|
-        toCartesianPoint system <| Point (sampleWidth / 2) 0
+  let
+    middle =
+      toCartesianPoint system <| Point (sampleWidth / 2) 0
+  in
+  Svg.g
+    [ SvgA.class "sample" ]
+    [ Internal.Line.viewSample config.line line.color line.dashing sampleWidth
+    , Internal.Dot.viewNormal config.dot line.shape line.color system middle
     ]
 
 

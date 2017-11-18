@@ -9,6 +9,7 @@
     "exposed-modules": [
         "Lines",
         "Lines.Dot",
+        "Lines.Line",
         "Lines.Events"
     ],
     "dependencies": {

@@ -58,7 +58,7 @@ view model =
         , interpolation = Lines.Monotone
         , events = Events.default Hover
         , legends = Legends.default
-        , line = Line.normal 1
+        , line = Line.wider 2
         , dot = Dot.emphasizable (Dot.disconnected 20 2) (Dot.aura 10 10 0.5) (Dot.isMaybe model.hovering)
         }
         [ Lines.line Color.blue Dot.circle "Non-binary" data1
