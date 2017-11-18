@@ -242,7 +242,7 @@ viewLine config system (Line line) points =
       Internal.Dot.view config.dot line.shape line.color system <| DataPoint datum point
   in
   Svg.g
-    [ SvgA.class "line" ]
+    [ SvgA.class "line" ] -- TODO prefix classes
     [ Internal.Line.view config.line config.interpolation system line.color line.dashing line.data points
     , Svg.g [ SvgA.class "dots" ] <| List.map2 viewDot line.data points
     ]
@@ -288,7 +288,7 @@ viewSample config system sampleWidth line =
 
 
 
--- DEFAULTS
+-- INTERNAL / DEFAULTS
 
 
 defaultColors : List Color.Color
