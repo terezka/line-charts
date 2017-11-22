@@ -1,9 +1,14 @@
-module Internal.Events exposing (..)
+module Internal.Events exposing
+    ( Event, toEvent, toSvgAttributes, decoder
+    , Searcher, findNearest, findNearestX, findWithin, findWithinX, cartesian, svg, searcher
+    )
 
+import DOM
 import Svg
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Utils exposing (withFirst)
+import Json.Decode as Json
 
 
 {-| -}
@@ -12,15 +17,57 @@ type Event data msg
 
 
 {-| -}
+toEvent : (List (DataPoint data) -> Coordinate.System -> Svg.Attribute msg) -> Event data msg
+toEvent =
+  Event
+
+
+{-| -}
 toSvgAttributes : List (DataPoint data) -> Coordinate.System -> List (Event data msg) -> List (Svg.Attribute msg)
 toSvgAttributes dataPoints system =
     List.map (\(Event attribute) -> attribute dataPoints system)
 
 
+
+-- DECODER
+
+
 {-| -}
+decoder : List (DataPoint data) -> Coordinate.System -> Searcher data hint -> (hint -> msg) -> Json.Decoder msg
+decoder points system searcher msg =
+  Json.map7
+    toCoordinate
+    (Json.succeed points)
+    (Json.succeed system)
+    (Json.succeed searcher)
+    (Json.succeed msg)
+    (Json.field "clientX" Json.float)
+    (Json.field "clientY" Json.float)
+    (DOM.target position)
+
+
+position : Json.Decoder DOM.Rectangle
+position =
+  Json.oneOf
+    [ DOM.boundingClientRect
+    , Json.lazy (\_ -> DOM.parentElement position)
+    ]
+
+
+toCoordinate : List (DataPoint data) -> Coordinate.System -> Searcher data hint -> (hint -> msg) -> Float -> Float -> DOM.Rectangle -> msg
+toCoordinate points system searcher msg mouseX mouseY { left, top } =
+  Point (mouseX - left) (mouseY - top)
+    |> applySearcher searcher points system
+    |> msg
+
+
 applySearcher : Searcher data hint -> List (DataPoint data) -> System -> Point -> hint
 applySearcher (Searcher searcher) dataPoints system searched =
   searcher dataPoints system searched
+
+
+
+-- SEARCHERS
 
 
 {-| -}
@@ -28,32 +75,39 @@ type Searcher data hint =
   Searcher (List (DataPoint data) -> System -> Point -> hint)
 
 
-{-| TODO: Make this -}
-svg : Searcher data (Maybe data)
+{-| -}
+svg : Searcher data Point
 svg =
   Searcher <| \points system searched ->
-   findNearestHelp points system searched |> Maybe.map .data
+    searched
 
 
-{-| TODO: Make this -}
-cartesian : Searcher data (Maybe data)
+{-| -}
+cartesian : Searcher data Point
 cartesian =
   Searcher <| \points system searched ->
-   findNearestHelp points system searched |> Maybe.map .data
+    toCartesianSafe system searched
 
 
 {-| -}
 findNearest : Searcher data (Maybe data)
 findNearest =
-  Searcher <| \points system searched ->
-   findNearestHelp points system searched |> Maybe.map .data
+  Searcher <| \points system searchedSvg ->
+    let
+      searched =
+        toCartesianSafe system searchedSvg
+    in
+    findNearestHelp points system searched |> Maybe.map .data
 
 
 {-| -}
 findWithin : Float -> Searcher data (Maybe data)
 findWithin radius =
-  Searcher <| \points system searched ->
+  Searcher <| \points system searchedSvg ->
     let
+        searched =
+          toCartesianSafe system searchedSvg
+
         keepIfEligible closest =
             if withinRadius system radius searched closest.point then
                 Just closest.data
@@ -67,16 +121,22 @@ findWithin radius =
 {-| -}
 findNearestX : Searcher data (List data)
 findNearestX =
-  Searcher <| \points system searched ->
+  Searcher <| \points system searchedSvg ->
+    let
+      searched =
+        toCartesianSafe system searchedSvg
+    in
     findNearestXHelp points system searched |> List.map .data
-
 
 
 {-| -}
 findWithinX : Float -> Searcher data (List data)
 findWithinX radius =
-  Searcher <| \points system searched ->
+  Searcher <| \points system searchedSvg ->
     let
+        searched =
+          toCartesianSafe system searchedSvg
+
         keepIfEligible =
             withinRadiusX system radius searched << .point
     in
@@ -85,15 +145,14 @@ findWithinX radius =
       |> List.map .data
 
 
-
-{-| TODO: Should it exist -}
-custom : (System -> Point -> hint) -> Searcher data hint
-custom toHint =
+{-| -}
+searcher : (System -> Point -> hint) -> Searcher data hint
+searcher toHint =
   Searcher (\_ -> toHint)
 
 
 
--- INTERNAL
+-- HELPERS
 
 
 findNearestHelp : List (DataPoint data) -> System -> Point -> Maybe (DataPoint data)
@@ -134,7 +193,15 @@ findNearestXHelp points system searched =
 
 
 
--- POSITION STUFF
+-- COORDINATE HELPERS
+
+
+{-| -}
+toCartesianSafe : Coordinate.System -> Point -> Point
+toCartesianSafe system point =
+  { x = clamp system.x.min system.x.max <| Coordinate.toCartesian X system point.x
+  , y = clamp system.y.min system.y.max <| Coordinate.toCartesian Y system point.y
+  }
 
 
 {-| -}
