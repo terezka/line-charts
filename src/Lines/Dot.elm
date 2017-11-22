@@ -1,7 +1,7 @@
 module Lines.Dot exposing
-  ( Look, default, static, emphasizable, isMaybe
-  , Shape, default1, default2, default3
-  , none, circle, triangle, square, diamond, plus, cross
+  ( Shape, none, default1, default2, default3
+  , circle, triangle, square, diamond, plus, cross
+  , Look, default, static, emphasizable, isMaybe
   , Style, bordered, disconnected, aura, full
   )
 
@@ -10,10 +10,10 @@ module Lines.Dot exposing
 # Dots
 
 ## Quick start
-@docs Shape, none, default1, default2, default3
+@docs none, default1, default2, default3
 
 ## Customizing dot shape
-@docs circle, triangle, square, diamond, plus, cross
+@docs Shape, circle, triangle, square, diamond, plus, cross
 
 ## Customizing dot style
 @docs Look, default, static, emphasizable, isMaybe
