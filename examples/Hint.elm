@@ -68,10 +68,10 @@ view model =
 
 junk : Data -> Junk.Junk Msg
 junk hint =
-    Junk.custom <| \s ->
+    Junk.custom <| \system ->
       let
           viewHint =
-              g [ Junk.transform [ Junk.move s s.x.max (s.y.max - 1), Junk.offset 20 10 ] ]
+              g [ transform [ move system system.x.max (system.y.max - 1), offset 20 10 ] ]
                 [ text_ []
                     [ viewDimension "Year" hint.year
                     , viewDimension "Cats" hint.cats
@@ -84,7 +84,7 @@ junk hint =
               [ text <| label ++ ": " ++ toString value ]
 
           line =
-              vertical s [] hint.year s.y.min s.y.max
+              vertical system [] hint.year system.y.min system.y.max
       in
       { below = []
       , above = [ viewHint, line ]
