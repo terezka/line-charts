@@ -6,7 +6,15 @@ module Lines.Junk exposing
 
 {-|
 
-## Placing
+# Junk
+
+## Quick start
+@docs Junk, none
+
+## Custom
+@docs custom
+
+## Placing help
 @docs Transfrom, transform, move, offset
 
 -}
