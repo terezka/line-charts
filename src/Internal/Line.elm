@@ -1,15 +1,64 @@
-module Internal.Line exposing (Look, Style, style,  default, wider, static, emphasizable, view, viewSample)
+module Internal.Line exposing
+  ( Line(..), LineConfig, lineConfig, defaultLine, line, dash
+  , Look, default, wider, static, emphasizable
+  , Style, style
+  , view, viewSample
+  )
 
 {-| -}
 
 import Svg
-import Svg.Attributes
+import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Coordinate as Coordinate exposing (..)
+import Internal.Dot as Dot
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
 
+
+
+{-| -}
+type Line data =
+  Line (LineConfig data)
+
+
+{-| -}
+type alias LineConfig data =
+  { color : Color.Color
+  , shape : Dot.Shape
+  , dashing : List Float
+  , label : String
+  , data : List data
+  }
+
+
+{-| -}
+lineConfig : Line data -> LineConfig data
+lineConfig (Line line) =
+  line
+
+
+{-| -}
+defaultLine : Dot.Shape -> Color.Color -> String -> List data -> Line data
+defaultLine shape color label data =
+  Line <| LineConfig color shape [] label data
+
+
+{-| -}
+line : Color.Color -> Dot.Shape -> String -> List data -> Line data
+line color shape label data =
+  Line <| LineConfig color shape [] label data
+
+
+{-| -}
+dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
+dash color shape label dashing data =
+  Line <| LineConfig color shape dashing label data
+
+
+
+-- LOOK
 
 
 {-| -}
@@ -80,8 +129,29 @@ style width color =
 
 
 {-| -}
-view : Look data -> Interpolation.Interpolation -> Coordinate.System -> Color.Color -> List Float -> List (DataPoint data) -> Svg.Svg msg
-view look interpolation system mainColor dashing dataPoints =
+view
+  :  Coordinate.System
+  -> Dot.Look data
+  -> Interpolation.Interpolation
+  -> Look data
+  -> Line data
+  -> List (Coordinate.DataPoint data)
+  -> Svg.Svg msg
+view system dotLook interpolation lineLook (Line line) dataPoints =
+  let
+    viewDot =
+      Dot.view dotLook line.shape line.color system
+  in
+  Svg.g
+    [ Attributes.class "line" ] -- TODO prefix classes
+    [ viewInterpolation system lineLook interpolation line.color line.dashing dataPoints
+    , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
+    ]
+
+
+{-| -}
+viewInterpolation : Coordinate.System -> Look data -> Interpolation.Interpolation -> Color.Color -> List Float -> List (DataPoint data) -> Svg.Svg msg
+viewInterpolation system look interpolation mainColor dashing dataPoints =
   let
     interpolationCommands =
       Interpolation.toCommands interpolation (List.map .point dataPoints)
@@ -115,12 +185,12 @@ toAttributes (Look look) mainColor dashing dataPoints =
     width =
       toFloat style.width / 2
   in
-      [ Svg.Attributes.style "pointer-events: none;"
-      , Svg.Attributes.class "interpolation"
-      , Svg.Attributes.stroke (style.color mainColor)
-      , Svg.Attributes.strokeWidth (toString width)
-      , Svg.Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
-      , Svg.Attributes.fill "transparent"
+      [ Attributes.style "pointer-events: none;"
+      , Attributes.class "interpolation"
+      , Attributes.stroke (style.color mainColor)
+      , Attributes.strokeWidth (toString width)
+      , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
+      , Attributes.fill "transparent"
       ]
 
 
@@ -132,10 +202,10 @@ viewSample look mainColor dashing sampleWidth =
       toAttributes look mainColor dashing []
 
     sizeAttributes =
-      [ Svg.Attributes.x1 "0"
-      , Svg.Attributes.y1 "0"
-      , Svg.Attributes.x2 <| toString sampleWidth
-      , Svg.Attributes.y2 "0"
+      [ Attributes.x1 "0"
+      , Attributes.y1 "0"
+      , Attributes.x2 <| toString sampleWidth
+      , Attributes.y2 "0"
       ]
   in
   Svg.line (lookAttributes ++ sizeAttributes) []

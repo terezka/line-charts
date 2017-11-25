@@ -1,7 +1,7 @@
 module Lines.Legends exposing
   ( none, default
   , Legends, Pieces
-  , byEnding, byBeginning, defaultLabel
+  , byEnding, byBeginning
   , bucketed, bucketedCustom
   )
 
@@ -24,7 +24,6 @@ The ones gathered in one spot.
 -}
 
 import Svg exposing (Svg)
-import Lines.Junk as Junk exposing (..)
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Legends as Legends
 
@@ -79,41 +78,17 @@ byBeginning =
   Legends.Free Legends.Beginning
 
 
-{-| -}
-defaultLabel : String -> Svg msg
-defaultLabel label =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text label ] ]
-
-
 
 -- BUCKETED
 
 
 {-| -}
 bucketed : (Coordinate.Limits -> Float) -> (Coordinate.Limits -> Float) -> Legends msg
-bucketed toX toY =
-  Legends.Bucketed 30 <| \system legends ->
-    Svg.g
-      [ transform [ move system (toX system.x) (toY system.y) ] ]
-      (List.indexedMap viewLegend legends)
+bucketed =
+  Legends.bucketed
 
 
 {-| -}
 bucketedCustom : Float -> (Coordinate.System -> List (Pieces msg) -> Svg msg) -> Legends msg
 bucketedCustom =
   Legends.Bucketed
-
-
-
--- INTERNAL
-
-
-viewLegend : Int -> Pieces msg -> Svg msg
-viewLegend index { sample, label } =
-   Svg.g
-    [ transform [ offset 20 (toFloat index * 15) ] ]
-    [ sample
-    , Svg.g
-        [ transform [ offset 40 4 ] ]
-        [ defaultLabel label ]
-    ]

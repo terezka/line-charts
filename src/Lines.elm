@@ -33,7 +33,6 @@ import Lines.Color as Color
 import Lines.Coordinate as Coordinate
 import Lines.Events as Events
 import Lines.Junk as Junk
-import Lines.Legends as Legends
 
 import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
@@ -41,9 +40,8 @@ import Internal.Dot as Dot
 import Internal.Events
 import Internal.Interpolation as Interpolation
 import Internal.Junk
-import Internal.Legends
+import Internal.Legends as Legends
 import Internal.Line as Line
-import Internal.Utils as Utils
 
 
 
@@ -91,20 +89,20 @@ monotone =
 
 
 {-| -}
-type Line data =
-  Line (LineConfig data)
+type alias Line data =
+  Line.Line data
 
 
 {-| -}
 line : Color.Color -> Dot.Shape -> String -> List data -> Line data
-line color shape label data =
-  Line <| LineConfig color shape [] label data
+line =
+  Line.line
 
 
 {-| -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
-dash color shape label dashing data =
-  Line <| LineConfig color shape dashing label data
+dash =
+  Line.dash
 
 
 
@@ -117,7 +115,7 @@ viewSimple toX toY datas =
   if List.length datas > 3 then
     Html.div [] [ Html.text "If you have more than three data sets, you must use `view` or `viewCustom`!" ]
   else
-    view toX toY (List.map4 defaultConfig defaultShapes defaultColors defaultLabel datas)
+    view toX toY (List.map4 Line.defaultLine defaultShapes defaultColors defaultLabel datas)
 
 
 
@@ -151,7 +149,7 @@ viewCustom config lines =
   let
     -- Data points
     dataPoints =
-      List.map (List.map dataPoint << .data << lineConfig) lines
+      List.map (List.map dataPoint << .data << Line.lineConfig) lines
 
     dataPoint datum =
       Coordinate.DataPoint datum (point datum)
@@ -187,21 +185,14 @@ viewCustom config lines =
           ]
         ]
 
+    viewLine =
+      Line.view system config.dot config.interpolation config.line
+
     viewLines =
-      List.map2 (viewLine config system) lines dataPoints
+      List.map2 viewLine lines dataPoints
 
     viewLegends =
-      case config.legends of -- TODO move to legends module
-        Internal.Legends.Free placement view ->
-          Svg.g [ Attributes.class "legends" ] <|
-            List.map2 (viewLegendFree system placement view) lines dataPoints
-
-        Internal.Legends.Bucketed sampleWidth toContainer ->
-          toContainer system <|
-            List.map (toLegendConfig config system sampleWidth) lines
-
-        Internal.Legends.None ->
-          Svg.text ""
+      Legends.view system config.line config.dot config.legends lines dataPoints
   in
   container <|
     Svg.svg attributes
@@ -212,87 +203,6 @@ viewCustom config lines =
       , viewLegends
       , Svg.g [ Attributes.class "junk--above" ] junk.above
       ]
-
-
-
--- INTERNAL
-
-
-type alias LineConfig data =
-  { color : Color.Color
-  , shape : Dot.Shape
-  , dashing : List Float
-  , label : String
-  , data : List data
-  }
-
-
-lineConfig : Line data -> LineConfig data
-lineConfig (Line line) =
-  line
-
-
-defaultConfig : Dot.Shape -> Color.Color -> String -> List data -> Line data
-defaultConfig shape color label data =
-  Line
-    { shape = shape
-    , color = color
-    , dashing = []
-    , data = data
-    , label = label
-    }
-
-
-viewLine : Config data msg -> Coordinate.System -> Line data -> List (Coordinate.DataPoint data) -> Svg.Svg msg
-viewLine config system (Line line) dataPoints =
-  let
-    viewDot dataPoint =
-      Dot.view config.dot line.shape line.color system dataPoint
-  in
-  Svg.g
-    [ Attributes.class "line" ] -- TODO prefix classes
-    [ Line.view config.line config.interpolation system line.color line.dashing dataPoints
-    , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
-    ]
-
-
-viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data -> List (Coordinate.DataPoint data) -> Svg.Svg msg
-viewLegendFree system placement view (Line line) dataPoints =
-  let
-    ( orderedPoints, anchor, xOffset ) =
-        case placement of
-          Internal.Legends.Beginning ->
-            ( dataPoints, "end", -10 )
-
-          Internal.Legends.Ending ->
-            ( List.reverse dataPoints, "start", 10 )
-  in
-  Utils.viewMaybe (List.head orderedPoints) <| \{ point } ->
-    Svg.g
-      [ Junk.transform [ Junk.move system point.x point.y, Junk.offset xOffset 3 ]
-      , Attributes.style <| "text-anchor: " ++ anchor ++ ";"
-      ]
-      [ view line.label ]
-
-
-toLegendConfig : Config data msg -> Coordinate.System -> Float -> Line data -> Legends.Pieces msg
-toLegendConfig config system sampleWidth (Line line) =
-  { sample = viewSample config system sampleWidth line
-  , label = line.label
-  }
-
-
-viewSample : Config data msg -> Coordinate.System -> Float -> LineConfig data -> Svg msg
-viewSample config system sampleWidth line =
-  let
-    middle =
-      Coordinate.toCartesianPoint system <| Coordinate.Point (sampleWidth / 2) 0
-  in
-  Svg.g
-    [ Attributes.class "sample" ]
-    [ Line.viewSample config.line line.color line.dashing sampleWidth
-    , Dot.viewNormal config.dot line.shape line.color system middle
-    ]
 
 
 
