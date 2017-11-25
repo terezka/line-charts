@@ -11,7 +11,7 @@ module Lines.Junk exposing
 @docs none
 
 ## Custom
-@docs Junk, custom
+@docs Junk, Layers, custom
 
 ## Placing helpers
 @docs Transfrom, transform, move, offset

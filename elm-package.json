@@ -8,9 +8,14 @@
     ],
     "exposed-modules": [
         "Lines",
+        "Lines.Axis",
+        "Lines.Color",
+        "Lines.Coordinate",
         "Lines.Dot",
-        "Lines.Line",
-        "Lines.Events"
+        "Lines.Events",
+        "Lines.Junk",
+        "Lines.Legends",
+        "Lines.Line"
     ],
     "dependencies": {
         "debois/elm-dom": "1.2.3 <= v < 2.0.0",

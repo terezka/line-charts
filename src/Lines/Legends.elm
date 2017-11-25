@@ -15,7 +15,7 @@ module Lines.Legends exposing
 
 ## Free legends
 The ones hanging my the line.
-@docs byEnding, byBeginning, defaultLabel
+@docs byEnding, byBeginning
 
 ## Bucketed legends
 The ones gathered in one spot.
