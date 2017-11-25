@@ -137,30 +137,26 @@ view toX toY =
 viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
 viewCustom config lines =
   let
-    -- Points
-    points =
-      List.map (List.map point << .data << lineConfig) lines
+    -- Data points
+    dataPoints =
+      List.map (List.map dataPoint << .data << lineConfig) lines
+
+    dataPoint datum =
+      DataPoint datum (point datum)
 
     point datum =
       Point
         (config.x.variable datum)
         (config.y.variable datum)
 
-    -- Data points
-    dataPoints =
-      List.concat <| List.map (List.map dataPoint << .data << lineConfig) lines
-
-    dataPoint datum =
-      DataPoint datum (point datum)
-
     -- System
     allPoints =
-      List.concat points
+      List.concat dataPoints
 
     system =
       { frame = config.frame
-      , x = Coordinate.limits .x allPoints
-      , y = Coordinate.limits .y allPoints
+      , x = Coordinate.limits (.point >> .x) allPoints
+      , y = Coordinate.limits (.point >> .y) allPoints
       }
 
     -- View
@@ -173,20 +169,20 @@ viewCustom config lines =
     attributes =
       List.concat
         [ config.attributes
-        , Internal.Events.toSvgAttributes dataPoints system config.events
+        , Internal.Events.toSvgAttributes allPoints system config.events
         , [ SvgA.width <| toString system.frame.size.width
           , SvgA.height <| toString system.frame.size.height
           ]
         ]
 
     viewLines =
-      List.map2 (viewLine config system) lines points
+      List.map2 (viewLine config system) lines dataPoints
 
     viewLegends =
       case config.legends of -- TODO move to legends module
         Internal.Legends.Free placement view ->
           Svg.g [ SvgA.class "legends" ] <|
-            List.map2 (viewLegendFree system placement view) lines points
+            List.map2 (viewLegendFree system placement view) lines dataPoints
 
         Internal.Legends.Bucketed sampleWidth toContainer ->
           toContainer system <|
@@ -235,31 +231,31 @@ defaultConfig shape color label data =
     }
 
 
-viewLine : Config data msg -> Coordinate.System -> Line data -> List Point -> Svg.Svg msg
-viewLine config system (Line line) points =
+viewLine : Config data msg -> Coordinate.System -> Line data -> List (DataPoint data) -> Svg.Svg msg
+viewLine config system (Line line) dataPoints =
   let
-    viewDot datum point =
-      Internal.Dot.view config.dot line.shape line.color system <| DataPoint datum point
+    viewDot dataPoint =
+      Internal.Dot.view config.dot line.shape line.color system dataPoint
   in
   Svg.g
     [ SvgA.class "line" ] -- TODO prefix classes
-    [ Internal.Line.view config.line config.interpolation system line.color line.dashing line.data points
-    , Svg.g [ SvgA.class "dots" ] <| List.map2 viewDot line.data points
+    [ Internal.Line.view config.line config.interpolation system line.color line.dashing dataPoints
+    , Svg.g [ SvgA.class "dots" ] <| List.map viewDot dataPoints
     ]
 
 
-viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data -> List Point -> Svg.Svg msg
-viewLegendFree system placement view (Line line) points =
+viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data -> List (DataPoint data) -> Svg.Svg msg
+viewLegendFree system placement view (Line line) dataPoints =
   let
     ( orderedPoints, anchor, xOffset ) =
         case placement of
           Internal.Legends.Beginning ->
-            ( points, "end", -10 )
+            ( dataPoints, "end", -10 )
 
           Internal.Legends.Ending ->
-            ( List.reverse points, "start", 10 )
+            ( List.reverse dataPoints, "start", 10 )
   in
-  Utils.viewMaybe (List.head orderedPoints) <| \point ->
+  Utils.viewMaybe (List.head orderedPoints) <| \{ point } ->
     Svg.g
       [ Junk.transform [ Junk.move system point.x point.y, Junk.offset xOffset 3 ]
       , SvgA.style <| "text-anchor: " ++ anchor ++ ";"

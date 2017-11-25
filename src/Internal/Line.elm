@@ -6,6 +6,7 @@ import Svg
 import Svg.Attributes
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate exposing (..)
+import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
 
@@ -45,31 +46,31 @@ look config =
 
 
 {-| -}
-view : Look data -> Interpolation.Interpolation -> Coordinate.System -> Color.Color -> List Float -> List data -> List Point -> Svg.Svg msg
-view look interpolation system mainColor dashing data points =
+view : Look data -> Interpolation.Interpolation -> Coordinate.System -> Color.Color -> List Float -> List (DataPoint data) -> Svg.Svg msg
+view look interpolation system mainColor dashing dataPoints =
   let
     interpolationCommands =
-      Interpolation.toCommands interpolation points
+      Interpolation.toCommands interpolation (List.map .point dataPoints)
 
     commands =
-      case points of
+      case dataPoints of
         first :: rest ->
-          Path.Move first :: interpolationCommands
+          Path.Move first.point :: interpolationCommands
 
         [] ->
           []
 
     attributes =
-      toAttributes look mainColor dashing data
+      toAttributes look mainColor dashing dataPoints
   in
   Path.view system attributes commands
 
 
-toAttributes : Look data -> Color.Color -> List Float -> List data -> List (Svg.Attribute msg)
-toAttributes (Look look) mainColor dashing data =
+toAttributes : Look data -> Color.Color -> List Float -> List (DataPoint data) -> List (Svg.Attribute msg)
+toAttributes (Look look) mainColor dashing dataPoints =
   let
     isEmphasized =
-      look.isEmphasized data
+      look.isEmphasized (List.map .data dataPoints)
 
     (Style style) =
       if isEmphasized then
