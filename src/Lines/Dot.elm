@@ -38,31 +38,19 @@ type alias Look data =
 {-| -}
 default : Look data
 default =
-  Dot.Look
-    { normal = disconnected 30 2
-    , emphasized = aura 20 4 0.5
-    , isEmphasized = always False
-    }
+  Dot.default
 
 
 {-| -}
 static : Style -> Look data
-static style =
-  Dot.Look
-    { normal = style
-    , emphasized = aura 20 4 0.5
-    , isEmphasized = always False
-    }
+static =
+  Dot.static
 
 
 {-| -}
 emphasizable : Style -> Style -> (data -> Bool) -> Look data
-emphasizable normal emphasized isEmphasized =
-  Dot.Look
-    { normal = normal
-    , emphasized = emphasized
-    , isEmphasized = isEmphasized
-    }
+emphasizable =
+  Dot.emphasizable
 
 
 {-| Helper for `emphasizable`. -}
@@ -155,23 +143,23 @@ type alias Style =
 
 {-| -}
 bordered : Int -> Int -> Style
-bordered size border =
-  Dot.style size (Dot.Bordered border)
+bordered =
+  Dot.bordered
 
 
 {-| -}
 disconnected : Int -> Int -> Style
-disconnected size border =
-  Dot.style size (Dot.Disconnected border)
+disconnected =
+  Dot.disconnected
 
 
 {-| -}
 aura : Int -> Int -> Float -> Style
-aura size aura opacity =
-  Dot.style size (Dot.Aura aura opacity)
+aura =
+  Dot.aura
 
 
 {-| -}
 full : Int -> Style
-full size =
-  Dot.style size Dot.Full
+full =
+  Dot.full

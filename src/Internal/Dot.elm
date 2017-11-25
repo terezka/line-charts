@@ -1,4 +1,11 @@
-module Internal.Dot exposing (Look(..), Shape(..), Style, style, Variety(..), view, viewNormal)
+module Internal.Dot exposing
+  ( Look, default, static, emphasizable
+  , Shape(..)
+  , Style, style, bordered, disconnected, aura, full
+  , Variety
+  , view, viewNormal
+  )
+
 
 {-| -}
 
@@ -17,6 +24,40 @@ type Look data =
     , emphasized : Style
     , isEmphasized : data -> Bool
     }
+
+
+{-| -}
+default : Look data
+default =
+  Look
+    { normal = disconnected 30 2
+    , emphasized = aura 20 4 0.5
+    , isEmphasized = always False
+    }
+
+
+{-| -}
+static : Style -> Look data
+static style =
+  Look
+    { normal = style
+    , emphasized = aura 20 4 0.5
+    , isEmphasized = always False
+    }
+
+
+{-| -}
+emphasizable : Style -> Style -> (data -> Bool) -> Look data
+emphasizable normal emphasized isEmphasized =
+  Look
+    { normal = normal
+    , emphasized = emphasized
+    , isEmphasized = isEmphasized
+    }
+
+
+
+-- STYLE
 
 
 {-| -}
@@ -54,6 +95,29 @@ style size variety =
     , variety = variety
     }
 
+
+{-| -}
+bordered : Int -> Int -> Style
+bordered size border =
+  style size (Bordered border)
+
+
+{-| -}
+disconnected : Int -> Int -> Style
+disconnected size border =
+  style size (Disconnected border)
+
+
+{-| -}
+aura : Int -> Int -> Float -> Style
+aura size aura opacity =
+  style size (Aura aura opacity)
+
+
+{-| -}
+full : Int -> Style
+full size =
+  style size Full
 
 
 -- VIEW

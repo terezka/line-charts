@@ -7,6 +7,7 @@ module Lines exposing
 
 {-|
 
+TODO: Add area
 # Lines
 
 ## Quick start
@@ -26,7 +27,6 @@ module Lines exposing
 import Html
 import Svg exposing (Svg)
 import Svg.Attributes as SvgA
-import Lines.Dot as Dot
 import Lines.Axis as Axis
 import Lines.Junk as Junk
 import Lines.Color as Color
@@ -42,7 +42,7 @@ import Internal.Axis as Axis
 import Internal.Junk
 import Internal.Events
 import Internal.Line as Line
-import Internal.Dot
+import Internal.Dot as Dot
 
 
 {-| -}
@@ -234,7 +234,7 @@ viewLine : Config data msg -> Coordinate.System -> Line data -> List (DataPoint 
 viewLine config system (Line line) dataPoints =
   let
     viewDot dataPoint =
-      Internal.Dot.view config.dot line.shape line.color system dataPoint
+      Dot.view config.dot line.shape line.color system dataPoint
   in
   Svg.g
     [ SvgA.class "line" ] -- TODO prefix classes
@@ -278,7 +278,7 @@ viewSample config system sampleWidth line =
   Svg.g
     [ SvgA.class "sample" ]
     [ Line.viewSample config.line line.color line.dashing sampleWidth
-    , Internal.Dot.viewNormal config.dot line.shape line.color system middle
+    , Dot.viewNormal config.dot line.shape line.color system middle
     ]
 
 
@@ -296,9 +296,9 @@ defaultColors =
 
 defaultShapes : List Dot.Shape
 defaultShapes =
-  [ Dot.default1
-  , Dot.default2
-  , Dot.default3
+  [ Dot.Circle
+  , Dot.Triangle
+  , Dot.Cross
   ]
 
 
