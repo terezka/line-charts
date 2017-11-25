@@ -7,7 +7,6 @@ module Lines exposing
 
 {-|
 
-TODO: Add area
 # Lines
 
 ## Quick start
@@ -105,6 +104,9 @@ dash =
   Line.dash
 
 
+-- TODO: Add area
+
+
 
 -- VIEW / SIMPLE
 
@@ -199,7 +201,13 @@ viewCustom config lines =
 
 viewError : Html.Html msg
 viewError =
-   Html.div [] [ Html.text "If you have more than three data sets, you must use `view` or `viewCustom`!" ]
+  Html.div []
+    [ Html.text
+        """
+        If you have more than three data sets,
+        you must use `view` or `viewCustom`!
+        """
+    ]
 
 
 
