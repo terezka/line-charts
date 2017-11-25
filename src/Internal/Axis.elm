@@ -73,14 +73,14 @@ viewHorizontalTitle system at { title } =
   let
     position =
       at (title.position system.x)
-
-    transform =
-      Junk.transform
+  in
+  g [ class "title"
+    , transform
         [ move system position.x position.y
         , offset title.xOffset (title.yOffset + 40)
         ]
-  in
-  g [ class "title", style "text-anchor: middle;", transform ]
+    , style "text-anchor: middle;"
+    ]
     [ title.view ]
 
 
@@ -89,14 +89,14 @@ viewVerticalTitle system at { title } =
   let
     position =
       at (title.position system.y)
-
-    transform =
-      Junk.transform
+  in
+  g [ class "title"
+    , transform
         [ move system position.x position.y
         , offset (title.xOffset - 5) (title.yOffset - 15)
         ]
-  in
-  g [ class "title", style "text-anchor: middle;", transform ]
+    , style "text-anchor: middle;"
+    ]
     [ title.view ]
 
 
@@ -134,14 +134,11 @@ viewHorizontalLabel system { direction } position view =
                 -10
             else
                 20
-
-        transform =
-          Junk.transform
-            [ move system position.x position.y
-            , offset 0 yOffset
-            ]
     in
-    g [ transform, style "text-anchor: middle;" ] [ view ]
+    g [ transform [ move system position.x position.y, offset 0 yOffset ]
+      , style "text-anchor: middle;"
+      ]
+      [ view ]
 
 
 viewVerticalLabel : Coordinate.System -> Axis.Look msg -> Point -> Svg msg -> Svg msg
@@ -158,14 +155,11 @@ viewVerticalLabel system { direction } position view =
                 10
             else
                 -10
-
-        transform =
-          Junk.transform
-            [ move system position.x position.y
-            , offset xOffset 5
-            ]
     in
-    g [ transform, style anchorOfLabel ] [ view ]
+    g [ transform [ move system position.x position.y, offset xOffset 5 ]
+      , style anchorOfLabel
+      ]
+      [ view ]
 
 
 
