@@ -1,4 +1,4 @@
-module Internal.Line exposing (Look, Style, style, look, view, viewSample)
+module Internal.Line exposing (Look, Style, style,  default, wider, static, emphasizable, view, viewSample)
 
 {-| -}
 
@@ -22,6 +22,50 @@ type Look data =
 
 
 {-| -}
+default : Look data
+default =
+  Look
+    { normal = style 1 identity
+    , emphasized = style 2 identity
+    , isEmphasized = always False
+    }
+
+
+{-| -}
+wider : Int -> Look data
+wider width =
+  Look
+    { normal = style width identity
+    , emphasized = style width identity
+    , isEmphasized = always False
+    }
+
+
+{-| -}
+static : Style -> Look data
+static normal =
+  Look
+    { normal = normal
+    , emphasized = style 1 identity
+    , isEmphasized = always False
+    }
+
+
+{-| -}
+emphasizable : Style -> Style -> (List data -> Bool) -> Look data
+emphasizable normal emphasized isEmphasized =
+  Look
+    { normal = normal
+    , emphasized = emphasized
+    , isEmphasized = isEmphasized
+    }
+
+
+
+-- STYLE
+
+
+{-| -}
 type Style =
   Style
     { width : Int -- TODO Float
@@ -33,16 +77,6 @@ type Style =
 style : Int -> (Color.Color -> Color.Color) -> Style
 style width color =
   Style { width = width, color = color }
-
-
-{-| -}
-look :
-  { normal : Style
-  , emphasized : Style
-  , isEmphasized : List data -> Bool
-  } -> Look data
-look config =
-  Look config
 
 
 {-| -}

@@ -30,41 +30,29 @@ type alias Style =
 {-| -}
 default : Look data
 default =
-  Line.look
-    { normal = Line.style 1 identity
-    , emphasized = Line.style 2 identity
-    , isEmphasized = always False
-    }
+  Line.default
 
 
 {-| -}
 wider : Int -> Look data
-wider width =
-  Line.look
-    { normal = Line.style width identity
-    , emphasized = Line.style width identity
-    , isEmphasized = always False
-    }
+wider =
+  Line.wider
 
 
 {-| -}
 static : Style -> Look data
-static normal =
-  Line.look
-    { normal = normal
-    , emphasized = Line.style 1 identity
-    , isEmphasized = always False
-    }
+static =
+  Line.static
 
 
 {-| -}
 emphasizable : Style -> Style -> (List data -> Bool) -> Look data
-emphasizable normal emphasized isEmphasized =
-  Line.look
-    { normal = normal
-    , emphasized = emphasized
-    , isEmphasized = isEmphasized
-    }
+emphasizable =
+  Line.emphasizable
+
+
+
+-- HELPERS
 
 
 {-| -}

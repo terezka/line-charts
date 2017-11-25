@@ -27,7 +27,6 @@ import Html
 import Svg exposing (Svg)
 import Svg.Attributes as SvgA
 import Lines.Dot as Dot
-import Lines.Line as Line
 import Lines.Axis as Axis
 import Lines.Junk as Junk
 import Lines.Color as Color
@@ -42,7 +41,7 @@ import Internal.Utils as Utils
 import Internal.Axis as Axis
 import Internal.Junk
 import Internal.Events
-import Internal.Line
+import Internal.Line as Line
 import Internal.Dot
 
 
@@ -216,8 +215,8 @@ type alias LineConfig data =
 
 
 lineConfig : Line data -> LineConfig data
-lineConfig (Line lineConfig) =
-  lineConfig
+lineConfig (Line line) =
+  line
 
 
 defaultConfig : Dot.Shape -> Color.Color -> String -> List data -> Line data
@@ -239,7 +238,7 @@ viewLine config system (Line line) dataPoints =
   in
   Svg.g
     [ SvgA.class "line" ] -- TODO prefix classes
-    [ Internal.Line.view config.line config.interpolation system line.color line.dashing dataPoints
+    [ Line.view config.line config.interpolation system line.color line.dashing dataPoints
     , Svg.g [ SvgA.class "dots" ] <| List.map viewDot dataPoints
     ]
 
@@ -278,7 +277,7 @@ viewSample config system sampleWidth line =
   in
   Svg.g
     [ SvgA.class "sample" ]
-    [ Internal.Line.viewSample config.line line.color line.dashing sampleWidth
+    [ Line.viewSample config.line line.color line.dashing sampleWidth
     , Internal.Dot.viewNormal config.dot line.shape line.color system middle
     ]
 
