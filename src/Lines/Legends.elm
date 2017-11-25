@@ -29,16 +29,7 @@ import Internal.Legends as Legends
 
 
 
--- CONFIG
-
-
-{-| -}
-type alias Legends msg
-  = Legends.Legends msg
-
-
-
--- NONE
+-- QUICK START
 
 
 {-| -}
@@ -47,14 +38,19 @@ none =
   Legends.None
 
 
-
--- DEFAULT
-
-
 {-| -}
 default : Legends msg
 default =
   bucketed .max .max
+
+
+
+-- CONFIG
+
+
+{-| -}
+type alias Legends msg
+  = Legends.Legends msg
 
 
 

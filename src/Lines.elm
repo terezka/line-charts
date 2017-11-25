@@ -85,7 +85,7 @@ monotone =
 
 
 {-| -}
-type alias Line data =
+type alias Line data = -- TODO Move to Line.elm?
   Line.Line data
 
 

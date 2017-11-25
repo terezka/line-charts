@@ -13,7 +13,7 @@ module Lines.Junk exposing
 ## Custom
 @docs Junk, custom
 
-## Placing help
+## Placing helpers
 @docs Transfrom, transform, move, offset
 
 -}
@@ -24,6 +24,19 @@ import Lines.Coordinate as Coordinate
 import Internal.Junk
 import Internal.Svg as Svg
 
+
+
+-- QUICK START
+
+
+{-| -}
+none : Junk msg
+none =
+  Internal.Junk.Junk (\_ -> Layers [] [] [])
+
+
+
+-- CUSTOMIZE
 
 
 {-| -}
@@ -40,19 +53,13 @@ type alias Layers msg =
 
 
 {-| -}
-none : Junk msg
-none =
-  Internal.Junk.Junk (\_ -> Layers [] [] [])
-
-
-{-| -}
 custom : (Coordinate.System -> Layers msg) -> Junk msg
 custom =
   Internal.Junk.Junk
 
 
 
--- PLACING
+-- PLACING HELPERS
 
 
 {-| -}

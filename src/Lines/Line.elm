@@ -9,7 +9,10 @@ module Lines.Line exposing
 @docs default
 
 ## Customizing
-@docs Look, Style, wider, static, emphasizable, hasMaybe
+@docs Look, Style, wider, static, emphasizable
+
+### Emphasizable helpers
+@docs hasMaybe
 
 -}
 
@@ -49,10 +52,6 @@ static =
 emphasizable : Style -> Style -> (List data -> Bool) -> Look data
 emphasizable =
   Line.emphasizable
-
-
-
--- HELPERS
 
 
 {-| -}
