@@ -261,7 +261,7 @@ viewLegendFree system placement view (Line line) points =
   in
   Utils.viewMaybe (List.head orderedPoints) <| \point ->
     Svg.g
-      [ Junk.placeWithOffset system point.x point.y xOffset 3
+      [ Junk.transform [ Junk.move system point.x point.y, Junk.offset xOffset 3 ]
       , SvgA.style <| "text-anchor: " ++ anchor ++ ";"
       ]
       [ view line.label ]

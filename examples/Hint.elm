@@ -71,7 +71,7 @@ junk hint =
     Junk.custom <| \s ->
       let
           viewHint =
-              Junk.container s s.x.max (s.y.max - 1) 20 10
+              g [ Junk.transform [ Junk.move s s.x.max (s.y.max - 1), Junk.offset 20 10 ] ]
                 [ text_ []
                     [ viewDimension "Year" hint.year
                     , viewDimension "Cats" hint.cats

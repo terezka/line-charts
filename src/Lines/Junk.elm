@@ -1,13 +1,13 @@
 module Lines.Junk exposing
   ( Junk, Layers, none, custom
-  , translate, translateWithOffset, translateFree, transform, place, placeWithOffset
+  , Transfrom, transform, move, offset
   )
 
 
 {-|
 
 ## Placing
-@docs translate, translateWithOffset, translateFree, transform, place, placeWithOffset
+@docs Transfrom, transform, move, offset
 
 -}
 
@@ -48,45 +48,42 @@ custom =
 
 
 {-| -}
-translate : Coordinate.System -> Float -> Float -> String
-translate system x y =
-  "translate(" ++ (toString <| toSVG X system x) ++ ", " ++ (toString <| toSVG Y system y) ++ ")"
+type Transfrom =
+  Transfrom Float Float
 
 
 {-| -}
-translateWithOffset : System -> Float -> Float -> Float -> Float -> String
-translateWithOffset system x y offsetX offsetY =
-  "translate("
-    ++ (toString <| toSVG X system x + offsetX)
-    ++ ", "
-    ++ (toString <| toSVG Y system y + offsetY)
-    ++ ")"
-
-
-{-| TODO -}
-translateFree : Float -> Float -> String
-translateFree offsetX offsetY =
-  "translate("
-    ++ (toString offsetX)
-    ++ ", "
-    ++ (toString offsetY)
-    ++ ")"
+move : Coordinate.System -> Float -> Float -> Transfrom
+move system x y =
+  Transfrom (toSVG X system x) (toSVG Y system y)
 
 
 {-| -}
-transform : List String -> Attribute msg
-transform transformers =
+offset : Float -> Float -> Transfrom
+offset x y =
+  Transfrom x y
+
+
+{-| -}
+transform : List Transfrom -> Svg.Attribute msg
+transform translations =
+  let
+    (Transfrom x y) =
+      toPosition translations
+  in
   Attributes.transform <|
-    String.join ", " transformers
+    "translate(" ++ toString x ++ ", " ++ toString y ++ ")"
 
 
-{-| -}
-place : System -> Float -> Float -> Attribute msg
-place system x y =
-  transform [ translate system x y ]
+
+-- INTERNAL
 
 
-{-| -}
-placeWithOffset : System -> Float -> Float -> Float -> Float -> Attribute msg
-placeWithOffset system x y offsetX offsetY =
-  transform [ translateWithOffset system x y offsetX offsetY ]
+toPosition : List Transfrom -> Transfrom
+toPosition =
+  List.foldr addPosition (Transfrom 0 0)
+
+
+addPosition : Transfrom -> Transfrom -> Transfrom
+addPosition (Transfrom x y) (Transfrom xf yf) =
+  Transfrom (xf + x) (yf + y)

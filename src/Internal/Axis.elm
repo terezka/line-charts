@@ -75,7 +75,10 @@ viewHorizontalTitle system at { title } =
       at (title.position system.x)
 
     transform =
-      placeWithOffset system position.x position.y title.xOffset (title.yOffset + 40)
+      Junk.transform
+        [ move system position.x position.y
+        , offset title.xOffset (title.yOffset + 40)
+        ]
   in
   g [ class "title", style "text-anchor: middle;", transform ]
     [ title.view ]
@@ -88,7 +91,10 @@ viewVerticalTitle system at { title } =
       at (title.position system.y)
 
     transform =
-      placeWithOffset system position.x position.y (title.xOffset - 5) (title.yOffset - 15)
+      Junk.transform
+        [ move system position.x position.y
+        , offset (title.xOffset - 5) (title.yOffset - 15)
+        ]
   in
   g [ class "title", style "text-anchor: middle;", transform ]
     [ title.view ]
@@ -123,14 +129,19 @@ lengthOfTick { direction } length =
 viewHorizontalLabel : Coordinate.System -> Axis.Look msg -> Point -> Svg msg -> Svg msg
 viewHorizontalLabel system { direction } position view =
     let
-        offset =
+        yOffset =
             if isPositive direction then
                 -10
             else
                 20
+
+        transform =
+          Junk.transform
+            [ move system position.x position.y
+            , offset 0 yOffset
+            ]
     in
-    g [ placeWithOffset system position.x position.y 0 offset, style "text-anchor: middle;" ]
-      [ view ]
+    g [ transform, style "text-anchor: middle;" ] [ view ]
 
 
 viewVerticalLabel : Coordinate.System -> Axis.Look msg -> Point -> Svg msg -> Svg msg
@@ -142,14 +153,19 @@ viewVerticalLabel system { direction } position view =
             else
                 "text-anchor: end;"
 
-        offset =
+        xOffset =
             if isPositive direction then
                 10
             else
                 -10
+
+        transform =
+          Junk.transform
+            [ move system position.x position.y
+            , offset xOffset 5
+            ]
     in
-    g [ placeWithOffset system position.x position.y offset 5, style anchorOfLabel ]
-      [ view ]
+    g [ transform, style anchorOfLabel ] [ view ]
 
 
 
