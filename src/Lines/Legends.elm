@@ -23,7 +23,7 @@ The ones gathered in one spot.
 
 -}
 
-import Svg exposing (Svg)
+import Svg
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Legends as Legends
 
@@ -39,7 +39,7 @@ type alias Legends msg
 
 {-| -}
 type alias Pieces msg =
-  { sample : Svg msg
+  { sample : Svg.Svg msg
   , label : String
   }
 
@@ -69,13 +69,13 @@ default =
 
 
 {-| -}
-byEnding : (String -> Svg msg) -> Legends msg
+byEnding : (String -> Svg.Svg msg) -> Legends msg
 byEnding =
   Legends.Free Legends.Ending
 
 
 {-| -}
-byBeginning : (String -> Svg msg) -> Legends msg
+byBeginning : (String -> Svg.Svg msg) -> Legends msg
 byBeginning =
   Legends.Free Legends.Beginning
 
@@ -91,6 +91,6 @@ bucketed =
 
 
 {-| -}
-bucketedCustom : Float -> (Coordinate.System -> List (Pieces msg) -> Svg msg) -> Legends msg
+bucketedCustom : Float -> (Coordinate.System -> List (Pieces msg) -> Svg.Svg msg) -> Legends msg
 bucketedCustom =
   Legends.Bucketed

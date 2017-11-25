@@ -128,10 +128,9 @@ view : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.Data
 view (Look config) shape color system dataPoint =
   let
     (Style style) =
-      if config.isEmphasized dataPoint.data then
-        config.emphasized
-      else
-        config.normal
+      if config.isEmphasized dataPoint.data
+        then config.emphasized
+        else config.normal
   in
   viewShape shape style.size style.variety color system dataPoint.point
 
@@ -165,11 +164,8 @@ viewShape shape =
 viewCircle : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
 viewCircle events size variety color system cartesianPoint =
   let
-    radius =
-      sqrt (toFloat size / pi)
-
-    point =
-      toSVGPoint system cartesianPoint
+    point = toSVGPoint system cartesianPoint
+    radius = sqrt (toFloat size / pi)
 
     attributes =
       [ Attributes.cx (toString point.x)
@@ -183,17 +179,10 @@ viewCircle events size variety color system cartesianPoint =
 viewTriangle : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
 viewTriangle events size variety color system cartesianPoint =
   let
-    side =
-      sqrt <| toFloat size * 4 / (sqrt 3)
-
-    point =
-      toSVGPoint system cartesianPoint
-
-    height =
-      (sqrt 3) * side / 2
-
-    fromMiddle =
-       height - tan (degrees 30) * side / 2
+    point = toSVGPoint system cartesianPoint
+    side = sqrt <| toFloat size * 4 / (sqrt 3)
+    height = (sqrt 3) * side / 2
+    fromMiddle = height - tan (degrees 30) * side / 2
 
     path =
       Attributes.d <| String.join " "
@@ -209,11 +198,8 @@ viewTriangle events size variety color system cartesianPoint =
 viewSquare : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
 viewSquare events size variety color system cartesianPoint =
   let
-    side =
-      sqrt <| toFloat size
-
-    point =
-      toSVGPoint system cartesianPoint
+    point = toSVGPoint system cartesianPoint
+    side = sqrt <| toFloat size
 
     attributes =
       [ Attributes.x <| toString (point.x - side / 2)
@@ -228,14 +214,9 @@ viewSquare events size variety color system cartesianPoint =
 viewDiamond : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
 viewDiamond events size variety color system cartesianPoint =
   let
-    side =
-      sqrt <| toFloat size
-
-    point =
-      toSVGPoint system cartesianPoint
-
-    rotation =
-      "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
+    point = toSVGPoint system cartesianPoint
+    side = sqrt <| toFloat size
+    rotation = "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
 
     attributes =
       [ Attributes.x <| toString (point.x - side / 2)
@@ -251,8 +232,7 @@ viewDiamond events size variety color system cartesianPoint =
 viewPlus : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
 viewPlus events size variety color system cartesianPoint =
   let
-    point =
-      toSVGPoint system cartesianPoint
+    point = toSVGPoint system cartesianPoint
 
     attributes =
       [ plusPath size point ]
@@ -263,11 +243,8 @@ viewPlus events size variety color system cartesianPoint =
 viewCross : List (Svg.Attribute msg) -> Int -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
 viewCross events size variety color system cartesianPoint =
   let
-    point =
-      toSVGPoint system cartesianPoint
-
-    rotation =
-      "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
+    point = toSVGPoint system cartesianPoint
+    rotation = "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
 
     attributes =
       [ plusPath size point
@@ -280,14 +257,9 @@ viewCross events size variety color system cartesianPoint =
 plusPath : Int -> Point -> Svg.Attribute msg
 plusPath size point =
   let
-    side =
-      sqrt (toFloat size / 5)
-
-    r3 =
-      side
-
-    r6 =
-      side / 2
+    side = sqrt (toFloat size / 5)
+    r3 = side
+    r6 = side / 2
 
     commands =
       [ "M" ++ toString (point.x - r6) ++ " " ++ toString (point.y - r3 - r6)

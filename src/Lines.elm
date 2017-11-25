@@ -24,7 +24,7 @@ module Lines exposing
 -}
 
 import Html
-import Svg exposing (Svg)
+import Svg
 import Svg.Attributes as Attributes
 import Lines.Axis as Axis
 import Lines.Color as Color

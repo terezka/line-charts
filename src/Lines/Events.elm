@@ -22,7 +22,7 @@ module Lines.Events exposing
 import Svg.Events
 import Json.Decode as Json
 import Internal.Events as Events
-import Lines.Coordinate as Coordinate exposing (..)
+import Lines.Coordinate as Coordinate
 
 
 
@@ -89,13 +89,13 @@ type alias Searcher data hint =
 
 
 {-| -}
-svg : Searcher data Point
+svg : Searcher data Coordinate.Point
 svg =
   Events.svg
 
 
 {-| -}
-cartesian : Searcher data Point
+cartesian : Searcher data Coordinate.Point
 cartesian =
   Events.cartesian
 
@@ -125,6 +125,6 @@ findWithinX =
 
 
 {-| -}
-searcher : (System -> Point -> hint) -> Searcher data hint
+searcher : (Coordinate.System -> Coordinate.Point -> hint) -> Searcher data hint
 searcher =
   Events.searcher

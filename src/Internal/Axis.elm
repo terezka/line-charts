@@ -105,20 +105,17 @@ viewVerticalTitle system at { title } =
 
 viewHorizontalTick : Coordinate.System -> Axis.Look msg -> Point -> Axis.Tick msg -> Svg msg
 viewHorizontalTick system view { x, y } { attributes, length } =
-    xTick system (lengthOfTick view length) attributes y x
+  xTick system (lengthOfTick view length) attributes y x
 
 
 viewVerticalTick : Coordinate.System -> Axis.Look msg -> Point -> Axis.Tick msg -> Svg msg
 viewVerticalTick system view { x, y } { attributes, length } =
-    yTick system (lengthOfTick view length) attributes x y
+  yTick system (lengthOfTick view length) attributes x y
 
 
 lengthOfTick : Axis.Look msg -> Int -> Int
 lengthOfTick { direction } length =
-    if isPositive direction then
-        -length
-    else
-        length
+  if isPositive direction then -length else length
 
 
 
@@ -127,37 +124,25 @@ lengthOfTick { direction } length =
 
 viewHorizontalLabel : Coordinate.System -> Axis.Look msg -> Point -> Svg msg -> Svg msg
 viewHorizontalLabel system { direction } position view =
-    let
-        yOffset =
-            if isPositive direction then
-                -10
-            else
-                20
-    in
-    g [ transform [ move system position.x position.y, offset 0 yOffset ]
-      , anchorStyle Middle
-      ]
-      [ view ]
+  let
+    yOffset = if isPositive direction then -10 else 20
+  in
+  g [ transform [ move system position.x position.y, offset 0 yOffset ]
+    , anchorStyle Middle
+    ]
+    [ view ]
 
 
 viewVerticalLabel : Coordinate.System -> Axis.Look msg -> Point -> Svg msg -> Svg msg
 viewVerticalLabel system { direction } position view =
-    let
-        anchor =
-            if isPositive direction
-              then Start
-              else End
-
-        xOffset =
-            if isPositive direction then
-                10
-            else
-                -10
-    in
-    g [ transform [ move system position.x position.y, offset xOffset 5 ]
-      , anchorStyle anchor
-      ]
-      [ view ]
+  let
+    anchor = if isPositive direction then Start else End
+    xOffset = if isPositive direction then 10 else -10
+  in
+  g [ transform [ move system position.x position.y, offset xOffset 5 ]
+    , anchorStyle anchor
+    ]
+    [ view ]
 
 
 
@@ -166,9 +151,6 @@ viewVerticalLabel system { direction } position view =
 
 isPositive : Axis.Direction -> Bool
 isPositive direction =
-    case direction of
-        Axis.Positive ->
-            True
-
-        Axis.Negative ->
-            False
+  case direction of
+    Axis.Positive -> True
+    Axis.Negative -> False

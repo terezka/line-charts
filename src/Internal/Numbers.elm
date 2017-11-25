@@ -22,14 +22,10 @@ customInterval intersection delta limits =
             getFirstValue delta limits.min intersection
 
         ticks result index =
-            let
-                next =
-                    position delta firstValue index
-            in
-            if next <= limits.max then
-                ticks (result ++ [ next ]) (index + 1)
-            else
-                result
+            let next = position delta firstValue index in
+              if next <= limits.max
+                then ticks (result ++ [ next ]) (index + 1)
+                else result
     in
     ticks [] 0
 
@@ -75,33 +71,19 @@ offset precision value =
 getDecentInterval : Float -> Float -> Int -> Float
 getDecentInterval min max total =
     let
-        range =
-            abs (max - min)
-
+        range = abs (max - min)
         -- calculate an initial guess at step size
-        delta0 =
-            range / toFloat total
-
+        delta0 = range / toFloat total
         -- get the magnitude of the step size
-        mag =
-            floor (logBase 10 delta0)
-
-        magPow =
-            toFloat (10 ^ mag)
-
+        mag = floor (logBase 10 delta0)
+        magPow = toFloat (10 ^ mag)
         -- calculate most significant digit of the new step size
-        magMsd =
-            round (delta0 / magPow)
-
+        magMsd = round (delta0 / magPow)
         -- promote the MSD to either 1, 2, or 5
         magMsdFinal =
-            if magMsd > 5 then
-                10
-            else if magMsd > 2 then
-                5
-            else if magMsd > 1 then
-                1
-            else
-                magMsd
+            if magMsd > 5 then 10
+            else if magMsd > 2 then 5
+            else if magMsd > 1 then 1
+            else magMsd
     in
     toFloat magMsdFinal * magPow

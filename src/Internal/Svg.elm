@@ -2,7 +2,7 @@ module Internal.Svg exposing (..)
 
 
 import Svg exposing (Svg, Attribute, g)
-import Svg.Attributes as Attributes exposing (class, fill, style, x1, x2, y1, y2, stroke, d)
+import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Path as Path exposing (..)
@@ -17,7 +17,7 @@ horizontal : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Floa
 horizontal system userAttributes y x1 x2 =
   let
     attributes =
-      concat [ stroke Color.gray ] userAttributes []
+      concat [ Attributes.stroke Color.gray ] userAttributes []
   in
     Path.view system attributes
       [ Move { x = x1, y = y }
@@ -30,7 +30,7 @@ vertical : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Float 
 vertical system userAttributes x y1 y2 =
   let
     attributes =
-      concat [ stroke Color.gray ] userAttributes []
+      concat [ Attributes.stroke Color.gray ] userAttributes []
   in
     Path.view system attributes
       [ Move { x = x, y = y1 }
@@ -41,7 +41,7 @@ vertical system userAttributes x y1 y2 =
 
 xTicks : Coordinate.System -> Int -> List (Attribute msg) -> Float -> List Float -> Svg msg
 xTicks system height userAttributes y xs =
-  g [ class "x-ticks" ] (List.map (xTick system height userAttributes y) xs)
+  g [ Attributes.class "x-ticks" ] (List.map (xTick system height userAttributes y) xs)
 
 
 xTick : Coordinate.System -> Int -> List (Attribute msg) -> Float -> Float -> Svg msg
@@ -49,7 +49,7 @@ xTick system height userAttributes y x =
   let
     attributes =
       concat
-        [ stroke Color.gray ]
+        [ Attributes.stroke Color.gray ]
         userAttributes
         [ Attributes.x1 <| toString (toSVG X system x)
         , Attributes.x2 <| toString (toSVG X system x)
@@ -62,7 +62,7 @@ xTick system height userAttributes y x =
 
 yTicks : Coordinate.System -> Int -> List (Attribute msg) -> Float -> List Float -> Svg msg
 yTicks system width userAttributes x ys =
-  g [ class "y-ticks" ] (List.map (yTick system width userAttributes x) ys)
+  g [ Attributes.class "y-ticks" ] (List.map (yTick system width userAttributes x) ys)
 
 
 yTick : Coordinate.System -> Int -> List (Attribute msg) -> Float -> Float -> Svg msg
@@ -70,7 +70,9 @@ yTick system width userAttributes x y =
   let
     attributes =
       concat
-        [ class "tick", stroke Color.gray ]
+        [ Attributes.class "tick"
+        , Attributes.stroke Color.gray
+        ]
         userAttributes
         [ Attributes.x1 <| toString (toSVG X system x)
         , Attributes.x2 <| toString (toSVG X system x - toFloat width)

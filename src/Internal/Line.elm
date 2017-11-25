@@ -158,11 +158,8 @@ viewInterpolation system look interpolation mainColor dashing dataPoints =
 
     commands =
       case dataPoints of
-        first :: rest ->
-          Path.Move first.point :: interpolationCommands
-
-        [] ->
-          []
+        first :: rest -> Path.Move first.point :: interpolationCommands
+        [] -> []
 
     attributes =
       toAttributes look mainColor dashing dataPoints
@@ -177,10 +174,9 @@ toAttributes (Look look) mainColor dashing dataPoints =
       look.isEmphasized (List.map .data dataPoints)
 
     (Style style) =
-      if isEmphasized then
-        look.emphasized
-      else
-        look.normal
+      if isEmphasized
+        then look.emphasized
+        else look.normal
 
     width =
       toFloat style.width / 2

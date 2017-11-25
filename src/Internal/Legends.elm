@@ -100,11 +100,8 @@ viewFree system placement viewLabel (Line.Line line) dataPoints =
   let
     ( orderedPoints, anchor, xOffset ) =
         case placement of
-          Beginning ->
-            ( dataPoints, Svg.End, -10 )
-
-          Ending ->
-            ( List.reverse dataPoints, Svg.Start, 10 )
+          Beginning -> ( dataPoints, Svg.End, -10 )
+          Ending    -> ( List.reverse dataPoints, Svg.Start, 10 )
 
     transformation { x, y } =
       Svg.transform [ Svg.move system x y, Svg.offset xOffset 3 ]

@@ -54,30 +54,18 @@ description system commands =
 toString : Command -> String
 toString command =
   case command of
-    Move p ->
-      "M" ++ point p
+    Close -> "Z"
 
-    Line p ->
-      "L" ++ point p
+    Move p       -> "M" ++ point p
+    Line p       -> "L" ++ point p
+    Horizontal x -> "H" ++ Basics.toString x
+    Vertical y   -> "V" ++ Basics.toString y
 
-    Horizontal x ->
-      "H" ++ Basics.toString x
-
-    Vertical y ->
-      "V" ++ Basics.toString y
-
-    CubicBeziers c1 c2 p ->
-      "C" ++ points [ c1, c2, p ]
-
-    CubicBeziersShort c1 p ->
-      "Q" ++ points [ c1, p ]
-
-    QuadraticBeziers c1 p ->
-      "Q" ++ points [ c1, p ]
-
-    QuadraticBeziersShort p ->
-      "T" ++ point p
-
+    CubicBeziers c1 c2 p    -> "C" ++ points [ c1, c2, p ]
+    CubicBeziersShort c1 p  -> "Q" ++ points [ c1, p ]
+    QuadraticBeziers c1 p   -> "Q" ++ points [ c1, p ]
+    QuadraticBeziersShort p -> "T" ++ point p
+    
     Arc rx ry xAxisRotation largeArcFlag sweepFlag p ->
       "A" ++ join
         [ Basics.toString rx
@@ -88,26 +76,14 @@ toString command =
         , point p
         ]
 
-    Close ->
-      "Z"
-
 
 translate : System -> Command -> Command
 translate system command =
   case command of
-    Move p ->
-      Move
-        (toSVGPoint system p)
-
-    Line p ->
-      Line
-        (toSVGPoint system p)
-
-    Horizontal x ->
-        Horizontal (toSVG X system x)
-
-    Vertical y ->
-        Vertical (toSVG Y system y)
+    Move p       -> Move (toSVGPoint system p)
+    Line p       -> Line (toSVGPoint system p)
+    Horizontal x -> Horizontal (toSVG X system x)
+    Vertical y   -> Vertical (toSVG Y system y)
 
     CubicBeziers c1 c2 p ->
       CubicBeziers
@@ -130,8 +106,7 @@ translate system command =
         (toSVGPoint system p)
 
     Arc rx ry xAxisRotation largeArcFlag sweepFlag p ->
-      Arc rx ry xAxisRotation largeArcFlag sweepFlag
-        (toSVGPoint system p)
+      Arc rx ry xAxisRotation largeArcFlag sweepFlag (toSVGPoint system p)
 
     Close ->
       Close

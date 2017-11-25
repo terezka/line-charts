@@ -112,10 +112,9 @@ findWithin radius =
           toCartesianSafe system searchedSvg
 
         keepIfEligible closest =
-            if withinRadius system radius searched closest.point then
-                Just closest.data
-            else
-                Nothing
+            if withinRadius system radius searched closest.point
+              then Just closest.data
+              else Nothing
     in
     findNearestHelp points system searched
         |> Maybe.andThen keepIfEligible
@@ -165,10 +164,9 @@ findNearestHelp points system searched =
           distance system searched
 
       getClosest point closest =
-          if distance_ closest.point < distance_ point.point then
-              closest
-          else
-              point
+          if distance_ closest.point < distance_ point.point
+            then closest
+            else point
   in
   withFirst points (List.foldl getClosest)
 
@@ -182,12 +180,9 @@ findNearestXHelp points system searched =
       getClosest point allClosest =
         case List.head allClosest of
           Just closest ->
-              if closest.point.x == point.point.x then
-                point :: allClosest
-              else if distanceX_ closest.point > distanceX_ point.point then
-                [ point ]
-              else
-                allClosest
+              if closest.point.x == point.point.x then point :: allClosest
+              else if distanceX_ closest.point > distanceX_ point.point then [ point ]
+              else allClosest
 
           Nothing ->
             [ point ]

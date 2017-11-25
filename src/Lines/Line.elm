@@ -13,7 +13,7 @@ module Lines.Line exposing
 
 -}
 
-import Internal.Line as Line exposing (Look, Style)
+import Internal.Line as Line
 
 
 
@@ -59,8 +59,5 @@ emphasizable =
 hasMaybe : Maybe data -> List data -> Bool
 hasMaybe hovering data =
   case hovering of
-    Just hovering ->
-      List.member hovering data
-
-    Nothing ->
-      False
+    Just hovering -> List.member hovering data
+    Nothing       -> False

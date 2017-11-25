@@ -18,8 +18,8 @@ module Lines.Junk exposing
 
 -}
 
-import Html exposing (Html)
-import Svg exposing (Svg)
+import Html
+import Svg
 import Lines.Coordinate as Coordinate
 import Internal.Junk
 import Internal.Svg as Svg
@@ -33,9 +33,9 @@ type alias Junk msg =
 
 {-| -}
 type alias Layers msg =
-  { above : List (Svg msg)
-  , below : List (Svg msg)
-  , html : List (Html msg)
+  { above : List (Svg.Svg msg)
+  , below : List (Svg.Svg msg)
+  , html : List (Html.Html msg)
   }
 
 

@@ -23,8 +23,8 @@ module Lines.Axis exposing
 -}
 
 import Svg exposing (..)
-import Svg.Attributes exposing (stroke, style, fill)
-import Lines.Coordinate as Coordinate exposing (..)
+import Svg.Attributes as Attributes
+import Lines.Coordinate as Coordinate
 import Lines.Color as Color
 import Internal.Numbers as Numbers
 
@@ -41,16 +41,16 @@ type alias Axis data msg =
 type alias Look msg =
   { title : Title msg
   , offset : Float
-  , position : Limits -> Float
-  , line : Maybe (Limits -> Line msg)
-  , marks : Limits -> List (Mark msg)
+  , position : Coordinate.Limits -> Float
+  , line : Maybe (Coordinate.Limits -> Line msg)
+  , marks : Coordinate.Limits -> List (Mark msg)
   , direction : Direction
   }
 
 
 {-| -}
 type alias Title msg =
-    { position : Limits -> Float
+    { position : Coordinate.Limits -> Float
     , view : Svg msg
     , xOffset : Float
     , yOffset : Float
@@ -104,7 +104,7 @@ defaultLook title =
   { title = title
   , offset = 20
   , position = towardsZero
-  , line = Just (defaultLine [ stroke Color.gray ])
+  , line = Just (defaultLine [ Attributes.stroke Color.gray ])
   , marks = List.map defaultMark << defaultInterval
   , direction = Negative
   }
@@ -135,7 +135,7 @@ defaultMark position =
 defaultTick : Tick msg
 defaultTick =
   { length = 5
-  , attributes = [ stroke Color.gray ]
+  , attributes = [ Attributes.stroke Color.gray ]
   }
 
 
@@ -146,9 +146,9 @@ defaultLabel position =
 
 
 {-| -}
-defaultLine : List (Attribute msg) -> Limits -> Line msg
+defaultLine : List (Attribute msg) -> Coordinate.Limits -> Line msg
 defaultLine attributes limits =
-    { attributes = Svg.Attributes.style "pointer-events: none;" :: attributes
+    { attributes = Attributes.style "pointer-events: none;" :: attributes
     , start = limits.min
     , end = limits.max
     }

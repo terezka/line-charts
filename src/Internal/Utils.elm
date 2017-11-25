@@ -2,8 +2,8 @@ module Internal.Utils exposing (..)
 
 {-| -}
 
-import Html exposing (Attribute, Html)
-import Svg exposing (Svg, text, g)
+import Html
+import Svg
 
 
 
@@ -23,13 +23,13 @@ concat first second third =
 
 
 {-| -}
-viewMaybe : Maybe a -> (a -> Svg msg) -> Svg msg
+viewMaybe : Maybe a -> (a -> Svg.Svg msg) -> Svg.Svg msg
 viewMaybe a view =
-    Maybe.withDefault (text "") (Maybe.map view a)
+    Maybe.withDefault (Svg.text "") (Maybe.map view a)
 
 
 {-| -}
-viewMaybeHtml : Maybe a -> (a -> Html msg) -> Html msg
+viewMaybeHtml : Maybe a -> (a -> Html.Html msg) -> Html.Html msg
 viewMaybeHtml a view =
     Maybe.withDefault (Html.text "") (Maybe.map view a)
 
@@ -37,18 +37,14 @@ viewMaybeHtml a view =
 {-| -}
 nonEmptyList : List a -> Maybe (List a)
 nonEmptyList list =
-    if List.isEmpty list then
-        Nothing
-    else
-        Just list
+    if List.isEmpty list
+      then Nothing
+      else Just list
 
 
 {-| -}
 withFirst : List a -> (a -> List a -> b) -> Maybe b
 withFirst stuff process =
     case stuff of
-        first :: rest ->
-            Just <| process first rest
-
-        _ ->
-            Nothing
+        first :: rest -> Just (process first rest)
+        _             -> Nothing

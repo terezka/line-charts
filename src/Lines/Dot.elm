@@ -23,7 +23,7 @@ module Lines.Dot exposing
 
 -}
 
-import Internal.Dot as Dot exposing (Look, Style, Shape)
+import Internal.Dot as Dot
 
 
 

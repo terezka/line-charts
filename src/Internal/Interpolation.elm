@@ -17,18 +17,12 @@ type Interpolation
 toCommands : Interpolation -> List Point -> List Command
 toCommands interpolation =
   case interpolation of
-    Linear ->
-      linear
-
-    Monotone ->
-      monotone
+    Linear   -> linear
+    Monotone -> monotone
 
 
 
--- INTERNAL
-
-
--- LINEAR INTERPOLATION
+-- INTERNAL / LINEAR
 
 
 linear : List Point -> List Command
@@ -37,7 +31,7 @@ linear =
 
 
 
--- MONOTONE INTERPOLATION
+-- INTERNAL / MONOTONE
 
 
 monotone : List Point -> List Command
@@ -110,29 +104,23 @@ slope3 point0 point1 point2 =
 
 toH : Float -> Float -> Float
 toH h0 h1 =
-  if h0 == 0 then
-    if h1 < 0 then
-      0 * -1
-    else
-      h1
-  else
-    h0
+  if h0 == 0
+    then if h1 < 0 then 0 * -1 else h1
+    else h0
 
 
 {-| Calculate a one-sided slope.
 -}
 slope2 : Point -> Point -> Float -> Float
 slope2 point0 point1 t =
-  let
-    h =
-      point1.x - point0.x
-  in
-    if h /= 0 then (3 * (point1.y - point0.y) / h - t) / 2 else t
+  let h = point1.x - point0.x in
+    if h /= 0
+      then (3 * (point1.y - point0.y) / h - t) / 2
+      else t
 
 
 sign : Float -> Float
 sign x =
-  if x < 0 then
-    -1
-  else
-    1
+  if x < 0
+    then -1
+    else 1
