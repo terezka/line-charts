@@ -46,6 +46,10 @@ import Internal.Line as Line
 import Internal.Utils as Utils
 
 
+
+-- CONFIG
+
+
 {-| -}
 type alias Config data msg =
   { frame : Coordinate.Frame
@@ -104,7 +108,7 @@ dash color shape label dashing data =
 
 
 
--- VIEW
+-- VIEW / SIMPLE
 
 
 {-| -}
@@ -114,6 +118,10 @@ viewSimple toX toY datas =
     Html.div [] [ Html.text "If you have more than three data sets, you must use `view` or `viewCustom`!" ]
   else
     view toX toY (List.map4 defaultConfig defaultShapes defaultColors defaultLabel datas)
+
+
+
+-- VIEW / NORMAL
 
 
 {-| -}
@@ -131,6 +139,10 @@ view toX toY =
     , line = Line.default
     , dot = Dot.default
     }
+
+
+
+-- VIEW / CUSTOM
 
 
 {-| -}
