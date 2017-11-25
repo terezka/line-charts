@@ -1,5 +1,5 @@
 module Internal.Events exposing
-    ( Event, toEvent, toSvgAttributes, decoder
+    ( Event, toEvent, toAttributes, decoder
     , Searcher, findNearest, findNearestX, findWithin, findWithinX, cartesian, svg, searcher
     )
 
@@ -26,8 +26,8 @@ toEvent =
 
 
 {-| -}
-toSvgAttributes : List (DataPoint data) -> Coordinate.System -> List (Event data msg) -> List (Svg.Attribute msg)
-toSvgAttributes dataPoints system =
+toAttributes : List (DataPoint data) -> Coordinate.System -> List (Event data msg) -> List (Svg.Attribute msg)
+toAttributes dataPoints system =
     List.map (\(Event attribute) -> attribute dataPoints system)
 
 

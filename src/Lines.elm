@@ -29,12 +29,11 @@ import Svg.Attributes as Attributes
 import Lines.Axis as Axis
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate
-import Lines.Events as Events
 import Lines.Junk as Junk
 import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
-import Internal.Events
+import Internal.Events as Events
 import Internal.Interpolation as Interpolation
 import Internal.Junk
 import Internal.Legends as Legends
@@ -167,7 +166,7 @@ viewCustom config lines =
     attributes =
       List.concat
         [ config.attributes
-        , Internal.Events.toSvgAttributes allPoints system config.events
+        , Events.toAttributes allPoints system config.events
         , [ Attributes.width <| toString system.frame.size.width
           , Attributes.height <| toString system.frame.size.height
           ]
