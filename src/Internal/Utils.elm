@@ -1,5 +1,7 @@
 module Internal.Utils exposing (..)
 
+{-| -}
+
 import Html exposing (Attribute, Html)
 import Svg exposing (Svg, text, g)
 

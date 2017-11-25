@@ -104,7 +104,7 @@ findNearest =
 {-| -}
 findWithin : Float -> Searcher data (Maybe data)
 findWithin =
-    Events.findWithin
+  Events.findWithin
 
 
 {-| -}

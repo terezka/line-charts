@@ -1,8 +1,11 @@
 module Internal.Numbers exposing (customInterval, defaultInterval)
 
+{-| -}
+
 import Regex
 import Round
 import Lines.Coordinate as Coordinate exposing (..)
+
 
 
 {-| -}

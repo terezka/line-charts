@@ -26,13 +26,11 @@ module Lines exposing
 import Html
 import Svg exposing (Svg)
 import Svg.Attributes as Attributes
-
 import Lines.Axis as Axis
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate
 import Lines.Events as Events
 import Lines.Junk as Junk
-
 import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot

@@ -3,10 +3,8 @@ module Internal.Axis exposing (..)
 
 import Svg exposing (Svg, g)
 import Svg.Attributes as Attributes exposing (class)
-
 import Lines.Axis as Axis exposing (Mark)
 import Lines.Coordinate as Coordinate exposing (..)
-
 import Internal.Utils exposing (..)
 import Internal.Svg as Svg exposing (..)
 

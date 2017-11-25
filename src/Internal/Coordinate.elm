@@ -1,6 +1,9 @@
 module Internal.Coordinate exposing (DataPoint, limits, minimum, minimumOrZero, maximum)
 
+{-| -}
+
 import Lines.Coordinate as Coordinate exposing (..)
+
 
 
 {-| -}

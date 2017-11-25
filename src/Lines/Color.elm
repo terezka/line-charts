@@ -3,6 +3,7 @@ module Lines.Color exposing (Color, pink, blue, orange, gray, transparent, black
 {-| -}
 
 
+
 {-| -}
 type alias Color =
   String

@@ -1,5 +1,7 @@
 module Internal.Legends exposing (..)
 
+{-| -}
+
 import Svg exposing (Svg)
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate

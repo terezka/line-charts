@@ -3,7 +3,6 @@ module Lines.Junk exposing
   , Transfrom, transform, move, offset
   )
 
-
 {-|
 
 # Junk
@@ -19,11 +18,12 @@ module Lines.Junk exposing
 
 -}
 
-import Svg exposing (Svg, Attribute, g)
 import Html exposing (Html)
-import Lines.Coordinate as Coordinate exposing (..)
+import Svg exposing (Svg)
+import Lines.Coordinate as Coordinate
 import Internal.Junk
 import Internal.Svg as Svg
+
 
 
 {-| -}

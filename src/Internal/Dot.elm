@@ -6,7 +6,6 @@ module Internal.Dot exposing
   , view, viewSample
   )
 
-
 {-| -}
 
 import Svg exposing (Svg)
@@ -15,6 +14,7 @@ import Lines.Coordinate as Coordinate
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Coordinate as Coordinate exposing (..)
+
 
 
 {-| -}

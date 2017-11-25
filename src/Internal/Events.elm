@@ -3,12 +3,15 @@ module Internal.Events exposing
     , Searcher, findNearest, findNearestX, findWithin, findWithinX, cartesian, svg, searcher
     )
 
+{-| -}
+
 import DOM
 import Svg
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Utils exposing (withFirst)
 import Json.Decode as Json
+
 
 
 {-| -}

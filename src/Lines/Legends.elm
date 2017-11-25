@@ -29,10 +29,12 @@ import Internal.Legends as Legends
 
 
 
+-- CONFIG
+
+
 {-| -}
 type alias Legends msg
   = Legends.Legends msg
-
 
 
 {-| -}

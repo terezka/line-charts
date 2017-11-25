@@ -32,6 +32,7 @@ module Lines.Coordinate exposing
 -}
 
 
+
 {-| Specifies the size and margins of your graphic.
 -}
 type alias Frame =
@@ -63,6 +64,7 @@ type alias Limits =
   }
 
 
+
 -- SYSTEM
 
 
@@ -72,6 +74,7 @@ type alias System =
   , x : Limits
   , y : Limits
   }
+
 
 
 -- TRANSLATION

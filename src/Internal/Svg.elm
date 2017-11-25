@@ -1,11 +1,16 @@
 module Internal.Svg exposing (..)
 
+
 import Svg exposing (Svg, Attribute, g)
 import Svg.Attributes as Attributes exposing (class, fill, style, x1, x2, y1, y2, stroke, d)
 import Lines.Color as Color
+import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Path as Path exposing (..)
 import Internal.Utils exposing (..)
-import Lines.Coordinate as Coordinate exposing (..)
+
+
+
+-- AXIS PRIMITIVES
 
 
 horizontal : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Float -> Svg msg
