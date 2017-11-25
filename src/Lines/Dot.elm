@@ -27,36 +27,31 @@ import Internal.Dot as Dot
 
 
 
--- LOOK
+-- QUICK START
 
 
 {-| -}
-type alias Look data =
-  Dot.Look data
+none : Shape
+none =
+  Dot.None
 
 
 {-| -}
-default : Look data
-default =
-  Dot.default
+default1 : Shape
+default1 =
+  circle
 
 
 {-| -}
-static : Style -> Look data
-static =
-  Dot.static
+default2 : Shape
+default2 =
+  triangle
 
 
 {-| -}
-emphasizable : Style -> Style -> (data -> Bool) -> Look data
-emphasizable =
-  Dot.emphasizable
-
-
-{-| Helper for `emphasizable`. -}
-isMaybe : Maybe data -> data -> Bool
-isMaybe hovering datum =
-  Just datum == hovering
+default3 : Shape
+default3 =
+  cross
 
 
 
@@ -64,14 +59,8 @@ isMaybe hovering datum =
 
 
 {-| -}
-type alias Shape
-  = Dot.Shape
-
-
-{-| -}
-none : Shape
-none =
-  Dot.None
+type alias Shape =
+  Dot.Shape
 
 
 {-| -}
@@ -111,25 +100,36 @@ cross =
 
 
 
--- SHAPES / DEFAULTS
+-- LOOK
 
 
 {-| -}
-default1 : Shape
-default1 =
-  circle
+type alias Look data =
+  Dot.Look data
 
 
 {-| -}
-default2 : Shape
-default2 =
-  triangle
+default : Look data
+default =
+  Dot.default
 
 
 {-| -}
-default3 : Shape
-default3 =
-  cross
+static : Style -> Look data
+static =
+  Dot.static
+
+
+{-| -}
+emphasizable : Style -> Style -> (data -> Bool) -> Look data
+emphasizable =
+  Dot.emphasizable
+
+
+{-| Helper for `emphasizable`. -}
+isMaybe : Maybe data -> data -> Bool
+isMaybe hovering datum =
+  Just datum == hovering
 
 
 

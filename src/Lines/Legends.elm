@@ -37,13 +37,6 @@ type alias Legends msg
   = Legends.Legends msg
 
 
-{-| -}
-type alias Pieces msg =
-  { sample : Svg.Svg msg
-  , label : String
-  }
-
-
 
 -- NONE
 
@@ -88,6 +81,13 @@ byBeginning =
 bucketed : (Coordinate.Limits -> Float) -> (Coordinate.Limits -> Float) -> Legends msg
 bucketed =
   Legends.bucketed
+
+
+{-| -}
+type alias Pieces msg =
+  { sample : Svg.Svg msg
+  , label : String
+  }
 
 
 {-| -}
