@@ -26,23 +26,24 @@ TODO: Add area
 
 import Html
 import Svg exposing (Svg)
-import Svg.Attributes as SvgA
+import Svg.Attributes as Attributes
+
 import Lines.Axis as Axis
-import Lines.Junk as Junk
 import Lines.Color as Color
+import Lines.Coordinate as Coordinate
 import Lines.Events as Events
+import Lines.Junk as Junk
 import Lines.Legends as Legends
-import Lines.Coordinate as Coordinate exposing (..)
-import Internal.Coordinate as Coordinate exposing (..)
-import Internal.Legends
-import Internal.Interpolation as Interpolation
-import Internal.Coordinate as Coordinate
-import Internal.Utils as Utils
+
 import Internal.Axis as Axis
-import Internal.Junk
-import Internal.Events
-import Internal.Line as Line
+import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
+import Internal.Events
+import Internal.Interpolation as Interpolation
+import Internal.Junk
+import Internal.Legends
+import Internal.Line as Line
+import Internal.Utils as Utils
 
 
 {-| -}
@@ -119,8 +120,8 @@ viewSimple toX toY datas =
 view : (data -> Float) -> (data -> Float) -> List (Line data) -> Svg.Svg msg
 view toX toY =
   viewCustom
-    { frame = Frame (Margin 40 150 90 150) (Size 650 400)
-    , attributes = [ SvgA.style "font-family: monospace;" ] -- TODO: Maybe remove
+    { frame = Coordinate.Frame (Coordinate.Margin 40 150 90 150) (Coordinate.Size 650 400)
+    , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
     , events = []
     , x = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toX
     , y = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toY
@@ -141,10 +142,10 @@ viewCustom config lines =
       List.map (List.map dataPoint << .data << lineConfig) lines
 
     dataPoint datum =
-      DataPoint datum (point datum)
+      Coordinate.DataPoint datum (point datum)
 
     point datum =
-      Point
+      Coordinate.Point
         (config.x.variable datum)
         (config.y.variable datum)
 
@@ -169,8 +170,8 @@ viewCustom config lines =
       List.concat
         [ config.attributes
         , Internal.Events.toSvgAttributes allPoints system config.events
-        , [ SvgA.width <| toString system.frame.size.width
-          , SvgA.height <| toString system.frame.size.height
+        , [ Attributes.width <| toString system.frame.size.width
+          , Attributes.height <| toString system.frame.size.height
           ]
         ]
 
@@ -180,7 +181,7 @@ viewCustom config lines =
     viewLegends =
       case config.legends of -- TODO move to legends module
         Internal.Legends.Free placement view ->
-          Svg.g [ SvgA.class "legends" ] <|
+          Svg.g [ Attributes.class "legends" ] <|
             List.map2 (viewLegendFree system placement view) lines dataPoints
 
         Internal.Legends.Bucketed sampleWidth toContainer ->
@@ -192,12 +193,12 @@ viewCustom config lines =
   in
   container <|
     Svg.svg attributes
-      [ Svg.g [ SvgA.class "junk--below" ] junk.below
-      , Svg.g [ SvgA.class "lines" ] viewLines
+      [ Svg.g [ Attributes.class "junk--below" ] junk.below
+      , Svg.g [ Attributes.class "lines" ] viewLines
       , Axis.viewHorizontal system config.x.look
       , Axis.viewVertical system config.y.look
       , viewLegends
-      , Svg.g [ SvgA.class "junk--above" ] junk.above
+      , Svg.g [ Attributes.class "junk--above" ] junk.above
       ]
 
 
@@ -230,20 +231,20 @@ defaultConfig shape color label data =
     }
 
 
-viewLine : Config data msg -> Coordinate.System -> Line data -> List (DataPoint data) -> Svg.Svg msg
+viewLine : Config data msg -> Coordinate.System -> Line data -> List (Coordinate.DataPoint data) -> Svg.Svg msg
 viewLine config system (Line line) dataPoints =
   let
     viewDot dataPoint =
       Dot.view config.dot line.shape line.color system dataPoint
   in
   Svg.g
-    [ SvgA.class "line" ] -- TODO prefix classes
+    [ Attributes.class "line" ] -- TODO prefix classes
     [ Line.view config.line config.interpolation system line.color line.dashing dataPoints
-    , Svg.g [ SvgA.class "dots" ] <| List.map viewDot dataPoints
+    , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
     ]
 
 
-viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data -> List (DataPoint data) -> Svg.Svg msg
+viewLegendFree : Coordinate.System -> Internal.Legends.Placement -> (String -> Svg msg) -> Line data -> List (Coordinate.DataPoint data) -> Svg.Svg msg
 viewLegendFree system placement view (Line line) dataPoints =
   let
     ( orderedPoints, anchor, xOffset ) =
@@ -257,7 +258,7 @@ viewLegendFree system placement view (Line line) dataPoints =
   Utils.viewMaybe (List.head orderedPoints) <| \{ point } ->
     Svg.g
       [ Junk.transform [ Junk.move system point.x point.y, Junk.offset xOffset 3 ]
-      , SvgA.style <| "text-anchor: " ++ anchor ++ ";"
+      , Attributes.style <| "text-anchor: " ++ anchor ++ ";"
       ]
       [ view line.label ]
 
@@ -273,10 +274,10 @@ viewSample : Config data msg -> Coordinate.System -> Float -> LineConfig data ->
 viewSample config system sampleWidth line =
   let
     middle =
-      toCartesianPoint system <| Point (sampleWidth / 2) 0
+      Coordinate.toCartesianPoint system <| Coordinate.Point (sampleWidth / 2) 0
   in
   Svg.g
-    [ SvgA.class "sample" ]
+    [ Attributes.class "sample" ]
     [ Line.viewSample config.line line.color line.dashing sampleWidth
     , Dot.viewNormal config.dot line.shape line.color system middle
     ]
