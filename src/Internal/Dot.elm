@@ -3,7 +3,7 @@ module Internal.Dot exposing
   , Shape(..)
   , Style, style, bordered, disconnected, aura, full
   , Variety
-  , view, viewNormal
+  , view, viewSample
   )
 
 
@@ -137,8 +137,8 @@ view (Look config) shape color system dataPoint =
 
 
 {-| -}
-viewNormal : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewNormal (Look config) shape =
+viewSample : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
+viewSample (Look config) shape =
   let
     (Style normal) =
       config.normal

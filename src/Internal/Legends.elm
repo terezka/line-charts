@@ -19,6 +19,15 @@ type Legends msg
 
 
 {-| -}
+type alias Container msg =
+  Coordinate.System -> List (Pieces msg) -> Svg msg
+
+
+type alias SampleWidth =
+  Float
+
+
+{-| -}
 type Placement
   = Beginning
   | Ending
@@ -72,15 +81,29 @@ view
 view system lineLook dotLook legends lines dataPoints =
   case legends of
     Free placement view ->
-      Svg.g [ Attributes.class "legends" ] <|
-        List.map2 (viewLegendFree system placement view) lines dataPoints
+      viewFrees system placement view lines dataPoints
 
-    Bucketed sampleWidth toContainer ->
-      toContainer system <|
-        List.map (toLegendConfig lineLook dotLook system sampleWidth) lines
+    Bucketed sampleWidth container ->
+      viewBucketed system lineLook dotLook sampleWidth container lines
 
     None ->
       Svg.text ""
+
+
+
+-- VIEW / FREE
+
+
+viewFrees
+  :  Coordinate.System
+  -> Placement
+  -> (String -> Svg msg)
+  -> List (Line.Line data)
+  -> List (List (Coordinate.DataPoint data))
+  -> Svg.Svg msg
+viewFrees system placement view lines dataPoints =
+  Svg.g [ Attributes.class "legends" ] <|
+    List.map2 (viewLegendFree system placement view) lines dataPoints
 
 
 viewLegendFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> List (Coordinate.DataPoint data) -> Svg.Svg msg
@@ -102,11 +125,26 @@ viewLegendFree system placement view (Line.Line line) dataPoints =
       [ view line.label ]
 
 
-toLegendConfig : Line.Look data -> Dot.Look data -> Coordinate.System -> Float -> Line.Line data -> Pieces msg
-toLegendConfig lineLook dotLook system sampleWidth (Line.Line line) =
-  { sample = viewSample system lineLook dotLook sampleWidth line
-  , label = line.label
-  }
+
+-- VIEW / BUCKETED
+
+
+viewBucketed
+  : Coordinate.System
+  -> Line.Look data
+  -> Dot.Look data
+  -> SampleWidth
+  -> Container msg
+  -> List (Line.Line data)
+  -> Svg.Svg msg
+viewBucketed system lineLook dotLook sampleWidth container lines =
+  let
+    toLegendConfig (Line.Line line) =
+      { sample = viewSample system lineLook dotLook sampleWidth line
+      , label = line.label
+      }
+  in
+  container system <| List.map toLegendConfig lines
 
 
 viewSample : Coordinate.System -> Line.Look data -> Dot.Look data -> Float -> Line.LineConfig data -> Svg msg
@@ -118,5 +156,5 @@ viewSample system lineLook dotLook sampleWidth line =
   Svg.g
     [ Attributes.class "sample" ]
     [ Line.viewSample lineLook line.color line.dashing sampleWidth
-    , Dot.viewNormal dotLook line.shape line.color system middle
+    , Dot.viewSample dotLook line.shape line.color system middle
     ]
