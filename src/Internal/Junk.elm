@@ -15,7 +15,7 @@ import Internal.Utils exposing (..)
 
 {-| TODO remove points -}
 type Junk msg =
-  Junk (List Point -> Coordinate.System -> Layers msg)
+  Junk (Coordinate.System -> Layers msg)
 
 
 {-| -}
@@ -27,7 +27,7 @@ type alias Layers msg =
 
 
 {-| -}
-getLayers : Junk msg -> List Point -> Coordinate.System -> Layers msg
+getLayers : Junk msg -> Coordinate.System -> Layers msg
 getLayers (Junk toLayers) =
   toLayers
 

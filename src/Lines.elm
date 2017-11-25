@@ -165,7 +165,7 @@ viewCustom config lines =
 
     -- View
     junk =
-      Internal.Junk.getLayers config.junk allPoints system
+      Internal.Junk.getLayers config.junk system
 
     container plot =
       Html.div [] (plot :: junk.html)

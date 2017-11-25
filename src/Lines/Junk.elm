@@ -34,13 +34,13 @@ type alias Layers msg =
 {-| -}
 none : Junk msg
 none =
-  Internal.Junk.Junk (\_ _ -> Layers [] [] [])
+  Internal.Junk.Junk (\_ -> Layers [] [] [])
 
 
 {-| -}
 custom : (Coordinate.System -> Layers msg) -> Junk msg
-custom toJunk =
-  Internal.Junk.Junk (\_ -> toJunk)
+custom =
+  Internal.Junk.Junk
 
 
 
