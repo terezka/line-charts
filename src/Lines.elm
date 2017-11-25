@@ -125,18 +125,7 @@ viewSimple toX toY datas =
 {-| -}
 view : (data -> Float) -> (data -> Float) -> List (Line data) -> Svg.Svg msg
 view toX toY =
-  viewCustom
-    { frame = Coordinate.Frame (Coordinate.Margin 40 150 90 150) (Coordinate.Size 650 400)
-    , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
-    , events = []
-    , x = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toX
-    , y = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toY
-    , junk = Junk.none
-    , interpolation = linear
-    , legends = Legends.bucketed .max (.min >> (+) 1) -- TODO
-    , line = Line.default
-    , dot = Dot.default
-    }
+  viewCustom (defaultConfig toX toY)
 
 
 
@@ -207,6 +196,21 @@ viewCustom config lines =
 
 
 -- INTERNAL / DEFAULTS
+
+
+defaultConfig : (data -> Float) -> (data -> Float) -> Config data msg
+defaultConfig toX toY =
+  { frame = Coordinate.Frame (Coordinate.Margin 40 150 90 150) (Coordinate.Size 650 400)
+  , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
+  , events = []
+  , x = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toX
+  , y = Axis.defaultAxis (Axis.defaultTitle "" 0 0) toY
+  , junk = Junk.none
+  , interpolation = linear
+  , legends = Legends.bucketed .max (.min >> (+) 1) -- TODO
+  , line = Line.default
+  , dot = Dot.default
+  }
 
 
 defaultColors : List Color.Color
