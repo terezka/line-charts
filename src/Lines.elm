@@ -118,7 +118,7 @@ viewSimple toX toY data =
 
 
 
--- VIEW / NORMAL
+-- VIEW
 
 
 {-| -}

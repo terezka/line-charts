@@ -3,7 +3,7 @@ module Internal.Axis exposing (..)
 
 import Lines.Axis as Axis exposing (Mark)
 import Internal.Utils exposing (..)
-import Internal.Junk exposing (..)
+import Internal.Junk as Junk exposing (..)
 import Lines.Coordinate as Coordinate  exposing (..)
 import Svg exposing (Attribute, Svg, g)
 import Svg.Attributes as Attributes exposing (class, fill, style, x1, x2, y1, y2, stroke, d)
@@ -79,7 +79,7 @@ viewHorizontalTitle system at { title } =
         [ move system position.x position.y
         , offset title.xOffset (title.yOffset + 40)
         ]
-    , style "text-anchor: middle;"
+    , Junk.anchor Junk.Middle
     ]
     [ title.view ]
 
@@ -95,7 +95,7 @@ viewVerticalTitle system at { title } =
         [ move system position.x position.y
         , offset (title.xOffset - 5) (title.yOffset - 15)
         ]
-    , style "text-anchor: middle;"
+    , Junk.anchor Junk.Middle
     ]
     [ title.view ]
 
@@ -136,7 +136,7 @@ viewHorizontalLabel system { direction } position view =
                 20
     in
     g [ transform [ move system position.x position.y, offset 0 yOffset ]
-      , style "text-anchor: middle;"
+      , Junk.anchor Junk.Middle
       ]
       [ view ]
 
@@ -144,11 +144,10 @@ viewHorizontalLabel system { direction } position view =
 viewVerticalLabel : Coordinate.System -> Axis.Look msg -> Point -> Svg msg -> Svg msg
 viewVerticalLabel system { direction } position view =
     let
-        anchorOfLabel =
-            if isPositive direction then
-                "text-anchor: start;"
-            else
-                "text-anchor: end;"
+        anchor =
+            if isPositive direction
+              then Junk.Start
+              else Junk.End
 
         xOffset =
             if isPositive direction then
@@ -157,7 +156,7 @@ viewVerticalLabel system { direction } position view =
                 -10
     in
     g [ transform [ move system position.x position.y, offset xOffset 5 ]
-      , style anchorOfLabel
+      , Junk.anchor anchor
       ]
       [ view ]
 

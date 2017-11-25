@@ -4,6 +4,7 @@ import Svg exposing (Svg)
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
 import Lines.Junk as Junk
+import Internal.Junk as Junk
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
 import Internal.Line as Line
@@ -11,11 +12,20 @@ import Internal.Utils as Utils
 
 
 
+-- CONFIG
+
+
 {-| -}
 type Legends msg
   = None
   | Free Placement (String -> Svg msg)
-  | Bucketed Float (Coordinate.System -> List (Pieces msg) -> Svg msg)
+  | Bucketed SampleWidth (Coordinate.System -> List (Pieces msg) -> Svg msg)
+
+
+{-| -}
+type Placement
+  = Beginning
+  | Ending
 
 
 {-| -}
@@ -23,14 +33,9 @@ type alias Container msg =
   Coordinate.System -> List (Pieces msg) -> Svg msg
 
 
+{-| -}
 type alias SampleWidth =
   Float
-
-
-{-| -}
-type Placement
-  = Beginning
-  | Ending
 
 
 {-| -}
@@ -47,23 +52,6 @@ bucketed toX toY =
     Svg.g
       [ Junk.transform [ Junk.move system (toX system.x) (toY system.y) ] ]
       (List.indexedMap defaultLegend legends)
-
-
-defaultLegend : Int -> Pieces msg -> Svg msg
-defaultLegend index { sample, label } =
-   Svg.g
-    [ Junk.transform [ Junk.offset 20 (toFloat index * 15) ] ]
-    [ sample
-    , Svg.g
-        [ Junk.transform [ Junk.offset 40 4 ] ]
-        [ defaultLabel label ]
-    ]
-
-
-defaultLabel : String -> Svg msg
-defaultLabel label =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text label ] ]
-
 
 
 
@@ -103,26 +91,25 @@ viewFrees
   -> Svg.Svg msg
 viewFrees system placement view lines dataPoints =
   Svg.g [ Attributes.class "legends" ] <|
-    List.map2 (viewLegendFree system placement view) lines dataPoints
+    List.map2 (viewFree system placement view) lines dataPoints
 
 
-viewLegendFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> List (Coordinate.DataPoint data) -> Svg.Svg msg
-viewLegendFree system placement view (Line.Line line) dataPoints =
+viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> List (Coordinate.DataPoint data) -> Svg.Svg msg
+viewFree system placement viewLabel (Line.Line line) dataPoints =
   let
     ( orderedPoints, anchor, xOffset ) =
         case placement of
           Beginning ->
-            ( dataPoints, "end", -10 )
+            ( dataPoints, Junk.End, -10 )
 
           Ending ->
-            ( List.reverse dataPoints, "start", 10 )
+            ( List.reverse dataPoints, Junk.Start, 10 )
+
+    transformation { x, y } =
+      Junk.transform [ Junk.move system x y, Junk.offset xOffset 3 ]
   in
   Utils.viewMaybe (List.head orderedPoints) <| \{ point } ->
-    Svg.g
-      [ Junk.transform [ Junk.move system point.x point.y, Junk.offset xOffset 3 ]
-      , Attributes.style <| "text-anchor: " ++ anchor ++ ";"
-      ]
-      [ view line.label ]
+    Svg.g [ transformation point, Junk.anchor anchor ] [ viewLabel line.label ]
 
 
 
@@ -139,12 +126,12 @@ viewBucketed
   -> Svg.Svg msg
 viewBucketed system lineLook dotLook sampleWidth container lines =
   let
-    toLegendConfig (Line.Line line) =
+    toConfig (Line.Line line) =
       { sample = viewSample system lineLook dotLook sampleWidth line
       , label = line.label
       }
   in
-  container system <| List.map toLegendConfig lines
+  container system <| List.map toConfig lines
 
 
 viewSample : Coordinate.System -> Line.Look data -> Dot.Look data -> Float -> Line.LineConfig data -> Svg msg
@@ -158,3 +145,23 @@ viewSample system lineLook dotLook sampleWidth line =
     [ Line.viewSample lineLook line.color line.dashing sampleWidth
     , Dot.viewSample dotLook line.shape line.color system middle
     ]
+
+
+
+-- DEFAULTS
+
+
+defaultLegend : Int -> Pieces msg -> Svg msg
+defaultLegend index { sample, label } =
+   Svg.g
+    [ Junk.transform [ Junk.offset 20 (toFloat index * 15) ] ]
+    [ sample
+    , Svg.g
+        [ Junk.transform [ Junk.offset 40 4 ] ]
+        [ defaultLabel label ]
+    ]
+
+
+defaultLabel : String -> Svg msg
+defaultLabel label =
+  Svg.text_ [] [ Svg.tspan [] [ Svg.text label ] ]

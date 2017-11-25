@@ -102,3 +102,27 @@ yTick system width userAttributes x y =
         ]
   in
     Svg.line attributes []
+
+
+
+-- ANCHOR
+
+
+{-| -}
+type Anchor
+  = Start
+  | Middle
+  | End
+
+
+{-| -}
+anchor : Anchor -> Svg.Attribute msg
+anchor anchor =
+  let
+    anchorString =
+      case anchor of
+        Start -> "start"
+        Middle -> "middle"
+        End -> "end"
+  in
+  Attributes.style <| "text-anchor: " ++ anchorString ++ ";"
