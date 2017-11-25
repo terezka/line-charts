@@ -20,10 +20,10 @@ module Lines.Junk exposing
 -}
 
 import Svg exposing (Svg, Attribute, g)
-import Svg.Attributes as Attributes
 import Html exposing (Html)
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Junk
+import Internal.Svg as Svg
 
 
 {-| -}
@@ -56,42 +56,23 @@ custom =
 
 
 {-| -}
-type Transfrom =
-  Transfrom Float Float
+type alias Transfrom =
+  Svg.Transfrom
 
 
 {-| -}
 move : Coordinate.System -> Float -> Float -> Transfrom
-move system x y =
-  Transfrom (toSVG X system x) (toSVG Y system y)
+move =
+  Svg.move
 
 
 {-| -}
 offset : Float -> Float -> Transfrom
-offset x y =
-  Transfrom x y
+offset =
+  Svg.offset
 
 
 {-| -}
 transform : List Transfrom -> Svg.Attribute msg
-transform translations =
-  let
-    (Transfrom x y) =
-      toPosition translations
-  in
-  Attributes.transform <|
-    "translate(" ++ toString x ++ ", " ++ toString y ++ ")"
-
-
-
--- INTERNAL
-
-
-toPosition : List Transfrom -> Transfrom
-toPosition =
-  List.foldr addPosition (Transfrom 0 0)
-
-
-addPosition : Transfrom -> Transfrom -> Transfrom
-addPosition (Transfrom x y) (Transfrom xf yf) =
-  Transfrom (xf + x) (yf + y)
+transform =
+  Svg.transform

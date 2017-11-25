@@ -3,12 +3,11 @@ module Internal.Legends exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
-import Lines.Junk as Junk
-import Internal.Junk as Junk
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
 import Internal.Line as Line
 import Internal.Utils as Utils
+import Internal.Svg as Svg
 
 
 
@@ -50,7 +49,7 @@ bucketed : (Coordinate.Limits -> Float) -> (Coordinate.Limits -> Float) -> Legen
 bucketed toX toY =
   Bucketed 30 <| \system legends ->
     Svg.g
-      [ Junk.transform [ Junk.move system (toX system.x) (toY system.y) ] ]
+      [ Svg.transform [ Svg.move system (toX system.x) (toY system.y) ] ]
       (List.indexedMap defaultLegend legends)
 
 
@@ -100,16 +99,16 @@ viewFree system placement viewLabel (Line.Line line) dataPoints =
     ( orderedPoints, anchor, xOffset ) =
         case placement of
           Beginning ->
-            ( dataPoints, Junk.End, -10 )
+            ( dataPoints, Svg.End, -10 )
 
           Ending ->
-            ( List.reverse dataPoints, Junk.Start, 10 )
+            ( List.reverse dataPoints, Svg.Start, 10 )
 
     transformation { x, y } =
-      Junk.transform [ Junk.move system x y, Junk.offset xOffset 3 ]
+      Svg.transform [ Svg.move system x y, Svg.offset xOffset 3 ]
   in
   Utils.viewMaybe (List.head orderedPoints) <| \{ point } ->
-    Svg.g [ transformation point, Junk.anchor anchor ] [ viewLabel line.label ]
+    Svg.g [ transformation point, Svg.anchorStyle anchor ] [ viewLabel line.label ]
 
 
 
@@ -154,10 +153,10 @@ viewSample system lineLook dotLook sampleWidth line =
 defaultLegend : Int -> Pieces msg -> Svg msg
 defaultLegend index { sample, label } =
    Svg.g
-    [ Junk.transform [ Junk.offset 20 (toFloat index * 15) ] ]
+    [ Svg.transform [ Svg.offset 20 (toFloat index * 15) ] ]
     [ sample
     , Svg.g
-        [ Junk.transform [ Junk.offset 40 4 ] ]
+        [ Svg.transform [ Svg.offset 40 4 ] ]
         [ defaultLabel label ]
     ]
 

@@ -10,7 +10,7 @@ import Lines.Events as Events
 import Lines.Junk as Junk exposing (..)
 import Lines.Legends as Legends
 import Lines.Line as Line
-import Internal.Junk exposing (vertical)
+import Internal.Svg exposing (vertical) -- TODO
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import Svg.Attributes as SvgA
 
