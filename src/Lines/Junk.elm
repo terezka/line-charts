@@ -8,10 +8,10 @@ module Lines.Junk exposing
 # Junk
 
 ## Quick start
-@docs Junk, none
+@docs none
 
 ## Custom
-@docs custom
+@docs Junk, custom
 
 ## Placing help
 @docs Transfrom, transform, move, offset

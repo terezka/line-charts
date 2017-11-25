@@ -1,6 +1,11 @@
 module Lines.Color exposing (Color, pink, blue, orange, gray, transparent, black)
 
-{-| -}
+{-|
+
+# Colors
+@docs Color, pink, blue, orange, gray, transparent, black
+
+-}
 
 
 

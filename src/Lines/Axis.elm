@@ -1,5 +1,5 @@
 module Lines.Axis exposing
-  ( defaultAxis
+  ( default
   , Axis, Look, Line, Mark, Tick, Direction(..)
   , defaultLook
   , towardsZero
@@ -12,7 +12,7 @@ module Lines.Axis exposing
 {-| # Axis
 
 ## Quick start
-@docs defaultAxis
+@docs default
 
 ## What is an axis?
 @docs Axis, Look, Line, Mark, Tick, Direction
@@ -91,8 +91,8 @@ type Direction
 
 
 {-| -}
-defaultAxis : Title msg -> (data -> Float) -> Axis data msg
-defaultAxis title variable =
+default : Title msg -> (data -> Float) -> Axis data msg
+default title variable =
   { variable = variable
   , look = defaultLook title
   }

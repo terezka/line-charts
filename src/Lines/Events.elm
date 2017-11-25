@@ -1,5 +1,5 @@
 module Lines.Events exposing
-  ( default
+  ( none, default
   , Event, onClick, onMouseMove, onMouseLeave, on
   , Searcher, findNearest, findNearestX, findWithin, findWithinX, cartesian, searcher
   )
@@ -9,7 +9,7 @@ module Lines.Events exposing
 # Events
 
 ## Quick start
-@docs default
+@docs none, default
 
 ## Events
 @docs Event, onClick, onMouseMove, onMouseLeave, on
@@ -36,6 +36,11 @@ default msg =
     , onMouseLeave (msg Nothing)
     ]
 
+
+{-| -}
+none : List (Event data msg)
+none =
+  []
 
 
 -- EVENTS
