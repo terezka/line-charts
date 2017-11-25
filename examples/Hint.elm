@@ -1,7 +1,6 @@
 module HintExample exposing (main)
 
 import Html exposing (Html, div, h1, node, p, text)
-import Internal.Primitives exposing (vertical)
 import Lines as Lines exposing (..)
 import Lines.Axis as Axis
 import Lines.Color as Color
@@ -11,11 +10,11 @@ import Lines.Events as Events
 import Lines.Junk as Junk exposing (..)
 import Lines.Legends as Legends
 import Lines.Line as Line
+import Internal.Junk exposing (vertical)
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import Svg.Attributes as SvgA
 
 
--- TODO
 -- MODEL
 
 
@@ -69,25 +68,28 @@ view model =
 
 junk : Data -> Junk.Junk Msg
 junk hint =
-    Junk.custom <|
-        \system ->
-            let
-                viewHint =
-                    Svg.g
-                        [ placeWithOffset system system.x.max (system.y.max - 1) 20 10 ]
-                        [ text_ []
-                            [ tspan [ SvgA.x "0", SvgA.dy "1em" ] [ text <| "Year: " ++ toString hint.year ]
-                            , tspan [ SvgA.x "0", SvgA.dy "1em" ] [ text <| "Cats: " ++ toString hint.cats ]
-                            ]
-                        ]
+    Junk.custom <| \s ->
+      let
+          viewHint =
+              Junk.container s s.x.max (s.y.max - 1) 20 10
+                [ text_ []
+                    [ viewDimension "Year" hint.year
+                    , viewDimension "Cats" hint.cats
+                    ]
+                ]
 
-                line =
-                    vertical system [] hint.year system.y.min system.y.max
-            in
-            { below = []
-            , above = [ viewHint ]
-            , html = []
-            }
+          viewDimension label value =
+            tspan
+              [ SvgA.x "0", SvgA.dy "1em" ]
+              [ text <| label ++ ": " ++ toString value ]
+
+          line =
+              vertical s [] hint.year s.y.min s.y.max
+      in
+      { below = []
+      , above = [ viewHint, line ]
+      , html = []
+      }
 
 
 
