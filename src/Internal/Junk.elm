@@ -13,7 +13,7 @@ import Internal.Utils exposing (..)
 
 
 
-{-| TODO remove points -}
+{-| -}
 type Junk msg =
   Junk (Coordinate.System -> Layers msg)
 

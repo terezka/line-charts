@@ -183,7 +183,7 @@ viewCustom config lines =
       List.map2 (viewLine config system) lines points
 
     viewLegends =
-      case config.legends of
+      case config.legends of -- TODO move to legends module
         Internal.Legends.Free placement view ->
           Svg.g [ SvgA.class "legends" ] <|
             List.map2 (viewLegendFree system placement view) lines points
