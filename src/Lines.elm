@@ -111,11 +111,10 @@ dash =
 
 {-| -}
 viewSimple : (data -> Float) -> (data -> Float) -> List (List data) -> Svg.Svg msg
-viewSimple toX toY datas =
-  if List.length datas > 3 then
-    Html.div [] [ Html.text "If you have more than three data sets, you must use `view` or `viewCustom`!" ]
-  else
-    view toX toY (List.map4 Line.defaultLine defaultShapes defaultColors defaultLabel datas)
+viewSimple toX toY data =
+  if List.length data > 3
+    then viewError
+    else view toX toY (defaultLines data)
 
 
 
@@ -195,6 +194,15 @@ viewCustom config lines =
 
 
 
+-- VIEW / ERROR
+
+
+viewError : Html.Html msg
+viewError =
+   Html.div [] [ Html.text "If you have more than three data sets, you must use `view` or `viewCustom`!" ]
+
+
+
 -- INTERNAL / DEFAULTS
 
 
@@ -211,6 +219,11 @@ defaultConfig toX toY =
   , line = Line.default
   , dot = Dot.default
   }
+
+
+defaultLines : List (List data) -> List (Line data)
+defaultLines =
+  List.map4 Line.defaultLine defaultShapes defaultColors defaultLabel
 
 
 defaultColors : List Color.Color
