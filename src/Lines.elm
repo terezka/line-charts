@@ -21,6 +21,8 @@ module Lines exposing
 ### Interpolations
 @docs Interpolation, linear, monotone
 
+More interpolations will come in later versions.
+
 -}
 
 import Html
@@ -56,8 +58,8 @@ import Internal.Line as Line
   - `junk` gets its name from Edward Tufte's concept of "chart junk". Here you
     are allowed set your creativity free and add whatever SVG or HTML fun you
     can imagine. Useful when you are the victim of a designer's urge to explore
-    their artistic potential within data visualizing. -- TODO See
-    `Lines.Junk` for more information and examples.
+    their artistic potential within data visualizing. See `Lines.Junk` for
+    more information and examples. -- TODO joke
   - `x` allows you to customize the look of your horizontal axis. See
     `Lines.Axis` for more information and examples.
   - `y` allows you to customize the look of your vertical axis. See
@@ -71,21 +73,31 @@ import Internal.Line as Line
   - `dot` allows you to customize your dots' size and style. See
     `Lines.Dot` for more information and examples.
 
-  TODO reorder properties, add links
+  TODO reorder properties, add links, align examples to run progressively
 
 
 The default configuration is the following. A good start would be to copy it and
-play around with customizations available for each property.
+play around with customizations available for each property. Again, to be used
+with `viewCustom`!
 
-    chartConfig : (data -> Float) -> (data -> Float) -> Config data msg
-    chartConfig toXValue toYValue =
-      { frame = Coordinate.Frame (Coordinate.Margin 40 150 90 150) (Coordinate.Size 650 400)
+    import Lines
+    import Lines.Axis as Axis
+    import Lines.Coordinate exposing (Frame, Margin, Size)
+    import Lines.Dot as Dot
+    import Lines.Events as Events
+    import Lines.Junk as Junk
+    import Lines.Legends as Legends
+    import Lines.Line as Line
+
+    chartConfig : Config data msg
+    chartConfig =
+      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
       , attributes = []
       , events = []
       , junk = Junk.none
-      , x = Axis.default (Axis.defaultTitle "" 0 0) toX
-      , y = Axis.default (Axis.defaultTitle "" 0 0) toY
-      , interpolation = linear
+      , x = Axis.default (Axis.defaultTitle "Age" 0 0) .age       -- FIXME
+      , y = Axis.default (Axis.defaultTitle "Weight" 0 0) .weight -- FIXME
+      , interpolation = Lines.linear
       , legends = Legends.default
       , line = Line.default
       , dot = Dot.default
@@ -93,10 +105,10 @@ play around with customizations available for each property.
 
     chart : Html msg
     chart =
-      Lines.viewCustom (chartConfig .year .riskOfDiabetes)
-        [ Lines.line "pink" Dot.square "U.S." healthData.usa
-        , Lines.line "brown" Dot.triangle "E.U." healthData.eu
-        , Lines.dash "darkviolet" Dot.none "Avg." [ 2, 3 ] healthData.avg
+      Lines.viewCustom chartConfig
+        [ Lines.line "red" Dot.cross "Alice" alice
+        , Lines.line "blue" Dot.square "Bob" bob
+        , Lines.line "green" Dot.circle "Chuck" chuck
         ]
 
 -}
@@ -109,7 +121,7 @@ type alias Config data msg =
   , y : Axis.Axis data msg
   , interpolation : Interpolation
   , legends : Legends.Legends msg
-  , line : Line.Look data
+  , line : Line.Look data -- TODO Look type ref doesn't show up in docs
   , dot : Dot.Look data
   }
 
@@ -118,18 +130,21 @@ type alias Config data msg =
 -- INTERPOLATIONS
 
 
-{-| -}
+{-| Defines an interpolation (curving of lines).
+-}
 type alias Interpolation =
   Interpolation.Interpolation
 
 
-{-| -}
+{-| A linear interpolation.
+-}
 linear : Interpolation
 linear =
   Interpolation.Linear
 
 
-{-| -}
+{-| A monotone-x interpolation.
+-}
 monotone : Interpolation
 monotone =
   Interpolation.Monotone
@@ -370,10 +385,10 @@ view toX toY =
 available customizations. The following example changes the font color of
 your chart:
 
-    import Svg.Attributes as Attributes
+    import Svg.Attributes
     import Lines
     import Lines.Axis as Axis
-    import Lines.Coordinate as Coordinate
+    import Lines.Coordinate exposing (Frame, Margin, Size)
     import Lines.Dot as Dot
     import Lines.Events as Events
     import Lines.Junk as Junk
@@ -382,13 +397,15 @@ your chart:
 
     chartConfig : (data -> Float) -> (data -> Float) -> Config data msg
     chartConfig toXValue toYValue =
-      { frame = Coordinate.Frame (Coordinate.Margin 40 150 90 150) (Coordinate.Size 650 400)
-      , attributes = [ Attributes.style "fill: darkslategray;" ] -- Changed from the default!
+      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
+      , attributes =
+          -- Changed from the default!
+          [ Svg.Attributes.style "fill: darkslategray;" ]
       , events = []
       , junk = Junk.none
       , x = Axis.default (Axis.defaultTitle "" 0 0) toXValue
       , y = Axis.default (Axis.defaultTitle "" 0 0) toYValue
-      , interpolation = linear
+      , interpolation = Lines.linear
       , legends = Legends.default
       , line = Line.default
       , dot = Dot.default
