@@ -41,7 +41,7 @@ none =
 {-| -}
 default : Legends msg
 default =
-  bucketed .max .max
+  Legends.default
 
 
 

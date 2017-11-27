@@ -12,10 +12,10 @@ module Lines.Coordinate exposing
 @docs Frame, Size, Margin
 
 # Limits
-@docs Limits, limits
+@docs Limits
 
 # System
-@docs System, system
+@docs System
 
 # Translation
 @docs Orientation

@@ -19,6 +19,7 @@ module Lines.Line exposing
 import Internal.Line as Line
 
 
+-- TODO add style creator
 
 {-| -}
 type alias Look data =

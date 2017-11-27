@@ -47,6 +47,12 @@ type alias Pieces msg =
 
 
 {-| -}
+default : Legends msg
+default =
+  bucketed .max .max
+
+
+{-| -}
 bucketed : (Coordinate.Limits -> Float) -> (Coordinate.Limits -> Float) -> Legends msg
 bucketed toX toY =
   Bucketed 30 <| \system legends ->

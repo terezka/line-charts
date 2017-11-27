@@ -30,8 +30,8 @@ type Look data =
 default : Look data
 default =
   Look
-    { normal = disconnected 30 2
-    , emphasized = aura 20 4 0.5
+    { normal = disconnected 70 2
+    , emphasized = aura 50 4 0.5
     , isEmphasized = always False
     }
 
@@ -41,7 +41,7 @@ static : Style -> Look data
 static style =
   Look
     { normal = style
-    , emphasized = aura 20 4 0.5
+    , emphasized = aura 50 4 0.5
     , isEmphasized = always False
     }
 

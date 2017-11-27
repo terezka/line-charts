@@ -74,8 +74,8 @@ type Look data =
 default : Look data
 default =
   Look
-    { normal = style 1 identity
-    , emphasized = style 2 identity
+    { normal = style 2 identity
+    , emphasized = style 3 identity
     , isEmphasized = always False
     }
 
@@ -95,7 +95,7 @@ static : Style -> Look data
 static normal =
   Look
     { normal = normal
-    , emphasized = style 1 identity
+    , emphasized = style 2 identity
     , isEmphasized = always False
     }
 
