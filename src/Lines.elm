@@ -7,18 +7,16 @@ module Lines exposing
 
 {-|
 
-# Lines
-
-## Quick start
+# Quick start
 @docs view1, view2, view3
 
-## Customize lines
+# Customize lines
 @docs view, line, dash
 
-## Customize everything else
+# Customize everything else
 @docs Config, viewCustom
 
-### Interpolations
+## Interpolations
 @docs Interpolation, linear, monotone
 
 More interpolations will come in later versions.
@@ -130,7 +128,7 @@ type alias Config data msg =
 -- INTERPOLATIONS
 
 
-{-| Defines an interpolation (curving of lines).
+{-| Representes an interpolation (curving of lines).
 -}
 type alias Interpolation =
   Interpolation.Interpolation
@@ -316,32 +314,6 @@ view2 toX toY dataset1 dataset2 =
     humanChart =
       Lines.view3 .age .weight alice bob chuck
 
-But what if you have more people? What if you have _four_ people?! In that case,
-check out `view` or `viewCustom`.
--}
-view3 : (data -> Float) -> (data -> Float) -> List data -> List data -> List data -> Svg.Svg msg
-view3 toX toY dataset1 dataset2 dataset3 =
-  view toX toY <| defaultLines [ dataset1, dataset2, dataset3 ]
-
-
-
--- VIEW
-
-
-{-| Show any amount of lines in your chart. Additional customizations of your
-lines are also made available by the use of the function `line`.
-
-    import Lines
-    import Lines.Dot as Dot
-
-    humanChart : Html msg
-    humanChart =
-      Lines.view .age .weight
-        [ Lines.line "red" Dot.cross "Alice" alice
-        , Lines.line "blue" Dot.square "Bob" bob
-        , Lines.line "green" Dot.circle "Chuck" chuck
-        ]
-
     type alias Info =
       { age : Float
       , weight : Float
@@ -369,6 +341,35 @@ lines are also made available by the use of the function `line`.
       , Info 25 89 1.83 85000
       , Info 43 95 1.84 120000
       ]
+
+But what if you have more people? What if you have _four_ people?! In that case,
+check out `view`.
+-}
+view3 : (data -> Float) -> (data -> Float) -> List data -> List data -> List data -> Svg.Svg msg
+view3 toX toY dataset1 dataset2 dataset3 =
+  view toX toY <| defaultLines [ dataset1, dataset2, dataset3 ]
+
+
+
+-- VIEW
+
+
+{-| Show any amount of lines in your chart. Additional customizations of your
+lines are also made available by the use of the function `line`.
+
+    import Lines
+    import Lines.Dot as Dot
+
+    humanChart : Html msg
+    humanChart =
+      Lines.view .age .weight
+        [ Lines.line "red" Dot.cross "Alice" alice
+        , Lines.line "blue" Dot.square "Bob" bob
+        , Lines.line "green" Dot.circle "Chuck" chuck
+        ]
+
+    -- Missing the data `alice`, `bob`, and `chuck`?
+    -- You can copy/paste it from the example by `view3`!
 
 
 -}

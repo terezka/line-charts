@@ -10,7 +10,23 @@ module Lines.Dot exposing
 # Dots
 
 ## Quick start
-@docs none, default1, default2, default3
+Can't be bothered to figure out about dots right now? I gotcha.
+@docs none
+
+### Easy defaults
+
+The following defaults are equivalent to `Dot.circle`, `Dot.triangle`, and
+`Dot.cross`, respectivily.
+
+    humanChart : Html msg
+    humanChart =
+      Lines.view .age .weight
+        [ Lines.line "red" Dot.default1 "Alice" alice
+        , Lines.line "blue" Dot.default2 "Bob" bob
+        , Lines.line "green" Dot.default3 "Chuck" chuck
+        ]
+
+@docs default1, default2, default3
 
 ## Customizing dot shape
 @docs Shape, circle, triangle, square, diamond, plus, cross
@@ -30,7 +46,13 @@ import Internal.Dot as Dot
 -- QUICK START
 
 
-{-| -}
+{-| If you don't want a dot at all.
+
+    humanChart : Html msg
+    humanChart =
+      Lines.view .age .weight
+        [ Lines.line "red" Dot.none "Alice" alice ]
+-}
 none : Shape
 none =
   Dot.None
@@ -58,7 +80,19 @@ default3 =
 -- SHAPES
 
 
-{-| -}
+{-| Representes a dot shape.
+
+    humanChart : Html msg
+    humanChart =
+      Lines.view .age .weight
+        [ Lines.line "red" Dot.diamond "Alice" alice
+        , Lines.line "blue" Dot.plus "Bob" bob
+        , Lines.line "green" Dot.cross "Chuck" chuck
+        ]
+
+**Note:** Interested in changing the size and style of the dots? Check out
+the `Look` type!
+-}
 type alias Shape =
   Dot.Shape
 

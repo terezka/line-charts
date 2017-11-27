@@ -16,7 +16,7 @@ import Lines.Line as Line
 
 main : Html msg
 main =
-  diabetesChart
+  humanChart
 
 
 type alias Info =
@@ -51,7 +51,7 @@ humanChart : Html msg
 humanChart =
   Lines.view .age .income
     [ Lines.line "red" Dot.cross "Alice" alice
-    , Lines.line "blue" Dot.square "Bob" bob
+    , Lines.line "blue" Dot.diamond "Bob" bob
     , Lines.line "green" Dot.circle "Chuck" chuck
     ]
 
