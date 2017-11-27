@@ -47,12 +47,22 @@ chuck =
   , Info 43 95 1.84 120000
   ]
 
+
+average : List Info
+average =
+  [ Info 4 22.3 1.0 0
+  , Info 25 79.7 1.8 46000
+  , Info 43 85 1.82 70667
+  ]
+
+
 humanChart : Html msg
 humanChart =
   Lines.view .age .income
-    [ Lines.line "red" Dot.cross "Alice" alice
-    , Lines.line "blue" Dot.diamond "Bob" bob
-    , Lines.line "green" Dot.circle "Chuck" chuck
+    [ Lines.line "darkslateblue" Dot.plus "Alice" alice
+    , Lines.line "darkturquoise" Dot.diamond "Bob" bob
+    , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
+    , Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
     ]
 
 
@@ -71,26 +81,42 @@ chartConfig toXValue toYValue =
   }
 
 
-diabetesChart : Html msg
-diabetesChart =
-  Lines.viewCustom (chartConfig .year .riskOfDiabetes)
-    [ Lines.line "pink" Dot.square "U.S." healthDataUSA
-    , Lines.dash "darkviolet" Dot.none "Avg." [ 2, 3 ] healthDataAvg
-    ]
+calcAverage : List (List Info) -> List Info -> List Info
+calcAverage people avaragesOfPeople =
+  if List.head (List.head people |> Maybe.withDefault []) == Nothing then
+    avaragesOfPeople
+  else
+    let
+      amount =
+        toFloat (List.length people)
 
-type alias Health =
-  { year : Float
-  , riskOfDiabetes : Float
-  }
+      aggregate info total =
+        { age = total.age + info.age
+        , weight = total.weight + info.weight
+        , height = total.height + info.height
+        , income = total.income + info.income
+        }
 
+      divide total =
+        { age = total.age / amount
+        , weight = total.weight / amount
+        , height = total.height / amount
+        , income = total.income / amount
+        }
 
-healthDataUSA : List Health
-healthDataUSA =
-  [ Health 1950 0.02, Health 2000 0.04, Health 2005 0.12, Health 2010 0.19 ]
+      averageOfInfo infos =
+        List.foldl aggregate (Info 0 0 0 0) infos |> divide
 
-healthDataAvg : List Health
-healthDataAvg =
-  [ Health 1950 0.01, Health 2000 0.02, Health 2005 0.09, Health 2010 0.12 ]
+      avarageOfPeople =
+        List.filterMap List.head people |> averageOfInfo
+
+      newAvaragesOfPeople =
+         avarageOfPeople :: avaragesOfPeople
+
+      nextPeople =
+        List.map (List.tail >> Maybe.withDefault []) people
+    in
+      calcAverage nextPeople newAvaragesOfPeople
 
 
 bmi : Info -> Float

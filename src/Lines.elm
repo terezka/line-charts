@@ -7,10 +7,55 @@ module Lines exposing
 
 {-|
 
+Welcome! If you wish to follow the examples, copy/paste the following mock data into your
+program!
+
+    type alias Info =
+      { age : Float
+      , weight : Float
+      , height : Float
+      , income : Float
+      }
+
+    alice : List Info
+    alice =
+      [ Info 4 24 0.94 0
+      , Info 25 75 1.73 25000
+      , Info 43 83 1.75 40000
+      ]
+
+    bob : List Info
+    bob =
+      [ Info 4 22 1.01 0
+      , Info 25 75 1.87 28000
+      , Info 43 77 1.87 52000
+      ]
+
+    chuck : List Info
+    chuck =
+      [ Info 4 21 0.98 0
+      , Info 25 89 1.83 85000
+      , Info 43 95 1.84 120000
+      ]
+
+    average : List Info
+    average =
+      [ Info 4 22.3 1.0 0
+      , Info 25 79.7 1.8 46000
+      , Info 43 85 1.82 70667
+      ]
+
+
+    bmi : Info -> Float
+    bmi person =
+      person.weight / person.height ^ 2
+
+
+
 # Quick start
 @docs view1, view2, view3
 
-# Customize lines
+# Arbitary amounts of lines and their customizations
 @docs view, line, dash
 
 # Customize everything else
@@ -159,21 +204,30 @@ type alias Line data = -- TODO Move to Line.elm?
 
 {-| Customize a solid line.
 
-For example, if you want to show a pink line with squares for the dots
-indicating your data points, and one which is brown and has triangles for dots,
-you can do that like this:
+Change the color or try some of the available options from `Lines.Dot`!
 
-    diabetesChart : Html msg
-    diabetesChart =
-      Lines.view .year .riskOfDiabetes
-        [ Lines.line "pink" Dot.square "U.S." healthData.usa
-        , Lines.line "brown" Dot.triangle "E.U." healthData.eu
+    import Lines
+    import Lines.Dot as Dot
+
+    humanChart : Html msg
+    humanChart =
+      Lines.view .age .weight
+        [ Lines.line "darkslateblue" Dot.cross "Alice" alice
+        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
+        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
+    -- Psst! Missing the data sets `alice`, `bob` and `chuck`?
+    -- Copy/paste from the top of the `Lines` documentation!
+
+
 Besides the color and the dot, you also pass the function a string title and
-the data for that line. The title will show up in the legend in top right
-side of your chart. You can learn more about the customizations available
-for legends by studying the `Config` type.
+the data for that line. These titles will show up in the legend in top right
+side of your chart.
+
+If you are interested in customizing your legends, dot size or line width,
+check out `viewCustom`. For now though, I'd recommend you stick to `view` and
+get your lines right first, and then stepping up the complexity.
 
  -}
 line : Color.Color -> Dot.Shape -> String -> List data -> Line data
@@ -188,21 +242,17 @@ is and array of floats indicating the pattern of your dashing. TODO insert link
 to svg dash-stroke. Dashed lines are especially good for visualizing processed
 data, like averages or predicted values. For example:
 
-    diabetesChart : Html msg
-    diabetesChart =
-      Lines.view .year .avgRiskOfDiabetes
-        [ Lines.line "pink" Dot.square "U.S." healthData.usa
-        , Lines.line "brown" Dot.triangle "E.U." healthData.eu
-        , Lines.dash "darkviolet" Dot.none "Avg." [ 2, 2 ] healthData.avg
+    humanChart : Html msg
+    humanChart =
+      Lines.view .age .weight
+        [ Lines.line "darkslateblue" Dot.cross "Alice" alice
+        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
+        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
+        , Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
         ]
 
-Besides the color and the dot, you also pass the function a string title and
-the data for that line. The title will show up in the legend in top right
-side of your chart.
-
-If you are interested in customizing your legends, dot size or line width,
-check out `viewCustom`. For now though, I'd recommend you stick to `view` and
-get your lines right first, and they stepping up the complexity.
+    -- Psst! Missing the data sets `alice`, `bob`, `chuck` and `average`?
+    -- Copy/paste from the top of the `Lines` documentation!
 
 -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
@@ -239,22 +289,18 @@ Notice that we provide `.x` and `.y` to specify which data we want to show.
 So if we had more complex data points (like a human with an `age`, `weight`,
 `height`, and `income`) we can easily pick which two we want to display:
 
-    type alias Alice =
-      { age : Float
-      , weight : Float
-      , height : Float
-      , income : Float
-      }
-
     aliceChart : Html msg
     aliceChart =
       Lines.view1 .age .weight
-        [ Alice  4 24 0.94 0
-        , Alice 25 75 1.73 25000
-        , Alice 43 83 1.75 40000
+        [ Info  4 24 0.94 0
+        , Info 25 75 1.73 25000
+        , Info 43 83 1.75 40000
         ]
 
     -- Try changing .weight to .income
+
+    -- Psst! Missing the data type `Info`?
+    -- Copy/paste from the top of the `Lines` documentation!
 
 
 **Note 1:** Rather than using data like `.weight` directly, you can make a
@@ -280,27 +326,8 @@ to their age, we can display it like this:
     humanChart =
       Lines.view2 .age .weight alice chuck
 
-    type alias Info =
-      { age : Float
-      , weight : Float
-      , height : Float
-      , income : Float
-      }
-
-    alice : List Info
-    alice =
-      [ Info  4 24 0.94 0
-      , Info 25 75 1.73 25000
-      , Info 43 83 1.75 40000
-      ]
-
-    chuck : List Info
-    chuck =
-      [ Info  4 21 0.98 0
-      , Info 25 89 1.83 85000
-      , Info 43 95 1.84 120000
-      ]
-
+    -- Psst! Missing the data sets `alice` and `chuck`?
+    -- Copy/paste from the top of the `Lines` documentation!
 
 -}
 view2 : (data -> Float) -> (data -> Float) -> List data -> List data -> Svg.Svg msg
@@ -314,33 +341,8 @@ view2 toX toY dataset1 dataset2 =
     humanChart =
       Lines.view3 .age .weight alice bob chuck
 
-    type alias Info =
-      { age : Float
-      , weight : Float
-      , height : Float
-      , income : Float
-      }
-
-    alice : List Info
-    alice =
-      [ Info 4 24 0.94 0
-      , Info 25 75 1.73 25000
-      , Info 43 83 1.75 40000
-      ]
-
-    bob : List Info
-    bob =
-      [ Info 4 22 1.01 0
-      , Info 25 75 1.87 28000
-      , Info 43 77 1.87 52000
-      ]
-
-    chuck : List Info
-    chuck =
-      [ Info 4 21 0.98 0
-      , Info 25 89 1.83 85000
-      , Info 43 95 1.84 120000
-      ]
+    -- Psst! Missing the data sets `alice`, `bob`, and `chuck`?
+    -- Copy/paste from the top of the `Lines` documentation!
 
 But what if you have more people? What if you have _four_ people?! In that case,
 check out `view`.
@@ -368,9 +370,8 @@ lines are also made available by the use of the function `line`.
         , Lines.line "green" Dot.circle "Chuck" chuck
         ]
 
-    -- Missing the data `alice`, `bob`, and `chuck`?
-    -- You can copy/paste it from the example by `view3`!
-
+    -- Psst! Missing the data sets `alice`, `bob`, and `chuck`?
+    -- Copy/paste from the top of the `Lines` documentation!
 
 -}
 view : (data -> Float) -> (data -> Float) -> List (Line data) -> Svg.Svg msg
@@ -396,16 +397,16 @@ your chart:
     import Lines.Legends as Legends
     import Lines.Line as Line
 
-    chartConfig : (data -> Float) -> (data -> Float) -> Config data msg
-    chartConfig toXValue toYValue =
+    chartConfig : Config data msg
+    chartConfig =
       { frame = Frame (Margin 40 150 90 150) (Size 650 400)
       , attributes =
           -- Changed from the default!
           [ Svg.Attributes.style "fill: darkslategray;" ]
       , events = []
       , junk = Junk.none
-      , x = Axis.default (Axis.defaultTitle "" 0 0) toXValue
-      , y = Axis.default (Axis.defaultTitle "" 0 0) toYValue
+      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
+      , y = Axis.default (Axis.defaultTitle "" 0 0) .weight
       , interpolation = Lines.linear
       , legends = Legends.default
       , line = Line.default
@@ -414,10 +415,11 @@ your chart:
 
     chart : Html msg
     chart =
-      Lines.viewCustom (chartConfig .year .riskOfDiabetes)
-        [ Lines.line "pink" Dot.square "U.S." healthData.usa
-        , Lines.line "brown" Dot.triangle "E.U." healthData.eu
-        , Lines.dash "darkviolet" Dot.none "Avg." [ 2, 3 ] healthData.avg
+      Lines.viewCustom chartConfig
+        [ Lines.line "darkslateblue" Dot.cross "Alice" alice
+        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
+        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
+        , Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
         ]
 
 -}
