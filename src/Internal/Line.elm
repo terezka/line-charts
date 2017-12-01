@@ -131,56 +131,8 @@ style width color =
   Style { width = width, color = color }
 
 
-{-| -}
-view
-  :  Coordinate.System
-  -> Dot.Look data
-  -> Interpolation.Interpolation
-  -> Look data
-  -> Line data
-  -> List (Coordinate.DataPoint data)
-  -> Svg.Svg msg
-view system dotLook interpolation lineLook (Line line) dataPoints =
-  let
-    viewDot =
-      Dot.view dotLook line.shape line.color system
 
-    dots =
-      Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
-
-    interpolation_ =
-      viewInterpolation system lineLook interpolation line.color line.dashing line.areaOpacity dataPoints
-  in
-  -- TODO prefix classes
-  Svg.g [ Attributes.class "line" ] <| interpolation_ ++ [ dots ]
-
-
-{-| -}
-viewInterpolation
-  :  Coordinate.System
-  -> Look data
-  -> Interpolation.Interpolation
-  -> Color.Color
-  -> List Float
-  -> Maybe Float
-  -> List (DataPoint data)
-  -> List (Svg.Svg msg)
-viewInterpolation system look interpolation mainColor dashing areaOpacity dataPoints =
-  let
-    interpolationCommands =
-      Interpolation.toCommands interpolation (List.map .point dataPoints)
-
-    commands =
-      case dataPoints of
-        first :: rest -> Path.Move first.point :: interpolationCommands
-        [] -> []
-
-    lineAttributes =
-      toLineAttributes look mainColor dashing dataPoints
-  in
-  [ Path.view system lineAttributes commands
-  , Utils.viewMaybe areaOpacity (viewArea system look mainColor dataPoints interpolationCommands)
-  ]
+-- SYSTEM
 
 
 {-| -}
@@ -200,6 +152,57 @@ isArea (Line line) =
 
         Nothing ->
             False
+
+
+
+-- VIEW
+
+
+{-| -}
+view
+  :  Coordinate.System
+  -> Dot.Look data
+  -> Interpolation.Interpolation
+  -> Look data
+  -> Line data
+  -> List (Coordinate.DataPoint data)
+  -> Svg.Svg msg
+view system dotLook interpolation lineLook (Line line) dataPoints =
+  let
+    viewDot =
+      Dot.view dotLook line.shape line.color system
+  in
+  -- TODO prefix classes
+  Svg.g [ Attributes.class "line" ]
+    [ Utils.viewMaybe line.areaOpacity <|
+        viewArea system lineLook interpolation line.color dataPoints
+    , viewLine system lineLook interpolation line.color line.dashing dataPoints
+    , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
+    ]
+
+
+viewLine
+  :  Coordinate.System
+  -> Look data
+  -> Interpolation.Interpolation
+  -> Color.Color
+  -> List Float
+  -> List (DataPoint data)
+  -> Svg.Svg msg
+viewLine system look interpolation mainColor dashing dataPoints =
+  let
+    interpolationCommands =
+      Interpolation.toCommands interpolation (List.map .point dataPoints)
+
+    commands =
+      case dataPoints of
+        first :: rest -> Path.Move first.point :: interpolationCommands
+        [] -> []
+
+    lineAttributes =
+      toLineAttributes look mainColor dashing dataPoints
+  in
+  Path.view system lineAttributes commands
 
 
 toLineAttributes : Look data -> Color.Color -> List Float -> List (DataPoint data) -> List (Svg.Attribute msg)
@@ -225,9 +228,19 @@ toLineAttributes (Look look) mainColor dashing dataPoints =
       ]
 
 
-viewArea : Coordinate.System -> Look data -> Color.Color -> List (DataPoint data) -> List Path.Command -> Float -> Svg.Svg msg
-viewArea system look mainColor dataPoints interpolationCommands opacity =
+viewArea
+  :  Coordinate.System
+  -> Look data
+  -> Interpolation.Interpolation
+  -> Color.Color
+  -> List (DataPoint data)
+  -> Float
+  -> Svg.Svg msg
+viewArea system look interpolation mainColor dataPoints opacity =
   let
+    interpolationCommands =
+      Interpolation.toCommands interpolation (List.map .point dataPoints)
+
     commands =
       case dataPoints of
         first :: rest ->
