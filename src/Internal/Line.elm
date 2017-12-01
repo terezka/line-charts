@@ -144,12 +144,15 @@ view system dotLook interpolation lineLook (Line line) dataPoints =
   let
     viewDot =
       Dot.view dotLook line.shape line.color system
+
+    dots =
+      Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
+
+    interpolation_ =
+      viewInterpolation system lineLook interpolation line.color line.dashing line.areaOpacity dataPoints
   in
-  Svg.g
-    [ Attributes.class "line" ] -- TODO prefix classes
-    [ viewInterpolation system lineLook interpolation line.color line.dashing line.areaOpacity dataPoints
-    , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
-    ]
+  -- TODO prefix classes
+  Svg.g [ Attributes.class "line" ] <| interpolation_ ++ [ dots ]
 
 
 {-| -}
@@ -161,7 +164,7 @@ viewInterpolation
   -> List Float
   -> Maybe Float
   -> List (DataPoint data)
-  -> Svg.Svg msg
+  -> List (Svg.Svg msg)
 viewInterpolation system look interpolation mainColor dashing areaOpacity dataPoints =
   let
     interpolationCommands =
@@ -175,11 +178,9 @@ viewInterpolation system look interpolation mainColor dashing areaOpacity dataPo
     lineAttributes =
       toLineAttributes look mainColor dashing dataPoints
   in
-  Svg.g
-    [ Attributes.class "interpolation" ]
-    [ Path.view system lineAttributes commands
-    , Utils.viewMaybe areaOpacity (viewArea system look mainColor dataPoints interpolationCommands)
-    ]
+  [ Path.view system lineAttributes commands
+  , Utils.viewMaybe areaOpacity (viewArea system look mainColor dataPoints interpolationCommands)
+  ]
 
 
 {-| -}
@@ -262,7 +263,8 @@ toAreaAttributes (Look look) mainColor opacity dataPoints =
     color =
       style.color mainColor
   in
-  [ Attributes.fill color
+  [ Attributes.class "interpolation__area"
+  , Attributes.fill color
   , Attributes.fillOpacity (toString opacity)
   ]
 
