@@ -181,6 +181,10 @@ view system dotLook interpolation lineLook (Line line) dataPoints =
     ]
 
 
+
+-- VIEW / LINE
+
+
 viewLine
   :  Coordinate.System
   -> Look data
@@ -226,6 +230,10 @@ toLineAttributes (Look look) mainColor dashing dataPoints =
       , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
       , Attributes.fill "transparent"
       ]
+
+
+
+-- VIEW / AREA
 
 
 viewArea
