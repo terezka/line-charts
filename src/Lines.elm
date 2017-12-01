@@ -7,64 +7,18 @@ module Lines exposing
 
 {-|
 
-Welcome! If you wish to follow the examples, copy/paste the following mock data into your
-program!
-
-    type alias Info =
-      { age : Float
-      , weight : Float
-      , height : Float
-      , income : Float
-      }
-
-    alice : List Info
-    alice =
-      [ Info 4 24 0.94 0
-      , Info 25 75 1.73 25000
-      , Info 43 83 1.75 40000
-      ]
-
-    bob : List Info
-    bob =
-      [ Info 4 22 1.01 0
-      , Info 25 75 1.87 28000
-      , Info 43 77 1.87 52000
-      ]
-
-    chuck : List Info
-    chuck =
-      [ Info 4 21 0.98 0
-      , Info 25 89 1.83 85000
-      , Info 43 95 1.84 120000
-      ]
-
-    average : List Info
-    average =
-      [ Info 4 22.3 1.0 0
-      , Info 25 79.7 1.8 46000
-      , Info 43 85 1.82 70667
-      ]
-
-
-    bmi : Info -> Float
-    bmi person =
-      person.weight / person.height ^ 2
-
-
-
 # Quick start
 @docs view1, view2, view3
 
-# Arbitary amounts of lines and their customizations
+# Customize lines
 @docs view, line, dash
 
-# Customize everything else
+# Customize everything
 @docs Config, viewCustom
 
 ## Interpolations
 @docs Interpolation, linear, monotone
 
-More interpolations will come in later versions.
 
 -}
 
@@ -138,8 +92,8 @@ with `viewCustom`!
       , attributes = []
       , events = []
       , junk = Junk.none
-      , x = Axis.default (Axis.defaultTitle "Age" 0 0) .age       -- FIXME
-      , y = Axis.default (Axis.defaultTitle "Weight" 0 0) .weight -- FIXME
+      , x = Axis.default (Axis.defaultTitle "Age" 0 0) .age
+      , y = Axis.default (Axis.defaultTitle "Weight" 0 0) .weight
       , interpolation = Lines.linear
       , legends = Legends.default
       , line = Line.default
@@ -204,7 +158,7 @@ type alias Line data = -- TODO Move to Line.elm?
 
 {-| Customize a solid line.
 
-Change the color or try some of the available options from `Lines.Dot`!
+Try changing the color or explore all the available dot shapes from `Lines.Dot`!
 
     import Lines
     import Lines.Dot as Dot
@@ -217,13 +171,10 @@ Change the color or try some of the available options from `Lines.Dot`!
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
-    -- Psst! Missing the data sets `alice`, `bob` and `chuck`?
-    -- Copy/paste from the top of the `Lines` documentation!
-
+_See the full example on Ellie [here](https://ellie-app.com/stWdWjqGZa1/0)._
 
 Besides the color and the dot, you also pass the function a string title and
-the data for that line. These titles will show up in the legend in top right
-side of your chart.
+the data for that line. These titles will show up in the legends.
 
 If you are interested in customizing your legends, dot size or line width,
 check out `viewCustom`. For now though, I'd recommend you stick to `view` and
@@ -238,21 +189,21 @@ line =
 {-| Customize a dashed line.
 
 Works just like `line`, except it takes another argument second to last which
-is and array of floats indicating the pattern of your dashing. TODO insert link
-to svg dash-stroke. Dashed lines are especially good for visualizing processed
-data, like averages or predicted values. For example:
+is and array of floats describing your dashing pattern. See the
+[SVG `stroke-dasharray` documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
+for examples of patterns. Dashed lines are especially good for visualizing
+processed data, like averages or predicted values.
 
     humanChart : Html msg
     humanChart =
       Lines.view .age .weight
-        [ Lines.line "darkslateblue" Dot.cross "Alice" alice
+        [ Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
+        , Lines.line "darkslateblue" Dot.cross "Alice" alice
         , Lines.line "darkturquoise" Dot.diamond "Bob" bob
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
-        , Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
         ]
 
-    -- Psst! Missing the data sets `alice`, `bob`, `chuck` and `average`?
-    -- Copy/paste from the top of the `Lines` documentation!
+_See the full example on Ellie [here](https://ellie-app.com/syMhqfR8qa1/1)._
 
 -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
@@ -285,6 +236,8 @@ For example, if you want to show a few points, you can display it like this:
         , Point 10 10
         ]
 
+_See the example on Ellie [here](https://ellie-app.com/s5M4fxFwGa1/0)._
+
 Notice that we provide `.x` and `.y` to specify which data we want to show.
 So if we had more complex data points (like a human with an `age`, `weight`,
 `height`, and `income`) we can easily pick which two we want to display:
@@ -299,9 +252,7 @@ So if we had more complex data points (like a human with an `age`, `weight`,
 
     -- Try changing .weight to .income
 
-    -- Psst! Missing the data type `Info`?
-    -- Copy/paste from the top of the `Lines` documentation!
-
+_See the example on Ellie [here](https://ellie-app.com/s8kQfLfYZa1/1)._
 
 **Note 1:** Rather than using data like `.weight` directly, you can make a
 function like `bmi human = human.weight / human.height ^ 2` and create a
@@ -326,8 +277,7 @@ to their age, we can display it like this:
     humanChart =
       Lines.view2 .age .weight alice chuck
 
-    -- Psst! Missing the data sets `alice` and `chuck`?
-    -- Copy/paste from the top of the `Lines` documentation!
+_See the full example on Ellie [here](https://ellie-app.com/scTM9Mw77a1/0)._
 
 -}
 view2 : (data -> Float) -> (data -> Float) -> List data -> List data -> Svg.Svg msg
@@ -341,8 +291,7 @@ view2 toX toY dataset1 dataset2 =
     humanChart =
       Lines.view3 .age .weight alice bob chuck
 
-    -- Psst! Missing the data sets `alice`, `bob`, and `chuck`?
-    -- Copy/paste from the top of the `Lines` documentation!
+_See the full example on Ellie [here](https://ellie-app.com/sdNHxCfrJa1/0)._
 
 But what if you have more people? What if you have _four_ people?! In that case,
 check out `view`.
@@ -370,8 +319,7 @@ lines are also made available by the use of the function `line`.
         , Lines.line "green" Dot.circle "Chuck" chuck
         ]
 
-    -- Psst! Missing the data sets `alice`, `bob`, and `chuck`?
-    -- Copy/paste from the top of the `Lines` documentation!
+_See the full example on Ellie [here](https://ellie-app.com/sgL9mdF7ra1/1)._
 
 -}
 view : (data -> Float) -> (data -> Float) -> List (Line data) -> Svg.Svg msg
@@ -419,8 +367,9 @@ your chart:
         [ Lines.line "darkslateblue" Dot.cross "Alice" alice
         , Lines.line "darkturquoise" Dot.diamond "Bob" bob
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
-        , Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
         ]
+
+_See the full example on Ellie [here](https://ellie-app.com/smkVxrpMfa1/0)._
 
 -}
 viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
