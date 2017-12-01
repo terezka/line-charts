@@ -1,6 +1,6 @@
 module Lines exposing
   ( view1, view2, view3
-  , view, line, dash
+  , view, line, dash, area
   , viewCustom, Config
   , Interpolation, linear, monotone
   )
@@ -11,7 +11,7 @@ module Lines exposing
 @docs view1, view2, view3
 
 # Customize lines
-@docs view, line, dash
+@docs view, line, dash, area
 
 # Customize everything
 @docs Config, viewCustom
@@ -211,6 +211,12 @@ dash =
   Line.dash
 
 
+{-| -}
+area : Color.Color -> Dot.Shape -> String -> Float -> List data -> Line data
+area =
+  Line.area
+
+
 -- TODO: Add area
 -- TODO: Fix zero limit
 -- TODO: Make sure max data lenght wins
@@ -394,7 +400,7 @@ viewCustom config lines =
     system =
       { frame = config.frame
       , x = Coordinate.limits (.point >> .x) allPoints
-      , y = Coordinate.limits (.point >> .y) allPoints
+      , y = Coordinate.limits (.point >> .y) allPoints |> Line.setAreaDomain lines
       }
 
     -- View
@@ -454,7 +460,7 @@ defaultConfig toX toY =
 
 defaultLines : List (List data) -> List (Line data)
 defaultLines =
-  List.map4 Line.defaultLine defaultShapes defaultColors defaultLabel
+  List.map4 Line.line defaultColors defaultShapes defaultLabel
 
 
 defaultColors : List Color.Color

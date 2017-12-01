@@ -1,8 +1,9 @@
 module Internal.Line exposing
-  ( Line(..), LineConfig, lineConfig, defaultLine, line, dash
+  ( Line(..), LineConfig, lineConfig, line, dash, area
   , Look, default, wider, static, emphasizable
   , Style, style
   , view, viewSample
+  , setAreaDomain
   )
 
 {-| -}
@@ -15,6 +16,7 @@ import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Dot as Dot
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
+import Internal.Utils as Utils
 
 
 
@@ -26,6 +28,7 @@ type Line data =
 {-| -}
 type alias LineConfig data =
   { color : Color.Color
+  , areaOpacity : Maybe Float
   , shape : Dot.Shape
   , dashing : List Float
   , label : String
@@ -40,21 +43,21 @@ lineConfig (Line line) =
 
 
 {-| -}
-defaultLine : Dot.Shape -> Color.Color -> String -> List data -> Line data
-defaultLine shape color label data =
-  Line <| LineConfig color shape [] label data
-
-
-{-| -}
 line : Color.Color -> Dot.Shape -> String -> List data -> Line data
 line color shape label data =
-  Line <| LineConfig color shape [] label data
+  Line <| LineConfig color Nothing shape [] label data
 
 
 {-| -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
 dash color shape label dashing data =
-  Line <| LineConfig color shape dashing label data
+  Line <| LineConfig color Nothing shape dashing label data
+
+
+{-| -}
+area : Color.Color -> Dot.Shape -> String -> Float -> List data -> Line data
+area color shape label areaOpacity data =
+  Line <| LineConfig color (Just areaOpacity) shape [] label data
 
 
 
@@ -144,14 +147,22 @@ view system dotLook interpolation lineLook (Line line) dataPoints =
   in
   Svg.g
     [ Attributes.class "line" ] -- TODO prefix classes
-    [ viewInterpolation system lineLook interpolation line.color line.dashing dataPoints
+    [ viewInterpolation system lineLook interpolation line.color line.dashing line.areaOpacity dataPoints
     , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
     ]
 
 
 {-| -}
-viewInterpolation : Coordinate.System -> Look data -> Interpolation.Interpolation -> Color.Color -> List Float -> List (DataPoint data) -> Svg.Svg msg
-viewInterpolation system look interpolation mainColor dashing dataPoints =
+viewInterpolation
+  :  Coordinate.System
+  -> Look data
+  -> Interpolation.Interpolation
+  -> Color.Color
+  -> List Float
+  -> Maybe Float
+  -> List (DataPoint data)
+  -> Svg.Svg msg
+viewInterpolation system look interpolation mainColor dashing areaOpacity dataPoints =
   let
     interpolationCommands =
       Interpolation.toCommands interpolation (List.map .point dataPoints)
@@ -161,14 +172,37 @@ viewInterpolation system look interpolation mainColor dashing dataPoints =
         first :: rest -> Path.Move first.point :: interpolationCommands
         [] -> []
 
-    attributes =
-      toAttributes look mainColor dashing dataPoints
+    lineAttributes =
+      toLineAttributes look mainColor dashing dataPoints
   in
-  Path.view system attributes commands
+  Svg.g
+    [ Attributes.class "interpolation" ]
+    [ Path.view system lineAttributes commands
+    , Utils.viewMaybe areaOpacity (viewArea system look mainColor dataPoints interpolationCommands)
+    ]
 
 
-toAttributes : Look data -> Color.Color -> List Float -> List (DataPoint data) -> List (Svg.Attribute msg)
-toAttributes (Look look) mainColor dashing dataPoints =
+{-| -}
+setAreaDomain : List (Line data) -> Coordinate.Limits -> Coordinate.Limits
+setAreaDomain lines limits =
+    if List.any isArea lines then
+        { limits | min = Basics.min limits.min 0 }
+    else
+        limits
+
+
+isArea : Line data -> Bool
+isArea (Line line) =
+    case line.areaOpacity of
+        Just opacity ->
+            True
+
+        Nothing ->
+            False
+
+
+toLineAttributes : Look data -> Color.Color -> List Float -> List (DataPoint data) -> List (Svg.Attribute msg)
+toLineAttributes (Look look) mainColor dashing dataPoints =
   let
     isEmphasized =
       look.isEmphasized (List.map .data dataPoints)
@@ -182,7 +216,7 @@ toAttributes (Look look) mainColor dashing dataPoints =
       toFloat style.width / 2
   in
       [ Attributes.style "pointer-events: none;"
-      , Attributes.class "interpolation"
+      , Attributes.class "interpolation__line"
       , Attributes.stroke (style.color mainColor)
       , Attributes.strokeWidth (toString width)
       , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
@@ -190,12 +224,59 @@ toAttributes (Look look) mainColor dashing dataPoints =
       ]
 
 
-{-| -}
-viewSample : Look data -> Color.Color -> List Float -> Float -> Svg.Svg msg
-viewSample look mainColor dashing sampleWidth =
+viewArea : Coordinate.System -> Look data -> Color.Color -> List (DataPoint data) -> List Path.Command -> Float -> Svg.Svg msg
+viewArea system look mainColor dataPoints interpolationCommands opacity =
   let
-    lookAttributes =
-      toAttributes look mainColor dashing []
+    commands =
+      case dataPoints of
+        first :: rest ->
+          [ Path.Move (Point first.point.x (Utils.towardsZero system.x))
+          , Path.Line first.point
+          ]
+          ++ interpolationCommands ++
+          [ Path.Line (Point (getLastX first rest) (Utils.towardsZero system.x)) ]
+
+        [] ->
+          []
+
+    getLastX first rest =
+      Maybe.withDefault first (Utils.last rest) |> .point |> .x
+
+    attributes =
+      toAreaAttributes look mainColor opacity dataPoints
+  in
+  Path.view system attributes commands
+
+
+toAreaAttributes : Look data -> Color.Color -> Float -> List (DataPoint data) -> List (Svg.Attribute msg)
+toAreaAttributes (Look look) mainColor opacity dataPoints =
+  let
+    isEmphasized =
+      look.isEmphasized (List.map .data dataPoints)
+
+    (Style style) =
+      if isEmphasized
+        then look.emphasized
+        else look.normal
+
+    color =
+      style.color mainColor
+  in
+  [ Attributes.fill color
+  , Attributes.fillOpacity (toString opacity)
+  ]
+
+
+
+-- VIEW / SAMPLE
+
+
+{-| -}
+viewSample : Look data -> Color.Color -> List Float -> Maybe Float -> Float -> Svg.Svg msg
+viewSample look mainColor dashing areaOpacity sampleWidth =
+  let
+    lineAttributes =
+      toLineAttributes look mainColor dashing []
 
     sizeAttributes =
       [ Attributes.x1 "0"
@@ -203,5 +284,21 @@ viewSample look mainColor dashing sampleWidth =
       , Attributes.x2 <| toString sampleWidth
       , Attributes.y2 "0"
       ]
+
+    areaAttributes opacity =
+      toAreaAttributes look mainColor opacity []
+
+    rectangleAttributes =
+      [ Attributes.x "0"
+      , Attributes.y "0"
+      , Attributes.height "9"
+      , Attributes.width <| toString sampleWidth
+      ]
+
+    viewRectangle opacity =
+      Svg.rect (areaAttributes opacity ++ rectangleAttributes) []
   in
-  Svg.line (lookAttributes ++ sizeAttributes) []
+  Svg.g []
+    [ Svg.line (lineAttributes ++ sizeAttributes) []
+    , Utils.viewMaybe areaOpacity viewRectangle
+    ]

@@ -4,6 +4,7 @@ module Internal.Utils exposing (..)
 
 import Html
 import Svg
+import Lines.Coordinate as Coordinate
 
 
 
@@ -48,3 +49,13 @@ withFirst stuff process =
     case stuff of
         first :: rest -> Just (process first rest)
         _             -> Nothing
+
+
+towardsZero : Coordinate.Limits -> Float
+towardsZero { max, min } =
+  clamp 0 min max
+
+
+last : List a -> Maybe a
+last list =
+  List.head (List.drop (List.length list - 1) list)

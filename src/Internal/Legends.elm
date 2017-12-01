@@ -146,7 +146,7 @@ viewSample system lineLook dotLook sampleWidth line =
   in
   Svg.g
     [ Attributes.class "sample" ]
-    [ Line.viewSample lineLook line.color line.dashing sampleWidth
+    [ Line.viewSample lineLook line.color line.dashing line.areaOpacity sampleWidth
     , Dot.viewSample dotLook line.shape line.color system middle
     ]
 
@@ -158,7 +158,7 @@ viewSample system lineLook dotLook sampleWidth line =
 defaultLegend : Int -> Pieces msg -> Svg msg
 defaultLegend index { sample, label } =
    Svg.g
-    [ Svg.transform [ Svg.offset 20 (toFloat index * 15) ] ]
+    [ Svg.transform [ Svg.offset 20 (toFloat index * 20) ] ]
     [ sample
     , Svg.g
         [ Svg.transform [ Svg.offset 40 4 ] ]
