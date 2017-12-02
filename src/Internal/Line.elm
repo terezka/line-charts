@@ -226,11 +226,11 @@ viewArea system look interpolation mainColor opacity id dataPoints =
     commands =
       case dataPoints of
         first :: rest ->
-          [ Path.Move (Point first.point.x (Utils.towardsZero system.x))
+          [ Path.Move (Point first.point.x (Utils.towardsZero system.y))
           , Path.Line first.point
           ]
           ++ interpolationCommands ++
-          [ Path.Line (Point (getLastX first rest) (Utils.towardsZero system.x)) ]
+          [ Path.Line (Point (getLastX first rest) (Utils.towardsZero system.y)) ]
 
         [] ->
           []

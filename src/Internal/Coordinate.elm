@@ -56,6 +56,13 @@ type alias Point =
 
 
 {-| -}
+type alias Limitations =
+  { min : Float -> Float
+  , max : Float -> Float
+  }
+
+
+{-| -}
 limits : (a -> Float) -> List a -> Limits
 limits toValue data =
   let
@@ -69,6 +76,13 @@ limits toValue data =
   else
     limits
 
+
+{-| -}
+applyLimitations : Limitations -> Limits -> Limits
+applyLimitations limitation limits =
+  { min = limitation.min limits.min
+  , max = limitation.max limits.max
+  }
 
 
 {-| -}

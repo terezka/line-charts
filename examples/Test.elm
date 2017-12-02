@@ -60,7 +60,7 @@ average =
 
 humanChart : Html msg
 humanChart =
-    Lines.viewCustom (chartConfig .age .income)
+    Lines.viewCustom (chartConfig .age .weight)
         [ Lines.dash Color.pink Dot.none "Average" [ 2, 4 ] average
         , Lines.line Color.blue Dot.none "Chuck" chuck
         , Lines.line Color.orange Dot.none "Alice" alice

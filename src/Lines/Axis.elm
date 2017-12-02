@@ -1,6 +1,6 @@
 module Lines.Axis exposing
   ( default
-  , Axis, Look, Line, Mark, Tick, Direction(..)
+  , Axis, Limitations, Look, Line, Mark, Tick, Direction(..)
   , defaultLook
   , towardsZero
   , defaultLine
@@ -15,7 +15,7 @@ module Lines.Axis exposing
 @docs default
 
 ## What is an axis?
-@docs Axis, Look, Line, Mark, Tick, Direction
+@docs Axis, Limitations, Look, Line, Mark, Tick, Direction
 
 ## Defaults
 @docs defaultLook, defaultTitle, towardsZero, defaultLine, defaultMark, defaultInterval, customInterval, defaultTick, defaultLabel
@@ -27,13 +27,22 @@ import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
 import Lines.Color as Color
 import Internal.Numbers as Numbers
+import Internal.Utils as Utils
 
 
 
 {-| -}
 type alias Axis data msg =
   { look : Look msg
+  , limitations : Limitations
   , variable : data -> Float
+  }
+
+
+{-| -}
+type alias Limitations =
+  { min : Float -> Float
+  , max : Float -> Float
   }
 
 
@@ -94,6 +103,7 @@ type Direction
 default : Title msg -> (data -> Float) -> Axis data msg
 default title variable =
   { variable = variable
+  , limitations = Limitations identity identity
   , look = defaultLook title
   }
 
@@ -118,8 +128,8 @@ defaultTitle title xOffset yOffset =
 
 {-| -}
 towardsZero : Coordinate.Limits -> Float
-towardsZero { max, min } =
-  clamp 0 min max
+towardsZero =
+  Utils.towardsZero
 
 
 {-| -}

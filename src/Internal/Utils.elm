@@ -62,7 +62,7 @@ withFirst stuff process =
 
 towardsZero : Coordinate.Limits -> Float
 towardsZero { max, min } =
-  clamp 0 min max
+  clamp min max 0
 
 
 last : List a -> Maybe a

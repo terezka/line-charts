@@ -41,7 +41,6 @@ import Internal.Utils as Utils
 
 
 -- TODO: Cutable domain/range
--- TODO: Add area negative curve
 -- TODO: Fix axis outliers maybe
 -- TODO: Curbing the translation in the custom event searcher
 
@@ -271,6 +270,7 @@ copy it and play around with customizations available for each property.
       , junk = Junk.none
       , attributes = []
       , events = []
+      , id = "chart"
       }
 
 -}
@@ -288,7 +288,6 @@ type alias Config data msg =
   , junk : Junk.Junk msg
   , id : String
   }
-
 
 
 -- INTERPOLATIONS
@@ -336,6 +335,8 @@ significant, it's best to leave it out. -- TODO revise
       { frame = Frame (Margin 40 150 90 150) (Size 650 400)
       , x = Axis.default (Axis.defaultTitle "" 0 0) .age
       , y = Axis.default (Axis.defaultTitle "" 0 0) .income
+      , range = Limitation identity identity
+      , domain = Limitation identity identity
       , interpolation = Lines.linear
       , areaOpacity = 0.25 -- Changed from the default!
       , legends = Legends.default
@@ -344,6 +345,7 @@ significant, it's best to leave it out. -- TODO revise
       , attributes = []
       , events = []
       , junk = Junk.none
+      , id = "chart"
       }
 
 _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
@@ -370,8 +372,13 @@ viewCustom config lines =
 
     system =
       { frame = config.frame
-      , x = Coordinate.limits (.point >> .x) allPoints
-      , y = Coordinate.limits (.point >> .y) allPoints |> adjustDomainLimits
+      , x = allPoints
+              |> Coordinate.limits (.point >> .x)
+              |> Coordinate.applyLimitations config.x.limitations
+      , y = allPoints
+              |> Coordinate.limits (.point >> .y)
+              |> adjustDomainLimits
+              |> Coordinate.applyLimitations config.y.limitations
       }
 
     adjustDomainLimits domain =
