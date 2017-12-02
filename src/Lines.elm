@@ -216,7 +216,6 @@ dash =
 -- TODO: Add area negative curve
 -- TODO: Fix axis outliers maybe
 -- TODO: Curbing the translation in the custom event searcher
--- TODO: Make all lines area if area
 
 
 -- VIEW / SIMPLE
