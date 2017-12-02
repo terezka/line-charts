@@ -147,7 +147,7 @@ view system dotLook interpolation lineLook areaOpacity id (Line line) dataPoints
   Svg.g [ Attributes.class "line" ]
     [ Utils.viewIf (areaOpacity > 0) <| \() ->
         viewArea system lineLook interpolation line.color areaOpacity id dataPoints
-    , viewLine system lineLook interpolation line.color line.dashing dataPoints
+    , viewLine system lineLook interpolation line.color line.dashing id dataPoints
     , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
     ]
 
@@ -162,9 +162,10 @@ viewLine
   -> Interpolation.Interpolation
   -> Color.Color
   -> List Float
+  -> String
   -> List (DataPoint data)
   -> Svg.Svg msg
-viewLine system look interpolation mainColor dashing dataPoints =
+viewLine system look interpolation mainColor dashing id dataPoints =
   let
     interpolationCommands =
       Interpolation.toCommands interpolation (List.map .point dataPoints)
@@ -175,7 +176,8 @@ viewLine system look interpolation mainColor dashing dataPoints =
         [] -> []
 
     lineAttributes =
-      toLineAttributes look mainColor dashing dataPoints
+      toLineAttributes look mainColor dashing dataPoints ++
+        [ Attributes.clipPath <| "url(#" ++ Utils.toClipPathId id ++ ")" ]
   in
   Path.view system lineAttributes commands
 
