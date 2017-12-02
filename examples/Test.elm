@@ -36,7 +36,7 @@ alice =
 bob : List Info
 bob =
     [ Info 4 22 1.01 0
-    , Info 25 75 1.87 98000
+    , Info 25 75 1.87 -98000
     , Info 43 77 1.87 52000
     ]
 
@@ -44,7 +44,7 @@ bob =
 chuck : List Info
 chuck =
     [ Info 4 21 0.98 20000
-    , Info 25 89 1.83 85000
+    , Info 25 89 1.83 -85000
     , Info 43 95 1.84 120000
     ]
 
@@ -59,10 +59,11 @@ average =
 
 humanChart : Html msg
 humanChart =
-    Lines.view .age .income
-        [ Lines.area "darkgoldenrod" Dot.triangle "Chuck" 0.5 chuck
-        , Lines.line "darkslateblue" Dot.plus "Alice" alice
-        , Lines.area "darkturquoise" Dot.diamond "Bob" 0.5 bob
+    Lines.view .age
+        .income
+        [ Lines.area "darkgoldenrod" Dot.none "Chuck" 0.25 chuck
+        , Lines.area "darkslateblue" Dot.none "Alice" 0.25 alice
+        , Lines.area "darkturquoise" Dot.none "Bob" 0.25 bob
         , Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
         ]
 

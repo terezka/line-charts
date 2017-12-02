@@ -152,7 +152,7 @@ monotone =
 
 
 {-| -}
-type alias Line data = -- TODO Move to Line.elm?
+type alias Line data =
   Line.Line data
 
 
@@ -171,7 +171,7 @@ Try changing the color or explore all the available dot shapes from `Lines.Dot`!
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
-_See the full example on Ellie [here](https://ellie-app.com/stWdWjqGZa1/0)._
+_See the full example [here](https://ellie-app.com/stWdWjqGZa1/0)._
 
 Besides the color and the dot, you also pass the function a string title and
 the data for that line. These titles will show up in the legends.
@@ -203,7 +203,7 @@ processed data, like averages or predicted values.
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
-_See the full example on Ellie [here](https://ellie-app.com/syMhqfR8qa1/1)._
+_See the full example [here](https://ellie-app.com/syMhqfR8qa1/1)._
 
 -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
@@ -217,11 +217,12 @@ area =
   Line.area
 
 
--- TODO: Add area
+-- TODO: Cutable domain/range
+-- TODO: Add area negative curve
 -- TODO: Fix zero limit
--- TODO: Make sure max data lenght wins
 -- TODO: Fix axis outliers maybe
 -- TODO: Curbing the translation in the custom event searcher
+-- TODO: Make all lines area if area
 
 
 -- VIEW / SIMPLE
@@ -242,7 +243,7 @@ For example, if you want to show a few points, you can display it like this:
         , Point 10 10
         ]
 
-_See the example on Ellie [here](https://ellie-app.com/s5M4fxFwGa1/0)._
+_See the example [here](https://ellie-app.com/s5M4fxFwGa1/0)._
 
 Notice that we provide `.x` and `.y` to specify which data we want to show.
 So if we had more complex data points (like a human with an `age`, `weight`,
@@ -256,9 +257,9 @@ So if we had more complex data points (like a human with an `age`, `weight`,
         , Info 43 83 1.75 40000
         ]
 
-    -- Try changing .weight to .income
+    -- Try changing .weight to .height
 
-_See the example on Ellie [here](https://ellie-app.com/s8kQfLfYZa1/1)._
+_See the example [here](https://ellie-app.com/s8kQfLfYZa1/1)._
 
 **Note 1:** Rather than using data like `.weight` directly, you can make a
 function like `bmi human = human.weight / human.height ^ 2` and create a
@@ -283,7 +284,7 @@ to their age, we can display it like this:
     humanChart =
       Lines.view2 .age .weight alice chuck
 
-_See the full example on Ellie [here](https://ellie-app.com/scTM9Mw77a1/0)._
+_See the full example [here](https://ellie-app.com/scTM9Mw77a1/0)._
 
 -}
 view2 : (data -> Float) -> (data -> Float) -> List data -> List data -> Svg.Svg msg
@@ -297,7 +298,7 @@ view2 toX toY dataset1 dataset2 =
     humanChart =
       Lines.view3 .age .weight alice bob chuck
 
-_See the full example on Ellie [here](https://ellie-app.com/sdNHxCfrJa1/0)._
+_See the full example [here](https://ellie-app.com/sdNHxCfrJa1/0)._
 
 But what if you have more people? What if you have _four_ people?! In that case,
 check out `view`.
@@ -325,7 +326,7 @@ lines are also made available by the use of the function `line`.
         , Lines.line "green" Dot.circle "Chuck" chuck
         ]
 
-_See the full example on Ellie [here](https://ellie-app.com/sgL9mdF7ra1/1)._
+_See the full example [here](https://ellie-app.com/sgL9mdF7ra1/1)._
 
 -}
 view : (data -> Float) -> (data -> Float) -> List (Line data) -> Svg.Svg msg
@@ -375,7 +376,7 @@ your chart:
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
-_See the full example on Ellie [here](https://ellie-app.com/smkVxrpMfa1/0)._
+_See the full example [here](https://ellie-app.com/smkVxrpMfa1/0)._
 
 -}
 viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
