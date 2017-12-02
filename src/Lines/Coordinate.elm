@@ -1,9 +1,11 @@
 module Lines.Coordinate exposing
   ( Frame, Size, Margin
-  , Orientation(..), Limits, System
-  , toSVG, toCartesian
+  , System, Limits
+  , toSVGX, toSVGY
+  , toCartesianX, toCartesianY
+  , scaleSVGX, scaleSVGY
+  , scaleCartesianX, scaleCartesianY
   , Point, toSVGPoint, toCartesianPoint
-  , scaleSVG, scaleCartesian
   )
 
 {-|
@@ -11,23 +13,17 @@ module Lines.Coordinate exposing
 # Frame
 @docs Frame, Size, Margin
 
-# Limits
-@docs Limits
-
 # System
-@docs System
-
-# Translation
-@docs Orientation
+@docs System, Limits
 
 ## Single value
-@docs toSVG, toCartesian
+@docs toSVGX, toSVGY, toCartesianX, toCartesianY
 
 ## Point
 @docs Point, toSVGPoint, toCartesianPoint
 
 ## Scale
-@docs scaleSVG, scaleCartesian
+@docs scaleSVGX, scaleSVGY, scaleCartesianX, scaleCartesianY
 
 -}
 
@@ -93,52 +89,64 @@ type alias Limits =
 -- TRANSLATION
 
 
-{-| -}
-type Orientation = X | Y
-
-
-{-| Translate a value from cartesian to SVG.
-
-    toSVG X system point.x
+{-| Translate a x-coordinate from cartesian to SVG.
 -}
-toSVG : Orientation -> System -> Float -> Float
-toSVG orientation system value =
-  case orientation of
-    X ->
-      scaleSVG orientation system (value - system.x.min) + system.frame.margin.left
-
-    Y ->
-      scaleSVG orientation system (system.y.max - value) + system.frame.margin.top
+toSVGX : System -> Float -> Float
+toSVGX system value =
+  scaleSVGX system (value - system.x.min) + system.frame.margin.left
 
 
-{-| Translate a value from SVG to cartesian.
+{-| Translate a y-coordinate from cartesian to SVG.
 -}
-toCartesian : Orientation -> System -> Float -> Float
-toCartesian orientation system value =
-  case orientation of
-    X ->
-      system.x.min + scaleCartesian orientation system (value - system.frame.margin.left)
+toSVGY : System -> Float -> Float
+toSVGY system value =
+  scaleSVGY system (system.y.max - value) + system.frame.margin.top
 
-    Y ->
-      system.y.max - scaleCartesian orientation system (value - system.frame.margin.top)
+
+{-| Translate a x-coordinate from SVG to cartesian.
+-}
+toCartesianX : System -> Float -> Float
+toCartesianX system value =
+  system.x.min + scaleCartesianX system (value - system.frame.margin.left)
+
+
+{-| Translate a y-coordinate from SVG to cartesian.
+-}
+toCartesianY : System -> Float -> Float
+toCartesianY system value =
+  system.y.max - scaleCartesianY system (value - system.frame.margin.top)
 
 
 
 -- Scaling
 
 
-{-| Scale a value from cartesian to SVG.
+{-| Scale a x-value from cartesian to SVG.
 -}
-scaleSVG : Orientation -> System -> Float -> Float
-scaleSVG orientation system value =
-  value * (length orientation system) / (reach orientation system)
+scaleSVGX : System -> Float -> Float
+scaleSVGX system value =
+  value * (lengthX system) / (reachX system)
 
 
-{-| Scale a value from SVG to cartesian.
+{-| Scale a y-value from cartesian to SVG.
 -}
-scaleCartesian : Orientation -> System -> Float -> Float
-scaleCartesian orientation system value =
-  value * (reach orientation system) / (length orientation system)
+scaleSVGY : System -> Float -> Float
+scaleSVGY system value =
+  value * (lengthY system) / (reachY system)
+
+
+{-| Scale a x-value from SVG to cartesian.
+-}
+scaleCartesianX : System -> Float -> Float
+scaleCartesianX system value =
+  value * (reachX system) / (lengthX system)
+
+
+{-| Scale a y-value from SVG to cartesian.
+-}
+scaleCartesianY : System -> Float -> Float
+scaleCartesianY system value =
+  value * (reachY system) / (lengthY system)
 
 
 
@@ -155,16 +163,16 @@ type alias Point =
 {-| -}
 toSVGPoint : System -> Point -> Point
 toSVGPoint system point =
-  { x = toSVG X system point.x
-  , y = toSVG Y system point.y
+  { x = toSVGX system point.x
+  , y = toSVGY system point.y
   }
 
 
 {-| -}
 toCartesianPoint : System -> Point -> Point
 toCartesianPoint system point =
-  { x = toCartesian X system point.x
-  , y = toCartesian Y system point.y
+  { x = toCartesianX system point.x
+  , y = toCartesianY system point.y
   }
 
 
@@ -172,28 +180,29 @@ toCartesianPoint system point =
 -- INTERNAL
 
 
-reach : Orientation -> System -> Float
-reach orientation system =
+reachX : System -> Float
+reachX system =
   let
-    limits =
-      case orientation of
-        X ->
-          system.x
-
-        Y ->
-          system.y
-
     diff =
-      limits.max - limits.min
+      system.x.max - system.x.min
   in
     if diff > 0 then diff else 1
 
 
-length : Orientation -> System -> Float
-length orientation system =
-  case orientation of
-    X ->
-      max 1 (system.frame.size.width - system.frame.margin.left - system.frame.margin.right)
+reachY : System -> Float
+reachY system =
+  let
+    diff =
+      system.y.max - system.y.min
+  in
+    if diff > 0 then diff else 1
 
-    Y ->
-      max 1 (system.frame.size.height - system.frame.margin.bottom - system.frame.margin.top)
+
+lengthX : System -> Float
+lengthX system =
+  max 1 (system.frame.size.width - system.frame.margin.left - system.frame.margin.right)
+
+
+lengthY : System -> Float
+lengthY system =
+  max 1 (system.frame.size.height - system.frame.margin.bottom - system.frame.margin.top)

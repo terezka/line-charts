@@ -3,7 +3,7 @@ module Coordinate exposing (..)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, list, int, float, string)
 import Test exposing (..)
-import Svg.Coordinate exposing (..)
+import Lines.Coordinate exposing (..)
 
 
 -- MATERIAL
@@ -34,15 +34,15 @@ coordinates =
   describe "Defaults"
     [ test "Length should default to 1" <|
         \() ->
-          Expect.equal 0.9 (toSVG Y (updateFrame system { frame | size = Size 0 0 }) 1)
+          Expect.equal 0.9 (toSVGY (updateFrame system { frame | size = Size 0 0 }) 1)
     , fuzz float "x-coordinate produced should always be a number" <|
         \number ->
-          toSVG X system number
+          toSVGX system number
             |> isNaN
             |> Expect.false "Coordinate should always be a number!"
     , fuzz float "y-coordinate produced should always be a number" <|
         \number ->
-          toSVG Y system number
+          toSVGY system number
             |> isNaN
             |> Expect.false "Coordinate should always be a number!"
     ]
@@ -53,22 +53,22 @@ horizontal =
   describe "Horizontal translation"
     [ test "toSVG" <|
         \() ->
-          Expect.equal 10 (toSVG X system 1)
+          Expect.equal 10 (toSVGX system 1)
     , test "toSVG with lower margin" <|
         \() ->
-          Expect.equal 28 (toSVG X (updateFrame system { frame | margin = Margin 0 0 0 20 }) 1)
+          Expect.equal 28 (toSVGX (updateFrame system { frame | margin = Margin 0 0 0 20 }) 1)
     , test "toSVG with upper margin" <|
         \() ->
-          Expect.equal 8 (toSVG X (updateFrame system { frame | margin = Margin 0 20 0 0 }) 1)
+          Expect.equal 8 (toSVGX (updateFrame system { frame | margin = Margin 0 20 0 0 }) 1)
     , test "toCartesian" <|
         \() ->
-          Expect.equal 1 (toCartesian X system 10)
+          Expect.equal 1 (toCartesianX system 10)
     , test "toCartesian with lower margin" <|
         \() ->
-          Expect.equal 1 (toCartesian X (updateFrame system { frame | margin = Margin 0 0 0 20 }) 28)
+          Expect.equal 1 (toCartesianX (updateFrame system { frame | margin = Margin 0 0 0 20 }) 28)
     , test "toCartesian with upper margin" <|
         \() ->
-          Expect.equal 1 (toCartesian X (updateFrame system { frame | margin = Margin 0 20 0 0 }) 8)
+          Expect.equal 1 (toCartesianX (updateFrame system { frame | margin = Margin 0 20 0 0 }) 8)
     ]
 
 
@@ -77,22 +77,22 @@ vertical =
   describe "Vertical translation"
     [ test "toSVG" <|
         \() ->
-          Expect.equal 90 (toSVG Y system 1)
+          Expect.equal 90 (toSVGY system 1)
     , test "toSVG with lower margin" <|
         \() ->
-          Expect.equal 72 (toSVG Y (updateFrame system { frame | margin = Margin 0 0 20 0 }) 1)
+          Expect.equal 72 (toSVGY (updateFrame system { frame | margin = Margin 0 0 20 0 }) 1)
     , test "toSVG with upper margin" <|
         \() ->
-          Expect.equal 92 (toSVG Y (updateFrame system { frame | margin = Margin 20 0 0 0 }) 1)
+          Expect.equal 92 (toSVGY (updateFrame system { frame | margin = Margin 20 0 0 0 }) 1)
     , test "toCartesian" <|
         \() ->
-          Expect.equal 1 (toCartesian Y system 90)
+          Expect.equal 1 (toCartesianY system 90)
     , test "toCartesian with lower margin" <|
         \() ->
-          Expect.equal 1 (toCartesian Y (updateFrame system { frame | margin = Margin 0 0 20 0 }) 72)
+          Expect.equal 1 (toCartesianY (updateFrame system { frame | margin = Margin 0 0 20 0 }) 72)
     , test "toCartesian with upper margin" <|
         \() ->
-          Expect.equal 1 (toCartesian Y (updateFrame system { frame | margin = Margin 20 0 0 0 }) 92)
+          Expect.equal 1 (toCartesianY (updateFrame system { frame | margin = Margin 20 0 0 0 }) 92)
     ]
 
 

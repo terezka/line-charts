@@ -82,8 +82,8 @@ translate system command =
   case command of
     Move p       -> Move (toSVGPoint system p)
     Line p       -> Line (toSVGPoint system p)
-    Horizontal x -> Horizontal (toSVG X system x)
-    Vertical y   -> Vertical (toSVG Y system y)
+    Horizontal x -> Horizontal (toSVGX system x)
+    Vertical y   -> Vertical (toSVGY system y)
 
     CubicBeziers c1 c2 p ->
       CubicBeziers
