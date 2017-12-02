@@ -151,9 +151,7 @@ view toX toY =
   viewCustom (defaultConfig toX toY)
 
 
-
-{-| The type to represent a line configuration.
--}
+{-| -}
 type alias Line data =
   Line.Line data
 
@@ -216,52 +214,61 @@ dash =
 
 {-| The customizations available for your line chart viewed with `viewCustom`.
 
-  - `frame` customizes the size and margins of your chart. See `Lines.Coordinate`
-    for more information and examples.
-  - `attributes` allows you to specify SVG attributes to be added to the `svg`
-    element containing your chart.
-  - `events` allows you to add events to your chart, allowing you easily making
-    your chart interactive (adding tooltips, hover startes etc.). See
-    `Lines.Events` for more information and examples.
-  - `junk` gets its name from Edward Tufte's concept of "chart junk". Here you
-    are allowed set your creativity free and add whatever SVG or HTML fun you
-    can imagine. Useful when you are the victim of a designer's urge to explore
-    their artistic potential within data visualizing. See `Lines.Junk` for
-    more information and examples. -- TODO joke
-  - `x` allows you to customize the look of your horizontal axis. See
-    `Lines.Axis` for more information and examples.
-  - `y` allows you to customize the look of your vertical axis. See
-    `Lines.Axis` for more information and examples.
-  - `interpolation` allows you to customize the curve of your lines.
+  - `frame`: customizes the size and margins of your chart.
+    See `Lines.Coordinate` for more information and examples.
+
+  - `x`: customizes the look of your horizontal axis.
+    See `Lines.Axis` for more information and examples.
+
+  - `y`: customizes the look of your vertical axis.
+    See `Lines.Axis` for more information and examples.
+
+  - `interpolation`: customizes the curve of your lines.
     See the `Interpolation` type for more information and examples.
-  - `legends` allows you to customize your charts legends. See
-    `Lines.Legends` for more information and examples.
-  - `line` allows you to customize your lines' width and color. See
-    `Lines.Line` for more information and examples.
-  - `dot` allows you to customize your dots' size and style. See
-    `Lines.Dot` for more information and examples.
-  - `areaOpacity` determines the opacity of the area under your line. The area
-    is always the same color as your line, but the transparency can be altered
-    with this property.
 
-  TODO reorder properties, add links, align examples to run progressively
+  - `areaOpacity`: determines the opacity of the area under your line.
+    The area is always the same color as your line, but the transparency
+    can be altered with this property. Takes a number between 0 and 1.
+
+  - `legends`: customizes your chart's legends.
+    See `Lines.Legends` for more information and examples.
+
+  - `line`: customizes your lines' width and color.
+    See `Lines.Line` for more information and examples.
+
+  - `dot`: customizes your dots' size and style.
+    See `Lines.Dot` for more information and examples.
+
+  - `attributes`: customizes the SVG attributes added to the
+    `svg` element containing your chart.
+
+  - `events`: customizes your chart's events, allowing you easily
+    make your chart interactive (adding tooltips, hover startes etc.).
+    See `Lines.Events` for more information and examples.
+
+  - `junk`: gets its name from Edward Tufte's concept of "chart junk".
+    Here you are allowed set your creativity loose and add whatever SVG or HTML fun
+    you can imagine.
+    See `Lines.Junk` for more information and examples.
 
 
-The default configuration is the following. A good start would be to copy it and
-play around with customizations available for each property.
+The default configuration is the following (besides the `.age` and `.weight`,
+You have to provide your own x and y property). A good start would be to
+copy it and play around with customizations available for each property.
 
     chartConfig : Config data msg
     chartConfig =
       { frame = Frame (Margin 40 150 90 150) (Size 650 400)
-      , attributes = []
-      , events = []
-      , junk = Junk.none
-      , x = Axis.default (Axis.defaultTitle "Age" 0 0) .age
-      , y = Axis.default (Axis.defaultTitle "Weight" 0 0) .weight
+      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
+      , y = Axis.default (Axis.defaultTitle "" 0 0) .weight
       , interpolation = Lines.linear
+      , areaOpacity = 0
       , legends = Legends.default
       , line = Line.default
       , dot = Dot.default
+      , junk = Junk.none
+      , attributes = []
+      , events = []
       }
 
     chart : Html msg
@@ -275,16 +282,16 @@ play around with customizations available for each property.
 -}
 type alias Config data msg =
   { frame : Coordinate.Frame
-  , attributes : List (Svg.Attribute msg)
-  , events : List (Events.Event data msg)
-  , junk : Junk.Junk msg
   , x : Axis.Axis data msg
   , y : Axis.Axis data msg
   , interpolation : Interpolation
-  , legends : Legends.Legends msg
-  , line : Line.Look data -- TODO Look type ref doesn't show up in docs
-  , dot : Dot.Look data
   , areaOpacity : Float
+  , legends : Legends.Legends msg
+  , line : Line.Look data
+  , dot : Dot.Look data
+  , attributes : List (Svg.Attribute msg)
+  , events : List (Events.Event data msg)
+  , junk : Junk.Junk msg
   }
 
 
@@ -317,6 +324,21 @@ monotone =
 available customizations. The following example changes the font color of
 your chart:
 
+    chartConfig : Config data msg
+    chartConfig =
+      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
+      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
+      , y = Axis.default (Axis.defaultTitle "" 0 0) .weight
+      , interpolation = Lines.linear
+      , areaOpacity = 0
+      , legends = Legends.byEnding -- Changed from the default!
+      , line = Line.default
+      , dot = Dot.default
+      , attributes = []
+      , events = []
+      , junk = Junk.none
+      }
+
     chart : Html msg
     chart =
       Lines.viewCustom chartConfig
@@ -324,20 +346,6 @@ your chart:
         , Lines.line "darkturquoise" Dot.diamond "Bob" bob
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
-
-    chartConfig : Config data msg
-    chartConfig =
-      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
-      , attributes = []
-      , events = []
-      , junk = Junk.none
-      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
-      , y = Axis.default (Axis.defaultTitle "" 0 0) .weight
-      , interpolation = Lines.linear
-      , legends = Legends.byEnding -- Changed from the default!
-      , line = Line.default
-      , dot = Dot.default
-      }
 
 _See the full example [here](https://ellie-app.com/smkVxrpMfa1/1)._
 
