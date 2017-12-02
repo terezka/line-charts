@@ -1,9 +1,8 @@
 module Internal.Line exposing
-  ( Line(..), LineConfig, lineConfig, line, dash, area
+  ( Line(..), LineConfig, lineConfig, line, dash
   , Look, default, wider, static, emphasizable
   , Style, style
   , view, viewSample
-  , setAreaDomain
   )
 
 {-| -}
@@ -28,7 +27,6 @@ type Line data =
 {-| -}
 type alias LineConfig data =
   { color : Color.Color
-  , areaOpacity : Maybe Float
   , shape : Dot.Shape
   , dashing : List Float
   , label : String
@@ -45,19 +43,13 @@ lineConfig (Line line) =
 {-| -}
 line : Color.Color -> Dot.Shape -> String -> List data -> Line data
 line color shape label data =
-  Line <| LineConfig color Nothing shape [] label data
+  Line <| LineConfig color shape [] label data
 
 
 {-| -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
 dash color shape label dashing data =
-  Line <| LineConfig color Nothing shape dashing label data
-
-
-{-| -}
-area : Color.Color -> Dot.Shape -> String -> Float -> List data -> Line data
-area color shape label areaOpacity data =
-  Line <| LineConfig color (Just areaOpacity) shape [] label data
+  Line <| LineConfig color shape dashing label data
 
 
 
@@ -132,29 +124,6 @@ style width color =
 
 
 
--- SYSTEM
-
-
-{-| -}
-setAreaDomain : List (Line data) -> Coordinate.Limits -> Coordinate.Limits
-setAreaDomain lines limits =
-    if List.any isArea lines then
-        { limits | min = Basics.min limits.min 0 }
-    else
-        limits
-
-
-isArea : Line data -> Bool
-isArea (Line line) =
-    case line.areaOpacity of
-        Just opacity ->
-            True
-
-        Nothing ->
-            False
-
-
-
 -- VIEW
 
 
@@ -164,18 +133,19 @@ view
   -> Dot.Look data
   -> Interpolation.Interpolation
   -> Look data
+  -> Float
   -> Line data
   -> List (Coordinate.DataPoint data)
   -> Svg.Svg msg
-view system dotLook interpolation lineLook (Line line) dataPoints =
+view system dotLook interpolation lineLook areaOpacity (Line line) dataPoints =
   let
     viewDot =
       Dot.view dotLook line.shape line.color system
   in
   -- TODO prefix classes
   Svg.g [ Attributes.class "line" ]
-    [ Utils.viewMaybe line.areaOpacity <|
-        viewArea system lineLook interpolation line.color dataPoints
+    [ Utils.viewIf (areaOpacity > 0) <| \() ->
+        viewArea system lineLook interpolation line.color areaOpacity dataPoints
     , viewLine system lineLook interpolation line.color line.dashing dataPoints
     , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
     ]
@@ -241,10 +211,10 @@ viewArea
   -> Look data
   -> Interpolation.Interpolation
   -> Color.Color
-  -> List (DataPoint data)
   -> Float
+  -> List (DataPoint data)
   -> Svg.Svg msg
-viewArea system look interpolation mainColor dataPoints opacity =
+viewArea system look interpolation mainColor opacity dataPoints =
   let
     interpolationCommands =
       Interpolation.toCommands interpolation (List.map .point dataPoints)
@@ -295,7 +265,7 @@ toAreaAttributes (Look look) mainColor opacity dataPoints =
 
 
 {-| -}
-viewSample : Look data -> Color.Color -> List Float -> Maybe Float -> Float -> Svg.Svg msg
+viewSample : Look data -> Color.Color -> List Float -> Float -> Float -> Svg.Svg msg
 viewSample look mainColor dashing areaOpacity sampleWidth =
   let
     lineAttributes =
@@ -308,8 +278,8 @@ viewSample look mainColor dashing areaOpacity sampleWidth =
       , Attributes.y2 "0"
       ]
 
-    areaAttributes opacity =
-      toAreaAttributes look mainColor opacity []
+    areaAttributes =
+      toAreaAttributes look mainColor areaOpacity []
 
     rectangleAttributes =
       [ Attributes.x "0"
@@ -318,10 +288,10 @@ viewSample look mainColor dashing areaOpacity sampleWidth =
       , Attributes.width <| toString sampleWidth
       ]
 
-    viewRectangle opacity =
-      Svg.rect (areaAttributes opacity ++ rectangleAttributes) []
+    viewRectangle () =
+      Svg.rect (areaAttributes ++ rectangleAttributes) []
   in
   Svg.g []
     [ Svg.line (lineAttributes ++ sizeAttributes) []
-    , Utils.viewMaybe areaOpacity viewRectangle
+    , Utils.viewIf (areaOpacity > 0) viewRectangle
     ]

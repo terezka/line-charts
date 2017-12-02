@@ -10,6 +10,7 @@ import Lines.Junk as Junk exposing (..)
 import Lines.Legends as Legends
 import Lines.Line as Line
 import Svg.Attributes as Attributes
+import Lines.Color as Color
 
 
 main : Html msg
@@ -59,11 +60,11 @@ average =
 
 humanChart : Html msg
 humanChart =
-    Lines.view .age .income
-        [ Lines.area "darkgoldenrod" Dot.none "Chuck" 0.25 chuck
-        , Lines.area "darkslateblue" Dot.none "Alice" 0.25 alice
-        , Lines.area "darkturquoise" Dot.none "Bob" 0.25 bob
-        , Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
+    Lines.viewCustom (chartConfig .age .income)
+        [ Lines.dash Color.pink Dot.none "Average" [ 2, 4 ] average
+        , Lines.line Color.blue Dot.none "Chuck" chuck
+        , Lines.line Color.orange Dot.none "Alice" alice
+        , Lines.line Color.gray Dot.none "Bob" bob
         ]
 
 
@@ -79,6 +80,7 @@ chartConfig toXValue toYValue =
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
+    , areaOpacity = 0.25
     }
 
 

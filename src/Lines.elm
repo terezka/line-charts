@@ -1,6 +1,6 @@
 module Lines exposing
   ( view1, view2, view3
-  , view, line, dash, area
+  , view, line, dash
   , viewCustom, Config
   , Interpolation, linear, monotone
   )
@@ -11,7 +11,7 @@ module Lines exposing
 @docs view1, view2, view3
 
 # Customize lines
-@docs view, line, dash, area
+@docs view, line, dash
 
 # Customize everything
 @docs Config, viewCustom
@@ -120,6 +120,7 @@ type alias Config data msg =
   , legends : Legends.Legends msg
   , line : Line.Look data -- TODO Look type ref doesn't show up in docs
   , dot : Dot.Look data
+  , areaOpacity : Float
   }
 
 
@@ -209,12 +210,6 @@ _See the full example [here](https://ellie-app.com/syMhqfR8qa1/1)._
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
 dash =
   Line.dash
-
-
-{-| -}
-area : Color.Color -> Dot.Shape -> String -> Float -> List data -> Line data
-area =
-  Line.area
 
 
 -- TODO: Cutable domain/range
@@ -400,8 +395,14 @@ viewCustom config lines =
     system =
       { frame = config.frame
       , x = Coordinate.limits (.point >> .x) allPoints
-      , y = Coordinate.limits (.point >> .y) allPoints |> Line.setAreaDomain lines
+      , y = Coordinate.limits (.point >> .y) allPoints |> adjustDomainLimits
       }
+
+    adjustDomainLimits domain =
+      if config.areaOpacity > 0 then
+        Coordinate.ground domain
+      else
+        domain
 
     -- View
     junk =
@@ -420,13 +421,13 @@ viewCustom config lines =
         ]
 
     viewLine =
-      Line.view system config.dot config.interpolation config.line
+      Line.view system config.dot config.interpolation config.line config.areaOpacity
 
     viewLines =
       List.map2 viewLine lines dataPoints
 
     viewLegends =
-      Legends.view system config.line config.dot config.legends lines dataPoints
+      Legends.view system config.line config.dot config.legends config.areaOpacity lines dataPoints
   in
   container <|
     Svg.svg attributes
@@ -455,6 +456,7 @@ defaultConfig toX toY =
   , legends = Legends.default
   , line = Line.default
   , dot = Dot.default
+  , areaOpacity = 0
   }
 
 

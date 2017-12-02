@@ -24,6 +24,15 @@ concat first second third =
 
 
 {-| -}
+viewIf : Bool -> (() -> Svg.Svg msg) -> Svg.Svg msg
+viewIf condition view =
+  if condition then
+    view ()
+  else
+    Svg.text ""
+
+
+{-| -}
 viewMaybe : Maybe a -> (a -> Svg.Svg msg) -> Svg.Svg msg
 viewMaybe a view =
     Maybe.withDefault (Svg.text "") (Maybe.map view a)

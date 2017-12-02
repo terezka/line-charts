@@ -70,16 +70,17 @@ view
   -> Line.Look data
   -> Dot.Look data
   -> Legends msg
+  -> Float
   -> List (Line.Line data)
   -> List (List (Coordinate.DataPoint data))
   -> Svg.Svg msg
-view system lineLook dotLook legends lines dataPoints =
+view system lineLook dotLook legends areaOpacity lines dataPoints =
   case legends of
     Free placement view ->
       viewFrees system placement view lines dataPoints
 
     Bucketed sampleWidth container ->
-      viewBucketed system lineLook dotLook sampleWidth container lines
+      viewBucketed system lineLook dotLook sampleWidth areaOpacity container lines
 
     None ->
       Svg.text ""
@@ -125,28 +126,29 @@ viewBucketed
   -> Line.Look data
   -> Dot.Look data
   -> SampleWidth
+  -> Float
   -> Container msg
   -> List (Line.Line data)
   -> Svg.Svg msg
-viewBucketed system lineLook dotLook sampleWidth container lines =
+viewBucketed system lineLook dotLook sampleWidth areaOpacity container lines =
   let
     toConfig (Line.Line line) =
-      { sample = viewSample system lineLook dotLook sampleWidth line
+      { sample = viewSample system lineLook dotLook sampleWidth areaOpacity line
       , label = line.label
       }
   in
   container system <| List.map toConfig lines
 
 
-viewSample : Coordinate.System -> Line.Look data -> Dot.Look data -> Float -> Line.LineConfig data -> Svg msg
-viewSample system lineLook dotLook sampleWidth line =
+viewSample : Coordinate.System -> Line.Look data -> Dot.Look data -> Float -> Float -> Line.LineConfig data -> Svg msg
+viewSample system lineLook dotLook sampleWidth areaOpacity line =
   let
     middle =
       Coordinate.toCartesianPoint system <| Coordinate.Point (sampleWidth / 2) 0
   in
   Svg.g
     [ Attributes.class "sample" ]
-    [ Line.viewSample lineLook line.color line.dashing line.areaOpacity sampleWidth
+    [ Line.viewSample lineLook line.color line.dashing areaOpacity sampleWidth
     , Dot.viewSample dotLook line.shape line.color system middle
     ]
 

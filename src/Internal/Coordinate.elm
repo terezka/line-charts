@@ -1,4 +1,4 @@
-module Internal.Coordinate exposing (DataPoint, limits, minimum, minimumOrZero, maximum)
+module Internal.Coordinate exposing (DataPoint, limits, minimum, minimumOrZero, maximum, ground)
 
 {-| -}
 
@@ -49,3 +49,9 @@ maximum toValue =
   List.map toValue
     >> List.maximum
     >> Maybe.withDefault 1
+
+
+{-| -}
+ground : Coordinate.Limits -> Coordinate.Limits
+ground limits =
+  { limits | min = Basics.min limits.min 0 }
