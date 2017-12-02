@@ -17,7 +17,7 @@ viewHorizontal : Coordinate.System -> Axis.Look msg -> Svg msg
 viewHorizontal system axis =
     let
         axisPosition =
-          axis.position system.y - scaleCartesianY system axis.offset
+          axis.position system.y - scaleDataY system axis.offset
 
         at x =
           { x = x, y = axisPosition }
@@ -42,7 +42,7 @@ viewVertical : Coordinate.System -> Axis.Look msg -> Svg msg
 viewVertical system axis =
     let
         axisPosition =
-          axis.position system.x - scaleCartesianX system axis.offset
+          axis.position system.x - scaleDataX system axis.offset
 
         at y =
           { x = axisPosition, y = y }

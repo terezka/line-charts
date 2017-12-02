@@ -144,7 +144,7 @@ viewSample : Coordinate.System -> Line.Look data -> Dot.Look data -> Float -> Fl
 viewSample system lineLook dotLook sampleWidth areaOpacity line =
   let
     middle =
-      Coordinate.toCartesianPoint system <| Coordinate.Point (sampleWidth / 2) 0
+      Coordinate.toData system <| Coordinate.Point (sampleWidth / 2) 0
   in
   Svg.g
     [ Attributes.class "sample" ]

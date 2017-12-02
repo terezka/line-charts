@@ -80,33 +80,33 @@ toString command =
 translate : System -> Command -> Command
 translate system command =
   case command of
-    Move p       -> Move (toSVGPoint system p)
-    Line p       -> Line (toSVGPoint system p)
+    Move p       -> Move (toSVG system p)
+    Line p       -> Line (toSVG system p)
     Horizontal x -> Horizontal (toSVGX system x)
     Vertical y   -> Vertical (toSVGY system y)
 
     CubicBeziers c1 c2 p ->
       CubicBeziers
-        (toSVGPoint system c1)
-        (toSVGPoint system c2)
-        (toSVGPoint system p)
+        (toSVG system c1)
+        (toSVG system c2)
+        (toSVG system p)
 
     CubicBeziersShort c1 p ->
       CubicBeziersShort
-        (toSVGPoint system c1)
-        (toSVGPoint system p)
+        (toSVG system c1)
+        (toSVG system p)
 
     QuadraticBeziers c1 p ->
       QuadraticBeziers
-        (toSVGPoint system c1)
-        (toSVGPoint system p)
+        (toSVG system c1)
+        (toSVG system p)
 
     QuadraticBeziersShort p ->
       QuadraticBeziersShort
-        (toSVGPoint system p)
+        (toSVG system p)
 
     Arc rx ry xAxisRotation largeArcFlag sweepFlag p ->
-      Arc rx ry xAxisRotation largeArcFlag sweepFlag (toSVGPoint system p)
+      Arc rx ry xAxisRotation largeArcFlag sweepFlag (toSVG system p)
 
     Close ->
       Close

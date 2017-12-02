@@ -62,13 +62,13 @@ horizontal =
           Expect.equal 8 (toSVGX (updateFrame system { frame | margin = Margin 0 20 0 0 }) 1)
     , test "toCartesian" <|
         \() ->
-          Expect.equal 1 (toCartesianX system 10)
+          Expect.equal 1 (toDataX system 10)
     , test "toCartesian with lower margin" <|
         \() ->
-          Expect.equal 1 (toCartesianX (updateFrame system { frame | margin = Margin 0 0 0 20 }) 28)
+          Expect.equal 1 (toDataX (updateFrame system { frame | margin = Margin 0 0 0 20 }) 28)
     , test "toCartesian with upper margin" <|
         \() ->
-          Expect.equal 1 (toCartesianX (updateFrame system { frame | margin = Margin 0 20 0 0 }) 8)
+          Expect.equal 1 (toDataX (updateFrame system { frame | margin = Margin 0 20 0 0 }) 8)
     ]
 
 
@@ -86,13 +86,13 @@ vertical =
           Expect.equal 92 (toSVGY (updateFrame system { frame | margin = Margin 20 0 0 0 }) 1)
     , test "toCartesian" <|
         \() ->
-          Expect.equal 1 (toCartesianY system 90)
+          Expect.equal 1 (toDataY system 90)
     , test "toCartesian with lower margin" <|
         \() ->
-          Expect.equal 1 (toCartesianY (updateFrame system { frame | margin = Margin 0 0 20 0 }) 72)
+          Expect.equal 1 (toDataY (updateFrame system { frame | margin = Margin 0 0 20 0 }) 72)
     , test "toCartesian with upper margin" <|
         \() ->
-          Expect.equal 1 (toCartesianY (updateFrame system { frame | margin = Margin 20 0 0 0 }) 92)
+          Expect.equal 1 (toDataY (updateFrame system { frame | margin = Margin 20 0 0 0 }) 92)
     ]
 
 

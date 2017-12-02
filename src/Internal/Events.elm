@@ -197,8 +197,8 @@ findNearestXHelp points system searched =
 {-| -}
 toCartesianSafe : Coordinate.System -> Point -> Point
 toCartesianSafe system point =
-  { x = clamp system.x.min system.x.max <| Coordinate.toCartesianX system point.x
-  , y = clamp system.y.min system.y.max <| Coordinate.toCartesianY system point.y
+  { x = clamp system.x.min system.x.max <| Coordinate.toDataX system point.x
+  , y = clamp system.y.min system.y.max <| Coordinate.toDataY system point.y
   }
 
 

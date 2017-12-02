@@ -1,11 +1,11 @@
 module Lines.Coordinate exposing
   ( Frame, Size, Margin
   , System, Limits
+  , Point, toSVG, toData
   , toSVGX, toSVGY
-  , toCartesianX, toCartesianY
+  , toDataX, toDataY
   , scaleSVGX, scaleSVGY
-  , scaleCartesianX, scaleCartesianY
-  , Point, toSVGPoint, toCartesianPoint
+  , scaleDataX, scaleDataY
   )
 
 {-|
@@ -16,14 +16,16 @@ module Lines.Coordinate exposing
 # System
 @docs System, Limits
 
-## Single value
-@docs toSVGX, toSVGY, toCartesianX, toCartesianY
+# Translation
 
 ## Point
-@docs Point, toSVGPoint, toCartesianPoint
+@docs Point, toSVG, toData
+
+## Single value
+@docs toSVGX, toSVGY, toDataX, toDataY
 
 ## Scale
-@docs scaleSVGX, scaleSVGY, scaleCartesianX, scaleCartesianY
+@docs scaleSVGX, scaleSVGY, scaleDataX, scaleDataY
 
 -}
 
@@ -105,16 +107,16 @@ toSVGY system value =
 
 {-| Translate a x-coordinate from SVG to cartesian.
 -}
-toCartesianX : System -> Float -> Float
-toCartesianX system value =
-  system.x.min + scaleCartesianX system (value - system.frame.margin.left)
+toDataX : System -> Float -> Float
+toDataX system value =
+  system.x.min + scaleDataX system (value - system.frame.margin.left)
 
 
 {-| Translate a y-coordinate from SVG to cartesian.
 -}
-toCartesianY : System -> Float -> Float
-toCartesianY system value =
-  system.y.max - scaleCartesianY system (value - system.frame.margin.top)
+toDataY : System -> Float -> Float
+toDataY system value =
+  system.y.max - scaleDataY system (value - system.frame.margin.top)
 
 
 
@@ -137,15 +139,15 @@ scaleSVGY system value =
 
 {-| Scale a x-value from SVG to cartesian.
 -}
-scaleCartesianX : System -> Float -> Float
-scaleCartesianX system value =
+scaleDataX : System -> Float -> Float
+scaleDataX system value =
   value * (reachX system) / (lengthX system)
 
 
 {-| Scale a y-value from SVG to cartesian.
 -}
-scaleCartesianY : System -> Float -> Float
-scaleCartesianY system value =
+scaleDataY : System -> Float -> Float
+scaleDataY system value =
   value * (reachY system) / (lengthY system)
 
 
@@ -161,18 +163,18 @@ type alias Point =
 
 
 {-| -}
-toSVGPoint : System -> Point -> Point
-toSVGPoint system point =
+toSVG : System -> Point -> Point
+toSVG system point =
   { x = toSVGX system point.x
   , y = toSVGY system point.y
   }
 
 
 {-| -}
-toCartesianPoint : System -> Point -> Point
-toCartesianPoint system point =
-  { x = toCartesianX system point.x
-  , y = toCartesianY system point.y
+toData : System -> Point -> Point
+toData system point =
+  { x = toDataX system point.x
+  , y = toDataY system point.y
   }
 
 
