@@ -1,6 +1,6 @@
 module Lines exposing
   ( view1, view2, view3
-  , view, line, dash
+  , view, Line, line, dash
   , viewCustom, Config
   , Interpolation, linear, monotone
   )
@@ -11,7 +11,7 @@ module Lines exposing
 @docs view1, view2, view3
 
 # Customize lines
-@docs view, line, dash
+@docs view, Line, line, dash
 
 # Customize everything
 @docs Config, viewCustom
@@ -37,7 +37,6 @@ import Internal.Interpolation as Interpolation
 import Internal.Junk
 import Internal.Legends as Legends
 import Internal.Line as Line
-
 
 
 -- TODO: Cutable domain/range
@@ -136,9 +135,6 @@ view3 toX toY dataset1 dataset2 dataset3 =
 {-| Show any amount of lines in your chart. Additional customizations of your
 lines are also made available by the use of the function `line`.
 
-    import Lines
-    import Lines.Dot as Dot
-
     humanChart : Html msg
     humanChart =
       Lines.view .age .weight
@@ -156,7 +152,8 @@ view toX toY =
 
 
 
-{-| -}
+{-| The type to represent a line configuration.
+-}
 type alias Line data =
   Line.Line data
 
@@ -164,9 +161,6 @@ type alias Line data =
 {-| Customize a solid line.
 
 Try changing the color or explore all the available dot shapes from `Lines.Dot`!
-
-    import Lines
-    import Lines.Dot as Dot
 
     humanChart : Html msg
     humanChart =
@@ -195,7 +189,7 @@ line =
 
 Works just like `line`, except it takes another argument second to last which
 is and array of floats describing your dashing pattern. See the
-[SVG `stroke-dasharray` documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
+SVG [`stroke-dasharray` documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
 for examples of patterns. Dashed lines are especially good for visualizing
 processed data, like averages or predicted values.
 
@@ -246,22 +240,15 @@ dash =
     `Lines.Line` for more information and examples.
   - `dot` allows you to customize your dots' size and style. See
     `Lines.Dot` for more information and examples.
+  - `areaOpacity` determines the opacity of the area under your line. The area
+    is always the same color as your line, but the transparency can be altered
+    with this property.
 
   TODO reorder properties, add links, align examples to run progressively
 
 
 The default configuration is the following. A good start would be to copy it and
-play around with customizations available for each property. Again, to be used
-with `viewCustom`!
-
-    import Lines
-    import Lines.Axis as Axis
-    import Lines.Coordinate exposing (Frame, Margin, Size)
-    import Lines.Dot as Dot
-    import Lines.Events as Events
-    import Lines.Junk as Junk
-    import Lines.Legends as Legends
-    import Lines.Line as Line
+play around with customizations available for each property.
 
     chartConfig : Config data msg
     chartConfig =
@@ -330,32 +317,6 @@ monotone =
 available customizations. The following example changes the font color of
 your chart:
 
-    import Svg.Attributes
-    import Lines
-    import Lines.Axis as Axis
-    import Lines.Coordinate exposing (Frame, Margin, Size)
-    import Lines.Dot as Dot
-    import Lines.Events as Events
-    import Lines.Junk as Junk
-    import Lines.Legends as Legends
-    import Lines.Line as Line
-
-    chartConfig : Config data msg
-    chartConfig =
-      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
-      , attributes =
-          -- Changed from the default!
-          [ Svg.Attributes.style "fill: darkslategray;" ]
-      , events = []
-      , junk = Junk.none
-      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
-      , y = Axis.default (Axis.defaultTitle "" 0 0) .weight
-      , interpolation = Lines.linear
-      , legends = Legends.default
-      , line = Line.default
-      , dot = Dot.default
-      }
-
     chart : Html msg
     chart =
       Lines.viewCustom chartConfig
@@ -364,7 +325,21 @@ your chart:
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
-_See the full example [here](https://ellie-app.com/smkVxrpMfa1/0)._
+    chartConfig : Config data msg
+    chartConfig =
+      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
+      , attributes = []
+      , events = []
+      , junk = Junk.none
+      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
+      , y = Axis.default (Axis.defaultTitle "" 0 0) .weight
+      , interpolation = Lines.linear
+      , legends = Legends.byEnding -- Changed from the default!
+      , line = Line.default
+      , dot = Dot.default
+      }
+
+_See the full example [here](https://ellie-app.com/smkVxrpMfa1/1)._
 
 -}
 viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
