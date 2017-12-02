@@ -40,178 +40,6 @@ import Internal.Line as Line
 
 
 
--- CONFIG
-
-
-{-| The customizations available for your line chart viewed with `viewCustom`.
-
-  - `frame` customizes the size and margins of your chart. See `Lines.Coordinate`
-    for more information and examples.
-  - `attributes` allows you to specify SVG attributes to be added to the `svg`
-    element containing your chart.
-  - `events` allows you to add events to your chart, allowing you easily making
-    your chart interactive (adding tooltips, hover startes etc.). See
-    `Lines.Events` for more information and examples.
-  - `junk` gets its name from Edward Tufte's concept of "chart junk". Here you
-    are allowed set your creativity free and add whatever SVG or HTML fun you
-    can imagine. Useful when you are the victim of a designer's urge to explore
-    their artistic potential within data visualizing. See `Lines.Junk` for
-    more information and examples. -- TODO joke
-  - `x` allows you to customize the look of your horizontal axis. See
-    `Lines.Axis` for more information and examples.
-  - `y` allows you to customize the look of your vertical axis. See
-    `Lines.Axis` for more information and examples.
-  - `interpolation` allows you to customize the curve of your lines.
-    See the `Interpolation` type for more information and examples.
-  - `legends` allows you to customize your charts legends. See
-    `Lines.Legends` for more information and examples.
-  - `line` allows you to customize your lines' width and color. See
-    `Lines.Line` for more information and examples.
-  - `dot` allows you to customize your dots' size and style. See
-    `Lines.Dot` for more information and examples.
-
-  TODO reorder properties, add links, align examples to run progressively
-
-
-The default configuration is the following. A good start would be to copy it and
-play around with customizations available for each property. Again, to be used
-with `viewCustom`!
-
-    import Lines
-    import Lines.Axis as Axis
-    import Lines.Coordinate exposing (Frame, Margin, Size)
-    import Lines.Dot as Dot
-    import Lines.Events as Events
-    import Lines.Junk as Junk
-    import Lines.Legends as Legends
-    import Lines.Line as Line
-
-    chartConfig : Config data msg
-    chartConfig =
-      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
-      , attributes = []
-      , events = []
-      , junk = Junk.none
-      , x = Axis.default (Axis.defaultTitle "Age" 0 0) .age
-      , y = Axis.default (Axis.defaultTitle "Weight" 0 0) .weight
-      , interpolation = Lines.linear
-      , legends = Legends.default
-      , line = Line.default
-      , dot = Dot.default
-      }
-
-    chart : Html msg
-    chart =
-      Lines.viewCustom chartConfig
-        [ Lines.line "red" Dot.cross "Alice" alice
-        , Lines.line "blue" Dot.square "Bob" bob
-        , Lines.line "green" Dot.circle "Chuck" chuck
-        ]
-
--}
-type alias Config data msg =
-  { frame : Coordinate.Frame
-  , attributes : List (Svg.Attribute msg)
-  , events : List (Events.Event data msg)
-  , junk : Junk.Junk msg
-  , x : Axis.Axis data msg
-  , y : Axis.Axis data msg
-  , interpolation : Interpolation
-  , legends : Legends.Legends msg
-  , line : Line.Look data -- TODO Look type ref doesn't show up in docs
-  , dot : Dot.Look data
-  , areaOpacity : Float
-  }
-
-
-
--- INTERPOLATIONS
-
-
-{-| Representes an interpolation (curving of lines).
--}
-type alias Interpolation =
-  Interpolation.Interpolation
-
-
-{-| A linear interpolation.
--}
-linear : Interpolation
-linear =
-  Interpolation.Linear
-
-
-{-| A monotone-x interpolation.
--}
-monotone : Interpolation
-monotone =
-  Interpolation.Monotone
-
-
-
--- LINE
-
-
-{-| -}
-type alias Line data =
-  Line.Line data
-
-
-{-| Customize a solid line.
-
-Try changing the color or explore all the available dot shapes from `Lines.Dot`!
-
-    import Lines
-    import Lines.Dot as Dot
-
-    humanChart : Html msg
-    humanChart =
-      Lines.view .age .weight
-        [ Lines.line "darkslateblue" Dot.cross "Alice" alice
-        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
-        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
-        ]
-
-_See the full example [here](https://ellie-app.com/stWdWjqGZa1/0)._
-
-Besides the color and the dot, you also pass the function a string title and
-the data for that line. These titles will show up in the legends.
-
-If you are interested in customizing your legends, dot size or line width,
-check out `viewCustom`. For now though, I'd recommend you stick to `view` and
-get your lines right first, and then stepping up the complexity.
-
- -}
-line : Color.Color -> Dot.Shape -> String -> List data -> Line data
-line =
-  Line.line
-
-
-{-| Customize a dashed line.
-
-Works just like `line`, except it takes another argument second to last which
-is and array of floats describing your dashing pattern. See the
-[SVG `stroke-dasharray` documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
-for examples of patterns. Dashed lines are especially good for visualizing
-processed data, like averages or predicted values.
-
-    humanChart : Html msg
-    humanChart =
-      Lines.view .age .weight
-        [ Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
-        , Lines.line "darkslateblue" Dot.cross "Alice" alice
-        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
-        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
-        ]
-
-_See the full example [here](https://ellie-app.com/syMhqfR8qa1/1)._
-
--}
-dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
-dash =
-  Line.dash
-
-
 -- TODO: Cutable domain/range
 -- TODO: Add area negative curve
 -- TODO: Fix axis outliers maybe
@@ -328,7 +156,174 @@ view toX toY =
 
 
 
+{-| -}
+type alias Line data =
+  Line.Line data
+
+
+{-| Customize a solid line.
+
+Try changing the color or explore all the available dot shapes from `Lines.Dot`!
+
+    import Lines
+    import Lines.Dot as Dot
+
+    humanChart : Html msg
+    humanChart =
+      Lines.view .age .weight
+        [ Lines.line "darkslateblue" Dot.cross "Alice" alice
+        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
+        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
+        ]
+
+_See the full example [here](https://ellie-app.com/stWdWjqGZa1/0)._
+
+Besides the color and the dot, you also pass the function a string title and
+the data for that line. These titles will show up in the legends.
+
+If you are interested in customizing your legends, dot size or line width,
+check out `viewCustom`. For now though, I'd recommend you stick to `view` and
+get your lines right first, and then stepping up the complexity.
+
+ -}
+line : Color.Color -> Dot.Shape -> String -> List data -> Line data
+line =
+  Line.line
+
+
+{-| Customize a dashed line.
+
+Works just like `line`, except it takes another argument second to last which
+is and array of floats describing your dashing pattern. See the
+[SVG `stroke-dasharray` documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
+for examples of patterns. Dashed lines are especially good for visualizing
+processed data, like averages or predicted values.
+
+    humanChart : Html msg
+    humanChart =
+      Lines.view .age .weight
+        [ Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
+        , Lines.line "darkslateblue" Dot.cross "Alice" alice
+        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
+        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
+        ]
+
+_See the full example [here](https://ellie-app.com/syMhqfR8qa1/1)._
+
+-}
+dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
+dash =
+  Line.dash
+
+
+
 -- VIEW / CUSTOM
+
+
+{-| The customizations available for your line chart viewed with `viewCustom`.
+
+  - `frame` customizes the size and margins of your chart. See `Lines.Coordinate`
+    for more information and examples.
+  - `attributes` allows you to specify SVG attributes to be added to the `svg`
+    element containing your chart.
+  - `events` allows you to add events to your chart, allowing you easily making
+    your chart interactive (adding tooltips, hover startes etc.). See
+    `Lines.Events` for more information and examples.
+  - `junk` gets its name from Edward Tufte's concept of "chart junk". Here you
+    are allowed set your creativity free and add whatever SVG or HTML fun you
+    can imagine. Useful when you are the victim of a designer's urge to explore
+    their artistic potential within data visualizing. See `Lines.Junk` for
+    more information and examples. -- TODO joke
+  - `x` allows you to customize the look of your horizontal axis. See
+    `Lines.Axis` for more information and examples.
+  - `y` allows you to customize the look of your vertical axis. See
+    `Lines.Axis` for more information and examples.
+  - `interpolation` allows you to customize the curve of your lines.
+    See the `Interpolation` type for more information and examples.
+  - `legends` allows you to customize your charts legends. See
+    `Lines.Legends` for more information and examples.
+  - `line` allows you to customize your lines' width and color. See
+    `Lines.Line` for more information and examples.
+  - `dot` allows you to customize your dots' size and style. See
+    `Lines.Dot` for more information and examples.
+
+  TODO reorder properties, add links, align examples to run progressively
+
+
+The default configuration is the following. A good start would be to copy it and
+play around with customizations available for each property. Again, to be used
+with `viewCustom`!
+
+    import Lines
+    import Lines.Axis as Axis
+    import Lines.Coordinate exposing (Frame, Margin, Size)
+    import Lines.Dot as Dot
+    import Lines.Events as Events
+    import Lines.Junk as Junk
+    import Lines.Legends as Legends
+    import Lines.Line as Line
+
+    chartConfig : Config data msg
+    chartConfig =
+      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
+      , attributes = []
+      , events = []
+      , junk = Junk.none
+      , x = Axis.default (Axis.defaultTitle "Age" 0 0) .age
+      , y = Axis.default (Axis.defaultTitle "Weight" 0 0) .weight
+      , interpolation = Lines.linear
+      , legends = Legends.default
+      , line = Line.default
+      , dot = Dot.default
+      }
+
+    chart : Html msg
+    chart =
+      Lines.viewCustom chartConfig
+        [ Lines.line "red" Dot.cross "Alice" alice
+        , Lines.line "blue" Dot.square "Bob" bob
+        , Lines.line "green" Dot.circle "Chuck" chuck
+        ]
+
+-}
+type alias Config data msg =
+  { frame : Coordinate.Frame
+  , attributes : List (Svg.Attribute msg)
+  , events : List (Events.Event data msg)
+  , junk : Junk.Junk msg
+  , x : Axis.Axis data msg
+  , y : Axis.Axis data msg
+  , interpolation : Interpolation
+  , legends : Legends.Legends msg
+  , line : Line.Look data -- TODO Look type ref doesn't show up in docs
+  , dot : Dot.Look data
+  , areaOpacity : Float
+  }
+
+
+
+-- INTERPOLATIONS
+
+
+{-| Representes an interpolation (curving of lines).
+-}
+type alias Interpolation =
+  Interpolation.Interpolation
+
+
+{-| A linear interpolation.
+-}
+linear : Interpolation
+linear =
+  Interpolation.Linear
+
+
+{-| A monotone-x interpolation.
+-}
+monotone : Interpolation
+monotone =
+  Interpolation.Monotone
+
 
 
 {-| Customize your chart. See the `Config` type for information about the
