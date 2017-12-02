@@ -59,8 +59,7 @@ average =
 
 humanChart : Html msg
 humanChart =
-    Lines.view .age
-        .income
+    Lines.view .age .income
         [ Lines.area "darkgoldenrod" Dot.none "Chuck" 0.25 chuck
         , Lines.area "darkslateblue" Dot.none "Alice" 0.25 alice
         , Lines.area "darkturquoise" Dot.none "Bob" 0.25 bob
