@@ -27,7 +27,6 @@ import Svg
 import Svg.Attributes as Attributes
 import Lines.Axis as Axis
 import Lines.Color as Color
-import Lines.Coordinate as Coordinate
 import Lines.Junk as Junk
 import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
@@ -37,6 +36,7 @@ import Internal.Interpolation as Interpolation
 import Internal.Junk
 import Internal.Legends as Legends
 import Internal.Line as Line
+import Internal.Utils as Utils
 
 
 
@@ -286,6 +286,7 @@ type alias Config data msg =
   , attributes : List (Svg.Attribute msg)
   , events : List (Events.Event data msg)
   , junk : Junk.Junk msg
+  , id : String
   }
 
 
@@ -396,7 +397,7 @@ viewCustom config lines =
         ]
 
     viewLine =
-      Line.view system config.dot config.interpolation config.line config.areaOpacity
+      Line.view system config.dot config.interpolation config.line config.areaOpacity config.id
 
     viewLines =
       List.map2 viewLine lines dataPoints
@@ -406,13 +407,31 @@ viewCustom config lines =
   in
   container <|
     Svg.svg attributes
-      [ Svg.g [ Attributes.class "junk--below" ] junk.below
+      [ Svg.defs [] [ clipPath config system ]
+      , Svg.g [ Attributes.class "junk--below" ] junk.below
       , Svg.g [ Attributes.class "lines" ] viewLines
       , Axis.viewHorizontal system config.x.look
       , Axis.viewVertical system config.y.look
       , viewLegends
       , Svg.g [ Attributes.class "junk--above" ] junk.above
       ]
+
+
+
+-- INTERNAL
+
+
+clipPath : Config data msg -> Coordinate.System -> Svg.Svg msg
+clipPath { id } system =
+  Svg.clipPath [ Attributes.id (Utils.toClipPathId id) ]
+    [ Svg.rect
+      [ Attributes.x <| toString system.frame.margin.right
+      , Attributes.y <| toString system.frame.margin.top
+      , Attributes.width <| toString (Coordinate.lengthX system)
+      , Attributes.height <| toString (Coordinate.lengthY system)
+      ]
+      []
+    ]
 
 
 
@@ -432,6 +451,7 @@ defaultConfig toX toY =
   , line = Line.default
   , dot = Dot.default
   , areaOpacity = 0
+  , id = "chart"
   }
 
 

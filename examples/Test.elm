@@ -81,6 +81,7 @@ chartConfig toXValue toYValue =
     , line = Line.default
     , dot = Dot.default
     , areaOpacity = 0.25
+    , id = "achart"
     }
 
 

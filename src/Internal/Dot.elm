@@ -10,10 +10,9 @@ module Internal.Dot exposing
 
 import Svg exposing (Svg)
 import Lines.Color as Color
-import Lines.Coordinate as Coordinate
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate exposing (..)
-import Internal.Coordinate as Coordinate exposing (..)
+import Internal.Coordinate exposing (DataPoint)
 
 
 
@@ -124,7 +123,7 @@ full size =
 
 
 {-| -}
-view : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.DataPoint data -> Svg msg
+view : Look data -> Shape -> Color.Color -> Coordinate.System -> DataPoint data -> Svg msg
 view (Look config) shape color system dataPoint =
   let
     (Style style) =

@@ -11,7 +11,7 @@ import Svg
 import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate exposing (..)
-import Internal.Coordinate as Coordinate exposing (..)
+import Internal.Coordinate exposing (DataPoint)
 import Internal.Dot as Dot
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
@@ -134,10 +134,11 @@ view
   -> Interpolation.Interpolation
   -> Look data
   -> Float
+  -> String
   -> Line data
-  -> List (Coordinate.DataPoint data)
+  -> List (DataPoint data)
   -> Svg.Svg msg
-view system dotLook interpolation lineLook areaOpacity (Line line) dataPoints =
+view system dotLook interpolation lineLook areaOpacity id (Line line) dataPoints =
   let
     viewDot =
       Dot.view dotLook line.shape line.color system
@@ -145,7 +146,7 @@ view system dotLook interpolation lineLook areaOpacity (Line line) dataPoints =
   -- TODO prefix classes
   Svg.g [ Attributes.class "line" ]
     [ Utils.viewIf (areaOpacity > 0) <| \() ->
-        viewArea system lineLook interpolation line.color areaOpacity dataPoints
+        viewArea system lineLook interpolation line.color areaOpacity id dataPoints
     , viewLine system lineLook interpolation line.color line.dashing dataPoints
     , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
     ]
@@ -212,9 +213,10 @@ viewArea
   -> Interpolation.Interpolation
   -> Color.Color
   -> Float
+  -> String
   -> List (DataPoint data)
   -> Svg.Svg msg
-viewArea system look interpolation mainColor opacity dataPoints =
+viewArea system look interpolation mainColor opacity id dataPoints =
   let
     interpolationCommands =
       Interpolation.toCommands interpolation (List.map .point dataPoints)
@@ -235,7 +237,8 @@ viewArea system look interpolation mainColor opacity dataPoints =
       Maybe.withDefault first (Utils.last rest) |> .point |> .x
 
     attributes =
-      toAreaAttributes look mainColor opacity dataPoints
+      toAreaAttributes look mainColor opacity dataPoints ++
+        [ Attributes.clipPath <| "url(#" ++ Utils.toClipPathId id ++ ")" ]
   in
   Path.view system attributes commands
 

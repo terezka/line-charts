@@ -1,20 +1,62 @@
-module Internal.Coordinate exposing (DataPoint, limits, minimum, minimumOrZero, maximum, ground)
+module Internal.Coordinate exposing (..)
 
 {-| -}
 
-import Lines.Coordinate as Coordinate exposing (..)
 
+{-| -}
+type alias Frame =
+  { margin : Margin
+  , size : Size
+  }
+
+
+{-| -}
+type alias Size =
+  { width : Float
+  , height : Float
+  }
+
+
+{-| -}
+type alias Margin =
+  { top : Float
+  , right : Float
+  , bottom : Float
+  , left : Float
+  }
+
+
+{-| -}
+type alias System =
+  { frame : Frame
+  , x : Limits
+  , y : Limits
+  }
+
+
+{-| -}
+type alias Limits =
+  { min : Float
+  , max : Float
+  }
 
 
 {-| -}
 type alias DataPoint data =
   { data : data
-  , point : Coordinate.Point
+  , point : Point
   }
 
 
 {-| -}
-limits : (a -> Float) -> List a -> Coordinate.Limits
+type alias Point =
+  { x : Float
+  , y : Float
+  }
+
+
+{-| -}
+limits : (a -> Float) -> List a -> Limits
 limits toValue data =
   let
     limits =
@@ -52,6 +94,38 @@ maximum toValue =
 
 
 {-| -}
-ground : Coordinate.Limits -> Coordinate.Limits
+ground : Limits -> Limits
 ground limits =
   { limits | min = Basics.min limits.min 0 }
+
+
+{-| -}
+reachX : System -> Float
+reachX system =
+  let
+    diff =
+      system.x.max - system.x.min
+  in
+    if diff > 0 then diff else 1
+
+
+{-| -}
+reachY : System -> Float
+reachY system =
+  let
+    diff =
+      system.y.max - system.y.min
+  in
+    if diff > 0 then diff else 1
+
+
+{-| -}
+lengthX : System -> Float
+lengthX system =
+  max 1 (system.frame.size.width - system.frame.margin.left - system.frame.margin.right)
+
+
+{-| -}
+lengthY : System -> Float
+lengthY system =
+  max 1 (system.frame.size.height - system.frame.margin.bottom - system.frame.margin.top)

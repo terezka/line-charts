@@ -8,7 +8,7 @@ module Internal.Events exposing
 import DOM
 import Svg
 import Lines.Coordinate as Coordinate exposing (..)
-import Internal.Coordinate as Coordinate exposing (..)
+import Internal.Coordinate exposing (DataPoint)
 import Internal.Utils exposing (withFirst)
 import Json.Decode as Json
 
@@ -16,17 +16,17 @@ import Json.Decode as Json
 
 {-| -}
 type Event data msg
-    = Event (List (DataPoint data) -> Coordinate.System -> Svg.Attribute msg)
+    = Event (List (DataPoint data) -> System -> Svg.Attribute msg)
 
 
 {-| -}
-toEvent : (List (DataPoint data) -> Coordinate.System -> Svg.Attribute msg) -> Event data msg
+toEvent : (List (DataPoint data) -> System -> Svg.Attribute msg) -> Event data msg
 toEvent =
   Event
 
 
 {-| -}
-toAttributes : List (DataPoint data) -> Coordinate.System -> List (Event data msg) -> List (Svg.Attribute msg)
+toAttributes : List (DataPoint data) -> System -> List (Event data msg) -> List (Svg.Attribute msg)
 toAttributes dataPoints system =
     List.map (\(Event attribute) -> attribute dataPoints system)
 
@@ -36,7 +36,7 @@ toAttributes dataPoints system =
 
 
 {-| -}
-decoder : List (DataPoint data) -> Coordinate.System -> Searcher data hint -> (hint -> msg) -> Json.Decoder msg
+decoder : List (DataPoint data) -> System -> Searcher data hint -> (hint -> msg) -> Json.Decoder msg
 decoder points system searcher msg =
   Json.map7
     toCoordinate
@@ -57,7 +57,7 @@ position =
     ]
 
 
-toCoordinate : List (DataPoint data) -> Coordinate.System -> Searcher data hint -> (hint -> msg) -> Float -> Float -> DOM.Rectangle -> msg
+toCoordinate : List (DataPoint data) -> System -> Searcher data hint -> (hint -> msg) -> Float -> Float -> DOM.Rectangle -> msg
 toCoordinate points system searcher msg mouseX mouseY { left, top } =
   Point (mouseX - left) (mouseY - top)
     |> applySearcher searcher points system
@@ -195,7 +195,7 @@ findNearestXHelp points system searched =
 
 
 {-| -}
-toCartesianSafe : Coordinate.System -> Point -> Point
+toCartesianSafe : System -> Point -> Point
 toCartesianSafe system point =
   { x = clamp system.x.min system.x.max <| Coordinate.toDataX system point.x
   , y = clamp system.y.min system.y.max <| Coordinate.toDataY system point.y

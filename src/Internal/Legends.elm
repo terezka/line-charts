@@ -5,7 +5,7 @@ module Internal.Legends exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
-import Internal.Coordinate as Coordinate
+import Internal.Coordinate exposing (DataPoint)
 import Internal.Dot as Dot
 import Internal.Line as Line
 import Internal.Utils as Utils
@@ -72,7 +72,7 @@ view
   -> Legends msg
   -> Float
   -> List (Line.Line data)
-  -> List (List (Coordinate.DataPoint data))
+  -> List (List (DataPoint data))
   -> Svg.Svg msg
 view system lineLook dotLook legends areaOpacity lines dataPoints =
   case legends of
@@ -95,14 +95,14 @@ viewFrees
   -> Placement
   -> (String -> Svg msg)
   -> List (Line.Line data)
-  -> List (List (Coordinate.DataPoint data))
+  -> List (List (DataPoint data))
   -> Svg.Svg msg
 viewFrees system placement view lines dataPoints =
   Svg.g [ Attributes.class "legends" ] <|
     List.map2 (viewFree system placement view) lines dataPoints
 
 
-viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> List (Coordinate.DataPoint data) -> Svg.Svg msg
+viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> List (DataPoint data) -> Svg.Svg msg
 viewFree system placement viewLabel (Line.Line line) dataPoints =
   let
     ( orderedPoints, anchor, xOffset ) =

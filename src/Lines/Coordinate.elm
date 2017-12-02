@@ -29,6 +29,7 @@ module Lines.Coordinate exposing
 
 -}
 
+import Internal.Coordinate exposing (..)
 
 
 {-| Specifies the size and margins of your chart.
@@ -176,35 +177,3 @@ toData system point =
   { x = toDataX system point.x
   , y = toDataY system point.y
   }
-
-
-
--- INTERNAL
-
-
-reachX : System -> Float
-reachX system =
-  let
-    diff =
-      system.x.max - system.x.min
-  in
-    if diff > 0 then diff else 1
-
-
-reachY : System -> Float
-reachY system =
-  let
-    diff =
-      system.y.max - system.y.min
-  in
-    if diff > 0 then diff else 1
-
-
-lengthX : System -> Float
-lengthX system =
-  max 1 (system.frame.size.width - system.frame.margin.left - system.frame.margin.right)
-
-
-lengthY : System -> Float
-lengthY system =
-  max 1 (system.frame.size.height - system.frame.margin.bottom - system.frame.margin.top)

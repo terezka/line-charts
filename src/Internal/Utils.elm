@@ -68,3 +68,8 @@ towardsZero { max, min } =
 last : List a -> Maybe a
 last list =
   List.head (List.drop (List.length list - 1) list)
+
+
+toClipPathId : String -> String
+toClipPathId id =
+  "clip-path__" ++ id
