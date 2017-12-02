@@ -14,7 +14,7 @@ module Lines exposing
 @docs view, Line, line, dash
 
 # Customize everything
-@docs Config, viewCustom
+@docs viewCustom, Config
 
 ## Interpolations
 @docs Interpolation, linear, monotone
@@ -214,46 +214,47 @@ dash =
 
 {-| The customizations available for your line chart viewed with `viewCustom`.
 
-  - `frame`: customizes the size and margins of your chart.
+  - `frame`: Customizes the size and margins of your chart.
     See `Lines.Coordinate` for more information and examples.
 
-  - `x`: customizes the look of your horizontal axis.
+  - `x`: Customizes the look of your horizontal axis.
     See `Lines.Axis` for more information and examples.
 
-  - `y`: customizes the look of your vertical axis.
+  - `y`: Customizes the look of your vertical axis.
     See `Lines.Axis` for more information and examples.
 
-  - `interpolation`: customizes the curve of your lines.
+  - `interpolation`: Customizes the curve of your lines.
     See the `Interpolation` type for more information and examples.
 
-  - `areaOpacity`: determines the opacity of the area under your line.
+  - `areaOpacity`: Determines the opacity of the area under your line.
     The area is always the same color as your line, but the transparency
     can be altered with this property. Takes a number between 0 and 1.
 
-  - `legends`: customizes your chart's legends.
+  - `legends`: Customizes your chart's legends.
     See `Lines.Legends` for more information and examples.
 
-  - `line`: customizes your lines' width and color.
+  - `line`: Customizes your lines' width and color.
     See `Lines.Line` for more information and examples.
 
-  - `dot`: customizes your dots' size and style.
+  - `dot`: Customizes your dots' size and style.
     See `Lines.Dot` for more information and examples.
 
-  - `attributes`: customizes the SVG attributes added to the
+  - `attributes`: Customizes the SVG attributes added to the
     `svg` element containing your chart.
 
-  - `events`: customizes your chart's events, allowing you easily
+  - `events`: Customizes your chart's events, allowing you easily
     make your chart interactive (adding tooltips, hover startes etc.).
     See `Lines.Events` for more information and examples.
 
-  - `junk`: gets its name from Edward Tufte's concept of "chart junk".
+  - `junk`: Gets its name from
+    [Edward Tufte's concept of "chart junk"](https://en.wikipedia.org/wiki/Chartjunk).
     Here you are allowed set your creativity loose and add whatever SVG or HTML fun
     you can imagine.
     See `Lines.Junk` for more information and examples.
 
 
 The default configuration is the following (besides the `.age` and `.weight`,
-You have to provide your own x and y property). A good start would be to
+you have to provide your own x and y property). A good start would be to
 copy it and play around with customizations available for each property.
 
     chartConfig : Config data msg
@@ -270,14 +271,6 @@ copy it and play around with customizations available for each property.
       , attributes = []
       , events = []
       }
-
-    chart : Html msg
-    chart =
-      Lines.viewCustom chartConfig
-        [ Lines.line "red" Dot.cross "Alice" alice
-        , Lines.line "blue" Dot.square "Bob" bob
-        , Lines.line "green" Dot.circle "Chuck" chuck
-        ]
 
 -}
 type alias Config data msg =
@@ -299,8 +292,7 @@ type alias Config data msg =
 -- INTERPOLATIONS
 
 
-{-| Representes an interpolation (curving of lines).
--}
+{-| -}
 type alias Interpolation =
   Interpolation.Interpolation
 
@@ -321,23 +313,13 @@ monotone =
 
 
 {-| Customize your chart. See the `Config` type for information about the
-available customizations. The following example changes the font color of
-your chart:
+available customizations. The example below adds color to the area below the lines.
 
-    chartConfig : Config data msg
-    chartConfig =
-      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
-      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
-      , y = Axis.default (Axis.defaultTitle "" 0 0) .weight
-      , interpolation = Lines.linear
-      , areaOpacity = 0
-      , legends = Legends.byEnding -- Changed from the default!
-      , line = Line.default
-      , dot = Dot.default
-      , attributes = []
-      , events = []
-      , junk = Junk.none
-      }
+**Note:** Speaking of areas, remember that area charts are for properties for
+which the area under the curve _matters_. Typically, this would be when you
+have an quantity changing with respect to time. In that case, the area under
+the curve shows how much the quantity changed. However if that amount is not
+significant, it's best to leave it out. -- TODO revise
 
     chart : Html msg
     chart =
@@ -347,7 +329,22 @@ your chart:
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
-_See the full example [here](https://ellie-app.com/smkVxrpMfa1/1)._
+    chartConfig : Config data msg
+    chartConfig =
+      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
+      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
+      , y = Axis.default (Axis.defaultTitle "" 0 0) .income
+      , interpolation = Lines.linear
+      , areaOpacity = 0.25 -- Changed from the default!
+      , legends = Legends.default
+      , line = Line.default
+      , dot = Dot.default
+      , attributes = []
+      , events = []
+      , junk = Junk.none
+      }
+
+_See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 
 -}
 viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
