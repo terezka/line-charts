@@ -16,9 +16,17 @@ type alias DataPoint data =
 {-| -}
 limits : (a -> Float) -> List a -> Coordinate.Limits
 limits toValue data =
-  { min = minimum toValue data
-  , max = maximum toValue data
-  }
+  let
+    limits =
+      { min = minimum toValue data
+      , max = maximum toValue data
+      }
+  in
+  if limits.min == limits.max then
+    { limits | max = limits.max + 1 }
+  else
+    limits
+
 
 
 {-| -}
