@@ -1,9 +1,9 @@
-module Lines.Color exposing (Color, pink, blue, orange, gray, transparent, black)
+module Lines.Color exposing (Color, pink, blue, orange, gray, black)
 
 {-|
 
-# Colors
-@docs Color, pink, blue, orange, gray, transparent, black
+# Default colors
+@docs Color, pink, blue, orange, gray, black
 
 -}
 

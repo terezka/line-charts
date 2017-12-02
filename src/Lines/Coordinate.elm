@@ -33,7 +33,7 @@ module Lines.Coordinate exposing
 
 
 
-{-| Specifies the size and margins of your graphic.
+{-| Specifies the size and margins of your chart.
 -}
 type alias Frame =
   { margin : Margin
@@ -41,14 +41,18 @@ type alias Frame =
   }
 
 
-{-| -}
+{-| The size (px) of your chart.
+-}
 type alias Size =
   { width : Float
   , height : Float
   }
 
 
-{-| -}
+{-| The margins (px) of your chart. Margins are useful when you have stuff like
+axes, legends or titles around outside the actual lines and you want more or
+less space for them.
+-}
 type alias Margin =
   { top : Float
   , right : Float
@@ -57,22 +61,31 @@ type alias Margin =
   }
 
 
-{-| -}
-type alias Limits =
-  { min : Float
-  , max : Float
-  }
-
-
 
 -- SYSTEM
 
 
-{-| -}
+{-| The system holds informations about the dimensions of your chart.
+
+  - The `frame` which is information about the size and margins of your chart.
+  - The `x` which is the minimum and maximum of your range.
+  - The `y` which is the minimum and maximum of your domain.
+
+This is all the information we need for translating your data coordinates into
+SVG coordinates.
+-}
 type alias System =
   { frame : Frame
   , x : Limits
   , y : Limits
+  }
+
+
+{-| These are minimum and maximum values of a dimension.
+-}
+type alias Limits =
+  { min : Float
+  , max : Float
   }
 
 
