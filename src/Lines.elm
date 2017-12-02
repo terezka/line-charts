@@ -40,9 +40,7 @@ import Internal.Utils as Utils
 
 
 
--- TODO: Cutable domain/range
 -- TODO: Fix axis outliers maybe
--- TODO: Curbing the translation in the custom event searcher
 
 
 -- VIEW / SIMPLE
