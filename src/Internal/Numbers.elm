@@ -14,7 +14,7 @@ defaultInterval limits =
     customInterval 0 (getDelta limits.min limits.max 10) limits
 
 
-{-| -}
+{-| TODO TEST ME -}
 customInterval : Float -> Float -> Coordinate.Limits -> List Float
 customInterval intersection delta limits =
     let
