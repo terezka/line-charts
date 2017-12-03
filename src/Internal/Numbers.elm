@@ -11,7 +11,7 @@ import Lines.Coordinate as Coordinate exposing (..)
 {-| -}
 defaultInterval : Coordinate.Limits -> List Float
 defaultInterval limits =
-    customInterval limits.min (getDecentInterval limits.min limits.max 10) limits
+    customInterval 0 (getDelta limits.min limits.max 10) limits
 
 
 {-| -}
@@ -19,13 +19,16 @@ customInterval : Float -> Float -> Coordinate.Limits -> List Float
 customInterval intersection delta limits =
     let
         firstValue =
-            getFirstValue delta limits.min intersection
+          intersection - offset (intersection - limits.min)
+
+        offset value =
+          toFloat (floor (value / delta)) * delta
 
         ticks result index =
-            let next = position delta firstValue index in
-              if next <= limits.max
-                then ticks (result ++ [ next ]) (index + 1)
-                else result
+          let next = position delta firstValue index in
+            if next <= limits.max
+              then ticks (result ++ [ next ]) (index + 1)
+              else result
     in
     ticks [] 0
 
@@ -36,9 +39,7 @@ customInterval intersection delta limits =
 
 position : Float -> Float -> Int -> Float
 position delta firstValue index =
-    firstValue
-        + toFloat index
-        * delta
+    firstValue + toFloat index * delta
         |> Round.round (deltaPrecision delta)
         |> String.toFloat
         |> Result.withDefault 0
@@ -58,18 +59,8 @@ deltaPrecision delta =
         |> abs
 
 
-getFirstValue : Float -> Float -> Float -> Float
-getFirstValue delta min intersection =
-    min + (intersection - min - offset delta (intersection - min))
-
-
-offset : Float -> Float -> Float
-offset precision value =
-    toFloat (floor (value / precision)) * precision
-
-
-getDecentInterval : Float -> Float -> Int -> Float
-getDecentInterval min max total =
+getDelta : Float -> Float -> Int -> Float
+getDelta min max total =
     let
         range = abs (max - min)
         -- calculate an initial guess at step size
