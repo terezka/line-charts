@@ -77,7 +77,7 @@ So if we had more complex data points (like a human with an `age`, `weight`,
 
     -- Try changing .weight to .height
 
-_See the example [here](https://ellie-app.com/s8kQfLfYZa1/1)._
+_See the full example [here](https://ellie-app.com/s8kQfLfYZa1/1)._
 
 **Note 1:** Rather than using data like `.weight` directly, you can make a
 function like `bmi human = human.weight / human.height ^ 2` and create a

@@ -145,19 +145,33 @@ type alias Title msg =
 
 {-| Produces a mark (a tick, a label, or both) on your axis.
 
-    mark : Float -> Mark msg
-    mark position =
+    aMark : Float -> Mark msg
+    aMark position =
       { label = Just (Axis.defaultLabel position)
       , tick = Just Axis.defaultTick
       , position = position
       }
 
+To produce a list of marks, you can use the interval helpers, like this:
+
+    marks : Coordinate.Limits -> List (Mark msg)
+    marks =
+      List.map aMark << Axis.defaultInterval
+
+To learn more about intervals, see `defaultInterval` and `customInterval`.
+You can also produce your own irregular intervals like this:
+
+    marks : Coordinate.Limits -> List (Mark msg)
+    marks _ =
+      List.map aMark [ 0, 3, 4, 7 ]
+
+
 TODO example
 -}
 type alias Mark msg =
-  { label : Maybe (Svg msg)
+  { position : Float
+  , label : Maybe (Svg msg)
   , tick : Maybe (Tick msg)
-  , position : Float
   }
 
 
@@ -240,7 +254,7 @@ defaultTitle title xOffset yOffset =
   Title .max (text_ [] [ tspan [] [ text title ] ]) 0 0
 
 
-{-| The default configuration is the following.
+{-| The default look configuration is the following.
 
     defaultLook : Title msg -> Look msg
     defaultLook title =
@@ -267,16 +281,31 @@ defaultLook title =
   }
 
 
-{-| -}
+{-| The default mark configuration is the following.
+
+    defaultMark : Float -> Mark msg
+    defaultMark position =
+      { position = position
+      , label = Just (defaultLabel position)
+      , tick = Just defaultTick
+      }
+-}
 defaultMark : Float -> Mark msg
 defaultMark position =
   { position = position
-  , tick = Just defaultTick
   , label = Just (defaultLabel position)
+  , tick = Just defaultTick
   }
 
 
-{-| -}
+{-| The default tick configuration is the following.
+
+    defaultTick : Tick msg
+    defaultTick =
+      { length = 5
+      , attributes = [ Attributes.stroke Color.gray ]
+      }
+-}
 defaultTick : Tick msg
 defaultTick =
   { length = 5
@@ -284,13 +313,26 @@ defaultTick =
   }
 
 
-{-| -}
+{-| The default label configuration is the following.
+
+    defaultLabel : Float -> Svg msg
+    defaultLabel position =
+      text_ [] [ tspan [] [ text (toString position) ] ]
+-}
 defaultLabel : Float -> Svg msg
 defaultLabel position =
   text_ [] [ tspan [] [ text (toString position) ] ]
 
 
-{-| -}
+{-| The default line configuration is the following.
+
+    defaultLine : List (Attribute msg) -> Coordinate.Limits -> Line msg
+    defaultLine attributes limits =
+        { attributes = Attributes.style "pointer-events: none;" :: attributes
+        , start = limits.min
+        , end = limits.max
+        }
+-}
 defaultLine : List (Attribute msg) -> Coordinate.Limits -> Line msg
 defaultLine attributes limits =
     { attributes = Attributes.style "pointer-events: none;" :: attributes
@@ -303,13 +345,29 @@ defaultLine attributes limits =
 -- INTERVALS
 
 
-{-| -}
+{-| Produces a list of evenly spaced numbers given the limits of your axis.
+-}
 defaultInterval : Coordinate.Limits -> List Float
 defaultInterval =
   Numbers.defaultInterval
 
 
-{-| -}
+{-| Produces a list of evenly spaced numbers given an offset, and interval, and
+the limits of your axis.
+
+The offset is useful when you want two sets of ticks with different views. For
+example, if you want a long tick at every 2 x and a small tick at every 2 x + 1,
+you'd use
+
+    firstInterval : Coordinate.Limits -> List Float
+    firstInterval =
+      Axis.customInterval 0 2
+
+    secondInterval : Coordinate.Limits -> List Float
+    secondInterval =
+      Axis.customInterval 1 2
+
+-}
 customInterval : Float -> Float -> Coordinate.Limits -> List Float
 customInterval =
   Numbers.customInterval
@@ -319,7 +377,8 @@ customInterval =
 -- HELPERS
 
 
-{-| -}
+{-| Produces zero if zero is within your limits, else the value closest to zero.
+-}
 towardsZero : Coordinate.Limits -> Float
 towardsZero =
   Utils.towardsZero

@@ -2,7 +2,7 @@ module Lines.Color exposing (Color, pink, blue, orange, gray, black)
 
 {-|
 
-# Default colors
+# Defaults
 @docs Color, pink, blue, orange, gray, black
 
 -}
