@@ -1,6 +1,7 @@
 module Lines.Junk exposing
   ( Junk, Layers, none, custom
   , Transfrom, transform, move, offset
+  , gridVertical, gridHorizontal
   )
 
 {-|
@@ -11,10 +12,13 @@ module Lines.Junk exposing
 @docs none
 
 ## Custom
-@docs Junk, Layers, custom
+@docs Junk, custom, Layers
 
 ## Placing helpers
 @docs Transfrom, transform, move, offset
+
+## Common junk
+@docs gridVertical, gridHorizontal
 
 -}
 
@@ -29,7 +33,8 @@ import Internal.Svg as Svg
 -- QUICK START
 
 
-{-| -}
+{-| No junk!
+-}
 none : Junk msg
 none =
   Internal.Junk.Junk (\_ -> Layers [] [] [])
@@ -39,20 +44,55 @@ none =
 -- CUSTOMIZE
 
 
-{-| -}
+{-| Junk for all the stuff which I don't let you do in the library, so for
+example if you want a picture of a kitten in the corner of your chart,
+you can use junk to add that. To be used in the `Lines.Config` passed to
+`viewCustom` like this:
+
+    chartConfig : Lines.Config data msg
+    chartConfig =
+      { ...
+      , junk = theJunk -- Use here!
+      , ...
+      }
+
+
+-}
 type alias Junk msg =
   Internal.Junk.Junk msg
 
 
-{-| -}
+{-| The layers where you can put your junk. Junk in the `below` property will
+be placed below your lines, Junk in the `above` property will
+be placed above your lines, and the `html` junk will be placed on top on the
+chart entirely.
+
+-}
 type alias Layers msg =
-  { above : List (Svg.Svg msg)
-  , below : List (Svg.Svg msg)
+  { below : List (Svg.Svg msg)
+  , above : List (Svg.Svg msg)
   , html : List (Html.Html msg)
   }
 
 
-{-| -}
+{-| Here is where you start producing your junk. You have the `System`
+available, meaning you can translate your charts coordinates into SVG
+coordinates and move things around easily. You add your elements to the "layer"
+you want in the resulting `Layers` type. Here's an example of adding grid lines.
+
+    theJunk : Info -> Junk.Junk msg
+    theJunk info =
+      Junk.custom <| \system ->
+        { below = gridLines
+        , above = []
+        , html = []
+        }
+
+    gridLines : Coordinate.System -> List (Svg msg)
+    gridLines system =
+      List.map (Junk.gridHorizontal system []) (Axis.defaultInterval system.y)
+
+-}
 custom : (Coordinate.System -> Layers msg) -> Junk msg
 custom =
   Internal.Junk.Junk
@@ -67,19 +107,64 @@ type alias Transfrom =
   Svg.Transfrom
 
 
-{-| -}
+{-| Moves in chart space.
+-}
 move : Coordinate.System -> Float -> Float -> Transfrom
 move =
   Svg.move
 
 
-{-| -}
+{-| Moves in SVG space.
+-}
 offset : Float -> Float -> Transfrom
 offset =
   Svg.offset
 
 
-{-| -}
+{-| Produces a SVG transform attributes. Useful to move elements around in
+your junk.
+
+    movedStuff : Coordinate.System -> Info -> Svg msg
+    movedStuff system hovered =
+      Svg.g
+        [ Junk.transform
+            [ Junk.move system hovered.age hovered.weight
+            , Junk.offset 20 10
+            ]
+        ]
+        [ theStuff ]
+
+-}
 transform : List Transfrom -> Svg.Attribute msg
 transform =
   Svg.transform
+
+
+
+-- COMMON
+
+
+{-| A grid line that takes up the full length of your vertical axis.
+
+    theJunk : Info -> Junk.Junk msg
+    theJunk info =
+      Junk.custom <| \system ->
+        { below = gridLines
+        , above = []
+        , html = []
+        }
+
+    gridLines : Coordinate.System -> List (Svg msg)
+    gridLines system =
+      List.map (Junk.gridVertical system []) (Axis.defaultInterval system.x)
+-}
+gridVertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
+gridVertical system attribuets at =
+  Svg.vertical system attribuets at system.y.min system.y.max
+
+
+{-| A grid line that takes up the full length of your horizontal axis.
+-}
+gridHorizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
+gridHorizontal system attribuets at =
+  Svg.horizontal system attribuets at system.x.min system.x.max

@@ -10,7 +10,6 @@ import Lines.Events as Events
 import Lines.Junk as Junk exposing (..)
 import Lines.Legends as Legends
 import Lines.Line as Line
-import Internal.Svg exposing (vertical) -- TODO
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import Svg.Attributes as SvgA
 
@@ -55,6 +54,8 @@ view model =
         , x = Axis.default (Axis.defaultTitle "Year" 0 0) .year
         , y = Axis.default (Axis.defaultTitle "Cats" 0 0) .cats
         , interpolation = Lines.monotone
+        , areaOpacity = 0
+        , id = "hey"
         , events = Events.default Hover
         , legends = Legends.default
         , line = Line.wider 2
@@ -71,7 +72,7 @@ junk hint =
     Junk.custom <| \system ->
       let
           viewHint =
-              g [ transform [ move system system.x.max (system.y.max - 1), offset 20 10 ] ]
+              g [ transform [ move system hint.year hint.cats, offset 20 10 ] ]
                 [ text_ []
                     [ viewDimension "Year" hint.year
                     , viewDimension "Cats" hint.cats
@@ -82,12 +83,9 @@ junk hint =
             tspan
               [ SvgA.x "0", SvgA.dy "1em" ]
               [ text <| label ++ ": " ++ toString value ]
-
-          line =
-              vertical system [] hint.year system.y.min system.y.max
       in
-      { below = []
-      , above = [ viewHint, line ]
+      { below = List.map (Junk.gridHorizontal system []) (Axis.defaultInterval system.y)
+      , above = [ viewHint ]
       , html = []
       }
 

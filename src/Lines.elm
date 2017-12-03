@@ -247,7 +247,7 @@ dash =
   - `junk`: Gets its name from
     [Edward Tufte's concept of "chart junk"](https://en.wikipedia.org/wiki/Chartjunk).
     Here you are allowed set your creativity loose and add whatever SVG or HTML fun
-    you can imagine.
+    you can imagine. (This is also where you can add grid lines!)
     See `Lines.Junk` for more information and examples.
 
 
