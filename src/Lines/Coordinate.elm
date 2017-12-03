@@ -24,7 +24,30 @@ module Lines.Coordinate exposing
 ## Single value
 @docs toSVGX, toSVGY, toDataX, toDataY
 
-## Scale
+# Scaling
+Scaling is different from translating in that it does not take a position as
+it's input, but a _distance_. Translating a position takes the frame into
+account, scaling doesn't.
+
+    system : System
+    system =
+      { frame = Frame (Margin 10 10 10 10) (Size 100 100)
+      , x = Limits 0 10
+      , y = Limits 0 10
+      }
+
+    dataPoint : Point
+    dataPoint =
+      Point 2 3
+
+    dataXinSVG : Float
+    dataXinSVG =
+      toSVGX system dataPoint.x    -- 30 (margin.left + 2 * 100 / 10)
+
+    dataXinSVG : Float
+    dataXinSVG =
+      scaleSVGX system dataPoint.x -- 20 (2 * 100 / 10)
+
 @docs scaleSVGX, scaleSVGY, scaleDataX, scaleDataY
 
 -}
@@ -163,7 +186,8 @@ type alias Point =
   }
 
 
-{-| -}
+{-| Translates a data point to a SVG point.
+-}
 toSVG : System -> Point -> Point
 toSVG system point =
   { x = toSVGX system point.x
@@ -171,7 +195,8 @@ toSVG system point =
   }
 
 
-{-| -}
+{-| Translates a SVG point to a data point.
+-}
 toData : System -> Point -> Point
 toData system point =
   { x = toDataX system point.x
