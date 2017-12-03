@@ -90,6 +90,26 @@ junk hint =
       }
 
 
+tooltip : Coordinate.System -> Info -> Svg msg
+tooltip system hovered =
+  Svg.g
+    [ Junk.transform
+        [ Junk.move system hovered.age hovered.weight
+        , Junk.offset 20 10
+        ]
+    ]
+    [ Svg.text_ []
+        [ dimension "Age" hovered.age
+        , dimension "Weight" hovered.weight
+        ]
+    ]
+
+dimension : String -> Float -> Svg msg
+dimension label value =
+  Svg.tspan
+    [ Attributes.x "0", Attributes.dy "1em" ]
+    [ Svg.text <| label ++ ": " ++ toString value ]
+
 
 -- DATA
 

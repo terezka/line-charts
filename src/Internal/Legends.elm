@@ -20,7 +20,7 @@ import Internal.Svg as Svg
 type Legends msg
   = None
   | Free Placement (String -> Svg msg)
-  | Bucketed SampleWidth (Coordinate.System -> List (Pieces msg) -> Svg msg)
+  | Bucketed SampleWidth (Coordinate.System -> List (Legend msg) -> Svg msg)
 
 
 {-| -}
@@ -31,7 +31,7 @@ type Placement
 
 {-| -}
 type alias Container msg =
-  Coordinate.System -> List (Pieces msg) -> Svg msg
+  Coordinate.System -> List (Legend msg) -> Svg msg
 
 
 {-| -}
@@ -40,7 +40,7 @@ type alias SampleWidth =
 
 
 {-| -}
-type alias Pieces msg =
+type alias Legend msg =
   { sample : Svg msg
   , label : String
   }
@@ -157,7 +157,7 @@ viewSample system lineLook dotLook sampleWidth areaOpacity line =
 -- DEFAULTS
 
 
-defaultLegend : Int -> Pieces msg -> Svg msg
+defaultLegend : Int -> Legend msg -> Svg msg
 defaultLegend index { sample, label } =
    Svg.g
     [ Svg.transform [ Svg.offset 20 (toFloat index * 20) ] ]
