@@ -6,15 +6,13 @@ module Lines.Events exposing
 
 {-|
 
-# Events
-
-## Quick start
+# Quick start
 @docs none, default
 
-## Events
+# Events
 @docs Event, onClick, onMouseMove, onMouseLeave, on
 
-## Searchers
+# Searchers
 @docs Searcher, svg, cartesian, findNearest, findNearestX, findWithin, findWithinX
 
 -}

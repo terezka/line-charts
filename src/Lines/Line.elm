@@ -3,12 +3,10 @@ module Lines.Line exposing
 
 {-|
 
-# Line
-
-## Quick start
+# Quick start
 @docs default
 
-## Customizing
+# Customizations
 @docs Look, Style, wider, static, emphasizable
 
 ### Emphasizable helpers

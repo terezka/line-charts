@@ -6,19 +6,18 @@ module Lines.Junk exposing
 
 {-|
 
-# Junk
-
-## Quick start
+# Quick start
 @docs none
 
-## Custom
+# Custom
 @docs Junk, custom, Layers
 
-## Placing helpers
+# Common junk
+@docs gridVertical, gridHorizontal
+
+# Placing helpers
 @docs Transfrom, transform, move, offset
 
-## Common junk
-@docs gridVertical, gridHorizontal
 
 -}
 
