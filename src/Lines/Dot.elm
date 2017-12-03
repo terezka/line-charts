@@ -7,13 +7,11 @@ module Lines.Dot exposing
 
 {-|
 
-# Dots
-
-## Quick start
+# Quick start
 Can't be bothered to figure out about dots right now? I gotcha.
 @docs none
 
-### Easy defaults
+## Easy defaults
 
 The following defaults are equivalent to `Dot.circle`, `Dot.triangle`, and
 `Dot.cross`, respectivily.
@@ -28,13 +26,13 @@ The following defaults are equivalent to `Dot.circle`, `Dot.triangle`, and
 
 @docs default1, default2, default3
 
-## Customizing dot shape
+# Customizing dot shape
 @docs Shape, circle, triangle, square, diamond, plus, cross
 
-## Customizing dot style
+# Customizing dot style
 @docs Look, default, static, emphasizable, isMaybe
 
-### Styles
+## Styles
 @docs Style, full, disconnected, bordered, aura
 
 -}
@@ -137,30 +135,89 @@ cross =
 -- LOOK
 
 
-{-| -}
+{-| These customzation are used in `Lines.Config` when you use `viewCustom`.
+
+    chartConfig : Lines.Config data msg
+    chartConfig =
+      { ...
+      , dot = Dot.default -- Use here!
+      , ...
+      }
+-}
 type alias Look data =
   Dot.Look data
 
 
-{-| -}
+{-| The default dot look. -}
 default : Look data
 default =
   Dot.default
 
 
-{-| -}
+{-| Alter the style of the dot.
+
+    dotLook : Dot.Look data
+    dotLook =
+      Dot.static (Dot.full 50) -- TODO Sizes
+-}
 static : Style -> Look data
 static =
   Dot.static
 
 
-{-| -}
+{-| Alter the style of the dot and pass an alternative style, to be used when
+the predicate in the third argument is fulfilled.
+
+
+    dotLook : Dot.Look Info
+    dotLook =
+      Dot.emphasizable
+        (Dot.full 50)
+        (Dot.aura 50 4 0.5)
+        isOverweight
+
+    isOverweight : Info -> Bool
+    isOverweight info =
+      bmi info > 25
+
+TODO link
+-}
 emphasizable : Style -> Style -> (data -> Bool) -> Look data
 emphasizable =
   Dot.emphasizable
 
 
-{-| Helper for `emphasizable`. -}
+{-| Helper for `emphasizable`. Useful when combined with `Events.default` to get
+a hover effect.
+
+    type alias Model =
+      Maybe Info
+
+    type Msg =
+      Hover (Maybe Info)
+
+    update : Msg -> Model -> Model
+    update (Hover hovered) =
+      Model hovered
+
+    chartConfig : Model -> Lines.Config Info msg
+    chartConfig hovered =
+      { ...
+      , events = Events.default Hover
+      , dot = dotLook
+      , ...
+      }
+
+    dotLook : Dot.Look data
+    dotLook =
+      Dot.emphasizable
+        (Dot.full 50)
+        (Dot.aura 50 4 0.5)
+        (isMaybe hovered)
+
+
+TODO link
+-}
 isMaybe : Maybe data -> data -> Bool
 isMaybe hovering datum =
   Just datum == hovering
@@ -171,29 +228,37 @@ isMaybe hovering datum =
 
 
 {-| -}
-type alias Style =
+type alias Style = -- TODO size divide by pi
   Dot.Style
 
 
-{-| -}
+{-| Produces a circle with a white core and a colored border.
+Pass the size of the dot and the width of the border.
+-}
 bordered : Int -> Int -> Style
 bordered =
   Dot.bordered
 
 
-{-| -}
+{-| Produces a circle with a colored core and a white border (Opposite of `bordered`).
+Pass the size of the dot and the width of the border.
+-}
 disconnected : Int -> Int -> Style
 disconnected =
   Dot.disconnected
 
 
-{-| -}
+{-| Produces a circle with a colored core and a less colored border.
+Pass the size of the dot, the width of the border, and the opacity of the
+border (A number between 0 and 1).
+-}
 aura : Int -> Int -> Float -> Style
 aura =
   Dot.aura
 
 
-{-| -}
+{-| Produces a solid dot. Pass the size.
+-}
 full : Int -> Style
 full =
   Dot.full
