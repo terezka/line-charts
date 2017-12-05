@@ -1,4 +1,4 @@
-module Internal.Numbers exposing (customInterval, defaultInterval)
+module Internal.Numbers exposing (customInterval, defaultInterval, normalizedInterval, correctFloat, magnitude)
 
 {-| -}
 
@@ -11,7 +11,14 @@ import Lines.Coordinate as Coordinate exposing (..)
 {-| -}
 defaultInterval : Coordinate.Limits -> List Float
 defaultInterval limits =
-    customInterval 0 (getDelta limits.min limits.max 10) limits
+    let
+      tickRange =
+        (limits.max - limits.min) / 10
+
+      interval =
+        normalizedInterval tickRange [] (magnitude tickRange) True
+    in
+    customInterval 0 interval limits
 
 
 {-| TODO TEST ME -}
@@ -59,22 +66,74 @@ deltaPrecision delta =
         |> abs
 
 
-getDelta : Float -> Float -> Int -> Float
-getDelta min max total =
+
+-- NORMALIZED
+
+
+normalizedInterval : Float -> List Float -> Float -> Bool -> Float
+normalizedInterval intervalRaw multiples_ magnitude allowDecimals =
+  let
+    normalized =
+      intervalRaw / magnitude
+
+    multiples =
+      if List.isEmpty multiples_ then
+       produceMultiples magnitude allowDecimals
+      else
+        multiples_
+
+    findClosest multiples interval =
+      case multiples of
+        m1 :: rest ->
+          if normalized <= m1 then m1 else findClosest rest interval
+
+        [] ->
+          interval
+
+    correctBack interval =
+      correctFloat (interval * magnitude) 3
+  in
+  correctBack <| findClosest multiples intervalRaw
+
+
+produceMultiples : Float -> Bool -> List Float
+produceMultiples magnitude allowDecimals =
+  let
+    defaults =
+      [ 1, 2, 2.5, 5, 10 ]
+  in
+    if allowDecimals then
+      defaults
+    else
+      if magnitude == 1 then
+        List.filter (\n -> toFloat (round n) /= n) defaults
+      else if magnitude <= 0.1 then
+        [ 1 / magnitude ]
+      else
+        defaults
+
+
+{-| -}
+correctFloat : Float -> Int -> Float
+correctFloat number prec =
+  if toFloat (round number) == number then
+    number
+  else
     let
-        range = abs (max - min)
-        -- calculate an initial guess at step size
-        delta0 = range / toFloat total
-        -- get the magnitude of the step size
-        mag = floor (logBase 10 delta0)
-        magPow = toFloat (10 ^ mag)
-        -- calculate most significant digit of the new step size
-        magMsd = round (delta0 / magPow)
-        -- promote the MSD to either 1, 2, or 5
-        magMsdFinal =
-            if magMsd > 5 then 10
-            else if magMsd > 2 then 5
-            else if magMsd > 1 then 1
-            else magMsd
+      toFloatSafe = String.toFloat >> Result.withDefault 0
+      string = toString number ++ String.repeat (prec + 1) "0"
+
+      ( before, after ) =
+        case String.split "." string of
+          [ before, after ] -> ( before, after )
+          _ -> ( "0", "0" ) -- never happens
+
+      decimals = String.slice 0 prec after
     in
-    toFloat magMsdFinal * magPow
+      toFloatSafe <| before ++ "." ++ decimals
+
+
+{-| -}
+magnitude : Float -> Float
+magnitude num =
+  toFloat <| 10 ^ (floor (logBase e num / logBase e 10))
