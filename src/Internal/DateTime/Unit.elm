@@ -50,7 +50,7 @@ interval amountRough limits =
       (limits.max - beginning) / interval |> floor |> Debug.log "amount"
 
     position m =
-      beginning + toFloat m * interval
+      next beginning unit (toFloat m * multiple)
   in
   List.map position (List.range 0 amount) |> Debug.log "positions"
 
@@ -119,7 +119,7 @@ toMs unit =
     Year        -> 364 * 24 * 3600000
 
 
-multiples : Unit -> List Float
+multiples : Unit -> List Float -- TODO int
 multiples unit =
   case unit of
     Millisecond -> [ 1, 2, 5, 10, 20, 25, 50, 100, 200, 500 ]
@@ -136,7 +136,10 @@ beginAt : Float -> Unit -> Float -> Float
 beginAt min unit multiple =
   let
     date =
-      Date.fromTime min
+      Debug.log "beginat" <| Date.ceiling (toExtraUnit unit) <| Date.fromTime min
+
+    ceilingPrev i =
+      Date.ceiling i date
 
     (y, m, d, hh, mm, ss, _) =
       toParts date
@@ -156,6 +159,27 @@ beginAt min unit multiple =
       in Date.fromParts y month 1 0 0 0 0 |> Date.toTime
     Year        ->
       Date.fromParts (ceilingToInt y multiple) Date.Jan 1 0 0 0 0 |> Date.toTime
+
+
+{-| -}
+next : Float -> Unit -> Float -> Float
+next timestamp unit multiple =
+  Date.fromTime timestamp
+    |> Date.add (toExtraUnit unit) (round multiple)
+    |> Date.toTime
+
+
+toExtraUnit : Unit -> Date.Interval
+toExtraUnit unit =
+  case unit of
+    Millisecond -> Date.Millisecond
+    Second      -> Date.Second
+    Minute      -> Date.Minute
+    Hour        -> Date.Hour
+    Day         -> Date.Day
+    Week        -> Date.Week
+    Month       -> Date.Month
+    Year        -> Date.Year
 
 
 highestMultiple : List Float -> Float -- TODO What about Years

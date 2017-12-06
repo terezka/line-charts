@@ -249,7 +249,7 @@ defaultForDates title variable =
   in
   { variable = variable
   , limitations = Limitations identity identity
-  , look = { look | marks = List.map defaultDateMark << Unit.interval 5 }
+  , look = { look | marks = List.map defaultDateMark << Unit.interval 4 }
   }
 
 
@@ -321,7 +321,7 @@ defaultDateMark position =
       Date.fromTime position
 
     label =
-      Date.Format.format "%H:%M" date
+      Date.Format.format "%d/%m/%y" date
 
     viewLabel =
       text_ [] [ tspan [] [ text label ] ]
