@@ -13,12 +13,12 @@ defaultInterval : Coordinate.Limits -> List Float
 defaultInterval limits =
     let
       tickRange =
-        (limits.max - limits.min) / 10
+        (limits.max - limits.min) / 10 -- TODO Correct for axis length
 
       interval =
         normalizedInterval tickRange [] (magnitude tickRange) True
     in
-    customInterval 0 interval limits
+    customInterval limits.min interval limits
 
 
 {-| TODO TEST ME -}
@@ -53,7 +53,7 @@ position delta firstValue index =
 
 
 deltaPrecision : Float -> Int
-deltaPrecision delta =
+deltaPrecision delta = -- TODO make this better...
     delta
         |> toString
         |> Regex.find (Regex.AtMost 1) (Regex.regex "\\.[0-9]*")
@@ -71,7 +71,7 @@ deltaPrecision delta =
 
 
 normalizedInterval : Float -> List Float -> Float -> Bool -> Float
-normalizedInterval intervalRaw multiples_ magnitude allowDecimals =
+normalizedInterval intervalRaw multiples_ magnitude allowDecimals = -- TODO add has hard amount
   let
     normalized =
       intervalRaw / magnitude
@@ -82,18 +82,21 @@ normalizedInterval intervalRaw multiples_ magnitude allowDecimals =
       else
         multiples_
 
-    findClosest multiples interval =
+    findMultiple multiples interval =
       case multiples of
+        m1 :: m2 :: rest ->
+          if normalized <= (m1 + m2) / 2 then m1 else findMultiple rest interval
+
         m1 :: rest ->
-          if normalized <= m1 then m1 else findClosest rest interval
+          if normalized <= m1 then m1 else findMultiple rest interval
 
         [] ->
-          interval
+          1
 
     correctBack interval =
       correctFloat (interval * magnitude) 3
   in
-  correctBack <| findClosest multiples intervalRaw
+  correctBack <|findMultiple multiples intervalRaw
 
 
 produceMultiples : Float -> Bool -> List Float
@@ -116,21 +119,16 @@ produceMultiples magnitude allowDecimals =
 {-| -}
 correctFloat : Float -> Int -> Float
 correctFloat number prec =
-  if toFloat (round number) == number then
-    number
-  else
-    let
-      toFloatSafe = String.toFloat >> Result.withDefault 0
-      string = toString number ++ String.repeat (prec + 1) "0"
+  case String.split "." <| toString number ++ String.repeat (prec + 1) "0" of -- TODO
+    [ before, after ] ->
+        let
+          toFloatSafe = String.toFloat >> Result.withDefault 0
+          decimals = String.slice 0 prec after
+        in
+          toFloatSafe <| before ++ "." ++ decimals
 
-      ( before, after ) =
-        case String.split "." string of
-          [ before, after ] -> ( before, after )
-          _ -> ( "0", "0" ) -- never happens
-
-      decimals = String.slice 0 prec after
-    in
-      toFloatSafe <| before ++ "." ++ decimals
+    _ ->
+       number
 
 
 {-| -}
