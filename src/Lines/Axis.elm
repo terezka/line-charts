@@ -1,5 +1,5 @@
 module Lines.Axis exposing
-  ( default
+  ( default, defaultForDates
   , Axis, Limitations, Look, Line, Mark, Tick, Direction(..)
   , defaultLook
   , towardsZero
@@ -12,7 +12,7 @@ module Lines.Axis exposing
 {-|
 
 # Quick start
-@docs default, defaultTitle
+@docs default, defaultTitle, defaultForDates
 
 # Configuration
 @docs Axis, Limitations
@@ -36,9 +36,12 @@ module Lines.Axis exposing
 
 import Svg exposing (..)
 import Svg.Attributes as Attributes
+import Date
+import Date.Format
 import Lines.Coordinate as Coordinate
 import Lines.Color as Color
 import Internal.Numbers as Numbers
+import Internal.DateTime.Unit as Unit
 import Internal.Utils as Utils
 
 
@@ -237,6 +240,19 @@ default title variable =
   }
 
 
+{-| -}
+defaultForDates : Title msg -> (data -> Float) -> Axis data msg
+defaultForDates title variable =
+  let
+    look =
+      defaultLook title
+  in
+  { variable = variable
+  , limitations = Limitations identity identity
+  , look = { look | marks = List.map defaultDateMark << Unit.interval 5 }
+  }
+
+
 {-| The default title configuration.
 
   - First argument is the title you'd like to see on your axis.
@@ -294,6 +310,24 @@ defaultMark : Float -> Mark msg
 defaultMark position =
   { position = position
   , label = Just (defaultLabel position)
+  , tick = Just defaultTick
+  }
+
+
+defaultDateMark : Float -> Mark msg
+defaultDateMark position =
+  let
+    date =
+      Date.fromTime position
+
+    label =
+      Date.Format.format "%H:%M" date
+
+    viewLabel =
+      text_ [] [ tspan [] [ text label ] ]
+  in
+  { position = position
+  , label = Just viewLabel
   , tick = Just defaultTick
   }
 
