@@ -4,6 +4,9 @@ module Internal.DateTime.Unit exposing (Unit, interval)
 
 import Internal.Numbers as Numbers
 import Internal.Coordinate as Coordinate
+import Date
+import Date.Extra as Date
+import Date.Extra.Facts as Date
 
 
 {-| -}
@@ -37,8 +40,11 @@ interval amountRough limits =
     interval =
       toMs unit * multiple |> Debug.log "interval"
 
+    _ =
+      limits.min |> Debug.log "min"
+
     beginning =
-      interval * toFloat (ceiling (limits.min / interval)) |> Debug.log "beginning"
+      beginAt limits.min unit multiple |> Debug.log "beginning"
 
     amount =
       (limits.max - beginning) / interval |> floor |> Debug.log "amount"
@@ -126,14 +132,35 @@ multiples unit =
     Year        -> [] -- TODO prevent 2.5
 
 
+beginAt : Float -> Unit -> Float -> Float
+beginAt min unit multiple =
+  let
+    date =
+      Date.fromTime min
+
+    (y, m, d, hh, mm, ss, _) =
+      toParts date
+
+    interval =
+      toMs unit * multiple
+  in
+  case unit of
+    Millisecond -> ceilingTo min interval
+    Second      -> ceilingTo min interval
+    Minute      -> ceilingTo min interval
+    Hour        -> Date.fromParts y m d (ceilingToInt hh multiple) 0 0 0 |> Date.toTime
+    Day         -> Date.fromParts y m (ceilingToInt d multiple) 0 0 0 0 |> Date.toTime
+    Week        -> min -- TODO
+    Month       ->
+      let month = Date.monthFromMonthNumber <| ceilingToInt (Date.monthNumber date) multiple
+      in Date.fromParts y month 1 0 0 0 0 |> Date.toTime
+    Year        ->
+      Date.fromParts (ceilingToInt y multiple) Date.Jan 1 0 0 0 0 |> Date.toTime
+
+
 highestMultiple : List Float -> Float -- TODO What about Years
 highestMultiple =
   List.reverse >> List.head >> Maybe.withDefault 0
-
-
-floorTo : Float -> Float -> Float
-floorTo number prec =
-  prec * toFloat (floor (number / prec))
 
 
 magnitude : Float -> Unit -> Float
@@ -144,3 +171,24 @@ magnitude interval unit =
 
     _ ->
       1
+
+ceilingTo : Float -> Float -> Float
+ceilingTo number prec =
+  prec * toFloat (ceiling (number / prec))
+
+
+ceilingToInt : Int -> Float -> Int
+ceilingToInt number prec =
+  Debug.log "hhf" <| ceiling <| prec * toFloat (ceiling (toFloat (number |> Debug.log "hh") / prec))
+
+
+toParts : Date.Date -> (Int, Date.Month, Int, Int, Int, Int, Int)
+toParts date =
+  ( Date.year date
+  , Date.month date
+  , Date.day date
+  , Date.hour date
+  , Date.minute date
+  , Date.second date
+  , Date.millisecond date
+  )
