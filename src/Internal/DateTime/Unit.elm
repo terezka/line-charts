@@ -73,10 +73,10 @@ defaultFormatting unit =
     Millisecond -> toString << Date.toTime
     Second      -> Date.Format.format "%S"
     Minute      -> Date.Format.format "%H:%M"
-    Hour        -> Date.Format.format "%H:%M"
+    Hour        -> Date.Format.format "%I %p"
     Day         -> Date.Format.format "%d/%m"
-    Week        -> toString << Date.toTime -- TODO
-    Month       -> Date.Format.format "%m/%y"
+    Week        -> Date.toFormattedString "'Week' w"
+    Month       -> Date.Format.format "%b %y"
     Year        -> Date.Format.format "%Y"
 
 
@@ -117,7 +117,7 @@ findBestMultiple interval unit =
             else findBest_ (m2 :: rest)
 
         m :: _ -> m
-        [] -> 1
+        []     -> 1
 
     middleOfNext m1 m2 =
       (toFloat m1 * toMs unit + toFloat m2 * toMs unit) / 2
@@ -145,7 +145,7 @@ beginAt min unit multiple =
     Minute      -> ceilingTo min interval
     Hour        -> Date.toTime <| Date.fromParts y m d (ceilingToInt hh multiple) 0 0 0
     Day         -> Date.toTime <| Date.fromParts y m (ceilingToInt d multiple) 0 0 0 0
-    Week        -> min -- TODO
+    Week        -> Date.toTime <| ceilingToWeek date multiple
     Month       -> Date.toTime <| Date.fromParts y (ceilingToMonth date multiple) 1 0 0 0 0
     Year        -> Date.toTime <| Date.fromParts (ceilingToInt y multiple) Date.Jan 1 0 0 0 0
 
@@ -158,6 +158,14 @@ ceilingTo number prec =
 ceilingToInt : Int -> Int -> Int
 ceilingToInt number prec =
   ceiling <| ceilingTo (toFloat number) (toFloat prec)
+
+
+ceilingToWeek : Date.Date -> Int -> Date.Date
+ceilingToWeek date multiple =
+  let
+    weekNumber = ceilingToInt (Date.weekNumber date) multiple
+  in
+  Date.fromSpec Date.utc Date.noTime (Date.weekDate (Date.year date) weekNumber 1)
 
 
 ceilingToMonth : Date.Date -> Int -> Date.Month
