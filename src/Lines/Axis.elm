@@ -37,7 +37,6 @@ module Lines.Axis exposing
 import Svg exposing (..)
 import Svg.Attributes as Attributes
 import Date
-import Date.Format
 import Lines.Coordinate as Coordinate
 import Lines.Color as Color
 import Internal.Numbers as Numbers
@@ -246,10 +245,13 @@ defaultForDates title variable =
   let
     look =
       defaultLook title
+
+    marks info =
+      List.map (defaultDateMark info.unit) info.positions
   in
   { variable = variable
   , limitations = Limitations identity identity
-  , look = { look | marks = List.map defaultDateMark << Unit.interval 4 }
+  , look = { look | marks = marks << Unit.positions 4 }
   }
 
 
@@ -314,14 +316,14 @@ defaultMark position =
   }
 
 
-defaultDateMark : Float -> Mark msg
-defaultDateMark position =
+defaultDateMark : Unit.Unit -> Float -> Mark msg
+defaultDateMark unit position =
   let
     date =
       Date.fromTime position
 
     label =
-      Date.Format.format "%d/%m/%y" date
+      Unit.defaultFormatting unit date
 
     viewLabel =
       text_ [] [ tspan [] [ text label ] ]

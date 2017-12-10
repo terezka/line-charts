@@ -1,4 +1,4 @@
-module Internal.DateTime.Unit exposing (Unit, interval)
+module Internal.DateTime.Unit exposing (Unit(..), positions, defaultFormatting)
 
 {-| -}
 
@@ -7,6 +7,7 @@ import Internal.Coordinate as Coordinate
 import Date
 import Date.Extra as Date
 import Date.Extra.Facts as Date
+import Date.Format
 
 
 {-| -}
@@ -22,38 +23,61 @@ type Unit
 
 
 {-| -}
-interval : Int -> Coordinate.Limits -> List Float
-interval amountRough limits =
+type alias Info =
+  { positions : List Float
+  , unit : Unit
+  , multiple : Float
+  }
+
+
+{-| -}
+positions : Int -> Coordinate.Limits -> Info
+positions amountRough limits =
   let
     range =
-      limits.max - limits.min |> Debug.log "range"
+      limits.max - limits.min
 
     intervalRough =
-      range / toFloat amountRough |> Debug.log "intervalRough"
+      range / toFloat amountRough
 
     unit =
-      findBestUnit intervalRough all |> Debug.log "unit"
+      findBestUnit intervalRough all
 
     multiple =
-      findBestMultiple intervalRough unit |> Debug.log "multiple"
+      findBestMultiple intervalRough unit
 
     interval =
-      toMs unit * multiple |> Debug.log "interval"
-
-    _ =
-      limits.min |> Debug.log "min"
+      toMs unit * multiple
 
     beginning =
-      beginAt limits.min unit multiple |> Debug.log "beginning"
+      beginAt limits.min unit multiple
 
     amount =
-      (limits.max - beginning) / interval |> floor |> Debug.log "amount"
+      floor <| (limits.max - beginning) / interval
 
-    position m =
-      next beginning unit (toFloat m * multiple)
+    positions_ acc m =
+      let next_ = next beginning unit (toFloat m * multiple)
+      in if next_ > limits.max then acc else positions_ (next_ :: acc) (m + 1)
   in
-  List.map position (List.range 0 amount) |> Debug.log "positions"
+  { positions = positions_ [] 0
+  , unit = unit
+  , multiple = multiple
+  }
 
+
+
+{-| -}
+defaultFormatting : Unit -> Date.Date -> String
+defaultFormatting unit =
+  case unit of
+    Millisecond -> toString << Date.toTime
+    Second      -> Date.Format.format "%S"
+    Minute      -> Date.Format.format "%H:%M"
+    Hour        -> Date.Format.format "%H:%M"
+    Day         -> Date.Format.format "%d/%m"
+    Week        -> toString << Date.toTime -- TODO
+    Month       -> Date.Format.format "%m/%y"
+    Year        -> Date.Format.format "%Y"
 
 
 -- INTERNAL
