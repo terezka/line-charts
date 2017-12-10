@@ -101,6 +101,56 @@ findBestMultiple interval unit =
   findBest_ (multiples unit)
 
 
+{-| Find the best position for the first tick.
+-}
+beginAt : Float -> Unit -> Float -> Float
+beginAt min unit multiple =
+  let
+    date =
+      Date.ceiling (toExtraUnit unit) (Date.fromTime min)
+
+    (y, m, d, hh, mm, ss, _) =
+      toParts date
+
+    interval =
+      toMs unit * multiple
+  in
+  case unit of
+    Millisecond -> ceilingTo min interval
+    Second      -> ceilingTo min interval
+    Minute      -> ceilingTo min interval
+    Hour        -> Date.toTime <| Date.fromParts y m d (ceilingToInt hh multiple) 0 0 0
+    Day         -> Date.toTime <| Date.fromParts y m (ceilingToInt d multiple) 0 0 0 0
+    Week        -> min -- TODO
+    Month       -> Date.toTime <| Date.fromParts y (ceilingToMonth date multiple) 1 0 0 0 0
+    Year        -> Date.toTime <| Date.fromParts (ceilingToInt y multiple) Date.Jan 1 0 0 0 0
+
+
+{-| -}
+ceilingTo : Float -> Float -> Float
+ceilingTo number prec =
+  prec * toFloat (ceiling (number / prec))
+
+
+ceilingToInt : Int -> Float -> Int
+ceilingToInt number prec =
+  ceiling <| prec * toFloat (ceiling (toFloat number / prec))
+
+
+ceilingToMonth : Date.Date -> Float -> Date.Month
+ceilingToMonth date multiple =
+  Date.monthFromMonthNumber <| ceilingToInt (Date.monthNumber date) multiple
+
+
+{-| Find the next position.
+-}
+next : Float -> Unit -> Float -> Float
+next timestamp unit multiple =
+  Date.fromTime timestamp
+    |> Date.add (toExtraUnit unit) (round multiple)
+    |> Date.toTime
+
+
 
 -- HELPERS
 
@@ -136,43 +186,6 @@ multiples unit =
     Year        -> [] -- TODO prevent 2.5
 
 
-{-| Find the best position for the first tick.
--}
-beginAt : Float -> Unit -> Float -> Float
-beginAt min unit multiple =
-  let
-    date =
-      Date.ceiling (toExtraUnit unit) (Date.fromTime min)
-
-    (y, m, d, hh, mm, ss, _) =
-      toParts date
-
-    interval =
-      toMs unit * multiple
-  in
-  case unit of
-    Millisecond -> ceilingTo min interval
-    Second      -> ceilingTo min interval
-    Minute      -> ceilingTo min interval
-    Hour        -> Date.fromParts y m d (ceilingToInt hh multiple) 0 0 0 |> Date.toTime
-    Day         -> Date.fromParts y m (ceilingToInt d multiple) 0 0 0 0 |> Date.toTime
-    Week        -> min -- TODO
-    Month       ->
-      let month = Date.monthFromMonthNumber <| ceilingToInt (Date.monthNumber date) multiple
-      in Date.fromParts y month 1 0 0 0 0 |> Date.toTime
-    Year        ->
-      Date.fromParts (ceilingToInt y multiple) Date.Jan 1 0 0 0 0 |> Date.toTime
-
-
-{-| Find the next position.
--}
-next : Float -> Unit -> Float -> Float
-next timestamp unit multiple =
-  Date.fromTime timestamp
-    |> Date.add (toExtraUnit unit) (round multiple)
-    |> Date.toTime
-
-
 toExtraUnit : Unit -> Date.Interval
 toExtraUnit unit =
   case unit of
@@ -199,15 +212,6 @@ magnitude interval unit =
 
     _ ->
       1
-
-ceilingTo : Float -> Float -> Float
-ceilingTo number prec =
-  prec * toFloat (ceiling (number / prec))
-
-
-ceilingToInt : Int -> Float -> Int
-ceilingToInt number prec =
-  ceiling <| prec * toFloat (ceiling (toFloat number / prec))
 
 
 toParts : Date.Date -> (Int, Date.Month, Int, Int, Int, Int, Int)
