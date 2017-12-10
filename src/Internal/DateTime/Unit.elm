@@ -32,7 +32,7 @@ interval amountRough limits =
       range / toFloat amountRough |> Debug.log "intervalRough"
 
     unit =
-      findBest intervalRough all |> Debug.log "unit"
+      findBestUnit intervalRough all |> Debug.log "unit"
 
     multiple =
       findBestMultiple intervalRough unit |> Debug.log "multiple"
@@ -59,8 +59,10 @@ interval amountRough limits =
 -- INTERNAL
 
 
-findBest : Float -> List Unit -> Unit
-findBest interval units =
+{-| Find the best fitted unit for a given interval and unit options.
+-}
+findBestUnit : Float -> List Unit -> Unit
+findBestUnit interval units =
   let
     findBest_ units u0 =
       case units of
@@ -78,6 +80,8 @@ findBest interval units =
   findBest_ units Year
 
 
+{-| Finds the best fit multiple given the interval and it's best fit unit.
+-}
 findBestMultiple : Float -> Unit -> Float
 findBestMultiple interval unit =
   let
@@ -132,14 +136,13 @@ multiples unit =
     Year        -> [] -- TODO prevent 2.5
 
 
+{-| Find the best position for the first tick.
+-}
 beginAt : Float -> Unit -> Float -> Float
 beginAt min unit multiple =
   let
     date =
-      Debug.log "beginat" <| Date.ceiling (toExtraUnit unit) <| Date.fromTime min
-
-    ceilingPrev i =
-      Date.ceiling i date
+      Date.ceiling (toExtraUnit unit) (Date.fromTime min)
 
     (y, m, d, hh, mm, ss, _) =
       toParts date
@@ -161,7 +164,8 @@ beginAt min unit multiple =
       Date.fromParts (ceilingToInt y multiple) Date.Jan 1 0 0 0 0 |> Date.toTime
 
 
-{-| -}
+{-| Find the next position.
+-}
 next : Float -> Unit -> Float -> Float
 next timestamp unit multiple =
   Date.fromTime timestamp
@@ -203,7 +207,7 @@ ceilingTo number prec =
 
 ceilingToInt : Int -> Float -> Int
 ceilingToInt number prec =
-  Debug.log "hhf" <| ceiling <| prec * toFloat (ceiling (toFloat (number |> Debug.log "hh") / prec))
+  ceiling <| prec * toFloat (ceiling (toFloat number / prec))
 
 
 toParts : Date.Date -> (Int, Date.Month, Int, Int, Int, Int, Int)
