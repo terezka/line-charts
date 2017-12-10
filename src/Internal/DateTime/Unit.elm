@@ -150,7 +150,6 @@ beginAt min unit multiple =
     Year        -> Date.toTime <| Date.fromParts (ceilingToInt y multiple) Date.Jan 1 0 0 0 0
 
 
-{-| -}
 ceilingTo : Float -> Float -> Float
 ceilingTo number prec =
   prec * toFloat (ceiling (number / prec))
@@ -223,7 +222,19 @@ toExtraUnit unit =
     Year        -> Date.Year
 
 
-highestMultiple : List Int -> Float -- TODO What about Years
+toParts : Date.Date -> (Int, Date.Month, Int, Int, Int, Int, Int)
+toParts date =
+  ( Date.year date
+  , Date.month date
+  , Date.day date
+  , Date.hour date
+  , Date.minute date
+  , Date.second date
+  , Date.millisecond date
+  )
+
+
+highestMultiple : List Int -> Float
 highestMultiple =
   List.reverse >> List.head >> Maybe.withDefault 0 >> toFloat
 
@@ -236,15 +247,3 @@ magnitude interval unit =
 
     _ ->
       1
-
-
-toParts : Date.Date -> (Int, Date.Month, Int, Int, Int, Int, Int)
-toParts date =
-  ( Date.year date
-  , Date.month date
-  , Date.day date
-  , Date.hour date
-  , Date.minute date
-  , Date.second date
-  , Date.millisecond date
-  )
