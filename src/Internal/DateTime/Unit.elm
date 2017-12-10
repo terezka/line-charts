@@ -26,7 +26,7 @@ type Unit
 type alias Info =
   { positions : List Float
   , unit : Unit
-  , multiple : Float
+  , multiple : Int
   }
 
 
@@ -47,7 +47,7 @@ positions amountRough limits =
       findBestMultiple intervalRough unit
 
     interval =
-      toMs unit * multiple
+      toMs unit * toFloat multiple
 
     beginning =
       beginAt limits.min unit multiple
@@ -56,7 +56,7 @@ positions amountRough limits =
       floor <| (limits.max - beginning) / interval
 
     positions_ acc m =
-      let next_ = next beginning unit (toFloat m * multiple)
+      let next_ = next beginning unit (m * multiple)
       in if next_ > limits.max then acc else positions_ (next_ :: acc) (m + 1)
   in
   { positions = positions_ [] 0
@@ -106,7 +106,7 @@ findBestUnit interval units =
 
 {-| Finds the best fit multiple given the interval and it's best fit unit.
 -}
-findBestMultiple : Float -> Unit -> Float
+findBestMultiple : Float -> Unit -> Int
 findBestMultiple interval unit =
   let
     findBest_ multiples =
@@ -120,14 +120,14 @@ findBestMultiple interval unit =
         [] -> 1
 
     middleOfNext m1 m2 =
-      (m1 * toMs unit + m2 * toMs unit) / 2
+      (toFloat m1 * toMs unit + toFloat m2 * toMs unit) / 2
   in
   findBest_ (multiples unit)
 
 
 {-| Find the best position for the first tick.
 -}
-beginAt : Float -> Unit -> Float -> Float
+beginAt : Float -> Unit -> Int -> Float
 beginAt min unit multiple =
   let
     date =
@@ -137,7 +137,7 @@ beginAt min unit multiple =
       toParts date
 
     interval =
-      toMs unit * multiple
+      toMs unit * toFloat multiple
   in
   case unit of
     Millisecond -> ceilingTo min interval
@@ -156,22 +156,22 @@ ceilingTo number prec =
   prec * toFloat (ceiling (number / prec))
 
 
-ceilingToInt : Int -> Float -> Int
+ceilingToInt : Int -> Int -> Int
 ceilingToInt number prec =
-  ceiling <| prec * toFloat (ceiling (toFloat number / prec))
+  ceiling <| ceilingTo (toFloat number) (toFloat prec)
 
 
-ceilingToMonth : Date.Date -> Float -> Date.Month
+ceilingToMonth : Date.Date -> Int -> Date.Month
 ceilingToMonth date multiple =
   Date.monthFromMonthNumber <| ceilingToInt (Date.monthNumber date) multiple
 
 
 {-| Find the next position.
 -}
-next : Float -> Unit -> Float -> Float
+next : Float -> Unit -> Int -> Float
 next timestamp unit multiple =
   Date.fromTime timestamp
-    |> Date.add (toExtraUnit unit) (round multiple)
+    |> Date.add (toExtraUnit unit) multiple
     |> Date.toTime
 
 
@@ -197,7 +197,7 @@ toMs unit =
     Year        -> 364 * 24 * 3600000
 
 
-multiples : Unit -> List Float -- TODO int
+multiples : Unit -> List Int
 multiples unit =
   case unit of
     Millisecond -> [ 1, 2, 5, 10, 20, 25, 50, 100, 200, 500 ]
@@ -223,9 +223,9 @@ toExtraUnit unit =
     Year        -> Date.Year
 
 
-highestMultiple : List Float -> Float -- TODO What about Years
+highestMultiple : List Int -> Float -- TODO What about Years
 highestMultiple =
-  List.reverse >> List.head >> Maybe.withDefault 0
+  List.reverse >> List.head >> Maybe.withDefault 0 >> toFloat
 
 
 magnitude : Float -> Unit -> Float
