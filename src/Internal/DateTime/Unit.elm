@@ -207,7 +207,7 @@ multiples unit =
     Day         -> [ 1, 2 ]
     Week        -> [ 1, 2 ]
     Month       -> [ 1, 2, 3, 4, 6 ]
-    Year        -> [] -- TODO prevent 2.5
+    Year        -> [ 1, 2, 5, 10, 20, 25, 50, 100, 200, 500, 1000, 10000 ]
 
 
 toExtraUnit : Unit -> Date.Interval
