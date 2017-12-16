@@ -19,12 +19,12 @@ main : Svg msg
 main =
   -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3 ]
   Lines.viewCustom
-    { frame = Coordinate.Frame (Coordinate.Margin 40 150 90 150) (Coordinate.Size 650 400)
+    { margin = Coordinate.Margin 40 150 90 150
     , attributes = [ Attributes.style "font-family: monospace;" ]
     , events = Events.none
     , junk = Junk.none
-    , x = AxisTime.default (Axis.defaultTitle "Time" 0 0) .date
-    , y = Axis.default (Axis.defaultTitle "Heart attacks" 0 0) .heartattacks
+    , x = AxisTime.default 850 (Axis.defaultTitle "Time" 0 0) .date
+    , y = Axis.default 400 (Axis.defaultTitle "Heart attacks" 0 0) .heartattacks
     , interpolation = Lines.linear
     , legends = Legends.default
     , line = Line.default

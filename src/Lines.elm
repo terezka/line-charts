@@ -212,7 +212,7 @@ dash =
 
 {-| The customizations available for your line chart viewed with `viewCustom`.
 
-  - `frame`: Customizes the size and margins of your chart.
+  - `margin`: Customizes the size and margins of your chart.
     See `Lines.Coordinate` for more information and examples.
 
   - `x`: Customizes the look of your horizontal axis.
@@ -257,7 +257,7 @@ copy it and play around with customizations available for each property.
 
     chartConfig : Config data msg
     chartConfig =
-      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
+      { margin = Margin 40 150 90 150
       , x = Axis.default (Axis.defaultTitle "" 0 0) .age
       , y = Axis.default (Axis.defaultTitle "" 0 0) .weight
       , interpolation = Lines.linear
@@ -273,7 +273,7 @@ copy it and play around with customizations available for each property.
 
 -}
 type alias Config data msg =
-  { frame : Coordinate.Frame
+  { margin : Coordinate.Margin
   , x : Axis.Axis data msg
   , y : Axis.Axis data msg
   , interpolation : Interpolation
@@ -369,7 +369,7 @@ viewCustom config lines =
       List.concat dataPoints
 
     system =
-      { frame = config.frame
+      { frame = Coordinate.Frame config.margin (Coordinate.Size config.x.length config.y.length)
       , x = allPoints
               |> Coordinate.limits (.point >> .x)
               |> Coordinate.applyLimitations config.x.limitations
@@ -445,11 +445,11 @@ clipPath { id } system =
 
 defaultConfig : (data -> Float) -> (data -> Float) -> Config data msg
 defaultConfig toX toY =
-  { frame = Coordinate.Frame (Coordinate.Margin 40 150 90 150) (Coordinate.Size 650 400)
+  { margin = Coordinate.Margin 40 150 90 150
   , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
   , events = []
-  , x = Axis.default (Axis.defaultTitle "" 0 0) toX
-  , y = Axis.default (Axis.defaultTitle "" 0 0) toY
+  , x = Axis.default 650 (Axis.defaultTitle "" 0 0) toX
+  , y = Axis.default 400 (Axis.defaultTitle "" 0 0) toY
   , junk = Junk.none
   , interpolation = linear
   , legends = Legends.default

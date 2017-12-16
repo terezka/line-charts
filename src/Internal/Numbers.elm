@@ -9,11 +9,14 @@ import Lines.Coordinate as Coordinate exposing (..)
 
 
 {-| -}
-defaultInterval : Coordinate.Limits -> List Float
-defaultInterval limits =
+defaultInterval : Float -> Coordinate.Limits -> List Float
+defaultInterval length limits =
     let
+      numOfTicks =
+        length / 100
+
       tickRange =
-        (limits.max - limits.min) / 10 -- TODO Correct for axis length
+        (limits.max - limits.min) / numOfTicks -- TODO Correct for axis length
 
       interval =
         normalizedInterval tickRange [] (magnitude tickRange) True

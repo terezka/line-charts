@@ -34,11 +34,12 @@ import Internal.DateTime.Unit as Unit
     axis =
       Axis.axisTime <| Axis.Time.default (Axis.Time.defaultTitle "Age" 0 0) .age
 -}
-default : Axis.Title msg -> (data -> Float) -> Axis.Axis data msg
-default title variable =
+default : Float -> Axis.Title msg -> (data -> Float) -> Axis.Axis data msg
+default length title variable =
   { variable = variable
   , limitations = Axis.Limitations identity identity
-  , look = defaultLook title
+  , look = defaultLook length title
+  , length = length
   }
 
 
@@ -58,13 +59,17 @@ I recommend you copy the snippet into your code and mess around with it for a
 but or check out the examples [here](TODO)
 
 -}
-defaultLook : Axis.Title msg -> Axis.Look msg
-defaultLook title =
+defaultLook : Float -> Axis.Title msg -> Axis.Look msg
+defaultLook length title =
+  let
+    numOfTicks =
+      round (length / 170)
+  in
   { title = title
   , offset = 20
   , position = Axis.towardsZero
   , line = Just (Axis.defaultLine [ Attributes.stroke Color.gray ])
-  , marks = (\info -> List.map (defaultMark info.unit) info.positions) << Unit.positions 3
+  , marks = (\info -> List.map (defaultMark info.unit) info.positions) << Unit.positions numOfTicks
   , direction = Axis.Negative
   }
 

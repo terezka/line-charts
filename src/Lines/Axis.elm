@@ -67,6 +67,7 @@ type alias Axis data msg =
   { variable : data -> Float
   , limitations : Limitations
   , look : Look msg
+  , length : Float
   }
 
 
@@ -230,11 +231,12 @@ type Direction
     axis =
       Axis.axis <| Axis.Float.default (Axis.Float.defaultTitle "Age" 0 0) .age
 -}
-default : Title msg -> (data -> Float) -> Axis data msg
-default title variable =
+default : Float -> Title msg -> (data -> Float) -> Axis data msg
+default length title variable =
   { variable = variable
   , limitations = Limitations identity identity
-  , look = defaultLook title
+  , look = defaultLook length title
+  , length = length
   }
 
 
@@ -271,13 +273,13 @@ I recommend you copy the snippet into your code and mess around with it for a
 but or check out the examples [here](TODO)
 
 -}
-defaultLook : Title msg -> Look msg
-defaultLook title =
+defaultLook : Float -> Title msg -> Look msg
+defaultLook length title =
   { title = title
   , offset = 20
   , position = towardsZero
   , line = Just (defaultLine [ Attributes.stroke Color.gray ])
-  , marks = List.map defaultMark << defaultInterval
+  , marks = List.map defaultMark << defaultInterval length
   , direction = Negative
   }
 
@@ -348,7 +350,7 @@ defaultLine attributes limits =
 
 {-| Produces a list of evenly spaced numbers given the limits of your axis.
 -}
-defaultInterval : Coordinate.Limits -> List Float
+defaultInterval : Float -> Coordinate.Limits -> List Float
 defaultInterval =
   Numbers.defaultInterval
 
