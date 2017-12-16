@@ -73,7 +73,7 @@ defaultFormatting unit =
     Millisecond -> toString << Date.toTime
     Second      -> Date.Format.format "%S"
     Minute      -> Date.Format.format "%H:%M"
-    Hour        -> Date.Format.format "%I %p"
+    Hour        -> Date.Format.format "%l%P"
     Day         -> Date.Format.format "%d/%m"
     Week        -> Date.toFormattedString "'Week' w, y"
     Month       -> Date.Format.format "%b %y"
