@@ -1,6 +1,6 @@
 module Lines.Axis exposing
-  ( default, defaultForDates
-  , Axis, Limitations, Look, Line, Mark, Tick, Direction(..)
+  ( default
+  , Axis, Title, Limitations, Look, Line, Mark, Tick, Direction(..)
   , defaultLook
   , towardsZero
   , defaultLine
@@ -12,10 +12,10 @@ module Lines.Axis exposing
 {-|
 
 # Quick start
-@docs default, defaultTitle, defaultForDates
+@docs default, defaultTitle
 
 # Configuration
-@docs Axis, Limitations
+@docs Axis, Title, Limitations
 
 # Look
 @docs Look, defaultLook
@@ -36,11 +36,9 @@ module Lines.Axis exposing
 
 import Svg exposing (..)
 import Svg.Attributes as Attributes
-import Date
 import Lines.Coordinate as Coordinate
 import Lines.Color as Color
 import Internal.Numbers as Numbers
-import Internal.DateTime.Unit as Unit
 import Internal.Utils as Utils
 
 
@@ -55,11 +53,12 @@ import Internal.Utils as Utils
 
 
     xAxisConfig : Axis Info msg
-    xAxisConfig =
-      { variable = .age
-      , limitations = Axis.Limitations (always 0) (always 100)
-      , look = Axis.defaultLook (Axis.defaultTitle "Age" 0 0)
-      }
+    xAxisConfig = -- TODO
+      Axis.axis
+        { variable = .age
+        , limitations = Axis.Float.Limitations (always 0) (always 100)
+        , look = Axis.Float.defaultLook (Axis.Float.defaultTitle "Age" 0 0)
+        }
 
 See full example [here](TODO)
 
@@ -229,29 +228,13 @@ type Direction
 
     axis : Axis data msg
     axis =
-      Axis.default (Axis.defaultTitle "Age" 0 0) .age
+      Axis.axis <| Axis.Float.default (Axis.Float.defaultTitle "Age" 0 0) .age
 -}
 default : Title msg -> (data -> Float) -> Axis data msg
 default title variable =
   { variable = variable
   , limitations = Limitations identity identity
   , look = defaultLook title
-  }
-
-
-{-| -}
-defaultForDates : Title msg -> (data -> Float) -> Axis data msg
-defaultForDates title variable =
-  let
-    look =
-      defaultLook title
-
-    marks info =
-      List.map (defaultDateMark info.unit) info.positions
-  in
-  { variable = variable
-  , limitations = Limitations identity identity
-  , look = { look | marks = marks << Unit.positions 4 }
   }
 
 
@@ -312,24 +295,6 @@ defaultMark : Float -> Mark msg
 defaultMark position =
   { position = position
   , label = Just (defaultLabel position)
-  , tick = Just defaultTick
-  }
-
-
-defaultDateMark : Unit.Unit -> Float -> Mark msg
-defaultDateMark unit position =
-  let
-    date =
-      Date.fromTime position
-
-    label =
-      Unit.defaultFormatting unit date
-
-    viewLabel =
-      text_ [] [ tspan [] [ text label ] ]
-  in
-  { position = position
-  , label = Just viewLabel
   , tick = Just defaultTick
   }
 

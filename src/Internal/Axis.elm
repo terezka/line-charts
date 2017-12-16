@@ -13,6 +13,7 @@ import Internal.Svg as Svg exposing (..)
 -- VIEWS
 
 
+{-| -}
 viewHorizontal : Coordinate.System -> Axis.Look msg -> Svg msg
 viewHorizontal system axis =
     let
@@ -38,6 +39,7 @@ viewHorizontal system axis =
       ]
 
 
+{-| -}
 viewVertical : Coordinate.System -> Axis.Look msg -> Svg msg
 viewVertical system axis =
     let

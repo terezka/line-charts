@@ -75,7 +75,7 @@ defaultFormatting unit =
     Minute      -> Date.Format.format "%H:%M"
     Hour        -> Date.Format.format "%I %p"
     Day         -> Date.Format.format "%d/%m"
-    Week        -> Date.toFormattedString "'Week' w"
+    Week        -> Date.toFormattedString "'Week' w, y"
     Month       -> Date.Format.format "%b %y"
     Year        -> Date.Format.format "%Y"
 
@@ -162,9 +162,7 @@ ceilingToInt number prec =
 
 ceilingToWeek : Date.Date -> Int -> Date.Date
 ceilingToWeek date multiple =
-  let
-    weekNumber = ceilingToInt (Date.weekNumber date) multiple
-  in
+  let weekNumber = ceilingToInt (Date.weekNumber date) multiple in
   Date.fromSpec Date.utc Date.noTime (Date.weekDate (Date.year date) weekNumber 1)
 
 
@@ -173,8 +171,7 @@ ceilingToMonth date multiple =
   Date.monthFromMonthNumber <| ceilingToInt (Date.monthNumber date) multiple
 
 
-{-| Find the next position.
--}
+{-| -}
 next : Float -> Unit -> Int -> Float
 next timestamp unit multiple =
   Date.fromTime timestamp
