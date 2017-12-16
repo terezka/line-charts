@@ -231,7 +231,7 @@ type Direction
     axis =
       Axis.axis <| Axis.Float.default (Axis.Float.defaultTitle "Age" 0 0) .age
 -}
-default : Float -> Title msg -> (data -> Float) -> Axis data msg
+default : Float -> String -> (data -> Float) -> Axis data msg
 default length title variable =
   { variable = variable
   , limitations = Limitations identity identity
@@ -273,9 +273,9 @@ I recommend you copy the snippet into your code and mess around with it for a
 but or check out the examples [here](TODO)
 
 -}
-defaultLook : Float -> Title msg -> Look msg
+defaultLook : Float -> String -> Look msg
 defaultLook length title =
-  { title = title
+  { title = defaultTitle title 0 0
   , offset = 20
   , position = towardsZero
   , line = Just (defaultLine [ Attributes.stroke Color.gray ])

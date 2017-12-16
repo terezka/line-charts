@@ -34,7 +34,7 @@ import Internal.DateTime.Unit as Unit
     axis =
       Axis.axisTime <| Axis.Time.default (Axis.Time.defaultTitle "Age" 0 0) .age
 -}
-default : Float -> Axis.Title msg -> (data -> Float) -> Axis.Axis data msg
+default : Float -> String -> (data -> Float) -> Axis.Axis data msg
 default length title variable =
   { variable = variable
   , limitations = Axis.Limitations identity identity
@@ -59,13 +59,13 @@ I recommend you copy the snippet into your code and mess around with it for a
 but or check out the examples [here](TODO)
 
 -}
-defaultLook : Float -> Axis.Title msg -> Axis.Look msg
+defaultLook : Float -> String -> Axis.Look msg
 defaultLook length title =
   let
     numOfTicks =
       round (length / 170)
   in
-  { title = title
+  { title = Axis.defaultTitle title 0 0
   , offset = 20
   , position = Axis.towardsZero
   , line = Just (Axis.defaultLine [ Attributes.stroke Color.gray ])
