@@ -2,7 +2,7 @@ module Lines.Axis exposing
   ( Axis, axis, axisTime, axisCustom, axisVeryCustom
   , Look, look, lookCustom, lookVeryCustom
   , Title, title, titleCustom
-  , Mark, mark, markCustom, values, valuesCustom
+  , Mark, mark, markCustom, values, valuesExact, interval
   , Line, line, lineCustom
   , Tick, tick, tickCustom
   , Direction, positive, negative
@@ -15,7 +15,7 @@ module Lines.Axis exposing
 @docs Axis, axis, axisTime, axisCustom, axisVeryCustom
 @docs Look, look, lookCustom, lookVeryCustom
 @docs Title, title, titleCustom
-@docs Mark, mark, markCustom, values, valuesCustom
+@docs Mark, mark, markCustom, values, valuesExact, interval
 @docs Line, line, lineCustom
 @docs Tick, tick, tickCustom
 @docs Direction, positive, negative
@@ -233,7 +233,14 @@ markCustom =
 -}
 values : Int -> Coordinate.Limits -> List Float
 values =
-  Numbers.defaultInterval
+  Numbers.values False
+
+
+{-| Produces a list of evenly spaced numbers given the limits of your axis.
+-}
+valuesExact : Int -> Coordinate.Limits -> List Float
+valuesExact =
+  Numbers.values True
 
 
 {-| Produces a list of evenly spaced numbers given an offset, and interval, and
@@ -252,9 +259,9 @@ you'd use
       Axis.customInterval 1 2
 
 -}
-valuesCustom : Float -> Float -> Coordinate.Limits -> List Float
-valuesCustom =
-  Numbers.customInterval
+interval : Float -> Float -> Coordinate.Limits -> List Float
+interval =
+  Numbers.interval
 
 
 {-| Produces the axis line.

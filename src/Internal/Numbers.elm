@@ -1,109 +1,114 @@
-module Internal.Numbers exposing (customInterval, defaultInterval, normalizedInterval, correctFloat, magnitude)
+module Internal.Numbers exposing (interval, values, getMagnitude)
 
 {-| -}
 
-import Regex
 import Round
 import Lines.Coordinate as Coordinate exposing (..)
 
 
 
 {-| -}
-defaultInterval : Int -> Coordinate.Limits -> List Float
-defaultInterval numOfTicks limits =
+values : Bool -> Int -> Coordinate.Limits -> List Float
+values exact amountRough limits =
     let
-      tickRange =
-        (limits.max - limits.min) / toFloat numOfTicks -- TODO Correct for axis length
+      range =
+        limits.max - limits.min
+
+      intervalRough =
+        range / toFloat amountRough
 
       interval =
-        normalizedInterval tickRange [] (magnitude tickRange) True
+        getInterval intervalRough True exact
+
+      ceilingTo number prec =
+        prec * toFloat (ceiling (number / prec))
+
+      beginning =
+        ceilingTo limits.min interval
+
+      positions_ acc m =
+        let next_ = correctFloat (beginning + (m * interval)) (precision interval)
+        in if next_ > limits.max then acc else positions_ (next_ :: acc) (m + 1)
     in
-    customInterval limits.min interval limits
+    positions_ [] 0
 
 
-{-| TODO TEST ME -}
-customInterval : Float -> Float -> Coordinate.Limits -> List Float
-customInterval intersection delta limits =
+{-| -}
+interval : Float -> Float -> Coordinate.Limits -> List Float
+interval intersection interval limits =
     let
-        firstValue =
+        offset value =
+          interval * toFloat (floor (value / interval))
+
+        beginning =
           intersection - offset (intersection - limits.min)
 
-        offset value =
-          toFloat (floor (value / delta)) * delta
-
-        ticks result index =
-          let next = position delta firstValue index in
-            if next <= limits.max
-              then ticks (result ++ [ next ]) (index + 1)
-              else result
+        positions_ acc m =
+          let next_ = correctFloat (beginning + (m * interval)) (precision interval)
+          in if next_ > limits.max then acc else positions_ (next_ :: acc) (m + 1)
     in
-    ticks [] 0
+    positions_ [] 0
 
 
 
 -- INTERNAL
 
 
-position : Float -> Float -> Int -> Float
-position delta firstValue index =
-    firstValue + toFloat index * delta
-        |> Round.round (deltaPrecision delta)
-        |> String.toFloat
-        |> Result.withDefault 0
-
-
-deltaPrecision : Float -> Int
-deltaPrecision delta = -- TODO make this better...
-    delta
-        |> toString
-        |> Regex.find (Regex.AtMost 1) (Regex.regex "\\.[0-9]*")
-        |> List.map .match
-        |> List.head
-        |> Maybe.withDefault ""
-        |> String.length
-        |> (-) 1
-        |> min 0
-        |> abs
-
-
-
--- NORMALIZED
-
-
-normalizedInterval : Float -> List Float -> Float -> Bool -> Float
-normalizedInterval intervalRaw multiples_ magnitude allowDecimals =
+{-| Returns multiple -}
+getInterval : Float -> Bool -> Bool -> Float
+getInterval intervalRaw allowDecimals hasTickAmount =
   let
+    magnitude =
+      getMagnitude intervalRaw
+
     normalized =
       intervalRaw / magnitude
 
     multiples =
-      if List.isEmpty multiples_ then
-       produceMultiples magnitude allowDecimals
-      else
-        multiples_
+      produceMultiples magnitude allowDecimals hasTickAmount
 
-    findMultiple multiples interval =
+    findMultiple multiples =
       case multiples of
         m1 :: m2 :: rest ->
-          if normalized <= (m1 + m2) / 2 then m1 else findMultiple rest interval
+          if normalized <= (m1 + m2) / 2
+            then m1
+            else findMultiple (m2 :: rest)
 
         m1 :: rest ->
-          if normalized <= m1 then m1 else findMultiple rest interval
+          if normalized <= m1
+            then m1
+            else findMultiple rest
 
         [] ->
           1
 
-    correctBack interval =
-      correctFloat (interval * magnitude) 3
+    findMultipleExact multiples =
+      case multiples of
+        m1 :: rest ->
+          if m1 * magnitude >= intervalRaw
+            then m1
+            else findMultipleExact rest
+
+        [] ->
+          1
+
+    multiple =
+      if hasTickAmount then
+        findMultipleExact multiples
+      else
+        findMultiple multiples
   in
-  correctBack <|findMultiple multiples intervalRaw
+  correctFloat (multiple * magnitude) (precision magnitude + precision multiple)
 
 
-produceMultiples : Float -> Bool -> List Float
-produceMultiples magnitude allowDecimals =
+produceMultiples : Float -> Bool -> Bool -> List Float
+produceMultiples magnitude allowDecimals hasTickAmount =
   let
     defaults =
-      [ 1, 2, 2.5, 5, 10 ]
+      if hasTickAmount then
+        [ 1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10 ]
+      else
+        [ 1, 2, 2.5, 5, 10 ]
   in
     if allowDecimals then
       defaults
@@ -119,19 +124,31 @@ produceMultiples magnitude allowDecimals =
 {-| -}
 correctFloat : Float -> Int -> Float
 correctFloat number prec =
-  case String.split "." <| toString number ++ String.repeat (prec + 1) "0" of -- TODO
+  case String.split "." (toString number) of -- TODO
     [ before, after ] ->
         let
+          afterSafe = after ++ String.repeat (prec + 2) "0"
           toFloatSafe = String.toFloat >> Result.withDefault 0
-          decimals = String.slice 0 prec after
+          decimals = String.slice 0 (prec + 1) <| afterSafe
         in
-          toFloatSafe <| before ++ "." ++ decimals
+          toFloatSafe <| Round.round prec <| toFloatSafe <| before ++ "." ++ decimals
 
     _ ->
        number
 
 
 {-| -}
-magnitude : Float -> Float
-magnitude num =
+getMagnitude : Float -> Float
+getMagnitude num =
   toFloat <| 10 ^ (floor (logBase e num / logBase e 10))
+
+
+{-| -}
+precision : Float -> Int
+precision interval =
+  case String.split "." (toString interval) of -- TODO
+    [ before, after ] ->
+        String.length after
+
+    _ ->
+       0

@@ -80,7 +80,7 @@ axis : Float -> (data -> Float) -> String -> Axis data msg
 axis length variable title =
   { variable = variable
   , limits = identity
-  , look = look title (List.map mark << Numbers.defaultInterval (round <| length / 100))
+  , look = look title (List.map mark << Numbers.values False (round <| length / 100))
   , length = length
   }
 

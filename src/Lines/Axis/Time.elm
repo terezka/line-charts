@@ -38,7 +38,7 @@ default : Float -> Coordinate.Limits -> List (Axis.Mark msg)
 default length =
   let
     numOfTicks =
-      round (length / 170) |> Debug.log "here"
+      round (length / 170)
   in
   List.map mark << values numOfTicks
 
@@ -64,9 +64,6 @@ values amountRough limits =
 
     beginning =
       beginAt limits.min unit multiple
-
-    amount =
-      floor <| (limits.max - beginning) / interval
 
     positions_ acc m =
       let next_ = next beginning unit (m * multiple)
@@ -276,7 +273,7 @@ magnitude : Float -> Unit -> Float
 magnitude interval unit =
   case unit of
     Year ->
-      max 1 (Numbers.magnitude interval)
+      max 1 (Numbers.getMagnitude interval)
 
     _ ->
       1
