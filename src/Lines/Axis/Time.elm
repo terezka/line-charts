@@ -1,4 +1,4 @@
-module Lines.Axis.Time exposing (default, Unit(..), Value, mark, values, defaultFormatting)
+module Lines.Axis.Time exposing (default, Unit(..), Value, mark, values, formatting)
 
 {-| -}
 
@@ -71,6 +71,7 @@ values amountRough limits =
   List.map (Value unit multiple) (positions_ [] 0)
 
 
+{-| -}
 mark : Value -> Axis.Mark msg
 mark { unit, position } =
   let
@@ -78,7 +79,7 @@ mark { unit, position } =
       Date.fromTime position
 
     label =
-      defaultFormatting unit date -- TODO how to format
+      formatting unit date -- TODO how to format
 
     viewLabel =
       text_ [] [ tspan [] [ text label ] ]
@@ -90,8 +91,8 @@ mark { unit, position } =
 
 
 {-| -}
-defaultFormatting : Unit -> Date.Date -> String
-defaultFormatting unit =
+formatting : Unit -> Date.Date -> String
+formatting unit =
   case unit of
     Millisecond -> toString << Date.toTime
     Second      -> Date.Format.format "%S"

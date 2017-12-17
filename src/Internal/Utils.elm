@@ -60,16 +60,19 @@ withFirst stuff process =
         _             -> Nothing
 
 
+{-| -}
 towardsZero : Coordinate.Limits -> Float
 towardsZero { max, min } =
   clamp min max 0
 
 
+{-| -}
 last : List a -> Maybe a
 last list =
   List.head (List.drop (List.length list - 1) list)
 
 
+{-| -}
 toClipPathId : String -> String
 toClipPathId id =
   "clip-path__" ++ id
