@@ -1,45 +1,70 @@
 module Lines.Axis exposing
-  ( default
-  , Axis, Limitations, Look, Line, Mark, Tick, Direction(..)
-  , defaultLook
+  ( Axis, axis, axisTime, axisCustom, axisVeryCustom
+  , Look, look, lookCustom, lookVeryCustom
+  , Title, title, titleCustom
+  , Mark, mark, markCustom, values, valuesExact, interval
+  , Line, line, lineCustom
+  , Tick, tick, tickCustom
+  , Direction, positive, negative
   , towardsZero
-  , defaultLine
-  , defaultTitle
-  , defaultMark, defaultInterval, customInterval
-  , defaultTick, defaultLabel
   )
 
 {-|
 
-# Quick start
-@docs default, defaultTitle
-
 # Configuration
-@docs Axis, Limitations
-
-# Look
-@docs Look, defaultLook
-
-## Axis line
-@docs Line, defaultLine
-
-## Ticks and labels
-@docs Mark, defaultMark, defaultLabel, Tick, defaultTick, Direction
-
-## Intervals
-@docs defaultInterval, customInterval
-
-## Helpers
+@docs Axis, axis, axisTime, axisCustom, axisVeryCustom
+@docs Look, look, lookCustom, lookVeryCustom
+@docs Title, title, titleCustom
+@docs Mark, mark, markCustom, values, valuesExact, interval
+@docs Line, line, lineCustom
+@docs Tick, tick, tickCustom
+@docs Direction, positive, negative
 @docs towardsZero
+
 
 -}
 
 import Svg exposing (..)
-import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
-import Lines.Color as Color
-import Internal.Numbers as Numbers
+import Lines.Axis.Time as Time
+import Internal.Axis as Axis
 import Internal.Utils as Utils
+import Internal.Numbers as Numbers
+
+
+{-| -}
+type alias Axis data msg =
+  Axis.Axis data msg
+
+
+{-| -}
+type alias Look msg =
+  Axis.Look msg
+
+
+{-| -}
+type alias Title msg =
+  Axis.Title msg
+
+
+{-| -}
+type alias Line msg =
+  Axis.Line msg
+
+
+{-| -}
+type alias Mark msg =
+  Axis.Mark msg
+
+
+{-| -}
+type alias Tick msg =
+  Axis.Tick msg
+
+
+{-| -}
+type alias Direction =
+  Axis.Direction
 
 
 
@@ -53,46 +78,47 @@ import Internal.Utils as Utils
 
 
     xAxisConfig : Axis Info msg
-    xAxisConfig =
-      { variable = .age
-      , limitations = Axis.Limitations (always 0) (always 100)
-      , look = Axis.defaultLook (Axis.defaultTitle "Age" 0 0)
-      }
+    xAxisConfig = -- TODO
+      Axis.axis
+        { variable = .age
+        , limitations = Axis.Float.Limitations (always 0) (always 100)
+        , look = Axis.Float.defaultLook (Axis.Float.defaultTitle "Age" 0 0)
+        }
 
 See full example [here](TODO)
 
 -}
-type alias Axis data msg =
-  { variable : data -> Float
-  , limitations : Limitations
+axis : Float -> (data -> Float) -> String -> Axis data msg
+axis =
+  Axis.axis
+
+
+{-| -}
+axisTime : Float -> (data -> Float) -> String -> Axis data msg
+axisTime length variable title =
+  { variable = variable
+  , limits = identity
+  , look = look title (Time.default length)
+  , length = length
+  }
+
+
+{-| -}
+axisCustom : Float -> (data -> Float) -> Look msg -> Axis data msg
+axisCustom length variable look =
+  Axis.axisCustom length variable identity look
+
+
+{-| -}
+axisVeryCustom :
+  { length : Float
+  , variable : data -> Float
+  , limits : Coordinate.Limits -> Coordinate.Limits
   , look : Look msg
   }
-
-
-{-| Limits the range of your axis, given the minimum and maximum of your values.
-
-Imagine you have a data set where the lowest value is 4 and the highest is 12.
-Now, normally that would make your axis start at 4 and end at 12, but if you'd
-like it go from 0 to 12, you could add the folloring limitations to your
-axis configuration:
-
-    xAxisConfig : Axis Info msg
-    xAxisConfig =
-      { variable = .age
-      , limitations =
-          { min = always 0  -- Axis always starts at 0
-          , max = always 15 -- Axis always ends at 15
-          }
-      , look = Axis.defaultLook (Axis.defaultTitle "Age" 0 0)
-      }
-
-See full example [here](TODO)
-
--}
-type alias Limitations =
-  { min : Float -> Float
-  , max : Float -> Float
-  }
+  -> Axis data msg
+axisVeryCustom { length, variable, limits, look } =
+  Axis.axisCustom length variable limits look
 
 
 {-| The visual configuration.
@@ -115,14 +141,35 @@ type alias Limitations =
 
 TODO example
 -}
-type alias Look msg =
-  { title : Title msg
+look : String -> (Coordinate.Limits -> List (Mark msg)) -> Look msg
+look =
+  Axis.look
+
+
+{-| -}
+lookCustom :
+  { title : Axis.Title msg
+  , position : Coordinate.Limits -> Float
+  , line : Maybe (Coordinate.Limits -> Line msg)
+  , marks : Coordinate.Limits -> List (Mark msg)
+  }
+  -> Axis.Look msg
+lookCustom =
+  Axis.lookCustom
+
+
+{-| -}
+lookVeryCustom :
+  { title : Axis.Title msg
   , position : Coordinate.Limits -> Float
   , offset : Float
   , line : Maybe (Coordinate.Limits -> Line msg)
   , marks : Coordinate.Limits -> List (Mark msg)
   , direction : Direction
   }
+  -> Look msg
+lookVeryCustom =
+  Axis.lookVeryCustom
 
 
 {-| The title is the label of your axis.
@@ -135,12 +182,15 @@ type alias Look msg =
 
 TODO example
 -}
-type alias Title msg =
-    { position : Coordinate.Limits -> Float
-    , view : Svg msg
-    , xOffset : Float
-    , yOffset : Float
-    }
+title : String -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
+title =
+  Axis.title
+
+
+{-| -}
+titleCustom : Svg msg -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
+titleCustom =
+  Axis.titleCustom
 
 
 {-| Produces a mark (a tick, a label, or both) on your axis.
@@ -168,188 +218,29 @@ You can also produce your own irregular intervals like this:
 
 TODO example
 -}
-type alias Mark msg =
-  { position : Float
-  , label : Maybe (Svg msg)
-  , tick : Maybe (Tick msg)
-  }
-
-
-{-| Produces the axis line.
-
-    axisLine : Coordinate.Limits -> Line msg
-    axisLine { min, max } =
-      { attributes = [ Attributes.stroke Color.black ]
-      , start = min
-      , end = 10
-      }
-
--}
-type alias Line msg =
-  { attributes : List (Attribute msg)
-  , start : Float
-  , end : Float
-  }
-
-
-{-| Produces a tick.
-
-    tick : Tick msg
-    tick =
-      { attributes = [ Attributes.stroke Color.black ]
-      , length = 7
-      }
-
--}
-type alias Tick msg =
-  { attributes : List (Attribute msg)
-  , length : Int
-  }
+mark : Float -> Mark msg
+mark =
+  Axis.mark
 
 
 {-| -}
-type Direction
-  = Negative
-  | Positive
-
-
-
--- DEFAULTS
-
-
-{-| The default axis configuration.
-
-  - First argument is a `Title`, which you don't have to bother too
-    much to figure out if you just use `defaultTitle`.
-  - Second argument is the axis variable. This is a fuction to extract
-    a value from your data.
-
-
-    axis : Axis data msg
-    axis =
-      Axis.default (Axis.defaultTitle "Age" 0 0) .age
--}
-default : Title msg -> (data -> Float) -> Axis data msg
-default title variable =
-  { variable = variable
-  , limitations = Limitations identity identity
-  , look = defaultLook title
-  }
-
-
-{-| The default title configuration.
-
-  - First argument is the title you'd like to see on your axis.
-  - Second and third argument are the x and y offsets respectively of your
-    title in SVG space. Use this when you want to move your title around
-    slightly.
-
-
-    title : Title msg
-    title =
-      Axis.defaultTitle "Age" 0 0
--}
-defaultTitle : String -> Float -> Float -> Title msg
-defaultTitle title xOffset yOffset =
-  Title .max (text_ [] [ tspan [] [ text title ] ]) 0 0
-
-
-{-| The default look configuration is the following.
-
-    defaultLook : Title msg -> Look msg
-    defaultLook title =
-      { title = title
-      , offset = 20
-      , position = Axis.towardsZero
-      , line = Just (Axis.defaultLine [ Attributes.stroke Color.gray ])
-      , marks = List.map Axis.defaultMark << Axis.defaultInterval
-      , direction = Negative
-      }
-
-I recommend you copy the snippet into your code and mess around with it for a
-but or check out the examples [here](TODO)
-
--}
-defaultLook : Title msg -> Look msg
-defaultLook title =
-  { title = title
-  , offset = 20
-  , position = towardsZero
-  , line = Just (defaultLine [ Attributes.stroke Color.gray ])
-  , marks = List.map defaultMark << defaultInterval
-  , direction = Negative
-  }
-
-
-{-| The default mark configuration is the following.
-
-    defaultMark : Float -> Mark msg
-    defaultMark position =
-      { position = position
-      , label = Just (defaultLabel position)
-      , tick = Just defaultTick
-      }
--}
-defaultMark : Float -> Mark msg
-defaultMark position =
-  { position = position
-  , label = Just (defaultLabel position)
-  , tick = Just defaultTick
-  }
-
-
-{-| The default tick configuration is the following.
-
-    defaultTick : Tick msg
-    defaultTick =
-      { length = 5
-      , attributes = [ Attributes.stroke Color.gray ]
-      }
--}
-defaultTick : Tick msg
-defaultTick =
-  { length = 5
-  , attributes = [ Attributes.stroke Color.gray ]
-  }
-
-
-{-| The default label configuration is the following.
-
-    defaultLabel : Float -> Svg msg
-    defaultLabel position =
-      text_ [] [ tspan [] [ text (toString position) ] ]
--}
-defaultLabel : Float -> Svg msg
-defaultLabel position =
-  text_ [] [ tspan [] [ text (toString position) ] ]
-
-
-{-| The default line configuration is the following.
-
-    defaultLine : List (Attribute msg) -> Coordinate.Limits -> Line msg
-    defaultLine attributes limits =
-        { attributes = Attributes.style "pointer-events: none;" :: attributes
-        , start = limits.min
-        , end = limits.max
-        }
--}
-defaultLine : List (Attribute msg) -> Coordinate.Limits -> Line msg
-defaultLine attributes limits =
-    { attributes = Attributes.style "pointer-events: none;" :: attributes
-    , start = limits.min
-    , end = limits.max
-    }
-
-
-
--- INTERVALS
+markCustom : Maybe (Svg msg) -> Maybe (Tick msg) -> Float -> Mark msg
+markCustom =
+  Axis.markCustom
 
 
 {-| Produces a list of evenly spaced numbers given the limits of your axis.
 -}
-defaultInterval : Coordinate.Limits -> List Float
-defaultInterval =
-  Numbers.defaultInterval
+values : Int -> Coordinate.Limits -> List Float
+values =
+  Numbers.values False
+
+
+{-| Produces a list of evenly spaced numbers given the limits of your axis.
+-}
+valuesExact : Int -> Coordinate.Limits -> List Float
+valuesExact =
+  Numbers.values True
 
 
 {-| Produces a list of evenly spaced numbers given an offset, and interval, and
@@ -368,13 +259,70 @@ you'd use
       Axis.customInterval 1 2
 
 -}
-customInterval : Float -> Float -> Coordinate.Limits -> List Float
-customInterval =
-  Numbers.customInterval
+interval : Float -> Float -> Coordinate.Limits -> List Float
+interval =
+  Numbers.interval
+
+
+{-| Produces the axis line.
+
+    axisLine : Coordinate.Limits -> Line msg
+    axisLine { min, max } =
+      { attributes = [ Attributes.stroke Color.black ]
+      , start = min
+      , end = 10
+      }
+
+-}
+line : Coordinate.Limits -> Line msg
+line =
+  Axis.line
+
+
+{-| -}
+lineCustom : List (Attribute msg) -> Coordinate.Limits -> Line msg
+lineCustom =
+  Axis.lineCustom
+
+
+{-| Produces a tick.
+
+    tick : Tick msg
+    tick =
+      { attributes = [ Attributes.stroke Color.black ]
+      , length = 7
+      }
+
+-}
+tick : Tick msg
+tick =
+  Axis.tick
+
+
+{-| TODO int to float -}
+tickCustom : List (Attribute msg) -> Int -> Tick msg
+tickCustom =
+  Axis.tickCustom
 
 
 
--- HELPERS
+-- DIRECTIONS
+
+
+{-| -}
+positive : Direction
+positive =
+  Axis.Positive
+
+
+{-| -}
+negative : Direction
+negative =
+  Axis.Negative
+
+
+
+-- HELP
 
 
 {-| Produces zero if zero is within your limits, else the value closest to zero.
