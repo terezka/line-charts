@@ -29,7 +29,6 @@ import Lines.Coordinate as Coordinate
 import Lines.Axis.Time as Time
 import Internal.Axis as Axis
 import Internal.Utils as Utils
-import Internal.Numbers as Numbers
 
 
 {-| -}
@@ -233,14 +232,14 @@ markCustom =
 -}
 values : Int -> Coordinate.Limits -> List Float
 values =
-  Numbers.values False
+  Axis.values False
 
 
 {-| Produces a list of evenly spaced numbers given the limits of your axis.
 -}
 valuesExact : Int -> Coordinate.Limits -> List Float
 valuesExact =
-  Numbers.values True
+  Axis.values True
 
 
 {-| Produces a list of evenly spaced numbers given an offset, and interval, and
@@ -261,7 +260,7 @@ you'd use
 -}
 interval : Float -> Float -> Coordinate.Limits -> List Float
 interval =
-  Numbers.interval
+  Axis.interval
 
 
 {-| Produces the axis line.

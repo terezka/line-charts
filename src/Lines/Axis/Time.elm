@@ -4,7 +4,6 @@ module Lines.Axis.Time exposing (default, Unit(..), Value, mark, values, default
 
 import Svg exposing (..)
 import Internal.Axis as Axis
-import Internal.Numbers as Numbers
 import Internal.Coordinate as Coordinate
 import Date
 import Date.Extra as Date
@@ -273,7 +272,7 @@ magnitude : Float -> Unit -> Float
 magnitude interval unit =
   case unit of
     Year ->
-      max 1 (Numbers.getMagnitude interval)
+      max 1 (Axis.getMagnitude interval)
 
     _ ->
       1

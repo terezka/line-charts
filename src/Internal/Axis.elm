@@ -5,8 +5,8 @@ import Svg exposing (Svg, Attribute, g, text_, tspan, text)
 import Svg.Attributes as Attributes exposing (class)
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Utils exposing (..)
-import Internal.Numbers as Numbers
 import Internal.Svg as Svg exposing (..)
+import Round
 
 
 
@@ -80,7 +80,7 @@ axis : Float -> (data -> Float) -> String -> Axis data msg
 axis length variable title =
   { variable = variable
   , limits = identity
-  , look = look title (List.map mark << Numbers.values False (round <| length / 100))
+  , look = look title (List.map mark << values False (round <| length / 100))
   , length = length
   }
 
@@ -344,6 +344,7 @@ viewText string =
   text_ [] [ tspan [] [ text string ] ]
 
 
+
 -- UTILS
 
 
@@ -352,3 +353,148 @@ isPositive direction =
   case direction of
     Positive -> True
     Negative -> False
+
+
+
+-- VALUES
+
+
+{-| -}
+values : Bool -> Int -> Coordinate.Limits -> List Float
+values exact amountRough limits =
+    let
+      range =
+        limits.max - limits.min
+
+      intervalRough =
+        range / toFloat amountRough
+
+      interval =
+        getInterval intervalRough True exact
+
+      ceilingTo number prec =
+        prec * toFloat (ceiling (number / prec))
+
+      beginning =
+        ceilingTo limits.min interval
+    in
+    positions limits beginning interval 0 []
+
+
+{-| -}
+interval : Float -> Float -> Coordinate.Limits -> List Float
+interval intersection interval limits =
+    let
+        offset value =
+          interval * toFloat (floor (value / interval))
+
+        beginning =
+          intersection - offset (intersection - limits.min)
+    in
+    positions limits beginning interval 0 []
+
+
+
+positions : Coordinate.Limits -> Float -> Float -> Float -> List Float -> List Float
+positions limits beginning interval m acc =
+  let next = correctFloat (beginning + (m * interval)) (getPrecision interval)
+  in if next > limits.max then acc else positions limits beginning interval (m + 1) (next :: acc)
+
+
+getInterval : Float -> Bool -> Bool -> Float
+getInterval intervalRaw allowDecimals hasTickAmount =
+  let
+    magnitude =
+      getMagnitude intervalRaw
+
+    normalized =
+      intervalRaw / magnitude
+
+    multiples =
+      getMultiples magnitude allowDecimals hasTickAmount
+
+    findMultiple multiples =
+      case multiples of
+        m1 :: m2 :: rest ->
+          if normalized <= (m1 + m2) / 2
+            then m1 else findMultiple (m2 :: rest)
+
+        m1 :: rest ->
+          if normalized <= m1
+            then m1 else findMultiple rest
+
+        [] ->
+          1
+
+    findMultipleExact multiples =
+      case multiples of
+        m1 :: rest ->
+          if m1 * magnitude >= intervalRaw
+            then m1 else findMultipleExact rest
+
+        [] ->
+          1
+
+    multiple =
+      if hasTickAmount then
+        findMultipleExact multiples
+      else
+        findMultiple multiples
+  in
+  correctFloat (multiple * magnitude) (getPrecision magnitude + getPrecision multiple)
+
+
+getMultiples : Float -> Bool -> Bool -> List Float
+getMultiples magnitude allowDecimals hasTickAmount =
+  let
+    defaults =
+      if hasTickAmount then
+        [ 1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10 ]
+      else
+        [ 1, 2, 2.5, 5, 10 ]
+  in
+    if allowDecimals then
+      defaults
+    else
+      if magnitude == 1 then
+        List.filter (\n -> toFloat (round n) /= n) defaults
+      else if magnitude <= 0.1 then
+        [ 1 / magnitude ]
+      else
+        defaults
+
+
+-- UTILS
+
+
+{-| -}
+correctFloat : Float -> Int -> Float
+correctFloat number prec =
+  case String.split "." (toString number) of -- TODO
+    [ before, after ] ->
+        let
+          afterSafe = after ++ String.repeat (prec + 2) "0"
+          toFloatSafe = String.toFloat >> Result.withDefault 0
+          decimals = String.slice 0 (prec + 1) <| afterSafe
+        in
+          toFloatSafe <| Round.round prec <| toFloatSafe <| before ++ "." ++ decimals
+
+    _ ->
+       number
+
+
+{-| -}
+getMagnitude : Float -> Float
+getMagnitude num =
+  toFloat <| 10 ^ (floor (logBase e num / logBase e 10))
+
+
+{-| -}
+getPrecision : Float -> Int
+getPrecision interval =
+  case String.split "." (toString interval) of -- TODO
+    [ before, after ] ->
+        String.length after
+
+    _ ->
+       0
