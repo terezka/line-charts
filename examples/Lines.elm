@@ -7,6 +7,7 @@ import Lines.Junk as Junk exposing (..)
 import Lines.Color as Color
 import Lines.Dot as Dot
 import Lines.Axis as Axis
+import Lines.Axis.Time as Time
 import Lines.Coordinate as Coordinate
 import Lines.Events as Events
 import Lines.Legends as Legends
@@ -22,8 +23,8 @@ main =
     , attributes = [ Attributes.style "font-family: monospace;" ]
     , events = Events.none
     , junk = Junk.none
-    , x = Axis.axisTime 850 .date "Time"
-    , y = Axis.axis 400 .heartattacks "Heart attacks"
+    , x = Axis.axisCustom 850 .date lookTime
+    , y = Axis.axisCustom 400 .heartattacks look
     , interpolation = Lines.linear
     , legends = Legends.default
     , line = Line.default
@@ -35,6 +36,16 @@ main =
     , Lines.line Color.pink Dot.diamond "" data2
     , Lines.line Color.orange Dot.cross "" data3
     ]
+
+
+look : Axis.Look msg
+look =
+  Axis.look "Heart attacks" (List.map Axis.mark << Axis.values 10)
+
+
+lookTime : Axis.Look msg
+lookTime =
+  Axis.look "Time" (List.map Time.mark << Time.values 10)
 
 
 

@@ -1,4 +1,4 @@
-module Lines.Axis.Mark.Time exposing (default, Unit(..), positions, defaultFormatting)
+module Lines.Axis.Time exposing (default, Unit(..), Value, mark, values, defaultFormatting)
 
 {-| -}
 
@@ -10,6 +10,7 @@ import Date
 import Date.Extra as Date
 import Date.Extra.Facts as Date
 import Date.Format
+import Time
 
 
 {-| -}
@@ -25,10 +26,10 @@ type Unit
 
 
 {-| -}
-type alias Info =
-  { positions : List Float
-  , unit : Unit
+type alias Value =
+  { unit : Unit
   , multiple : Int
+  , position : Time.Time
   }
 
 
@@ -37,36 +38,14 @@ default : Float -> Coordinate.Limits -> List (Axis.Mark msg)
 default length =
   let
     numOfTicks =
-      round (length / 170)
-
-    marks info =
-      List.map (mark info.unit) info.positions
+      round (length / 170) |> Debug.log "here"
   in
-  marks << positions numOfTicks
+  List.map mark << values numOfTicks
 
 
 {-| -}
-mark : Unit -> Float -> Axis.Mark msg
-mark unit position =
-  let
-    date =
-      Date.fromTime position
-
-    label =
-      defaultFormatting unit date -- TODO how to format
-
-    viewLabel =
-      text_ [] [ tspan [] [ text label ] ]
-  in
-  { position = position
-  , label = Just viewLabel
-  , tick = Just (Axis.Tick [] 5)
-  }
-
-
-{-| -}
-positions : Int -> Coordinate.Limits -> Info
-positions amountRough limits =
+values : Int -> Coordinate.Limits -> List Value
+values amountRough limits =
   let
     range =
       limits.max - limits.min
@@ -93,11 +72,25 @@ positions amountRough limits =
       let next_ = next beginning unit (m * multiple)
       in if next_ > limits.max then acc else positions_ (next_ :: acc) (m + 1)
   in
-  { positions = positions_ [] 0
-  , unit = unit
-  , multiple = multiple
-  }
+  List.map (Value unit multiple) (positions_ [] 0)
 
+
+mark : Value -> Axis.Mark msg
+mark { unit, position } =
+  let
+    date =
+      Date.fromTime position
+
+    label =
+      defaultFormatting unit date -- TODO how to format
+
+    viewLabel =
+      text_ [] [ tspan [] [ text label ] ]
+  in
+  { position = position
+  , label = Just viewLabel
+  , tick = Just (Axis.Tick [] 5)
+  }
 
 
 {-| -}
@@ -112,6 +105,7 @@ defaultFormatting unit =
     Week        -> Date.toFormattedString "'Week' w, y"
     Month       -> Date.Format.format "%b %y"
     Year        -> Date.Format.format "%Y"
+
 
 
 -- INTERNAL

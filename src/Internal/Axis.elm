@@ -80,7 +80,7 @@ axis : Float -> (data -> Float) -> String -> Axis data msg
 axis length variable title =
   { variable = variable
   , limits = identity
-  , look = look title (List.map mark << Numbers.defaultInterval length)
+  , look = look title (List.map mark << Numbers.defaultInterval (round <| length / 100))
   , length = length
   }
 
@@ -100,7 +100,7 @@ look : String -> (Coordinate.Limits -> List (Mark msg)) -> Look msg
 look title_ marks =
   { title = title title_ .max 0 0
   , position = towardsZero
-  , offset = 0
+  , offset = 20
   , line = Just line
   , marks = marks
   , direction = Negative

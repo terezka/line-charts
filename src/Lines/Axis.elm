@@ -1,8 +1,8 @@
 module Lines.Axis exposing
-  ( Axis, axis, axisTime, axisCustom
+  ( Axis, axis, axisTime, axisCustom, axisVeryCustom
   , Look, look, lookCustom, lookVeryCustom
   , Title, title, titleCustom
-  , Mark, mark, markCustom
+  , Mark, mark, markCustom, values, valuesCustom
   , Line, line, lineCustom
   , Tick, tick, tickCustom
   , Direction, positive, negative
@@ -12,10 +12,10 @@ module Lines.Axis exposing
 {-|
 
 # Configuration
-@docs Axis, axis, axisTime, axisCustom
+@docs Axis, axis, axisTime, axisCustom, axisVeryCustom
 @docs Look, look, lookCustom, lookVeryCustom
 @docs Title, title, titleCustom
-@docs Mark, mark, markCustom
+@docs Mark, mark, markCustom, values, valuesCustom
 @docs Line, line, lineCustom
 @docs Tick, tick, tickCustom
 @docs Direction, positive, negative
@@ -26,9 +26,10 @@ module Lines.Axis exposing
 
 import Svg exposing (..)
 import Lines.Coordinate as Coordinate
-import Lines.Axis.Mark.Time as Time
+import Lines.Axis.Time as Time
 import Internal.Axis as Axis
 import Internal.Utils as Utils
+import Internal.Numbers as Numbers
 
 
 {-| -}
@@ -92,7 +93,6 @@ axis =
   Axis.axis
 
 
-
 {-| -}
 axisTime : Float -> (data -> Float) -> String -> Axis data msg
 axisTime length variable title =
@@ -104,9 +104,21 @@ axisTime length variable title =
 
 
 {-| -}
-axisCustom : Float -> (data -> Float) -> (Coordinate.Limits -> Coordinate.Limits) -> Look msg -> Axis data msg
-axisCustom =
-  Axis.axisCustom
+axisCustom : Float -> (data -> Float) -> Look msg -> Axis data msg
+axisCustom length variable look =
+  Axis.axisCustom length variable identity look
+
+
+{-| -}
+axisVeryCustom :
+  { length : Float
+  , variable : data -> Float
+  , limits : Coordinate.Limits -> Coordinate.Limits
+  , look : Look msg
+  }
+  -> Axis data msg
+axisVeryCustom { length, variable, limits, look } =
+  Axis.axisCustom length variable limits look
 
 
 {-| The visual configuration.
@@ -215,6 +227,34 @@ mark =
 markCustom : Maybe (Svg msg) -> Maybe (Tick msg) -> Float -> Mark msg
 markCustom =
   Axis.markCustom
+
+
+{-| Produces a list of evenly spaced numbers given the limits of your axis.
+-}
+values : Int -> Coordinate.Limits -> List Float
+values =
+  Numbers.defaultInterval
+
+
+{-| Produces a list of evenly spaced numbers given an offset, and interval, and
+the limits of your axis.
+
+The offset is useful when you want two sets of ticks with different views. For
+example, if you want a long tick at every 2 x and a small tick at every 2 x + 1,
+you'd use
+
+    firstInterval : Coordinate.Limits -> List Float
+    firstInterval =
+      Axis.customInterval 0 2
+
+    secondInterval : Coordinate.Limits -> List Float
+    secondInterval =
+      Axis.customInterval 1 2
+
+-}
+valuesCustom : Float -> Float -> Coordinate.Limits -> List Float
+valuesCustom =
+  Numbers.customInterval
 
 
 {-| Produces the axis line.
