@@ -25,7 +25,6 @@ module Lines exposing
 import Html
 import Svg
 import Svg.Attributes as Attributes
-import Lines.Axis as Axis
 import Lines.Color as Color
 import Lines.Junk as Junk
 import Internal.Axis as Axis
@@ -372,11 +371,11 @@ viewCustom config lines =
       { frame = Coordinate.Frame config.margin (Coordinate.Size config.x.length config.y.length)
       , x = allPoints
               |> Coordinate.limits (.point >> .x)
-              |> Coordinate.applyLimitations config.x.limitations
+              |> config.x.limits
       , y = allPoints
               |> Coordinate.limits (.point >> .y)
               |> adjustDomainLimits
-              |> Coordinate.applyLimitations config.y.limitations
+              |> config.y.limits
       }
 
     adjustDomainLimits domain =
@@ -448,8 +447,8 @@ defaultConfig toX toY =
   { margin = Coordinate.Margin 40 150 90 150
   , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
   , events = []
-  , x = Axis.default 650 "" toX
-  , y = Axis.default 400 "" toY
+  , x = Axis.axis 650 toX ""
+  , y = Axis.axis 400 toY ""
   , junk = Junk.none
   , interpolation = linear
   , legends = Legends.default

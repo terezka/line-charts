@@ -1,7 +1,9 @@
-module Internal.DateTime.Unit exposing (Unit(..), positions, defaultFormatting)
+module Lines.Axis.Mark.Time exposing (default, Unit(..), positions, defaultFormatting)
 
 {-| -}
 
+import Svg exposing (..)
+import Internal.Axis as Axis
 import Internal.Numbers as Numbers
 import Internal.Coordinate as Coordinate
 import Date
@@ -27,6 +29,38 @@ type alias Info =
   { positions : List Float
   , unit : Unit
   , multiple : Int
+  }
+
+
+{-| -}
+default : Float -> Coordinate.Limits -> List (Axis.Mark msg)
+default length =
+  let
+    numOfTicks =
+      round (length / 170)
+
+    marks info =
+      List.map (mark info.unit) info.positions
+  in
+  marks << positions numOfTicks
+
+
+{-| -}
+mark : Unit -> Float -> Axis.Mark msg
+mark unit position =
+  let
+    date =
+      Date.fromTime position
+
+    label =
+      defaultFormatting unit date -- TODO how to format
+
+    viewLabel =
+      text_ [] [ tspan [] [ text label ] ]
+  in
+  { position = position
+  , label = Just viewLabel
+  , tick = Just (Axis.Tick [] 5)
   }
 
 

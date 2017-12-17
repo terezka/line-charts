@@ -74,7 +74,7 @@ deltaPrecision delta = -- TODO make this better...
 
 
 normalizedInterval : Float -> List Float -> Float -> Bool -> Float
-normalizedInterval intervalRaw multiples_ magnitude allowDecimals = -- TODO add has hard amount
+normalizedInterval intervalRaw multiples_ magnitude allowDecimals =
   let
     normalized =
       intervalRaw / magnitude

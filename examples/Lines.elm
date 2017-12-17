@@ -6,8 +6,7 @@ import Lines as Lines
 import Lines.Junk as Junk exposing (..)
 import Lines.Color as Color
 import Lines.Dot as Dot
-import Lines.Axis.Time as AxisTime
-import Lines.Axis.Unit as AxisUnit
+import Lines.Axis as Axis
 import Lines.Coordinate as Coordinate
 import Lines.Events as Events
 import Lines.Legends as Legends
@@ -23,19 +22,20 @@ main =
     , attributes = [ Attributes.style "font-family: monospace;" ]
     , events = Events.none
     , junk = Junk.none
-    , x = AxisTime.default 850 "Time" .date
-    , y = AxisUnit.default 400 "Heart attacks" .heartattacks
+    , x = Axis.axisTime 850 .date "Time"
+    , y = Axis.axis 400 .heartattacks "Heart attacks"
     , interpolation = Lines.linear
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
     , areaOpacity = 0
-    , id = "achart"
+    , id = "chart"
     }
     [ Lines.line Color.blue Dot.triangle "" data1
     , Lines.line Color.pink Dot.diamond "" data2
     , Lines.line Color.orange Dot.cross "" data3
     ]
+
 
 
 -- DATA
