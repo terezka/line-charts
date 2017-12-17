@@ -1,7 +1,7 @@
 module Internal.Axis exposing (..)
 
 
-import Svg exposing (Svg, Attribute, g)
+import Svg exposing (Svg, Attribute, g, text_, tspan, text)
 import Svg.Attributes as Attributes exposing (class)
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Utils exposing (..)
@@ -71,46 +71,134 @@ type Direction
   | Positive
 
 
--- HELP
+
+-- API
 
 
+{-| -}
 axis : Float -> (data -> Float) -> String -> Axis data msg
 axis length variable title =
   { variable = variable
   , limits = identity
-  , look =
-      { title = Title (defaultTitle title) .max 0 0
-      , position = towardsZero
-      , offset = 0
-      , line =
-        Just <| \limits ->
-          { attributes = []
-          , start = limits.min
-          , end = limits.max
-          }
-      , marks = List.map mark << Numbers.defaultInterval length
-      , direction = Negative
-      }
+  , look = look title (List.map mark << Numbers.defaultInterval length)
   , length = length
   }
 
 
+{-| -}
+axisCustom : Float -> (data -> Float) -> (Coordinate.Limits -> Coordinate.Limits) -> Look msg -> Axis data msg
+axisCustom length variable limits look =
+  { variable = variable
+  , limits = limits
+  , look = look
+  , length = length
+  }
+
+
+{-| -}
+look : String -> (Coordinate.Limits -> List (Mark msg)) -> Look msg
+look title_ marks =
+  { title = title title_ .max 0 0
+  , position = towardsZero
+  , offset = 0
+  , line = Just line
+  , marks = marks
+  , direction = Negative
+  }
+
+
+{-| -}
+lookCustom :
+  { title : Title msg
+  , position : Coordinate.Limits -> Float
+  , line : Maybe (Coordinate.Limits -> Line msg)
+  , marks : Coordinate.Limits -> List (Mark msg)
+  }
+  -> Look msg
+lookCustom { title, position, line, marks} =
+  { title = title
+  , position = position
+  , offset = 0
+  , line = line
+  , marks = marks
+  , direction = Negative
+  }
+
+
+{-| -}
+lookVeryCustom :
+  { title : Title msg
+  , position : Coordinate.Limits -> Float
+  , offset : Float
+  , line : Maybe (Coordinate.Limits -> Line msg)
+  , marks : Coordinate.Limits -> List (Mark msg)
+  , direction : Direction
+  }
+  -> Look msg
+lookVeryCustom look =
+  look
+
+
+{-| -}
+title : String -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
+title title =
+  Title (viewText title)
+
+
+{-| -}
+titleCustom : Svg msg -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
+titleCustom =
+  Title
+
+
+{-| -}
 mark : Float -> Mark msg
 mark position =
-  { label = Just (defaultLabel position)
-  , tick = Just (Tick [] 5)
+  { label = Just <| viewText <| toString position
+  , tick = Just tick
   , position = position
   }
 
 
-defaultTitle : String -> Svg msg
-defaultTitle title =
-   Svg.text_ [] [ Svg.tspan [] [ Svg.text title ] ]
+{-| -}
+markCustom : Maybe (Svg msg) -> Maybe (Tick msg) -> Float -> Mark msg
+markCustom label tick position =
+  { label = label
+  , tick = tick
+  , position = position
+  }
 
 
-defaultLabel : Float -> Svg msg
-defaultLabel position =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text (toString position) ] ]
+{-| -}
+line : Coordinate.Limits -> Line msg
+line limits =
+  { attributes = []
+  , start = limits.min
+  , end = limits.max
+  }
+
+
+{-| -}
+lineCustom : List (Attribute msg) -> Coordinate.Limits -> Line msg
+lineCustom attributes limits =
+  { attributes = attributes
+  , start = limits.min
+  , end = limits.max
+  }
+
+
+{-| -}
+tick : Tick msg
+tick =
+  { attributes = []
+  , length = 5
+  }
+
+
+{-| TODO int to float -}
+tickCustom : List (Attribute msg) -> Int -> Tick msg
+tickCustom =
+  Tick
 
 
 
@@ -250,6 +338,10 @@ viewVerticalLabel system { direction } position view =
     ]
     [ view ]
 
+
+viewText : String -> Svg msg
+viewText string =
+  text_ [] [ tspan [] [ text string ] ]
 
 
 -- UTILS

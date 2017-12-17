@@ -1,11 +1,11 @@
 module Lines.Axis exposing
   ( Axis, axis, axisTime, axisCustom
-  , look, lookCustom, lookVeryCustom
-  , title, titleCustom
-  , mark, markCustom
-  , line, lineCustom
-  , tick, tickCustom
-  , positive, negative
+  , Look, look, lookCustom, lookVeryCustom
+  , Title, title, titleCustom
+  , Mark, mark, markCustom
+  , Line, line, lineCustom
+  , Tick, tick, tickCustom
+  , Direction, positive, negative
   , towardsZero
   )
 
@@ -13,12 +13,12 @@ module Lines.Axis exposing
 
 # Configuration
 @docs Axis, axis, axisTime, axisCustom
-@docs look, lookCustom, lookVeryCustom
-@docs title, titleCustom
-@docs mark, markCustom
-@docs line, lineCustom
-@docs tick, tickCustom
-@docs positive, negative
+@docs Look, look, lookCustom, lookVeryCustom
+@docs Title, title, titleCustom
+@docs Mark, mark, markCustom
+@docs Line, line, lineCustom
+@docs Tick, tick, tickCustom
+@docs Direction, positive, negative
 @docs towardsZero
 
 
@@ -26,7 +26,6 @@ module Lines.Axis exposing
 
 import Svg exposing (..)
 import Lines.Coordinate as Coordinate
-import Lines.Axis.Mark as Mark
 import Lines.Axis.Mark.Time as Time
 import Internal.Axis as Axis
 import Internal.Utils as Utils
@@ -35,6 +34,37 @@ import Internal.Utils as Utils
 {-| -}
 type alias Axis data msg =
   Axis.Axis data msg
+
+
+{-| -}
+type alias Look msg =
+  Axis.Look msg
+
+
+{-| -}
+type alias Title msg =
+  Axis.Title msg
+
+
+{-| -}
+type alias Line msg =
+  Axis.Line msg
+
+
+{-| -}
+type alias Mark msg =
+  Axis.Mark msg
+
+
+{-| -}
+type alias Tick msg =
+  Axis.Tick msg
+
+
+{-| -}
+type alias Direction =
+  Axis.Direction
+
 
 
 {-| The axis configuration:
@@ -58,12 +88,8 @@ See full example [here](TODO)
 
 -}
 axis : Float -> (data -> Float) -> String -> Axis data msg
-axis length variable title =
-  { variable = variable
-  , limits = identity
-  , look = look title (List.map mark << Mark.defaultInterval length)
-  , length = length
-  }
+axis =
+  Axis.axis
 
 
 
@@ -78,13 +104,9 @@ axisTime length variable title =
 
 
 {-| -}
-axisCustom : Float -> (data -> Float) -> (Coordinate.Limits -> Coordinate.Limits) -> Axis.Look msg -> Axis data msg
-axisCustom length variable limits look =
-  { variable = variable
-  , limits = limits
-  , look = look
-  , length = length
-  }
+axisCustom : Float -> (data -> Float) -> (Coordinate.Limits -> Coordinate.Limits) -> Look msg -> Axis data msg
+axisCustom =
+  Axis.axisCustom
 
 
 {-| The visual configuration.
@@ -107,33 +129,21 @@ axisCustom length variable limits look =
 
 TODO example
 -}
-look : String -> (Coordinate.Limits -> List (Axis.Mark msg)) -> Axis.Look msg
-look title_ marks =
-  { title = title title_ .max 0 0
-  , position = towardsZero
-  , offset = 0
-  , line = Just line
-  , marks = marks
-  , direction = negative
-  }
+look : String -> (Coordinate.Limits -> List (Mark msg)) -> Look msg
+look =
+  Axis.look
 
 
 {-| -}
 lookCustom :
   { title : Axis.Title msg
   , position : Coordinate.Limits -> Float
-  , line : Maybe (Coordinate.Limits -> Axis.Line msg)
-  , marks : Coordinate.Limits -> List (Axis.Mark msg)
+  , line : Maybe (Coordinate.Limits -> Line msg)
+  , marks : Coordinate.Limits -> List (Mark msg)
   }
   -> Axis.Look msg
-lookCustom { title, position, line, marks} =
-  { title = title
-  , position = position
-  , offset = 0
-  , line = line
-  , marks = marks
-  , direction = negative
-  }
+lookCustom =
+  Axis.lookCustom
 
 
 {-| -}
@@ -141,13 +151,13 @@ lookVeryCustom :
   { title : Axis.Title msg
   , position : Coordinate.Limits -> Float
   , offset : Float
-  , line : Maybe (Coordinate.Limits -> Axis.Line msg)
-  , marks : Coordinate.Limits -> List (Axis.Mark msg)
-  , direction : Axis.Direction
+  , line : Maybe (Coordinate.Limits -> Line msg)
+  , marks : Coordinate.Limits -> List (Mark msg)
+  , direction : Direction
   }
-  -> Axis.Look msg
-lookVeryCustom look =
-  look
+  -> Look msg
+lookVeryCustom =
+  Axis.lookVeryCustom
 
 
 {-| The title is the label of your axis.
@@ -160,15 +170,15 @@ lookVeryCustom look =
 
 TODO example
 -}
-title : String -> (Coordinate.Limits -> Float) -> Float -> Float -> Axis.Title msg
-title title =
-  Axis.Title (Axis.defaultTitle title)
+title : String -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
+title =
+  Axis.title
 
 
 {-| -}
-titleCustom : Svg msg -> (Coordinate.Limits -> Float) -> Float -> Float -> Axis.Title msg
+titleCustom : Svg msg -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
 titleCustom =
-  Axis.Title
+  Axis.titleCustom
 
 
 {-| Produces a mark (a tick, a label, or both) on your axis.
@@ -196,21 +206,15 @@ You can also produce your own irregular intervals like this:
 
 TODO example
 -}
-mark : Float -> Axis.Mark msg
-mark position =
-  { label = Just (Axis.defaultLabel position)
-  , tick = Just tick
-  , position = position
-  }
+mark : Float -> Mark msg
+mark =
+  Axis.mark
 
 
 {-| -}
-markCustom : Maybe (Svg msg) -> Maybe (Axis.Tick msg) -> Float -> Axis.Mark msg
-markCustom label tick position =
-  { label = label
-  , tick = tick
-  , position = position
-  }
+markCustom : Maybe (Svg msg) -> Maybe (Tick msg) -> Float -> Mark msg
+markCustom =
+  Axis.markCustom
 
 
 {-| Produces the axis line.
@@ -223,21 +227,15 @@ markCustom label tick position =
       }
 
 -}
-line : Coordinate.Limits -> Axis.Line msg
-line limits =
-  { attributes = []
-  , start = limits.min
-  , end = limits.max
-  }
+line : Coordinate.Limits -> Line msg
+line =
+  Axis.line
 
 
 {-| -}
-lineCustom : List (Attribute msg) -> Coordinate.Limits -> Axis.Line msg
-lineCustom attributes limits =
-  { attributes = attributes
-  , start = limits.min
-  , end = limits.max
-  }
+lineCustom : List (Attribute msg) -> Coordinate.Limits -> Line msg
+lineCustom =
+  Axis.lineCustom
 
 
 {-| Produces a tick.
@@ -249,17 +247,15 @@ lineCustom attributes limits =
       }
 
 -}
-tick : Axis.Tick msg
+tick : Tick msg
 tick =
-  { attributes = []
-  , length = 5
-  }
+  Axis.tick
 
 
 {-| TODO int to float -}
-tickCustom : List (Attribute msg) -> Int -> Axis.Tick msg
+tickCustom : List (Attribute msg) -> Int -> Tick msg
 tickCustom =
-  Axis.Tick
+  Axis.tickCustom
 
 
 
@@ -267,13 +263,13 @@ tickCustom =
 
 
 {-| -}
-positive : Axis.Direction
+positive : Direction
 positive =
   Axis.Positive
 
 
 {-| -}
-negative : Axis.Direction
+negative : Direction
 negative =
   Axis.Negative
 
