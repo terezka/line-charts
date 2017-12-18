@@ -370,7 +370,7 @@ interval intersection interval limits =
           intersection - offset (intersection - limits.min)
     in
     positions limits beginning interval 0 []
-    
+
 
 {-| -}
 values : Bool -> Int -> Coordinate.Limits -> List Float
@@ -397,7 +397,7 @@ values exact amountRough limits =
 positions : Coordinate.Limits -> Float -> Float -> Float -> List Float -> List Float
 positions limits beginning interval m acc =
   let next = correctFloat (beginning + (m * interval)) (getPrecision interval)
-  in if next > limits.max then acc else positions limits beginning interval (m + 1) (next :: acc)
+  in if next > limits.max then acc else positions limits beginning interval (m + 1) (acc ++ [ next ])
 
 
 getInterval : Float -> Bool -> Bool -> Float

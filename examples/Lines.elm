@@ -45,7 +45,7 @@ look =
 
 lookTime : Axis.Look msg
 lookTime =
-  Axis.look "Time" (Time.render << Time.values 10)
+  Axis.look "Time" (Time.marks 10 Time.formatter)
 
 
 

@@ -97,7 +97,7 @@ axisTime : Float -> (data -> Float) -> String -> Axis data msg
 axisTime length variable title =
   { variable = variable
   , limits = identity
-  , look = look title (Time.default length)
+  , look = look title (Time.marks (round (length / 170)) Time.formatter)
   , length = length
   }
 
