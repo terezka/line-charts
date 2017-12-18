@@ -1,8 +1,7 @@
-module Lines.Axis.Time exposing (default, Unit(..), Value, mark, values, formatting)
+module Lines.Axis.Time exposing (default, Unit(..), Value, mark, values, formatting, render)
 
 {-| -}
 
-import Svg exposing (..)
 import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
 import Date
@@ -34,12 +33,14 @@ type alias Value =
 
 {-| -}
 default : Float -> Coordinate.Limits -> List (Axis.Mark msg)
-default length =
-  let
-    numOfTicks =
-      round (length / 170)
-  in
-  List.map mark << values numOfTicks
+default length limits =
+  marks (values (round (length / 170)) limits) Nothing []
+
+
+{-| -}
+render : List Value -> List (Axis.Mark msg)
+render values =
+  marks (List.reverse values) Nothing []
 
 
 {-| -}
@@ -65,13 +66,28 @@ values amountRough limits =
       beginAt limits.min unit multiple
 
     positions_ acc m =
-      let next_ = next beginning unit (m * multiple)
-      in if next_ > limits.max then acc else positions_ (next_ :: acc) (m + 1)
+      let next_ = next beginning unit (m * multiple) in
+      if next_ > limits.max then acc else positions_ (next_ :: acc) (m + 1)
   in
   List.map (Value unit multiple) (positions_ [] 0)
 
 
-{-| -}
+marks : List Value -> Maybe Unit -> List (Axis.Mark msg) -> List (Axis.Mark msg)
+marks values unitChange_ marks_ =
+  case values of
+    value :: next :: rest ->
+      marks (next :: rest) (unitChange value.unit value.position next.position) <|
+        case unitChange_ of
+          Just unit -> mark (Value unit 1 value.position) :: marks_
+          Nothing -> mark value :: marks_
+
+    [ value ] ->
+       mark value :: marks_
+
+    [] ->
+      marks_
+
+
 mark : Value -> Axis.Mark msg
 mark { unit, position } =
   let
@@ -79,29 +95,52 @@ mark { unit, position } =
       Date.fromTime position
 
     label =
-      formatting unit date -- TODO how to format
-
-    viewLabel =
-      text_ [] [ tspan [] [ text label ] ]
+      formatting unit position -- TODO how to format
   in
   { position = position
-  , label = Just viewLabel
+  , label = Just (Axis.viewText label)
   , tick = Just (Axis.Tick [] 5)
   }
 
 
-{-| -}
-formatting : Unit -> Date.Date -> String
+formatting : Unit -> Float -> String
 formatting unit =
-  case unit of
-    Millisecond -> toString << Date.toTime
-    Second      -> Date.Format.format "%S"
-    Minute      -> Date.Format.format "%H:%M"
-    Hour        -> Date.Format.format "%l%P"
-    Day         -> Date.Format.format "%d/%m"
-    Week        -> Date.toFormattedString "'Week' w, y"
-    Month       -> Date.Format.format "%b %y"
-    Year        -> Date.Format.format "%Y"
+  Date.fromTime >>
+    case unit of
+      Millisecond -> toString << Date.toTime
+      Second      -> Date.Format.format "%S"
+      Minute      -> Date.Format.format "%M"
+      Hour        -> Date.Format.format "%l%P"
+      Day         -> Date.Format.format "%d"
+      Week        -> Date.toFormattedString "'Week' w"
+      Month       -> Date.Format.format "%b"
+      Year        -> Date.Format.format "%Y"
+
+
+unitChange : Unit -> Float -> Float -> Maybe Unit
+unitChange interval prev timestamp =
+  let
+    equal unit =
+      Date.equalBy (toExtraUnit unit) (Date.fromTime prev) (Date.fromTime timestamp)
+
+    findChange units =
+      case units of
+        [ Millisecond ] ->
+          Nothing
+
+        Week :: rest ->
+          findChange rest
+
+        unit :: rest ->
+          if not (equal unit) then Just unit
+          else if toMs unit <= toMs interval then Nothing
+          else findChange rest
+
+        [] ->
+          Nothing
+  in
+  findChange allReversed
+
 
 
 
@@ -211,6 +250,11 @@ next timestamp unit multiple =
 all : List Unit
 all =
   [ Millisecond, Second, Minute, Hour, Day, Week, Month, Year ]
+
+
+allReversed : List Unit
+allReversed =
+  List.reverse all
 
 
 toMs : Unit -> Float
