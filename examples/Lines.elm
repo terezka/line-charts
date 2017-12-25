@@ -23,8 +23,12 @@ main =
     , attributes = [ Attributes.style "font-family: monospace;" ]
     , events = Events.none
     , junk = Junk.none
-    , x = Axis.axisCustom 850 .date lookTime
-    , y = Axis.axisCustom 400 .heartattacks look
+    , x = Axis.axisCustom 850 .date
+            <| Axis.look "Time"
+              <| Time.marks Time.mark 10
+    , y = Axis.axisCustom 400 .heartattacks
+            <| Axis.look "Heart attacks"
+              <| Axis.marks Axis.mark (Axis.valuesExact 7)
     , interpolation = Lines.linear
     , legends = Legends.default
     , line = Line.default
@@ -36,16 +40,6 @@ main =
     , Lines.line Color.pink Dot.diamond "" data2
     , Lines.line Color.orange Dot.cross "" data3
     ]
-
-
-look : Axis.Look msg
-look =
-  Axis.look "Heart attacks" (List.map Axis.mark << Axis.valuesExact 10)
-
-
-lookTime : Axis.Look msg
-lookTime =
-  Axis.look "Time" (List.map Time.mark << Time.values 10)
 
 
 
@@ -61,28 +55,28 @@ type alias Data =
 
 data1 : List Data
 data1 =
-  [ Data 1 0.00034 (269860504300 + 0 * 3 * 3600000)
-  , Data 2 0.00037 (269860504300 + 1 * 3 * 3600000)
-  , Data 3 0.00036 (269860504300 + 2 * 3 * 3600000)
-  , Data 9 0.00033 (269860504300 + 3 * 3 * 3600000)
+  [ Data 1 0.00034 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
+  , Data 2 0.00037 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
+  , Data 3 0.00036 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
+  , Data 9 0.00033 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
   ]
 
 
 data2 : List Data
 data2 =
-  [ Data 2 0.00032 (269860504300 + 0 * 3 * 3600000)
-  , Data 3 0.00034 (269860504300 + 1 * 3 * 3600000)
-  , Data 4 0.00036 (269860504300 + 2 * 3 * 3600000)
-  , Data 5 0.00038 (269860504300 + 3 * 3 * 3600000)
+  [ Data 2 0.00032 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
+  , Data 3 0.00034 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
+  , Data 4 0.00036 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
+  , Data 5 0.00038 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
   ]
 
 
 data3 : List Data
 data3 =
-  [ Data 2 0.00035 (269860504300 + 0 * 3 * 3600000)
-  , Data 3 0.00032 (269860504300 + 1 * 3 * 3600000)
-  , Data 4 0.00038 (269860504300 + 2 * 3 * 3600000)
-  , Data 5 0.00036 (269860504300 + 3 * 3 * 3600000)
+  [ Data 2 0.00035 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
+  , Data 3 0.00032 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
+  , Data 4 0.00038 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
+  , Data 5 0.00036 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
   ]
 
 

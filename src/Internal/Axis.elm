@@ -360,6 +360,19 @@ isPositive direction =
 
 
 {-| -}
+interval : Float -> Float -> Coordinate.Limits -> List Float
+interval intersection interval limits =
+    let
+        offset value =
+          interval * toFloat (floor (value / interval))
+
+        beginning =
+          intersection - offset (intersection - limits.min)
+    in
+    positions limits beginning interval 0 []
+
+
+{-| -}
 values : Bool -> Int -> Coordinate.Limits -> List Float
 values exact amountRough limits =
     let
@@ -381,24 +394,10 @@ values exact amountRough limits =
     positions limits beginning interval 0 []
 
 
-{-| -}
-interval : Float -> Float -> Coordinate.Limits -> List Float
-interval intersection interval limits =
-    let
-        offset value =
-          interval * toFloat (floor (value / interval))
-
-        beginning =
-          intersection - offset (intersection - limits.min)
-    in
-    positions limits beginning interval 0 []
-
-
-
 positions : Coordinate.Limits -> Float -> Float -> Float -> List Float -> List Float
 positions limits beginning interval m acc =
   let next = correctFloat (beginning + (m * interval)) (getPrecision interval)
-  in if next > limits.max then acc else positions limits beginning interval (m + 1) (next :: acc)
+  in if next > limits.max then acc else positions limits beginning interval (m + 1) (acc ++ [ next ])
 
 
 getInterval : Float -> Bool -> Bool -> Float
@@ -462,6 +461,7 @@ getMultiples magnitude allowDecimals hasTickAmount =
         [ 1 / magnitude ]
       else
         defaults
+
 
 
 -- UTILS
