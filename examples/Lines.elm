@@ -25,10 +25,10 @@ main =
     , junk = Junk.none
     , x = Axis.axisCustom 850 .date
             <| Axis.look "Time"
-              <| Time.marks Time.default 10
+              <| Time.marks Time.mark 10
     , y = Axis.axisCustom 400 .heartattacks
             <| Axis.look "Heart attacks"
-              <| List.map Axis.mark << (Axis.valuesExact 10)
+              <| Axis.marks Axis.mark (Axis.valuesExact 7)
     , interpolation = Lines.linear
     , legends = Legends.default
     , line = Line.default

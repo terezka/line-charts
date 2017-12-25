@@ -1,4 +1,6 @@
-module Lines.Axis.Time exposing (Formatter, Unit(..), default, uniform, irregular, marks)
+module Lines.Axis.Time exposing
+  ( Mark, Unit(..), marks, mark, uniform, irregular, custom
+  )
 
 {-| -}
 
@@ -24,8 +26,8 @@ type Unit
 
 
 {-| -}
-type Formatter msg =
-  Formatter (Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg)
+type Mark msg =
+  Mark (Int -> Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg)
 
 
 {-| -}
@@ -36,8 +38,8 @@ type alias Interval =
 
 
 {-| -}
-default : Formatter msg
-default =
+mark : Mark msg
+mark =
   irregular <| \unitChange interval time ->
     let
       date =
@@ -55,20 +57,26 @@ default =
 
 
 {-| -}
-uniform : (Interval -> Time.Time -> Axis.Mark msg) -> Formatter msg
+uniform : (Interval -> Time.Time -> Axis.Mark msg) -> Mark msg
 uniform formatter =
-  Formatter (\_ -> formatter)
+  Mark (\_ _ -> formatter)
 
 
 {-| -}
-irregular : (Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg) -> Formatter msg
-irregular =
-  Formatter
+irregular : (Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg) -> Mark msg
+irregular formatter =
+  Mark (\_ -> formatter)
 
 
 {-| -}
-marks : Formatter msg -> Int -> Coordinate.Limits -> List (Axis.Mark msg)
-marks (Formatter formatter) amountRough limits =
+custom : (Int -> Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg) -> Mark msg
+custom =
+  Mark
+
+
+{-| -}
+marks : Mark msg -> Int -> Coordinate.Limits -> List (Axis.Mark msg)
+marks (Mark formatter) amountRough limits =
   let
     range =
       limits.max - limits.min
@@ -92,22 +100,22 @@ marks (Formatter formatter) amountRough limits =
       let next_ = next beginning unit (m * multiple) in
       if next_ > limits.max then acc else toPositions (acc ++ [ next_ ]) (m + 1)
 
-    mark unitChange =
-      formatter unitChange (Interval unit multiple)
+    mark unitChange index =
+      formatter index unitChange (Interval unit multiple)
 
-    toMarks values unitChange acc =
+    toMarks values unitChange index acc =
       case values of
         value :: next :: rest ->
-          toMarks (next :: rest) (getUnitChange unit value next) <|
-            mark unitChange value :: acc
+          toMarks (next :: rest) (getUnitChange unit value next) (index + 1) <|
+            mark unitChange index value :: acc
 
         [ value ] ->
-           mark unitChange value :: acc
+           mark unitChange index value :: acc
 
         [] ->
           acc
   in
-  toMarks (toPositions [] 0) Nothing []
+  toMarks (toPositions [] 0) Nothing 0 []
 
 
 

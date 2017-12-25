@@ -2,7 +2,7 @@ module Lines.Axis exposing
   ( Axis, axis, axisTime, axisCustom, axisVeryCustom
   , Look, look, lookCustom, lookVeryCustom
   , Title, title, titleCustom
-  , Mark, mark, markCustom, values, valuesExact, interval
+  , Mark, marks, mark, markCustom, values, valuesExact, interval
   , Line, line, lineCustom
   , Tick, tick, tickCustom
   , Direction, positive, negative
@@ -15,7 +15,7 @@ module Lines.Axis exposing
 @docs Axis, axis, axisTime, axisCustom, axisVeryCustom
 @docs Look, look, lookCustom, lookVeryCustom
 @docs Title, title, titleCustom
-@docs Mark, mark, markCustom, values, valuesExact, interval
+@docs Mark, marks, mark, markCustom, values, valuesExact, interval
 @docs Line, line, lineCustom
 @docs Tick, tick, tickCustom
 @docs Direction, positive, negative
@@ -98,7 +98,7 @@ axisTime length variable title =
   let amount = round (length / 170) in
   { variable = variable
   , limits = identity
-  , look = look title (Time.marks Time.default amount) -- TODO
+  , look = look title (Time.marks Time.mark amount) -- TODO
   , length = length
   }
 
@@ -193,31 +193,13 @@ titleCustom =
   Axis.titleCustom
 
 
-{-| Produces a mark (a tick, a label, or both) on your axis.
-
-    aMark : Float -> Mark msg
-    aMark position =
-      { label = Just (Axis.defaultLabel position)
-      , tick = Just Axis.defaultTick
-      , position = position
-      }
-
-To produce a list of marks, you can use the interval helpers, like this:
-
-    marks : Coordinate.Limits -> List (Mark msg)
-    marks =
-      List.map aMark << Axis.defaultInterval
-
-To learn more about intervals, see `defaultInterval` and `customInterval`.
-You can also produce your own irregular intervals like this:
-
-    marks : Coordinate.Limits -> List (Mark msg)
-    marks _ =
-      List.map aMark [ 0, 3, 4, 7 ]
+{-| -}
+marks : (Float -> Mark msg) -> (Coordinate.Limits -> List Float) -> Coordinate.Limits -> List (Mark msg)
+marks mark interval =
+  List.map mark << interval
 
 
-TODO example
--}
+{-| -}
 mark : Float -> Mark msg
 mark =
   Axis.mark
