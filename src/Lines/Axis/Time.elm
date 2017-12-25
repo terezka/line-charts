@@ -1,4 +1,4 @@
-module Lines.Axis.Time exposing (Unit(..), formatter, marks)
+module Lines.Axis.Time exposing (Formatter, Unit(..), default, uniform, irregular, marks)
 
 {-| -}
 
@@ -23,14 +23,52 @@ type Unit
   | Year
 
 
-{-| TODO to union -}
-type alias Formatter msg =
-  Int -> Unit -> Maybe Unit -> Time.Time -> Axis.Mark msg
+{-| -}
+type Formatter msg =
+  Formatter (Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg)
 
 
 {-| -}
-marks : Int -> Formatter msg -> Coordinate.Limits -> List (Axis.Mark msg)
-marks amountRough formatter limits =
+type alias Interval =
+  { unit : Unit
+  , multiple : Int
+  }
+
+
+{-| -}
+default : Formatter msg
+default =
+  irregular <| \unitChange interval time ->
+    let
+      date =
+        Date.fromTime time
+
+      label =
+        case unitChange of
+          Just unitChange -> formattingChange unitChange time
+          Nothing         -> formatting interval.unit time
+    in
+    { position = time
+    , label = Just (Axis.viewText label)
+    , tick = Just (Axis.Tick [] 5)
+    }
+
+
+{-| -}
+uniform : (Interval -> Time.Time -> Axis.Mark msg) -> Formatter msg
+uniform formatter =
+  Formatter (\_ -> formatter)
+
+
+{-| -}
+irregular : (Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg) -> Formatter msg
+irregular =
+  Formatter
+
+
+{-| -}
+marks : Formatter msg -> Int -> Coordinate.Limits -> List (Axis.Mark msg)
+marks (Formatter formatter) amountRough limits =
   let
     range =
       limits.max - limits.min
@@ -54,8 +92,8 @@ marks amountRough formatter limits =
       let next_ = next beginning unit (m * multiple) in
       if next_ > limits.max then acc else toPositions (acc ++ [ next_ ]) (m + 1)
 
-    mark =
-      formatter multiple unit
+    mark unitChange =
+      formatter unitChange (Interval unit multiple)
 
     toMarks values unitChange acc =
       case values of
@@ -70,52 +108,6 @@ marks amountRough formatter limits =
           acc
   in
   toMarks (toPositions [] 0) Nothing []
-
-
-{-| -}
-formatter : Formatter msg
-formatter mult unit unitChange time =
-  let
-    date =
-      Date.fromTime time
-
-    label =
-      case unitChange of
-        Just unitChange -> formattingChange unitChange time
-        Nothing         -> formatting unit time
-  in
-  { position = time
-  , label = Just (Axis.viewText label)
-  , tick = Just (Axis.Tick [] 5)
-  }
-
-
-formatting : Unit -> Float -> String
-formatting unit =
-  Date.fromTime >>
-    case unit of
-      Millisecond -> toString << Date.toTime
-      Second      -> Date.Format.format "%S"
-      Minute      -> Date.Format.format "%M"
-      Hour        -> Date.Format.format "%l%P"
-      Day         -> Date.Format.format "%d"
-      Week        -> Date.toFormattedString "'Week' w"
-      Month       -> Date.Format.format "%b"
-      Year        -> Date.Format.format "%Y"
-
-
-formattingChange : Unit -> Float -> String
-formattingChange unit =
-  Date.fromTime >>
-    case unit of
-      Millisecond -> toString << Date.toTime
-      Second      -> Date.Format.format "%S"
-      Minute      -> Date.Format.format "%M"
-      Hour        -> Date.Format.format "%l%P"
-      Day         -> Date.Format.format "%a"
-      Week        -> Date.toFormattedString "'Week' w"
-      Month       -> Date.Format.format "%b"
-      Year        -> Date.Format.format "%Y"
 
 
 
@@ -218,10 +210,10 @@ next timestamp unit multiple =
 
 
 getUnitChange : Unit -> Float -> Float -> Maybe Unit
-getUnitChange interval prev time =
+getUnitChange interval value next =
   let
     equalBy unit =
-      Date.equalBy (toExtraUnit unit) (Date.fromTime prev) (Date.fromTime time)
+      Date.equalBy (toExtraUnit unit) (Date.fromTime value) (Date.fromTime next)
 
     unitChange_ units =
       case units of
@@ -229,14 +221,43 @@ getUnitChange interval prev time =
           unitChange_ rest
 
         unit :: rest ->
-          if not (equalBy unit) then Just unit
-          else if toMs unit <= toMs interval then Nothing
+          if toMs unit <= toMs interval then Nothing
+          else if not (equalBy unit) then Just unit
           else unitChange_ rest
 
         [] ->
           Nothing
   in
   unitChange_ allReversed
+
+
+formatting : Unit -> Float -> String
+formatting unit =
+  Date.fromTime >>
+    case unit of
+      Millisecond -> toString << Date.toTime
+      Second      -> Date.Format.format "%S"
+      Minute      -> Date.Format.format "%M"
+      Hour        -> Date.Format.format "%l%P"
+      Day         -> Date.Format.format "%e"
+      Week        -> Date.toFormattedString "'Week' w"
+      Month       -> Date.Format.format "%b"
+      Year        -> Date.Format.format "%Y"
+
+
+formattingChange : Unit -> Float -> String
+formattingChange unit =
+  Date.fromTime >>
+    case unit of
+      Millisecond -> toString << Date.toTime
+      Second      -> Date.Format.format "%S"
+      Minute      -> Date.Format.format "%M"
+      Hour        -> Date.Format.format "%l%P"
+      Day         -> Date.Format.format "%a"
+      Week        -> Date.toFormattedString "'Week' w"
+      Month       -> Date.Format.format "%b"
+      Year        -> Date.Format.format "%Y"
+
 
 
 -- HELPERS
