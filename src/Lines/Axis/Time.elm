@@ -75,14 +75,11 @@ custom =
 
 
 {-| -}
-marks : Mark msg -> Int -> Coordinate.Limits -> List (Axis.Mark msg)
-marks (Mark formatter) amountRough limits =
+marks : Mark msg -> Int -> Coordinate.Range -> List (Axis.Mark msg)
+marks (Mark formatter) amountRough range =
   let
-    range =
-      limits.max - limits.min
-
     intervalRough =
-      range / toFloat amountRough
+      (range.max - range.min) / toFloat amountRough
 
     unit =
       findBestUnit intervalRough all
@@ -94,11 +91,11 @@ marks (Mark formatter) amountRough limits =
       toMs unit * toFloat multiple
 
     beginning =
-      beginAt limits.min unit multiple
+      beginAt range.min unit multiple
 
     toPositions acc m =
       let next_ = next beginning unit (m * multiple) in
-      if next_ > limits.max then acc else toPositions (acc ++ [ next_ ]) (m + 1)
+      if next_ > range.max then acc else toPositions (acc ++ [ next_ ]) (m + 1)
 
     mark unitChange index =
       formatter index unitChange (Interval unit multiple)

@@ -97,7 +97,7 @@ axisTime : Float -> (data -> Float) -> String -> Axis data msg
 axisTime length variable title =
   let amount = round (length / 170) in
   { variable = variable
-  , limits = identity
+  , range = identity
   , look = look title (Time.marks Time.mark amount) -- TODO
   , length = length
   }
@@ -113,12 +113,12 @@ axisCustom length variable look =
 axisVeryCustom :
   { length : Float
   , variable : data -> Float
-  , limits : Coordinate.Limits -> Coordinate.Limits
+  , range : Coordinate.Range -> Coordinate.Range
   , look : Look msg
   }
   -> Axis data msg
-axisVeryCustom { length, variable, limits, look } =
-  Axis.axisCustom length variable limits look
+axisVeryCustom { length, variable, range, look } =
+  Axis.axisCustom length variable range look
 
 
 {-| The visual configuration.
@@ -126,14 +126,14 @@ axisVeryCustom { length, variable, limits, look } =
   - The `title` is the label that will show up by your axis.
     See the `Title` type for more information.
   - The `position` determines where on the axis intersects with the opposing
-    axis, given the limits of your opposing axis.
+    axis, given the range of your opposing axis.
   - The `offset` is the offset _perpendicular_ to the axis's direction. This means
     that if your dealing with a x-axis then the offset moves it down, and if
     your dealing with a y-axis then the offset moves it to the left.
-  - The `line` is the configuration of the axis line, given the limits of your
+  - The `line` is the configuration of the axis line, given the range of your
     axis. If you don't want a line, set it to `Nothing`.
     See the `Line` type for more information.
-  - The `marks` are the ticks and labels of your axis, given the limits of
+  - The `marks` are the ticks and labels of your axis, given the range of
     your your axis.
     See the `Mark` type for more information.
   - The `direction` determines what directions your ticks and labels point.
@@ -141,7 +141,7 @@ axisVeryCustom { length, variable, limits, look } =
 
 TODO example
 -}
-look : String -> (Coordinate.Limits -> List (Mark msg)) -> Look msg
+look : String -> (Coordinate.Range -> List (Mark msg)) -> Look msg
 look =
   Axis.look
 
@@ -149,9 +149,9 @@ look =
 {-| -}
 lookCustom :
   { title : Axis.Title msg
-  , position : Coordinate.Limits -> Float
-  , line : Maybe (Coordinate.Limits -> Line msg)
-  , marks : Coordinate.Limits -> List (Mark msg)
+  , position : Coordinate.Range -> Float
+  , line : Maybe (Coordinate.Range -> Line msg)
+  , marks : Coordinate.Range -> List (Mark msg)
   }
   -> Axis.Look msg
 lookCustom =
@@ -161,10 +161,10 @@ lookCustom =
 {-| -}
 lookVeryCustom :
   { title : Axis.Title msg
-  , position : Coordinate.Limits -> Float
+  , position : Coordinate.Range -> Float
   , offset : Float
-  , line : Maybe (Coordinate.Limits -> Line msg)
-  , marks : Coordinate.Limits -> List (Mark msg)
+  , line : Maybe (Coordinate.Range -> Line msg)
+  , marks : Coordinate.Range -> List (Mark msg)
   , direction : Direction
   }
   -> Look msg
@@ -175,26 +175,26 @@ lookVeryCustom =
 {-| The title is the label of your axis.
 
   - The `position` determines where the title will be on your axis, given
-    the limits of your axis.
+    the range of your axis.
   - The `view` is the SVG you'd like to show as your title.
   - The `xOffset` moves your title horizontally.
   - The `yOffset` moves your title vertically.
 
 TODO example
 -}
-title : String -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
+title : String -> (Coordinate.Range -> Float) -> Float -> Float -> Title msg
 title =
   Axis.title
 
 
 {-| -}
-titleCustom : Svg msg -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
+titleCustom : Svg msg -> (Coordinate.Range -> Float) -> Float -> Float -> Title msg
 titleCustom =
   Axis.titleCustom
 
 
 {-| -}
-marks : (Float -> Mark msg) -> (Coordinate.Limits -> List Float) -> Coordinate.Limits -> List (Mark msg)
+marks : (Float -> Mark msg) -> (Coordinate.Range -> List Float) -> Coordinate.Range -> List (Mark msg)
 marks mark interval =
   List.map mark << interval
 
@@ -211,44 +211,44 @@ markCustom =
   Axis.markCustom
 
 
-{-| Produces a list of evenly spaced numbers given the limits of your axis.
+{-| Produces a list of evenly spaced numbers given the range of your axis.
 -}
-values : Int -> Coordinate.Limits -> List Float
+values : Int -> Coordinate.Range -> List Float
 values =
   Axis.values False
 
 
-{-| Produces a list of evenly spaced numbers given the limits of your axis.
+{-| Produces a list of evenly spaced numbers given the range of your axis.
 -}
-valuesExact : Int -> Coordinate.Limits -> List Float
+valuesExact : Int -> Coordinate.Range -> List Float
 valuesExact =
   Axis.values True
 
 
 {-| Produces a list of evenly spaced numbers given an offset, and interval, and
-the limits of your axis.
+the range of your axis.
 
 The offset is useful when you want two sets of ticks with different views. For
 example, if you want a long tick at every 2 x and a small tick at every 2 x + 1,
 you'd use
 
-    firstInterval : Coordinate.Limits -> List Float
+    firstInterval : Coordinate.Range -> List Float
     firstInterval =
       Axis.customInterval 0 2
 
-    secondInterval : Coordinate.Limits -> List Float
+    secondInterval : Coordinate.Range -> List Float
     secondInterval =
       Axis.customInterval 1 2
 
 -}
-interval : Float -> Float -> Coordinate.Limits -> List Float
+interval : Float -> Float -> Coordinate.Range -> List Float
 interval =
   Axis.interval
 
 
 {-| Produces the axis line.
 
-    axisLine : Coordinate.Limits -> Line msg
+    axisLine : Coordinate.Range -> Line msg
     axisLine { min, max } =
       { attributes = [ Attributes.stroke Color.black ]
       , start = min
@@ -256,13 +256,13 @@ interval =
       }
 
 -}
-line : Coordinate.Limits -> Line msg
+line : Coordinate.Range -> Line msg
 line =
   Axis.line
 
 
 {-| -}
-lineCustom : List (Attribute msg) -> Coordinate.Limits -> Line msg
+lineCustom : List (Attribute msg) -> Coordinate.Range -> Line msg
 lineCustom =
   Axis.lineCustom
 
@@ -307,8 +307,8 @@ negative =
 -- HELP
 
 
-{-| Produces zero if zero is within your limits, else the value closest to zero.
+{-| Produces zero if zero is within your range, else the value closest to zero.
 -}
-towardsZero : Coordinate.Limits -> Float
+towardsZero : Coordinate.Range -> Float
 towardsZero =
   Utils.towardsZero

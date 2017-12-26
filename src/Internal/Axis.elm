@@ -16,7 +16,7 @@ import Round
 {-| -}
 type alias Axis data msg =
   { variable : data -> Float
-  , limits : Coordinate.Limits -> Coordinate.Limits
+  , range : Coordinate.Range -> Coordinate.Range
   , look : Look msg
   , length : Float
   }
@@ -25,10 +25,10 @@ type alias Axis data msg =
 {-| -}
 type alias Look msg =
   { title : Title msg
-  , position : Coordinate.Limits -> Float
+  , position : Coordinate.Range -> Float
   , offset : Float
-  , line : Maybe (Coordinate.Limits -> Line msg)
-  , marks : Coordinate.Limits -> List (Mark msg)
+  , line : Maybe (Coordinate.Range -> Line msg)
+  , marks : Coordinate.Range -> List (Mark msg)
   , direction : Direction
   }
 
@@ -36,7 +36,7 @@ type alias Look msg =
 {-| -}
 type alias Title msg =
     { view : Svg msg
-    , position : Coordinate.Limits -> Float
+    , position : Coordinate.Range -> Float
     , xOffset : Float
     , yOffset : Float
     }
@@ -79,24 +79,24 @@ type Direction
 axis : Float -> (data -> Float) -> String -> Axis data msg
 axis length variable title =
   { variable = variable
-  , limits = identity
+  , range = identity
   , look = look title (List.map mark << values False (round <| length / 100))
   , length = length
   }
 
 
 {-| -}
-axisCustom : Float -> (data -> Float) -> (Coordinate.Limits -> Coordinate.Limits) -> Look msg -> Axis data msg
-axisCustom length variable limits look =
+axisCustom : Float -> (data -> Float) -> (Coordinate.Range -> Coordinate.Range) -> Look msg -> Axis data msg
+axisCustom length variable range look =
   { variable = variable
-  , limits = limits
+  , range = range
   , look = look
   , length = length
   }
 
 
 {-| -}
-look : String -> (Coordinate.Limits -> List (Mark msg)) -> Look msg
+look : String -> (Coordinate.Range -> List (Mark msg)) -> Look msg
 look title_ marks =
   { title = title title_ .max 0 0
   , position = towardsZero
@@ -110,9 +110,9 @@ look title_ marks =
 {-| -}
 lookCustom :
   { title : Title msg
-  , position : Coordinate.Limits -> Float
-  , line : Maybe (Coordinate.Limits -> Line msg)
-  , marks : Coordinate.Limits -> List (Mark msg)
+  , position : Coordinate.Range -> Float
+  , line : Maybe (Coordinate.Range -> Line msg)
+  , marks : Coordinate.Range -> List (Mark msg)
   }
   -> Look msg
 lookCustom { title, position, line, marks} =
@@ -128,10 +128,10 @@ lookCustom { title, position, line, marks} =
 {-| -}
 lookVeryCustom :
   { title : Title msg
-  , position : Coordinate.Limits -> Float
+  , position : Coordinate.Range -> Float
   , offset : Float
-  , line : Maybe (Coordinate.Limits -> Line msg)
-  , marks : Coordinate.Limits -> List (Mark msg)
+  , line : Maybe (Coordinate.Range -> Line msg)
+  , marks : Coordinate.Range -> List (Mark msg)
   , direction : Direction
   }
   -> Look msg
@@ -140,13 +140,13 @@ lookVeryCustom look =
 
 
 {-| -}
-title : String -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
+title : String -> (Coordinate.Range -> Float) -> Float -> Float -> Title msg
 title title =
   Title (viewText title)
 
 
 {-| -}
-titleCustom : Svg msg -> (Coordinate.Limits -> Float) -> Float -> Float -> Title msg
+titleCustom : Svg msg -> (Coordinate.Range -> Float) -> Float -> Float -> Title msg
 titleCustom =
   Title
 
@@ -170,20 +170,20 @@ markCustom label tick position =
 
 
 {-| -}
-line : Coordinate.Limits -> Line msg
-line limits =
+line : Coordinate.Range -> Line msg
+line range =
   { attributes = []
-  , start = limits.min
-  , end = limits.max
+  , start = range.min
+  , end = range.max
   }
 
 
 {-| -}
-lineCustom : List (Attribute msg) -> Coordinate.Limits -> Line msg
-lineCustom attributes limits =
+lineCustom : List (Attribute msg) -> Coordinate.Range -> Line msg
+lineCustom attributes range =
   { attributes = attributes
-  , start = limits.min
-  , end = limits.max
+  , start = range.min
+  , end = range.max
   }
 
 
@@ -360,27 +360,24 @@ isPositive direction =
 
 
 {-| -}
-interval : Float -> Float -> Coordinate.Limits -> List Float
-interval intersection interval limits =
+interval : Float -> Float -> Coordinate.Range -> List Float
+interval intersection interval range =
     let
         offset value =
           interval * toFloat (floor (value / interval))
 
         beginning =
-          intersection - offset (intersection - limits.min)
+          intersection - offset (intersection - range.min)
     in
-    positions limits beginning interval 0 []
+    positions range beginning interval 0 []
 
 
 {-| -}
-values : Bool -> Int -> Coordinate.Limits -> List Float
-values exact amountRough limits =
+values : Bool -> Int -> Coordinate.Range -> List Float
+values exact amountRough range =
     let
-      range =
-        limits.max - limits.min
-
       intervalRough =
-        range / toFloat amountRough
+        (range.max - range.min) / toFloat amountRough
 
       interval =
         getInterval intervalRough True exact
@@ -389,15 +386,15 @@ values exact amountRough limits =
         prec * toFloat (ceiling (number / prec))
 
       beginning =
-        ceilingTo limits.min interval
+        ceilingTo range.min interval
     in
-    positions limits beginning interval 0 []
+    positions range beginning interval 0 []
 
 
-positions : Coordinate.Limits -> Float -> Float -> Float -> List Float -> List Float
-positions limits beginning interval m acc =
+positions : Coordinate.Range -> Float -> Float -> Float -> List Float -> List Float
+positions range beginning interval m acc =
   let next = correctFloat (beginning + (m * interval)) (getPrecision interval)
-  in if next > limits.max then acc else positions limits beginning interval (m + 1) (acc ++ [ next ])
+  in if next > range.max then acc else positions range beginning interval (m + 1) (acc ++ [ next ])
 
 
 getInterval : Float -> Bool -> Bool -> Float

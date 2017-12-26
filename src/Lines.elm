@@ -370,15 +370,15 @@ viewCustom config lines =
     system =
       { frame = Coordinate.Frame config.margin (Coordinate.Size config.x.length config.y.length)
       , x = allPoints
-              |> Coordinate.limits (.point >> .x)
-              |> config.x.limits
+              |> Coordinate.range (.point >> .x)
+              |> config.x.range
       , y = allPoints
-              |> Coordinate.limits (.point >> .y)
-              |> adjustDomainLimits
-              |> config.y.limits
+              |> Coordinate.range (.point >> .y)
+              |> adjustDomainRange
+              |> config.y.range
       }
 
-    adjustDomainLimits domain =
+    adjustDomainRange domain =
       if config.areaOpacity > 0 then
         Coordinate.ground domain
       else

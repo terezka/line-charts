@@ -61,7 +61,7 @@ withFirst stuff process =
 
 
 {-| -}
-towardsZero : Coordinate.Limits -> Float
+towardsZero : Coordinate.Range -> Float
 towardsZero { max, min } =
   clamp min max 0
 
