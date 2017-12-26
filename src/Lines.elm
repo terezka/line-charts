@@ -1,6 +1,6 @@
 module Lines exposing
   ( view1, view2, view3
-  , view, Line, line, dash
+  , view, Line, line, dash, grad
   , viewCustom, Config
   , Interpolation, linear, monotone
   )
@@ -11,7 +11,7 @@ module Lines exposing
 @docs view1, view2, view3
 
 # Customize lines
-@docs view, Line, line, dash
+@docs view, Line, line, dash, grad
 
 # Customize everything
 @docs viewCustom, Config
@@ -204,6 +204,11 @@ dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line dat
 dash =
   Line.dash
 
+
+{-| -}
+grad : List Color.Color -> Int -> Dot.Shape -> String -> List data -> Line data
+grad =
+  Line.grad
 
 
 -- VIEW / CUSTOM
@@ -404,14 +409,17 @@ viewCustom config lines =
       Line.view system config.dot config.interpolation config.line config.areaOpacity config.id
 
     viewLines =
-      List.map2 viewLine lines dataPoints
+      Utils.indexedMap2 viewLine lines dataPoints
 
     viewLegends =
       Legends.view system config.line config.dot config.legends config.areaOpacity lines dataPoints
+
+    viewDefs =
+      List.concat [ [ clipPath config system ], List.indexedMap Line.viewGradient lines ]
   in
   container <|
     Svg.svg attributes
-      [ Svg.defs [] [ clipPath config system ]
+      [ Svg.defs [] viewDefs
       , Svg.g [ Attributes.class "junk--below" ] junk.below
       , Svg.g [ Attributes.class "lines" ] viewLines
       , Axis.viewHorizontal system config.x.look
@@ -452,7 +460,7 @@ defaultConfig toX toY =
   , junk = Junk.none
   , interpolation = linear
   , legends = Legends.default
-  , line = Line.default
+  , line = Line.wider 3
   , dot = Dot.default
   , areaOpacity = 0
   , id = "chart"

@@ -36,9 +36,10 @@ main =
     , areaOpacity = 0
     , id = "chart"
     }
-    [ Lines.line Color.blue Dot.triangle "" data1
-    , Lines.line Color.pink Dot.diamond "" data2
-    , Lines.line Color.orange Dot.cross "" data3
+    [ Lines.grad [ "#c6e48b", "#7bc96f", "#239a3b", "#196127" ] 90 Dot.cross "" data1
+    , Lines.grad [ "#c6e48b", "#7bc96f", "#239a3b", "#196127" ] 90 Dot.triangle "" data1
+    , Lines.grad [ "#c6e48b", "#7bc96f", "#239a3b", "#196127" ] 90 Dot.circle "" data3
+    , Lines.grad [ "#c6e48b", "#7bc96f", "#239a3b", "#196127" ] 90 Dot.diamond "" data3_5
     ]
 
 
@@ -82,8 +83,8 @@ data3 =
 
 data3_5 : List Data
 data3_5 =
-  [ Data 6 0.00036 (269849424300 + 4 * 2 * 3600000)
-  , Data 7 0.00036 (269849424300 + 5 * 2 * 3600000)
+  [ Data 2 0.00039 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
+  , Data 5 0.00036 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
   ]
 
 

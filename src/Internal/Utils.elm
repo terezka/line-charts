@@ -76,3 +76,27 @@ last list =
 toClipPathId : String -> String
 toClipPathId id =
   "clip-path__" ++ id
+
+
+{-| -}
+toGradientId : Int -> String
+toGradientId id =
+  "gradient__" ++ toString id
+
+
+{-| -}
+rotate : Int -> String
+rotate angle =
+  "rotate(" ++ toString angle ++ ")"
+
+
+{-| -}
+indexedMap2 : (Int -> a -> b -> c) -> List a -> List b -> List c
+indexedMap2 f xs1 xs2 =
+  List.map3 f (List.range 0 (List.length xs1 - 1)) xs1 xs2
+
+
+{-| -}
+idRef : String -> String
+idRef id =
+  "url(#" ++ id ++ ")"

@@ -132,24 +132,27 @@ viewBucketed
   -> Svg.Svg msg
 viewBucketed system lineLook dotLook sampleWidth areaOpacity container lines =
   let
-    toConfig (Line.Line line) =
-      { sample = viewSample system lineLook dotLook sampleWidth areaOpacity line
+    toConfig index (Line.Line line) =
+      { sample = viewSample system lineLook dotLook sampleWidth areaOpacity index line
       , label = line.label
       }
   in
-  container system <| List.map toConfig lines
+  container system <| List.indexedMap toConfig lines
 
 
-viewSample : Coordinate.System -> Line.Look data -> Dot.Look data -> Float -> Float -> Line.LineConfig data -> Svg msg
-viewSample system lineLook dotLook sampleWidth areaOpacity line =
+viewSample : Coordinate.System -> Line.Look data -> Dot.Look data -> Float -> Float -> Int ->  Line.LineConfig data -> Svg msg
+viewSample system lineLook dotLook sampleWidth areaOpacity index line =
   let
     middle =
       Coordinate.toData system <| Coordinate.Point (sampleWidth / 2) 0
+
+    color = -- TODO
+      List.head line.color |> Maybe.withDefault "black"
   in
   Svg.g
     [ Attributes.class "sample" ]
-    [ Line.viewSample lineLook line.color line.dashing areaOpacity sampleWidth
-    , Dot.viewSample dotLook line.shape line.color system middle
+    [ Line.viewSample lineLook line.color line.dashing areaOpacity sampleWidth index
+    , Dot.viewSample dotLook line.shape color system middle
     ]
 
 
