@@ -14,6 +14,7 @@ default : Intersection
 default =
   Intersection.default
 
+
 {-| -}
 at : (Float, Float) -> Intersection
 at =
