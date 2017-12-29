@@ -7,7 +7,6 @@ import Lines.Junk as Junk exposing (..)
 import Lines.Color as Color
 import Lines.Dot as Dot
 import Lines.Axis as Axis
-import Lines.Axis.Time as Time
 import Lines.Coordinate as Coordinate
 import Lines.Events as Events
 import Lines.Legends as Legends
@@ -17,29 +16,8 @@ import Lines.Legends as Legends
 
 main : Svg msg
 main =
-  -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3 ]
-  Lines.viewCustom
-    { margin = Coordinate.Margin 40 150 90 150
-    , attributes = [ Attributes.style "font-family: monospace;" ]
-    , events = Events.none
-    , junk = Junk.none
-    , x = Axis.axisCustom 850 .date
-            <| Axis.look "Time"
-              <| Time.marks Time.mark 10
-    , y = Axis.axisCustom 400 .heartattacks
-            <| Axis.look "Heart attacks"
-              <| Axis.marks Axis.mark (Axis.valuesExact 7)
-    , interpolation = Lines.linear
-    , legends = Legends.default
-    , line = Line.default
-    , dot = Dot.default
-    , areaOpacity = 0
-    , id = "chart"
-    }
-    [ Lines.line Color.blue Dot.triangle "" data1
-    , Lines.line Color.pink Dot.diamond "" data2
-    , Lines.line Color.orange Dot.cross "" data3
-    ]
+  Lines.view1 .magnesium .heartattacks data1
+
 
 
 

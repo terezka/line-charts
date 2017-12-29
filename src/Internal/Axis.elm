@@ -1,204 +1,182 @@
-module Internal.Axis exposing (..)
+module Internal.Axis exposing
+  ( Axis
+  , exactly, around
+  , int, time, float
+  , intCustom, timeCustom, floatCustom, dataCustom, custom
+  , Config, intConfig, timeConfig, floatConfig
+  -- INTERNAL
+  , line, ticks, direction
+  , viewHorizontal, viewVertical
+  )
 
 
 import Svg exposing (Svg, Attribute, g, text_, tspan, text)
-import Svg.Attributes as Attributes exposing (class)
+import Svg.Attributes as Attributes exposing (class, strokeWidth, stroke)
 import Lines.Coordinate as Coordinate exposing (..)
-import Internal.Utils exposing (..)
+import Internal.Axis.Line as Line
+import Internal.Axis.Tick as Tick
+import Internal.Axis.Title as Title
+import Internal.Axis.Values as Values
+import Internal.Axis.Values.Time as Time
 import Internal.Svg as Svg exposing (..)
-import Round
-
-
-
--- CONFIG
+import Internal.Utils exposing (..)
 
 
 {-| -}
-type alias Axis data msg =
-  { variable : data -> Float
-  , range : Coordinate.Range -> Coordinate.Range
-  , look : Look msg
-  , length : Float
+type Axis data msg
+  = AxisInt (Coordinate.Range -> List Int) (Config Int msg)
+  | AxisTime (Coordinate.Range -> List Time.Time) (Config Time.Time msg)
+  | AxisFloat (Coordinate.Range -> List Float) (Config Float msg)
+  | AxisData (Config data msg)
+
+
+
+-- API / AXIS
+
+
+{-| -}
+exactly : Int -> Values.Amount
+exactly =
+  Values.Exactly
+
+
+{-| -}
+around : Int -> Values.Amount
+around =
+  Values.Around
+
+
+{-| -}
+int : Values.Amount -> Axis data msg
+int amount =
+   AxisInt (Values.int amount) intConfig
+
+
+{-| -}
+time : Values.Amount -> Axis data msg
+time amount =
+   AxisTime (Values.time amount) timeConfig
+
+
+{-| -}
+float : Values.Amount -> Axis data msg
+float amount =
+   AxisFloat (Values.float amount) floatConfig
+
+
+{-| -}
+intCustom : Values.Amount -> Config Int msg -> Axis data msg
+intCustom amount =
+  AxisInt (Values.int amount)
+
+
+{-| -}
+timeCustom : Values.Amount -> Config Time.Time msg -> Axis data msg
+timeCustom amount =
+  AxisTime (Values.time amount)
+
+
+{-| -}
+floatCustom : Values.Amount -> Config Float msg -> Axis data msg
+floatCustom amount =
+  AxisFloat (Values.float amount)
+
+
+{-| -}
+dataCustom : Config data msg -> Axis data msg
+dataCustom =
+   AxisData
+
+
+{-| -}
+custom : (Coordinate.Range -> List Float) -> Config Float msg -> Axis data msg
+custom =
+  AxisFloat
+
+
+
+-- API / CONFIG
+
+
+{-| -}
+type alias Config unit msg =
+  { line : Maybe (Line.Line msg)
+  , tick : Int -> unit -> Tick.Tick msg
+  , direction : Tick.Direction
   }
 
 
 {-| -}
-type alias Look msg =
-  { title : Title msg
-  , position : Coordinate.Range -> Float
-  , offset : Float
-  , line : Maybe (Coordinate.Range -> Line msg)
-  , marks : Coordinate.Range -> List (Mark msg)
-  , direction : Direction
+intConfig : Config Int msg
+intConfig =
+  { line = Just Line.default
+  , direction = Tick.negative
+  , tick = Tick.int
   }
 
 
 {-| -}
-type alias Title msg =
-    { view : Svg msg
-    , position : Coordinate.Range -> Float
-    , xOffset : Float
-    , yOffset : Float
-    }
-
-
-{-| -}
-type alias Mark msg =
-  { label : Maybe (Svg msg)
-  , tick : Maybe (Tick msg)
-  , position : Float
+timeConfig : Config Time.Time msg
+timeConfig =
+  { line = Just Line.default
+  , direction = Tick.negative
+  , tick = Tick.time
   }
 
 
 {-| -}
-type alias Line msg =
-  { attributes : List (Attribute msg)
-  , start : Float
-  , end : Float
+floatConfig : Config Float msg
+floatConfig =
+  { line = Just Line.default
+  , direction = Tick.negative
+  , tick = Tick.float
   }
 
 
-{-| -}
-type alias Tick msg =
-  { attributes : List (Attribute msg)
-  , length : Int
-  }
+
+-- INTERNAL
 
 
 {-| -}
-type Direction
-  = Negative
-  | Positive
+ticks : Coordinate.Range -> (data -> Float) -> List data -> Axis data msg -> List ( Float, Tick.Tick msg )
+ticks range variable data axis =
+  case axis of
+    AxisInt values config ->
+      let withPosition i v = ( toFloat v, config.tick i v ) in
+      List.indexedMap withPosition (values range)
 
+    AxisTime values config ->
+      let withPosition i v = ( v.timestamp, config.tick i v ) in
+      List.indexedMap withPosition (values range)
 
+    AxisFloat values config ->
+      let withPosition i v = ( v, config.tick i v ) in
+      List.indexedMap withPosition (values range)
 
--- API
-
-
-{-| -}
-axis : Float -> (data -> Float) -> String -> Axis data msg
-axis length variable title =
-  { variable = variable
-  , range = identity
-  , look = look title (List.map mark << values False (round <| length / 100))
-  , length = length
-  }
-
-
-{-| -}
-axisCustom : Float -> (data -> Float) -> (Coordinate.Range -> Coordinate.Range) -> Look msg -> Axis data msg
-axisCustom length variable range look =
-  { variable = variable
-  , range = range
-  , look = look
-  , length = length
-  }
+    AxisData config ->
+      let withPosition i v = ( variable v, config.tick i v ) in
+      List.indexedMap withPosition data
 
 
 {-| -}
-look : String -> (Coordinate.Range -> List (Mark msg)) -> Look msg
-look title_ marks =
-  { title = title title_ .max 0 0
-  , position = towardsZero
-  , offset = 20
-  , line = Just line
-  , marks = marks
-  , direction = Negative
-  }
+line : Axis data msg -> Maybe (Coordinate.Range -> Line.Config msg)
+line axis =
+  let toConfig = Maybe.map Line.config in
+  case axis of
+    AxisInt values config   -> toConfig config.line
+    AxisTime values config  -> toConfig config.line
+    AxisFloat values config -> toConfig config.line
+    AxisData config         -> toConfig config.line
 
 
 {-| -}
-lookCustom :
-  { title : Title msg
-  , position : Coordinate.Range -> Float
-  , line : Maybe (Coordinate.Range -> Line msg)
-  , marks : Coordinate.Range -> List (Mark msg)
-  }
-  -> Look msg
-lookCustom { title, position, line, marks} =
-  { title = title
-  , position = position
-  , offset = 0
-  , line = line
-  , marks = marks
-  , direction = Negative
-  }
-
-
-{-| -}
-lookVeryCustom :
-  { title : Title msg
-  , position : Coordinate.Range -> Float
-  , offset : Float
-  , line : Maybe (Coordinate.Range -> Line msg)
-  , marks : Coordinate.Range -> List (Mark msg)
-  , direction : Direction
-  }
-  -> Look msg
-lookVeryCustom look =
-  look
-
-
-{-| -}
-title : String -> (Coordinate.Range -> Float) -> Float -> Float -> Title msg
-title title =
-  Title (viewText title)
-
-
-{-| -}
-titleCustom : Svg msg -> (Coordinate.Range -> Float) -> Float -> Float -> Title msg
-titleCustom =
-  Title
-
-
-{-| -}
-mark : Float -> Mark msg
-mark position =
-  { label = Just <| viewText <| toString position
-  , tick = Just tick
-  , position = position
-  }
-
-
-{-| -}
-markCustom : Maybe (Svg msg) -> Maybe (Tick msg) -> Float -> Mark msg
-markCustom label tick position =
-  { label = label
-  , tick = tick
-  , position = position
-  }
-
-
-{-| -}
-line : Coordinate.Range -> Line msg
-line range =
-  { attributes = []
-  , start = range.min
-  , end = range.max
-  }
-
-
-{-| -}
-lineCustom : List (Attribute msg) -> Coordinate.Range -> Line msg
-lineCustom attributes range =
-  { attributes = attributes
-  , start = range.min
-  , end = range.max
-  }
-
-
-{-| -}
-tick : Tick msg
-tick =
-  { attributes = []
-  , length = 5
-  }
-
-
-{-| TODO int to float -}
-tickCustom : List (Attribute msg) -> Int -> Tick msg
-tickCustom =
-  Tick
+direction : Axis data msg -> Tick.Direction
+direction axis =
+  case axis of
+    AxisInt values config   -> config.direction
+    AxisTime values config  -> config.direction
+    AxisFloat values config -> config.direction
+    AxisData config         -> config.direction
 
 
 
@@ -206,54 +184,60 @@ tickCustom =
 
 
 {-| -}
-viewHorizontal : Coordinate.System -> Look msg -> Svg msg
+type alias ViewConfig msg =
+  { padding : Float
+  , line : Maybe (Coordinate.Range -> Line.Config msg)
+  , ticks : List ( Float, Tick.Tick msg )
+  , direction : Tick.Direction
+  , intersection : Float
+  , title : Title.Config msg
+  }
+
+
+
+{-| -}
+viewHorizontal : Coordinate.System -> ViewConfig msg -> Svg msg
 viewHorizontal system axis =
     let
         axisPosition =
-          axis.position system.y - scaleDataY system axis.offset
+          axis.intersection - scaleDataY system axis.padding
 
         at x =
           { x = x, y = axisPosition }
 
-        viewAxisLine { start, end, attributes } =
-          horizontal system attributes axisPosition start end
+        viewAxisLine { start, end, events } = -- TODO Add color and width
+          horizontal system events axisPosition start end
 
-        viewMark { position, tick, label } =
-          g [ class "mark" ]
-            [ viewMaybe tick (viewHorizontalTick system axis (at position))
-            , viewMaybe label (viewHorizontalLabel system axis (at position))
-            ]
+        viewTick ( position, tick ) =
+          viewHorizontalTick system axis (at position) tick
     in
     g [ class "axis--horizontal" ]
       [ viewHorizontalTitle system at axis
       , viewMaybe axis.line (apply system.x >> viewAxisLine)
-      , g [ class "marks" ] (List.map viewMark (apply system.x axis.marks))
+      , g [ class "ticks" ] (List.map viewTick axis.ticks)
       ]
 
 
 {-| -}
-viewVertical : Coordinate.System -> Look msg -> Svg msg
+viewVertical : Coordinate.System -> ViewConfig msg -> Svg msg
 viewVertical system axis =
     let
         axisPosition =
-          axis.position system.x - scaleDataX system axis.offset
+          axis.intersection - scaleDataX system axis.padding
 
         at y =
           { x = axisPosition, y = y }
 
-        viewAxisLine { start, end, attributes } =
-          vertical system attributes axisPosition start end
+        viewAxisLine { start, end, events } = -- TODO Add color and width
+          vertical system events axisPosition start end
 
-        viewMark { position, tick, label } =
-          g [ class "mark" ]
-            [ viewMaybe tick (viewVerticalTick system axis (at position))
-            , viewMaybe label (viewVerticalLabel system axis (at position))
-            ]
+        viewTick ( position, tick ) =
+          viewVerticalTick system axis (at position) tick
     in
     g [ class "axis--vertical" ]
       [ viewVerticalTitle system at axis
       , viewMaybe axis.line (apply system.y >> viewAxisLine)
-      , g [ class "marks" ] (List.map viewMark (apply system.y axis.marks))
+      , g [ class "ticks" ] (List.map viewTick axis.ticks)
       ]
 
 
@@ -261,7 +245,7 @@ viewVertical system axis =
 -- VIEW TITLE
 
 
-viewHorizontalTitle : Coordinate.System -> (Float -> Point) -> Look msg -> Svg msg
+viewHorizontalTitle : Coordinate.System -> (Float -> Point) -> ViewConfig msg -> Svg msg
 viewHorizontalTitle system at { title } =
   let
     position =
@@ -277,7 +261,7 @@ viewHorizontalTitle system at { title } =
     [ title.view ]
 
 
-viewVerticalTitle : Coordinate.System -> (Float -> Point) -> Look msg -> Svg msg
+viewVerticalTitle : Coordinate.System -> (Float -> Point) -> ViewConfig msg -> Svg msg
 viewVerticalTitle system at { title } =
   let
     position =
@@ -297,26 +281,34 @@ viewVerticalTitle system at { title } =
 -- VIEW TICK
 
 
-viewHorizontalTick : Coordinate.System -> Look msg -> Point -> Tick msg -> Svg msg
-viewHorizontalTick system view { x, y } { attributes, length } =
-  xTick system (lengthOfTick view length) attributes y x
+viewHorizontalTick : Coordinate.System -> ViewConfig msg -> Point -> Tick.Tick msg -> Svg msg
+viewHorizontalTick system config ({ x, y } as point) tick =
+  g [ class "tick" ]
+    [ xTick system (lengthOfTick config tick) (attributesTick tick) y x
+    , viewMaybe tick.label (viewHorizontalLabel system config point)
+    ]
 
 
-viewVerticalTick : Coordinate.System -> Look msg -> Point -> Tick msg -> Svg msg
-viewVerticalTick system view { x, y } { attributes, length } =
-  yTick system (lengthOfTick view length) attributes x y
+viewVerticalTick : Coordinate.System -> ViewConfig msg -> Point -> Tick.Tick msg -> Svg msg
+viewVerticalTick system config ({ x, y } as point) tick =
+  g [ class "tick" ]
+    [ yTick system (lengthOfTick config tick) (attributesTick tick) x y
+    , viewMaybe tick.label (viewVerticalLabel system config point)
+    ]
 
 
-lengthOfTick : Look msg -> Int -> Int
-lengthOfTick { direction } length =
+lengthOfTick : ViewConfig msg -> Tick.Tick msg -> Float
+lengthOfTick { direction } { length } =
   if isPositive direction then -length else length
 
 
+attributesTick : Tick.Tick msg -> List (Svg.Attribute msg)
+attributesTick { width, color } =
+  [ strokeWidth (toString width), stroke color ]
 
--- VIEW LABEL
 
 
-viewHorizontalLabel : Coordinate.System -> Look msg -> Point -> Svg msg -> Svg msg
+viewHorizontalLabel : Coordinate.System -> ViewConfig msg -> Point -> Svg msg -> Svg msg
 viewHorizontalLabel system { direction } position view =
   let
     yOffset = if isPositive direction then -10 else 20
@@ -327,7 +319,7 @@ viewHorizontalLabel system { direction } position view =
     [ view ]
 
 
-viewVerticalLabel : Coordinate.System -> Look msg -> Point -> Svg msg -> Svg msg
+viewVerticalLabel : Coordinate.System -> ViewConfig msg -> Point -> Svg msg -> Svg msg
 viewVerticalLabel system { direction } position view =
   let
     anchor = if isPositive direction then Start else End
@@ -339,159 +331,12 @@ viewVerticalLabel system { direction } position view =
     [ view ]
 
 
-viewText : String -> Svg msg
-viewText string =
-  text_ [] [ tspan [] [ text string ] ]
-
-
 
 -- UTILS
 
 
-isPositive : Direction -> Bool
+isPositive : Tick.Direction -> Bool
 isPositive direction =
   case direction of
-    Positive -> True
-    Negative -> False
-
-
-
--- VALUES
-
-
-{-| -}
-interval : Float -> Float -> Coordinate.Range -> List Float
-interval intersection interval range =
-    let
-        offset value =
-          interval * toFloat (floor (value / interval))
-
-        beginning =
-          intersection - offset (intersection - range.min)
-    in
-    positions range beginning interval 0 []
-
-
-{-| -}
-values : Bool -> Int -> Coordinate.Range -> List Float
-values exact amountRough range =
-    let
-      intervalRough =
-        (range.max - range.min) / toFloat amountRough
-
-      interval =
-        getInterval intervalRough True exact
-
-      ceilingTo number prec =
-        prec * toFloat (ceiling (number / prec))
-
-      beginning =
-        ceilingTo range.min interval
-    in
-    positions range beginning interval 0 []
-
-
-positions : Coordinate.Range -> Float -> Float -> Float -> List Float -> List Float
-positions range beginning interval m acc =
-  let next = correctFloat (beginning + (m * interval)) (getPrecision interval)
-  in if next > range.max then acc else positions range beginning interval (m + 1) (acc ++ [ next ])
-
-
-getInterval : Float -> Bool -> Bool -> Float
-getInterval intervalRaw allowDecimals hasTickAmount =
-  let
-    magnitude =
-      getMagnitude intervalRaw
-
-    normalized =
-      intervalRaw / magnitude
-
-    multiples =
-      getMultiples magnitude allowDecimals hasTickAmount
-
-    findMultiple multiples =
-      case multiples of
-        m1 :: m2 :: rest ->
-          if normalized <= (m1 + m2) / 2
-            then m1 else findMultiple (m2 :: rest)
-
-        m1 :: rest ->
-          if normalized <= m1
-            then m1 else findMultiple rest
-
-        [] ->
-          1
-
-    findMultipleExact multiples =
-      case multiples of
-        m1 :: rest ->
-          if m1 * magnitude >= intervalRaw
-            then m1 else findMultipleExact rest
-
-        [] ->
-          1
-
-    multiple =
-      if hasTickAmount then
-        findMultipleExact multiples
-      else
-        findMultiple multiples
-  in
-  correctFloat (multiple * magnitude) (getPrecision magnitude + getPrecision multiple)
-
-
-getMultiples : Float -> Bool -> Bool -> List Float
-getMultiples magnitude allowDecimals hasTickAmount =
-  let
-    defaults =
-      if hasTickAmount then
-        [ 1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10 ]
-      else
-        [ 1, 2, 2.5, 5, 10 ]
-  in
-    if allowDecimals then
-      defaults
-    else
-      if magnitude == 1 then
-        List.filter (\n -> toFloat (round n) /= n) defaults
-      else if magnitude <= 0.1 then
-        [ 1 / magnitude ]
-      else
-        defaults
-
-
-
--- UTILS
-
-
-{-| -}
-correctFloat : Float -> Int -> Float
-correctFloat number prec =
-  case String.split "." (toString number) of -- TODO
-    [ before, after ] ->
-        let
-          afterSafe = after ++ String.repeat (prec + 2) "0"
-          toFloatSafe = String.toFloat >> Result.withDefault 0
-          decimals = String.slice 0 (prec + 1) <| afterSafe
-        in
-          toFloatSafe <| Round.round prec <| toFloatSafe <| before ++ "." ++ decimals
-
-    _ ->
-       number
-
-
-{-| -}
-getMagnitude : Float -> Float
-getMagnitude num =
-  toFloat <| 10 ^ (floor (logBase e num / logBase e 10))
-
-
-{-| -}
-getPrecision : Float -> Int
-getPrecision interval =
-  case String.split "." (toString interval) of -- TODO
-    [ before, after ] ->
-        String.length after
-
-    _ ->
-       0
+    Tick.Positive -> True
+    Tick.Negative -> False

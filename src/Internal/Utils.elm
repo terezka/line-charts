@@ -76,3 +76,9 @@ last list =
 toClipPathId : String -> String
 toClipPathId id =
   "clip-path__" ++ id
+
+
+{-| -}
+magnitude : Float -> Float
+magnitude num =
+  toFloat <| 10 ^ (floor (logBase e num / logBase e 10))

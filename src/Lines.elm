@@ -1,7 +1,7 @@
 module Lines exposing
   ( view1, view2, view3
   , view, Line, line, dash
-  , viewCustom, Config
+  , viewCustom, Config, Dimension
   , Interpolation, linear, monotone
   )
 
@@ -14,10 +14,11 @@ module Lines exposing
 @docs view, Line, line, dash
 
 # Customize everything
-@docs viewCustom, Config
+@docs viewCustom, Config, Dimension
 
 ## Interpolations
 @docs Interpolation, linear, monotone
+
 
 
 -}
@@ -36,10 +37,13 @@ import Internal.Junk
 import Internal.Legends as Legends
 import Internal.Line as Line
 import Internal.Utils as Utils
+import Internal.Axis.Range as Range
+import Internal.Axis.Title as Title
+import Internal.Axis.Intersection as Intersection
 
 
 
--- TODO: Fix axis outliers maybe
+-- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
 
 
 -- VIEW / SIMPLE
@@ -273,8 +277,9 @@ copy it and play around with customizations available for each property.
 -}
 type alias Config data msg =
   { margin : Coordinate.Margin
-  , x : Axis.Axis data msg
-  , y : Axis.Axis data msg
+  , x : Dimension data msg
+  , y : Dimension data msg
+  , intersection : Intersection.Intersection
   , interpolation : Interpolation
   , areaOpacity : Float
   , legends : Legends.Legends msg
@@ -284,6 +289,17 @@ type alias Config data msg =
   , events : List (Events.Event data msg)
   , junk : Junk.Junk msg
   , id : String
+  }
+
+
+{-| -}
+type alias Dimension data msg =
+  { title : Title.Title msg
+  , variable : data -> Float
+  , pixels : Float -- TODO
+  , padding : Float
+  , range : Range.Range
+  , axis : Axis.Axis data msg
   }
 
 
@@ -351,6 +367,9 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
 viewCustom config lines =
   let
+    allData =
+      List.concatMap (.data << Line.lineConfig) lines
+
     -- Data points
     dataPoints =
       List.map (List.map dataPoint << .data << Line.lineConfig) lines
@@ -368,14 +387,14 @@ viewCustom config lines =
       List.concat dataPoints
 
     system =
-      { frame = Coordinate.Frame config.margin (Coordinate.Size config.x.length config.y.length)
+      { frame = Coordinate.Frame config.margin (Coordinate.Size config.x.pixels config.y.pixels)
       , x = allPoints
               |> Coordinate.range (.point >> .x)
-              |> config.x.range
+              |> Range.apply config.x.range
       , y = allPoints
               |> Coordinate.range (.point >> .y)
               |> adjustDomainRange
-              |> config.y.range
+              |> Range.apply config.y.range
       }
 
     adjustDomainRange domain =
@@ -414,8 +433,22 @@ viewCustom config lines =
       [ Svg.defs [] [ clipPath config system ]
       , Svg.g [ Attributes.class "junk--below" ] junk.below
       , Svg.g [ Attributes.class "lines" ] viewLines
-      , Axis.viewHorizontal system config.x.look
-      , Axis.viewVertical system config.y.look
+      , Axis.viewHorizontal system
+          { padding = config.x.padding
+          , line = Axis.line config.x.axis -- TODO all this .axis should go to internal.axis
+          , ticks = Axis.ticks system.x config.x.variable allData config.x.axis
+          , direction = Axis.direction config.x.axis
+          , intersection = Intersection.getX config.intersection system
+          , title = Title.config config.x.title
+          }
+      , Axis.viewVertical system
+          { padding = config.y.padding
+          , line = Axis.line config.y.axis -- TODO all this .axis should go to internal.axis
+          , ticks = Axis.ticks system.y config.y.variable allData config.y.axis
+          , direction = Axis.direction config.y.axis
+          , intersection = Intersection.getY config.intersection system
+          , title = Title.config config.y.title
+          }
       , viewLegends
       , Svg.g [ Attributes.class "junk--above" ] junk.above
       ]
@@ -447,8 +480,23 @@ defaultConfig toX toY =
   { margin = Coordinate.Margin 40 150 90 150
   , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
   , events = []
-  , x = Axis.axis 650 toX ""
-  , y = Axis.axis 400 toY ""
+  , x =
+      { title = Title.default ""
+      , variable = toX
+      , pixels = 650
+      , padding = 20
+      , range = Range.default
+      , axis = Axis.float (Axis.around 10)
+      }
+  , y =
+      { title = Title.default ""
+      , variable = toY
+      , pixels = 400
+      , padding = 20
+      , range = Range.default
+      , axis = Axis.float (Axis.around 10)
+      }
+  , intersection = Intersection.default
   , junk = Junk.none
   , interpolation = linear
   , legends = Legends.default
