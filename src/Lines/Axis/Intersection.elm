@@ -1,4 +1,11 @@
-module Lines.Axis.Intersection exposing (Intersection, default, custom)
+module Lines.Axis.Intersection exposing (Intersection, default, at, custom)
+
+{-|
+
+@docs Intersection, default, at, custom
+
+-}
+
 
 import Internal.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate

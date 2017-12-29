@@ -1,5 +1,11 @@
 module Lines.Axis.Title exposing (Title, default, at, custom)
 
+{-|
+
+@docs Title, default, at, custom
+
+-}
+
 import Svg exposing (Svg)
 import Internal.Axis.Title as Title
 import Lines.Coordinate as Coordinate

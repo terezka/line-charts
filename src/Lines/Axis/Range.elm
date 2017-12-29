@@ -1,5 +1,11 @@
 module Lines.Axis.Range exposing (Range, default, padded, window, custom)
 
+{-|
+
+@docs Range, default, padded, window, custom
+
+-}
+
 import Internal.Axis.Range as Range
 import Lines.Coordinate as Coordinate
 

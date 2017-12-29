@@ -1,5 +1,10 @@
 module Lines.Axis.Line exposing (Line, default, fat, Config, custom)
 
+{-|
+
+@docs Line, default, fat, Config, custom
+
+-}
 
 import Svg exposing (Attribute)
 import Lines.Color as Color

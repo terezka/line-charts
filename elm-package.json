@@ -9,6 +9,10 @@
     "exposed-modules": [
         "Lines",
         "Lines.Axis",
+        "Lines.Axis.Line",
+        "Lines.Axis.Intersection",
+        "Lines.Axis.Range",
+        "Lines.Axis.Title",
         "Lines.Color",
         "Lines.Coordinate",
         "Lines.Dot",
