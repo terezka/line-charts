@@ -197,10 +197,10 @@ type alias ViewConfig msg =
 
 {-| -}
 viewHorizontal : Coordinate.System -> ViewConfig msg -> Svg msg
-viewHorizontal system axis =
+viewHorizontal system config =
     let
         axisPosition =
-          axis.intersection - scaleDataY system axis.padding
+          config.intersection - scaleDataY system config.padding
 
         at x =
           { x = x, y = axisPosition }
@@ -209,21 +209,21 @@ viewHorizontal system axis =
           viewHorizontalAxisLine system axisPosition
 
         viewTick ( position, tick ) =
-          viewHorizontalTick system axis (at position) tick
+          viewHorizontalTick system config (at position) tick
     in
     g [ class "axis--horizontal" ]
-      [ viewHorizontalTitle system at axis
-      , viewMaybe axis.line (apply system.x >> viewAxisLine)
-      , g [ class "ticks" ] (List.map viewTick axis.ticks)
+      [ viewHorizontalTitle system at config
+      , viewMaybe config.line (apply system.x >> viewAxisLine)
+      , g [ class "ticks" ] (List.map viewTick config.ticks)
       ]
 
 
 {-| -}
 viewVertical : Coordinate.System -> ViewConfig msg -> Svg msg
-viewVertical system axis =
+viewVertical system config =
     let
         axisPosition =
-          axis.intersection - scaleDataX system axis.padding
+          config.intersection - scaleDataX system config.padding
 
         at y =
           { x = axisPosition, y = y }
@@ -232,12 +232,12 @@ viewVertical system axis =
           viewVerticalAxisLine system axisPosition
 
         viewTick ( position, tick ) =
-          viewVerticalTick system axis (at position) tick
+          viewVerticalTick system config (at position) tick
     in
     g [ class "axis--vertical" ]
-      [ viewVerticalTitle system at axis
-      , viewMaybe axis.line (apply system.y >> viewAxisLine)
-      , g [ class "ticks" ] (List.map viewTick axis.ticks)
+      [ viewVerticalTitle system at config
+      , viewMaybe config.line (apply system.y >> viewAxisLine)
+      , g [ class "ticks" ] (List.map viewTick config.ticks)
       ]
 
 
