@@ -13,6 +13,7 @@
         "Lines.Axis.Intersection",
         "Lines.Axis.Range",
         "Lines.Axis.Title",
+        "Lines.Axis.Tick",
         "Lines.Color",
         "Lines.Coordinate",
         "Lines.Dot",
