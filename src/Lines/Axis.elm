@@ -49,7 +49,7 @@ int =
    Axis.int
 
 
-{-| -}
+{-| TODO Change amount to int? -}
 time : Amount -> Axis data msg
 time =
    Axis.time

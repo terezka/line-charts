@@ -211,7 +211,7 @@ viewHorizontal system intersection data dimension =
           , line = line dimension.axis -- TODO all this .axis should go to internal.axis
           , ticks = ticks system.x dimension.variable data dimension.axis
           , direction = direction dimension.axis
-          , intersection = Intersection.getX intersection system
+          , intersection = Intersection.getY intersection system
           , title = Title.config dimension.title
           }
 
@@ -243,7 +243,7 @@ viewVertical system intersection data dimension =
           , line = line dimension.axis -- TODO all this .axis should go to internal.axis
           , ticks = ticks system.y dimension.variable data dimension.axis
           , direction = direction dimension.axis
-          , intersection = Intersection.getY intersection system
+          , intersection = Intersection.getX intersection system
           , title = Title.config dimension.title
           }
 

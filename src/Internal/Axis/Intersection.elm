@@ -29,7 +29,7 @@ at ( x, y ) =
 custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Intersection
 custom toX toY =
   Intersection <| \{ x, y } ->
-    Coordinate.Point (toX y) (toY x)
+    Coordinate.Point (toX x) (toY y)
 
 
 

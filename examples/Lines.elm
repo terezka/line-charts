@@ -7,8 +7,10 @@ import Lines.Junk as Junk exposing (..)
 import Lines.Color as Color
 import Lines.Dot as Dot
 import Lines.Axis as Axis
+import Lines.Axis.Title as Title
+import Lines.Axis.Range as Range
+import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
-import Lines.Events as Events
 import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Legends as Legends
@@ -16,8 +18,40 @@ import Lines.Legends as Legends
 
 main : Svg msg
 main =
-  Lines.view1 .magnesium .heartattacks data1
-
+  -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3 ]
+  Lines.viewCustom
+    { margin = Coordinate.Margin 40 150 90 150
+    , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
+    , events = []
+    , x =
+        { title = Title.default ""
+        , variable = .date
+        , pixels = 650
+        , padding = 20
+        , range = Range.default
+        , axis = Axis.time (Axis.around 10)
+        }
+    , y =
+        { title = Title.default ""
+        , variable = .heartattacks
+        , pixels = 400
+        , padding = 20
+        , range = Range.default
+        , axis = Axis.float (Axis.around 5)
+        }
+    , intersection = Intersection.custom .min (always 0.00035)
+    , junk = Junk.none
+    , interpolation = Lines.linear
+    , legends = Legends.default
+    , line = Line.default
+    , dot = Dot.default
+    , areaOpacity = 0
+    , id = "chart"
+    }
+    [ Lines.line Color.blue Dot.triangle "" data1
+    , Lines.line Color.pink Dot.diamond "" data2
+    , Lines.line Color.orange Dot.cross "" data3
+    ]
 
 
 
