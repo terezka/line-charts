@@ -19,13 +19,13 @@ import Internal.Axis.Values.Time as Time
 
 
 {-| -}
-type alias Axis data msg
-  = Axis.Axis data msg
+type alias Axis data msg =
+  Axis.Axis data msg
 
 
 {-| -}
-type alias Amount
-  = Values.Amount
+type alias Amount =
+  Values.Amount
 
 
 -- API / AXIS
