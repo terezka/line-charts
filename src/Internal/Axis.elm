@@ -205,8 +205,8 @@ viewHorizontal system axis =
         at x =
           { x = x, y = axisPosition }
 
-        viewAxisLine { start, end, events } = -- TODO Add color and width
-          horizontal system events axisPosition start end
+        viewAxisLine =
+          viewHorizontalAxisLine system axisPosition
 
         viewTick ( position, tick ) =
           viewHorizontalTick system axis (at position) tick
@@ -228,8 +228,8 @@ viewVertical system axis =
         at y =
           { x = axisPosition, y = y }
 
-        viewAxisLine { start, end, events } = -- TODO Add color and width
-          vertical system events axisPosition start end
+        viewAxisLine =
+          viewVerticalAxisLine system axisPosition
 
         viewTick ( position, tick ) =
           viewVerticalTick system axis (at position) tick
@@ -275,6 +275,25 @@ viewVerticalTitle system at { title } =
     , anchorStyle Middle
     ]
     [ title.view ]
+
+
+
+-- VIEW LINE
+
+
+viewHorizontalAxisLine : Coordinate.System -> Float -> Line.Config msg -> Svg msg
+viewHorizontalAxisLine system axisPosition config =
+  horizontal system (attributesLine config) axisPosition config.start config.end
+
+
+viewVerticalAxisLine : Coordinate.System -> Float -> Line.Config msg -> Svg msg
+viewVerticalAxisLine system axisPosition config =
+  vertical system (attributesLine config) axisPosition config.start config.end
+
+
+attributesLine : Line.Config msg -> List (Svg.Attribute msg)
+attributesLine { events, width, color } =
+  events ++ [ strokeWidth (toString width), stroke color ]
 
 
 
