@@ -1,4 +1,9 @@
-module Internal.Axis.Intersection exposing (Intersection, default, at, custom, getX, getY)
+module Internal.Axis.Intersection exposing
+  ( Intersection
+  , default, at, custom
+  -- INTERNAL
+  , getX, getY
+  )
 
 import Internal.Coordinate as Coordinate
 
@@ -39,7 +44,7 @@ towardsZero { max, min } =
 
 
 
---
+-- INTERNAL
 
 
 {-| -}
