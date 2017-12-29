@@ -433,22 +433,8 @@ viewCustom config lines =
       [ Svg.defs [] [ clipPath config system ]
       , Svg.g [ Attributes.class "junk--below" ] junk.below
       , Svg.g [ Attributes.class "lines" ] viewLines
-      , Axis.viewHorizontal system
-          { padding = config.x.padding
-          , line = Axis.line config.x.axis -- TODO all this .axis should go to internal.axis
-          , ticks = Axis.ticks system.x config.x.variable allData config.x.axis
-          , direction = Axis.direction config.x.axis
-          , intersection = Intersection.getX config.intersection system
-          , title = Title.config config.x.title
-          }
-      , Axis.viewVertical system
-          { padding = config.y.padding
-          , line = Axis.line config.y.axis -- TODO all this .axis should go to internal.axis
-          , ticks = Axis.ticks system.y config.y.variable allData config.y.axis
-          , direction = Axis.direction config.y.axis
-          , intersection = Intersection.getY config.intersection system
-          , title = Title.config config.y.title
-          }
+      , Axis.viewHorizontal system config.intersection allData config.x
+      , Axis.viewVertical   system config.intersection allData config.y
       , viewLegends
       , Svg.g [ Attributes.class "junk--above" ] junk.above
       ]

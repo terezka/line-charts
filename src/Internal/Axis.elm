@@ -5,7 +5,6 @@ module Internal.Axis exposing
   , intCustom, timeCustom, floatCustom, dataCustom, custom
   , Config, intConfig, timeConfig, floatConfig
   -- INTERNAL
-  , line, ticks, direction
   , viewHorizontal, viewVertical
   )
 
@@ -14,12 +13,25 @@ import Svg exposing (Svg, Attribute, g, text_, tspan, text)
 import Svg.Attributes as Attributes exposing (class, strokeWidth, stroke)
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Axis.Line as Line
+import Internal.Axis.Intersection as Intersection
+import Internal.Axis.Range as Range
 import Internal.Axis.Tick as Tick
 import Internal.Axis.Title as Title
 import Internal.Axis.Values as Values
 import Internal.Axis.Values.Time as Time
 import Internal.Svg as Svg exposing (..)
 import Internal.Utils exposing (..)
+
+
+{-| -}
+type alias Dimension data msg =
+  { title : Title.Title msg
+  , variable : data -> Float
+  , pixels : Float -- TODO
+  , padding : Float
+  , range : Range.Range
+  , axis : Axis data msg
+  }
 
 
 {-| -}
@@ -137,7 +149,6 @@ floatConfig =
 -- INTERNAL
 
 
-{-| -}
 ticks : Coordinate.Range -> (data -> Float) -> List data -> Axis data msg -> List ( Float, Tick.Tick msg )
 ticks range variable data axis =
   case axis of
@@ -158,7 +169,6 @@ ticks range variable data axis =
       List.indexedMap withPosition data
 
 
-{-| -}
 line : Axis data msg -> Maybe (Coordinate.Range -> Line.Config msg)
 line axis =
   let toConfig = Maybe.map Line.config in
@@ -169,7 +179,6 @@ line axis =
     AxisData config         -> toConfig config.line
 
 
-{-| -}
 direction : Axis data msg -> Tick.Direction
 direction axis =
   case axis of
@@ -183,7 +192,6 @@ direction axis =
 -- VIEW
 
 
-{-| -}
 type alias ViewConfig msg =
   { padding : Float
   , line : Maybe (Coordinate.Range -> Line.Config msg)
@@ -194,11 +202,19 @@ type alias ViewConfig msg =
   }
 
 
-
 {-| -}
-viewHorizontal : Coordinate.System -> ViewConfig msg -> Svg msg
-viewHorizontal system config =
+viewHorizontal : Coordinate.System -> Intersection.Intersection -> List data -> Dimension data msg -> Svg msg
+viewHorizontal system intersection data dimension =
     let
+        config =
+          { padding = dimension.padding
+          , line = line dimension.axis -- TODO all this .axis should go to internal.axis
+          , ticks = ticks system.x dimension.variable data dimension.axis
+          , direction = direction dimension.axis
+          , intersection = Intersection.getX intersection system
+          , title = Title.config dimension.title
+          }
+
         axisPosition =
           config.intersection - scaleDataY system config.padding
 
@@ -219,9 +235,18 @@ viewHorizontal system config =
 
 
 {-| -}
-viewVertical : Coordinate.System -> ViewConfig msg -> Svg msg
-viewVertical system config =
+viewVertical : Coordinate.System -> Intersection.Intersection -> List data -> Dimension data msg -> Svg msg
+viewVertical system intersection data dimension =
     let
+        config =
+          { padding = dimension.padding
+          , line = line dimension.axis -- TODO all this .axis should go to internal.axis
+          , ticks = ticks system.y dimension.variable data dimension.axis
+          , direction = direction dimension.axis
+          , intersection = Intersection.getY intersection system
+          , title = Title.config dimension.title
+          }
+
         axisPosition =
           config.intersection - scaleDataX system config.padding
 
