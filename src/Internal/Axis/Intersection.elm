@@ -16,15 +16,13 @@ type Intersection =
 {-| -}
 default : Intersection
 default =
-  Intersection <| \{ x, y } ->
-    Coordinate.Point (towardsZero y) (towardsZero x)
+  custom towardsZero towardsZero
 
 
 {-| -}
-at : (Float, Float) -> Intersection
-at (x, y) =
-  Intersection <| \_ ->
-    Coordinate.Point x y
+at : ( Float, Float ) -> Intersection
+at ( x, y ) =
+  custom (always x) (always y)
 
 
 {-| -}
