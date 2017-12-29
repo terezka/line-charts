@@ -36,7 +36,7 @@ int =
   Tick.int
 
 
-{-| -}
+{-| TODO expose time units -}
 time : Int -> Time.Time -> Tick msg
 time =
   Tick.time

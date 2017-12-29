@@ -5,15 +5,12 @@ module Internal.Axis.Tick exposing
 
 
 import Svg exposing (Svg, Attribute)
-import Date
-import Date.Format
-import Date.Extra as Date
 import Lines.Color as Color
 import Internal.Axis.Values.Time as Time
 
 
 
--- TICK
+-- TICKS
 
 
 {-| -}
@@ -24,9 +21,6 @@ type alias Tick msg =
   , length : Float
   , label : Maybe (Svg msg)
   }
-
-
--- TICK / INT
 
 
 {-| -}
@@ -40,58 +34,16 @@ int _ n =
   }
 
 
-
--- TICK / TIME
-
-
 {-| -}
 time : Int -> Time.Time -> Tick msg
-time _ { change, interval, timestamp } =
-  let
-    label =
-      case change of
-        Just change -> timeFormatEmphasized change timestamp
-        Nothing     -> timeFormat interval.unit timestamp
-  in
+time _ time =
   { color = Color.gray
   , width = 1
   , events = []
   , length = 5
-  , label = Just <| viewText label
+  , label = Just <| viewText (Time.toString time)
   }
 
-
-timeFormat : Time.Unit -> Float -> String
-timeFormat unit =
-  Date.fromTime >>
-    case unit of
-      Time.Millisecond -> toString << Date.toTime
-      Time.Second      -> Date.Format.format "%S"
-      Time.Minute      -> Date.Format.format "%M"
-      Time.Hour        -> Date.Format.format "%l%P"
-      Time.Day         -> Date.Format.format "%e"
-      Time.Week        -> Date.toFormattedString "'Week' w"
-      Time.Month       -> Date.Format.format "%b"
-      Time.Year        -> Date.Format.format "%Y"
-
-
-timeFormatEmphasized : Time.Unit -> Float -> String
-timeFormatEmphasized unit =
-  Date.fromTime >>
-    case unit of
-      Time.Millisecond -> toString << Date.toTime
-      Time.Second      -> Date.Format.format "%S"
-      Time.Minute      -> Date.Format.format "%M"
-      Time.Hour        -> Date.Format.format "%l%P"
-      Time.Day         -> Date.Format.format "%a"
-      Time.Week        -> Date.toFormattedString "'Week' w"
-      Time.Month       -> Date.Format.format "%b"
-      Time.Year        -> Date.Format.format "%Y"
-
-
-
-
--- TICK / FLOAT
 
 
 {-| -}

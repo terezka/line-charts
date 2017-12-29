@@ -1,4 +1,4 @@
-module Internal.Axis.Values.Time exposing (Unit(..), Time, Interval, values)
+module Internal.Axis.Values.Time exposing (Unit(..), Time, Interval, values, toString)
 
 {-| -}
 
@@ -7,7 +7,7 @@ import Internal.Utils as Utils
 import Date
 import Date.Extra as Date
 import Date.Extra.Facts as Date
-import Time
+import Date.Format
 
 
 {-| -}
@@ -27,7 +27,7 @@ type Unit
 type alias Time =
   { change : Maybe Unit
   , interval : Interval
-  , timestamp : Time.Time
+  , timestamp : Float
   }
 
 
@@ -36,6 +36,46 @@ type alias Interval =
   { unit : Unit
   , multiple : Int
   }
+
+
+{-| -}
+toString : Time -> String
+toString { change, interval, timestamp } =
+  case change of
+    Just change -> formatBold change timestamp
+    Nothing     -> format interval.unit timestamp
+
+
+format : Unit -> Float -> String
+format unit =
+  Date.fromTime >>
+    case unit of
+      Millisecond -> Basics.toString << Date.toTime
+      Second      -> Date.Format.format "%S"
+      Minute      -> Date.Format.format "%M"
+      Hour        -> Date.Format.format "%l%P"
+      Day         -> Date.Format.format "%e"
+      Week        -> Date.toFormattedString "'Week' w"
+      Month       -> Date.Format.format "%b"
+      Year        -> Date.Format.format "%Y"
+
+
+formatBold : Unit -> Float -> String
+formatBold unit =
+  Date.fromTime >>
+    case unit of
+      Millisecond -> Basics.toString << Date.toTime
+      Second      -> Date.Format.format "%S"
+      Minute      -> Date.Format.format "%M"
+      Hour        -> Date.Format.format "%l%P"
+      Day         -> Date.Format.format "%a"
+      Week        -> Date.toFormattedString "'Week' w"
+      Month       -> Date.Format.format "%b"
+      Year        -> Date.Format.format "%Y"
+
+
+
+-- PRODUCTION
 
 
 {-| -}
