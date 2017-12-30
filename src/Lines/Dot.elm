@@ -235,7 +235,7 @@ type alias Style = -- TODO size divide by pi
 {-| Produces a circle with a white core and a colored border.
 Pass the size of the dot and the width of the border.
 -}
-bordered : Int -> Int -> Style
+bordered : Float -> Int -> Style
 bordered =
   Dot.bordered
 
@@ -243,7 +243,7 @@ bordered =
 {-| Produces a circle with a colored core and a white border (Opposite of `bordered`).
 Pass the size of the dot and the width of the border.
 -}
-disconnected : Int -> Int -> Style
+disconnected : Float -> Int -> Style
 disconnected =
   Dot.disconnected
 
@@ -252,13 +252,13 @@ disconnected =
 Pass the size of the dot, the width of the border, and the opacity of the
 border (A number between 0 and 1).
 -}
-aura : Int -> Int -> Float -> Style
+aura : Float -> Int -> Float -> Style
 aura =
   Dot.aura
 
 
 {-| Produces a solid dot. Pass the size.
 -}
-full : Int -> Style
+full : Float -> Style
 full =
   Dot.full
