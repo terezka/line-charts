@@ -296,7 +296,7 @@ type alias Config data msg =
 type alias Dimension data msg =
   { title : Title.Title msg
   , variable : data -> Float
-  , pixels : Float -- TODO
+  , pixels : Int
   , padding : Float
   , range : Range.Range
   , axis : Axis.Axis data msg
@@ -388,7 +388,7 @@ viewCustom config lines =
 
     frame =
       Coordinate.Frame config.margin
-        (Coordinate.Size config.x.pixels config.y.pixels)
+        (Coordinate.Size (toFloat config.x.pixels) (toFloat config.y.pixels))
 
     xRange =
       Coordinate.range (.point >> .x) allPoints

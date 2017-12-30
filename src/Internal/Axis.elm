@@ -27,7 +27,7 @@ import Internal.Utils exposing (..)
 type alias Dimension data msg =
   { title : Title.Title msg
   , variable : data -> Float
-  , pixels : Float -- TODO
+  , pixels : Int
   , padding : Float
   , range : Range.Range
   , axis : Axis data msg
@@ -156,7 +156,7 @@ floatConfig =
 -- INTERNAL
 
 
-ticks : Coordinate.Range -> (data -> Float) -> Float -> List data -> Axis data msg -> List ( Float, Tick.Tick msg )
+ticks : Coordinate.Range -> (data -> Float) -> Int -> List data -> Axis data msg -> List ( Float, Tick.Tick msg )
 ticks range variable length data axis =
   case axis of
     AxisDefault ->
@@ -180,14 +180,14 @@ ticks range variable length data axis =
       List.indexedMap withPosition data
 
 
-defaultValues : Float -> Coordinate.Range -> List Float
+defaultValues : Int -> Coordinate.Range -> List Float
 defaultValues length =
   Values.float (defaultAmount length)
 
 
-defaultAmount : Float -> Values.Amount
+defaultAmount : Int -> Values.Amount
 defaultAmount length =
-  around <| round <| length / 90
+  around <| length // 90
 
 
 line : Axis data msg -> Maybe (Coordinate.Range -> Coordinate.Range -> Line.Config msg)
