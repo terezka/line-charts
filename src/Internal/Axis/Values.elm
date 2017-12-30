@@ -2,6 +2,7 @@ module Internal.Axis.Values exposing (Amount(..), int, time, float, interval)
 
 
 import Round
+import Lines.Axis.Tick exposing (Time, Unit(..), Interval)
 import Internal.Axis.Values.Time as Time
 import Internal.Utils as Utils
 import Internal.Coordinate as Coordinate
@@ -22,7 +23,7 @@ int amount =
 
 
 {-| -}
-time : Amount -> Coordinate.Range -> List Time.Time
+time : Amount -> Coordinate.Range -> List Time
 time amount =
   case amount of
     Exactly amount -> Time.values amount

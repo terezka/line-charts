@@ -1,20 +1,21 @@
 module Lines.Axis.Tick exposing
-  ( Tick, int, time, float
+  ( Tick, int, time, Time, Unit(..), Interval, float
   , Direction, negative, positive
   )
 
 {-|
 
-@docs Tick, int, time, float
+@docs Tick, int, time, Time, Unit, Interval, float
 @docs Direction, negative, positive
 
 -}
 
 import Svg exposing (Svg, Attribute)
 import Lines.Color as Color
-import Internal.Axis.Values.Time as Time
 import Internal.Axis.Tick as Tick
-
+import Date
+import Date.Extra as Date
+import Date.Format
 
 
 -- TICKS
@@ -32,20 +33,64 @@ type alias Tick msg =
 
 {-| -}
 int : Int -> Int -> Tick msg
-int =
-  Tick.int
+int _ n =
+  { color = Color.gray
+  , width = 1
+  , events = []
+  , length = 5
+  , label = Just <| viewText (toString n)
+  }
 
 
-{-| TODO expose time units -}
-time : Int -> Time.Time -> Tick msg
-time =
-  Tick.time
+{-| -}
+type Unit
+  = Millisecond
+  | Second
+  | Minute
+  | Hour
+  | Day
+  | Week
+  | Month
+  | Year
+
+
+
+{-| -}
+type alias Time =
+  { change : Maybe Unit
+  , interval : Interval
+  , timestamp : Float
+  }
+
+
+{-| -}
+type alias Interval =
+  { unit : Unit
+  , multiple : Int
+  }
+
+
+{-| -}
+time : Int -> Time -> Tick msg
+time _ time =
+  { color = Color.gray
+  , width = 1
+  , events = []
+  , length = 5
+  , label = Just <| viewText (format time)
+  }
+
 
 
 {-| -}
 float : Int -> Float -> Tick msg
-float =
-  Tick.float
+float _ n =
+  { color = Color.gray
+  , width = 1
+  , events = []
+  , length = 5
+  , label = Just <| viewText (toString n)
+  }
 
 
 
@@ -60,10 +105,54 @@ type alias Direction =
 {-| -}
 negative : Direction
 negative =
-  Tick.negative
+  Tick.Negative
 
 
 {-| -}
 positive : Direction
 positive =
-  Tick.positive
+  Tick.Positive
+
+
+
+-- INTERNAL
+
+
+viewText : String -> Svg msg
+viewText string =
+  Svg.text_ [] [ Svg.tspan [] [ Svg.text string ] ]
+
+
+format : Time -> String
+format { change, interval, timestamp } =
+  case change of
+    Just change -> formatBold change timestamp
+    Nothing     -> formatNorm interval.unit timestamp
+
+
+formatNorm : Unit -> Float -> String
+formatNorm unit =
+  Date.fromTime >>
+    case unit of
+      Millisecond -> Basics.toString << Date.toTime
+      Second      -> Date.Format.format "%S"
+      Minute      -> Date.Format.format "%M"
+      Hour        -> Date.Format.format "%l%P"
+      Day         -> Date.Format.format "%e"
+      Week        -> Date.toFormattedString "'Week' w"
+      Month       -> Date.Format.format "%b"
+      Year        -> Date.Format.format "%Y"
+
+
+formatBold : Unit -> Float -> String
+formatBold unit =
+  Date.fromTime >>
+    case unit of
+      Millisecond -> Basics.toString << Date.toTime
+      Second      -> Date.Format.format "%S"
+      Minute      -> Date.Format.format "%M"
+      Hour        -> Date.Format.format "%l%P"
+      Day         -> Date.Format.format "%a"
+      Week        -> Date.toFormattedString "'Week' w"
+      Month       -> Date.Format.format "%b"
+      Year        -> Date.Format.format "%Y"

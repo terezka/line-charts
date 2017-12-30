@@ -12,13 +12,13 @@ module Internal.Axis exposing
 import Svg exposing (Svg, Attribute, g, text_, tspan, text)
 import Svg.Attributes as Attributes exposing (class, strokeWidth, stroke)
 import Lines.Coordinate as Coordinate exposing (..)
+import Lines.Axis.Tick as Tick exposing (Direction)
+import Internal.Axis.Tick as Tick
 import Internal.Axis.Line as Line
 import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Range as Range
-import Internal.Axis.Tick as Tick
 import Internal.Axis.Title as Title
 import Internal.Axis.Values as Values
-import Internal.Axis.Values.Time as Time
 import Internal.Svg as Svg exposing (..)
 import Internal.Utils exposing (..)
 
@@ -37,7 +37,7 @@ type alias Dimension data msg =
 {-| -}
 type Axis data msg
   = AxisInt (Coordinate.Range -> List Int) (Config Int msg)
-  | AxisTime (Coordinate.Range -> List Time.Time) (Config Time.Time msg)
+  | AxisTime (Coordinate.Range -> List Tick.Time) (Config Tick.Time msg)
   | AxisFloat (Coordinate.Range -> List Float) (Config Float msg)
   | AxisData (Config data msg)
 
@@ -83,7 +83,7 @@ intCustom amount =
 
 
 {-| -}
-timeCustom : Values.Amount -> Config Time.Time msg -> Axis data msg
+timeCustom : Values.Amount -> Config Tick.Time msg -> Axis data msg
 timeCustom amount =
   AxisTime (Values.time amount)
 
@@ -114,7 +114,7 @@ custom =
 type alias Config unit msg =
   { line : Maybe (Line.Line msg)
   , tick : Int -> unit -> Tick.Tick msg
-  , direction : Tick.Direction
+  , direction : Direction
   }
 
 
@@ -128,7 +128,7 @@ intConfig =
 
 
 {-| -}
-timeConfig : Config Time.Time msg
+timeConfig : Config Tick.Time msg
 timeConfig =
   { line = Just Line.default
   , direction = Tick.negative
@@ -179,7 +179,7 @@ line axis =
     AxisData config         -> toConfig config.line
 
 
-direction : Axis data msg -> Tick.Direction
+direction : Axis data msg -> Direction
 direction axis =
   case axis of
     AxisInt values config   -> config.direction
@@ -196,7 +196,7 @@ type alias ViewConfig msg =
   { padding : Float
   , line : Maybe (Coordinate.Range -> Line.Config msg)
   , ticks : List ( Float, Tick.Tick msg )
-  , direction : Tick.Direction
+  , direction : Direction
   , intersection : Float
   , title : Title.Config msg
   }
@@ -343,7 +343,7 @@ viewVerticalTick system config ({ x, y } as point) tick =
 
 lengthOfTick : ViewConfig msg -> Tick.Tick msg -> Float
 lengthOfTick { direction } { length } =
-  if isPositive direction then -length else length
+  if Tick.isPositive direction then -length else length
 
 
 attributesTick : Tick.Tick msg -> List (Svg.Attribute msg)
@@ -355,7 +355,7 @@ attributesTick { width, color } =
 viewHorizontalLabel : Coordinate.System -> ViewConfig msg -> Point -> Svg msg -> Svg msg
 viewHorizontalLabel system { direction } position view =
   let
-    yOffset = if isPositive direction then -10 else 20
+    yOffset = if Tick.isPositive direction then -10 else 20
   in
   g [ transform [ move system position.x position.y, offset 0 yOffset ]
     , anchorStyle Middle
@@ -366,21 +366,10 @@ viewHorizontalLabel system { direction } position view =
 viewVerticalLabel : Coordinate.System -> ViewConfig msg -> Point -> Svg msg -> Svg msg
 viewVerticalLabel system { direction } position view =
   let
-    anchor = if isPositive direction then Start else End
-    xOffset = if isPositive direction then 10 else -10
+    anchor = if Tick.isPositive direction then Start else End
+    xOffset = if Tick.isPositive direction then 10 else -10
   in
   g [ transform [ move system position.x position.y, offset xOffset 5 ]
     , anchorStyle anchor
     ]
     [ view ]
-
-
-
--- UTILS
-
-
-isPositive : Tick.Direction -> Bool
-isPositive direction =
-  case direction of
-    Tick.Positive -> True
-    Tick.Negative -> False

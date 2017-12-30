@@ -15,7 +15,7 @@ module Lines.Axis exposing
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Axis as Axis
 import Internal.Axis.Values as Values
-import Internal.Axis.Values.Time as Time
+import Lines.Axis.Tick as Tick
 
 
 {-| -}
@@ -68,7 +68,7 @@ intCustom =
 
 
 {-| -}
-timeCustom : Amount -> Config Time.Time msg -> Axis data msg
+timeCustom : Amount -> Config Tick.Time msg -> Axis data msg
 timeCustom =
   Axis.timeCustom
 
