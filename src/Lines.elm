@@ -44,7 +44,7 @@ import Internal.Axis.Intersection as Intersection
 
 
 -- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
-
+-- TOOO prevent dots from going outside range
 
 -- VIEW / SIMPLE
 
@@ -386,8 +386,12 @@ viewCustom config lines =
     allPoints =
       List.concat dataPoints
 
+    frame =
+      Coordinate.Frame config.margin
+        (Coordinate.Size config.x.pixels config.y.pixels)
+
     system =
-      { frame = Coordinate.Frame config.margin (Coordinate.Size config.x.pixels config.y.pixels)
+      { frame = frame
       , x = allPoints
               |> Coordinate.range (.point >> .x)
               |> Range.apply config.x.range
