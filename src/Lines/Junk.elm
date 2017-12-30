@@ -1,7 +1,7 @@
 module Lines.Junk exposing
   ( Junk, Layers, none, custom
   , Transfrom, transform, move, offset
-  , gridVertical, gridHorizontal
+  , gridVertical, gridHorizontal, text
   )
 
 {-|
@@ -13,7 +13,7 @@ module Lines.Junk exposing
 @docs Junk, custom, Layers
 
 # Common junk
-@docs gridVertical, gridHorizontal
+@docs gridVertical, gridHorizontal, text
 
 # Placing helpers
 @docs Transfrom, transform, move, offset
@@ -167,3 +167,13 @@ gridVertical system attribuets at =
 gridHorizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
 gridHorizontal system attribuets at =
   Svg.horizontal system attribuets at system.x.min system.x.max
+
+
+
+-- HELPERS
+
+
+{-| -}
+text : String -> Svg.Svg msg
+text string =
+  Svg.text_ [] [ Svg.tspan [] [ Svg.text string ] ]

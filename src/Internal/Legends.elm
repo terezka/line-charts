@@ -53,7 +53,7 @@ default =
 
 
 {-| -}
-bucketed : (Coordinate.Limits -> Float) -> (Coordinate.Limits -> Float) -> Legends msg
+bucketed : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends msg
 bucketed toX toY =
   Bucketed 30 <| \system legends ->
     Svg.g

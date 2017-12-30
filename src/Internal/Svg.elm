@@ -39,12 +39,12 @@ vertical system userAttributes x y1 y2 =
       ]
 
 
-xTicks : Coordinate.System -> Int -> List (Attribute msg) -> Float -> List Float -> Svg msg
+xTicks : Coordinate.System -> Float -> List (Attribute msg) -> Float -> List Float -> Svg msg
 xTicks system height userAttributes y xs =
   g [ Attributes.class "x-ticks" ] (List.map (xTick system height userAttributes y) xs)
 
 
-xTick : Coordinate.System -> Int -> List (Attribute msg) -> Float -> Float -> Svg msg
+xTick : Coordinate.System -> Float -> List (Attribute msg) -> Float -> Float -> Svg msg
 xTick system height userAttributes y x =
   let
     attributes =
@@ -54,18 +54,18 @@ xTick system height userAttributes y x =
         [ Attributes.x1 <| toString (toSVGX system x)
         , Attributes.x2 <| toString (toSVGX system x)
         , Attributes.y1 <| toString (toSVGY system y)
-        , Attributes.y2 <| toString (toSVGY system y + toFloat height)
+        , Attributes.y2 <| toString (toSVGY system y + height)
         ]
   in
     Svg.line attributes []
 
 
-yTicks : Coordinate.System -> Int -> List (Attribute msg) -> Float -> List Float -> Svg msg
+yTicks : Coordinate.System -> Float -> List (Attribute msg) -> Float -> List Float -> Svg msg
 yTicks system width userAttributes x ys =
   g [ Attributes.class "y-ticks" ] (List.map (yTick system width userAttributes x) ys)
 
 
-yTick : Coordinate.System -> Int -> List (Attribute msg) -> Float -> Float -> Svg msg
+yTick : Coordinate.System -> Float -> List (Attribute msg) -> Float -> Float -> Svg msg
 yTick system width userAttributes x y =
   let
     attributes =
@@ -75,7 +75,7 @@ yTick system width userAttributes x y =
         ]
         userAttributes
         [ Attributes.x1 <| toString (toSVGX system x)
-        , Attributes.x2 <| toString (toSVGX system x - toFloat width)
+        , Attributes.x2 <| toString (toSVGX system x - width)
         , Attributes.y1 <| toString (toSVGY system y)
         , Attributes.y2 <| toString (toSVGY system y)
         ]

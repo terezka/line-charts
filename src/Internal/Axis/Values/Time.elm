@@ -1,88 +1,25 @@
-module Lines.Axis.Time exposing
-  ( Mark, Unit(..), marks, mark, uniform, irregular, custom
-  )
+module Internal.Axis.Values.Time exposing (values)
 
 {-| -}
 
-import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
+import Internal.Utils as Utils
 import Date
 import Date.Extra as Date
 import Date.Extra.Facts as Date
-import Date.Format
-import Time
+import Lines.Axis.Tick exposing (Time, Unit(..), Interval)
+
+
+
+-- PRODUCTION
 
 
 {-| -}
-type Unit
-  = Millisecond
-  | Second
-  | Minute
-  | Hour
-  | Day
-  | Week
-  | Month
-  | Year
-
-
-{-| -}
-type Mark msg =
-  Mark (Int -> Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg)
-
-
-{-| -}
-type alias Interval =
-  { unit : Unit
-  , multiple : Int
-  }
-
-
-{-| -}
-mark : Mark msg
-mark =
-  irregular <| \unitChange interval time ->
-    let
-      date =
-        Date.fromTime time
-
-      label =
-        case unitChange of
-          Just unitChange -> formattingChange unitChange time
-          Nothing         -> formatting interval.unit time
-    in
-    { position = time
-    , label = Just (Axis.viewText label)
-    , tick = Just (Axis.Tick [] 5)
-    }
-
-
-{-| -}
-uniform : (Interval -> Time.Time -> Axis.Mark msg) -> Mark msg
-uniform formatter =
-  Mark (\_ _ -> formatter)
-
-
-{-| -}
-irregular : (Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg) -> Mark msg
-irregular formatter =
-  Mark (\_ -> formatter)
-
-
-{-| -}
-custom : (Int -> Maybe Unit -> Interval -> Time.Time -> Axis.Mark msg) -> Mark msg
-custom =
-  Mark
-
-
-{-| -}
-marks : Mark msg -> Int -> Coordinate.Limits -> List (Axis.Mark msg)
-marks (Mark formatter) amountRough limits =
+values : Int -> Coordinate.Range -> List Time
+values amountRough range =
   let
-    range =
-      limits.max - limits.min
-
     intervalRough =
-      range / toFloat amountRough
+      (range.max - range.min) / toFloat amountRough
 
     unit =
       findBestUnit intervalRough all
@@ -94,28 +31,31 @@ marks (Mark formatter) amountRough limits =
       toMs unit * toFloat multiple
 
     beginning =
-      beginAt limits.min unit multiple
+      beginAt range.min unit multiple
 
-    toPositions acc m =
-      let next_ = next beginning unit (m * multiple) in
-      if next_ > limits.max then acc else toPositions (acc ++ [ next_ ]) (m + 1)
+    toPositions acc i =
+      let next_ = next beginning unit (i * multiple) in
+      if next_ > range.max then acc else toPositions (acc ++ [ next_ ]) (i + 1)
 
-    mark unitChange index =
-      formatter index unitChange (Interval unit multiple)
+    toTime unitChange value =
+      { change = unitChange
+      , interval = Interval unit multiple
+      , timestamp = value
+      }
 
-    toMarks values unitChange index acc =
+    toTimes values unitChange acc =
       case values of
         value :: next :: rest ->
-          toMarks (next :: rest) (getUnitChange unit value next) (index + 1) <|
-            mark unitChange index value :: acc
+          toTime unitChange value :: acc
+            |> toTimes (next :: rest) (getUnitChange unit value next)
 
         [ value ] ->
-           mark unitChange index value :: acc
+           toTime unitChange value :: acc
 
         [] ->
           acc
   in
-  toMarks (toPositions [] 0) Nothing 0 []
+  toTimes (toPositions [] 0) Nothing []
 
 
 
@@ -239,34 +179,6 @@ getUnitChange interval value next =
   unitChange_ allReversed
 
 
-formatting : Unit -> Float -> String
-formatting unit =
-  Date.fromTime >>
-    case unit of
-      Millisecond -> toString << Date.toTime
-      Second      -> Date.Format.format "%S"
-      Minute      -> Date.Format.format "%M"
-      Hour        -> Date.Format.format "%l%P"
-      Day         -> Date.Format.format "%e"
-      Week        -> Date.toFormattedString "'Week' w"
-      Month       -> Date.Format.format "%b"
-      Year        -> Date.Format.format "%Y"
-
-
-formattingChange : Unit -> Float -> String
-formattingChange unit =
-  Date.fromTime >>
-    case unit of
-      Millisecond -> toString << Date.toTime
-      Second      -> Date.Format.format "%S"
-      Minute      -> Date.Format.format "%M"
-      Hour        -> Date.Format.format "%l%P"
-      Day         -> Date.Format.format "%a"
-      Week        -> Date.toFormattedString "'Week' w"
-      Month       -> Date.Format.format "%b"
-      Year        -> Date.Format.format "%Y"
-
-
 
 -- HELPERS
 
@@ -341,7 +253,7 @@ magnitude : Float -> Unit -> Float
 magnitude interval unit =
   case unit of
     Year ->
-      max 1 (Axis.getMagnitude interval)
+      max 1 (Utils.magnitude interval)
 
     _ ->
       1

@@ -105,7 +105,7 @@ defaultLabel =
 -- BUCKETED
 
 
-{-| The two arguments constitute the position of the legend given the limits of
+{-| The two arguments constitute the position of the legend given the range of
 the respective axes.
 
     chartConfig : Lines.Config data msg
@@ -116,7 +116,7 @@ the respective axes.
       }
 
 -}
-bucketed : (Coordinate.Limits -> Float) -> (Coordinate.Limits -> Float) -> Legends msg
+bucketed : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends msg
 bucketed =
   Legends.bucketed
 

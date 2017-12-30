@@ -18,6 +18,12 @@ apply stuff toNewStuff =
 
 
 {-| -}
+apply2 : a -> b -> (a -> b -> c) -> c
+apply2 stuff1 stuff2 toNewStuff =
+    toNewStuff stuff1 stuff2
+
+
+{-| -}
 concat : List a -> List a -> List a -> List a
 concat first second third =
   first ++ second ++ third
@@ -61,7 +67,7 @@ withFirst stuff process =
 
 
 {-| -}
-towardsZero : Coordinate.Limits -> Float
+towardsZero : Coordinate.Range -> Float
 towardsZero { max, min } =
   clamp min max 0
 
@@ -76,3 +82,9 @@ last list =
 toClipPathId : String -> String
 toClipPathId id =
   "clip-path__" ++ id
+
+
+{-| -}
+magnitude : Float -> Float
+magnitude num =
+  toFloat <| 10 ^ (floor (logBase e num / logBase e 10))

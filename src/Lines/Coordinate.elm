@@ -1,6 +1,6 @@
 module Lines.Coordinate exposing
   ( Frame, Size, Margin
-  , System, Limits
+  , System, Range
   , Point, toSVG, toData
   , toSVGX, toSVGY
   , toDataX, toDataY
@@ -14,7 +14,7 @@ module Lines.Coordinate exposing
 @docs Frame, Size, Margin
 
 # System
-@docs System, Limits
+@docs System, Range
 
 # Translation
 
@@ -32,8 +32,8 @@ account, scaling doesn't.
     system : System
     system =
       { frame = Frame (Margin 10 10 10 10) (Size 100 100)
-      , x = Limits 0 10
-      , y = Limits 0 10
+      , x = Range 0 10
+      , y = Range 0 10
       }
 
     dataPoint : Point
@@ -91,21 +91,23 @@ type alias Margin =
 
   - The `frame` which is information about the size and margins of your chart.
   - The `x` which is the minimum and maximum of your range.
-  - The `y` which is the minimum and maximum of your domain.
+  - The `y` which is the minimum and maximum of your domain. TODO
 
 This is all the information we need for translating your data coordinates into
 SVG coordinates.
 -}
 type alias System =
   { frame : Frame
-  , x : Limits
-  , y : Limits
+  , x : Range
+  , y : Range
+  , xData : Range
+  , yData : Range
   }
 
 
 {-| These are minimum and maximum values of a dimension.
 -}
-type alias Limits =
+type alias Range =
   { min : Float
   , max : Float
   }

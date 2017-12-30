@@ -29,13 +29,15 @@ type alias Margin =
 {-| -}
 type alias System =
   { frame : Frame
-  , x : Limits
-  , y : Limits
+  , x : Range
+  , y : Range
+  , xData : Range
+  , yData : Range
   }
 
 
 {-| -}
-type alias Limits =
+type alias Range =
   { min : Float
   , max : Float
   }
@@ -56,18 +58,18 @@ type alias Point =
 
 
 {-| -}
-limits : (a -> Float) -> List a -> Limits
-limits toValue data =
+range : (a -> Float) -> List a -> Range
+range toValue data =
   let
-    limits =
+    range =
       { min = minimum toValue data
       , max = maximum toValue data
       }
   in
-  if limits.min == limits.max then
-    { limits | max = limits.max + 1 }
+  if range.min == range.max then
+    { range | max = range.max + 1 }
   else
-    limits
+    range
 
 
 {-| -}
@@ -93,9 +95,9 @@ maximum toValue =
 
 
 {-| -}
-ground : Limits -> Limits
-ground limits =
-  { limits | min = Basics.min limits.min 0 }
+ground : Range -> Range
+ground range =
+  { range | min = Basics.min range.min 0 }
 
 
 {-| -}

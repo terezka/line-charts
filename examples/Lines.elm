@@ -7,9 +7,12 @@ import Lines.Junk as Junk exposing (..)
 import Lines.Color as Color
 import Lines.Dot as Dot
 import Lines.Axis as Axis
-import Lines.Axis.Time as Time
+import Lines.Axis.Tick as Tick
+import Lines.Axis.Title as Title
+import Lines.Axis.Range as Range
+import Lines.Axis.Line as AxisLine
+import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
-import Lines.Events as Events
 import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Legends as Legends
@@ -21,25 +24,56 @@ main =
   Lines.viewCustom
     { margin = Coordinate.Margin 40 150 90 150
     , attributes = [ Attributes.style "font-family: monospace;" ]
-    , events = Events.none
+    , events = []
+    , x =
+        { title = Title.default "Time"
+        , variable = .date
+        , pixels = 650
+        , padding = 20
+        , range = Range.padded 0.1 0.1
+        , axis =
+            Axis.timeCustom (Axis.around 7)
+              { line = Just AxisLine.rangeFrame
+              , tick = Tick.time
+              , direction = Tick.negative
+              }
+        }
+    , y =
+        { title = Title.at .max -10 0 "Heart attacks"
+        , variable = .heartattacks
+        , pixels = 400
+        , padding = 20
+        , range = Range.padded 0.1 0.1
+        , axis =
+            Axis.dashed
+              { line = Just AxisLine.rangeFrame
+              , tick = tick
+              , direction = Tick.negative
+              }
+        }
+    , intersection = Intersection.default
     , junk = Junk.none
-    , x = Axis.axisCustom 850 .date
-            <| Axis.look "Time"
-              <| Time.marks Time.mark 10
-    , y = Axis.axisCustom 400 .heartattacks
-            <| Axis.look "Heart attacks"
-              <| Axis.marks Axis.mark (Axis.valuesExact 7)
-    , interpolation = Lines.linear
+    , interpolation = Lines.monotone
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
     , areaOpacity = 0
     , id = "chart"
     }
-    [ Lines.line Color.blue Dot.triangle "" data1
-    , Lines.line Color.pink Dot.diamond "" data2
-    , Lines.line Color.orange Dot.cross "" data3
+    [ Lines.line Color.blue Dot.triangle "1" data1
+    , Lines.line Color.pink Dot.diamond "2" data2
+    , Lines.line Color.orange Dot.cross "3" data3
     ]
+
+
+tick : Int -> Data -> Tick.Tick msg
+tick _ data =
+  { color = Color.orange
+  , width = 2
+  , events = []
+  , length = 7
+  , label = Just <| Junk.text (toString data.heartattacks)
+  }
 
 
 
@@ -55,35 +89,35 @@ type alias Data =
 
 data1 : List Data
 data1 =
-  [ Data 1 0.00034 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
-  , Data 2 0.00037 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
-  , Data 3 0.00036 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
-  , Data 9 0.00033 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
+  [ Data 1 34 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
+  , Data 2 36 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
+  , Data 3 36.5 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
+  , Data 9 34 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
   ]
 
 
 data2 : List Data
 data2 =
-  [ Data 2 0.00032 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
-  , Data 3 0.00034 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
-  , Data 4 0.00036 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
-  , Data 5 0.00038 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
+  [ Data 2 32 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
+  , Data 3 34 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
+  , Data 4 32 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
+  , Data 5 38 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
   ]
 
 
 data3 : List Data
 data3 =
-  [ Data 2 0.00035 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
-  , Data 3 0.00032 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
-  , Data 4 0.00038 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
-  , Data 5 0.00036 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
+  [ Data 2 35 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
+  , Data 3 32 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
+  , Data 4 38 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
+  , Data 5 36 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
   ]
 
 
 data3_5 : List Data
 data3_5 =
-  [ Data 6 0.00036 (269849424300 + 4 * 2 * 3600000)
-  , Data 7 0.00036 (269849424300 + 5 * 2 * 3600000)
+  [ Data 6 36 (269849424300 + 4 * 2 * 3600000)
+  , Data 7 36 (269849424300 + 5 * 2 * 3600000)
   ]
 
 
