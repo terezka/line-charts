@@ -10,6 +10,9 @@ import Internal.Axis.Range as Range
 import Lines.Coordinate as Coordinate
 
 
+-- TODO: Add adjust for nice ticks?
+
+
 {-| -}
 type alias Range =
   Range.Range
