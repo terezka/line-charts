@@ -21,27 +21,27 @@ main =
   -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3 ]
   Lines.viewCustom
     { margin = Coordinate.Margin 40 150 90 150
-    , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
+    , attributes = [ Attributes.style "font-family: monospace;" ]
     , events = []
     , x =
-        { title = Title.default ""
+        { title = Title.default "Time"
         , variable = .date
         , pixels = 650
         , padding = 20
-        , range = Range.default
+        , range = Range.padded 0.1 0.1
         , axis = Axis.time (Axis.around 10)
         }
     , y =
-        { title = Title.default ""
+        { title = Title.at .max -10 0 "Heart attacks"
         , variable = .heartattacks
         , pixels = 400
         , padding = 20
         , range = Range.default
-        , axis = Axis.float (Axis.around 5)
+        , axis = Axis.float (Axis.exactly 5)
         }
-    , intersection = Intersection.custom .min (always 0.00035)
+    , intersection = Intersection.default
     , junk = Junk.none
-    , interpolation = Lines.linear
+    , interpolation = Lines.monotone
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
