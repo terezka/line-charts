@@ -30,26 +30,16 @@ main =
         , variable = .date
         , pixels = 650
         , padding = 20
-        , range = Range.padded 0.1 0.1
-        , axis =
-            Axis.timeCustom (Axis.around 7)
-              { line = Just AxisLine.rangeFrame
-              , tick = Tick.time
-              , direction = Tick.negative
-              }
+        , range = Range.default
+        , axis = Axis.time (Axis.around 4)
         }
     , y =
-        { title = Title.at .max -10 0 "Heart attacks"
+        { title = Title.default "Heart attacks"
         , variable = .heartattacks
-        , pixels = 400
+        , pixels = 500
         , padding = 20
-        , range = Range.padded 0.1 0.1
-        , axis =
-            Axis.dashed
-              { line = Just AxisLine.rangeFrame
-              , tick = tick
-              , direction = Tick.negative
-              }
+        , range = Range.default
+        , axis = Axis.default
         }
     , intersection = Intersection.default
     , junk = Junk.none
@@ -89,28 +79,28 @@ type alias Data =
 
 data1 : List Data
 data1 =
-  [ Data 1 34 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
-  , Data 2 36 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
-  , Data 3 36.5 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
-  , Data 9 34 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
+  [ Data 1 34 (269810504300 + (1 + 0) * 3600000)
+  , Data 2 36 (269810504300 + (1 + 1) * 3600000)
+  , Data 3 36.5 (269810504300 + (1 + 2) * 3600000)
+  , Data 9 34 (269810504300 + (1 + 3) * 3600000)
   ]
 
 
 data2 : List Data
 data2 =
-  [ Data 2 32 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
-  , Data 3 34 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
-  , Data 4 32 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
-  , Data 5 38 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
+  [ Data 2 32 (269810504300 + (1 + 0) * 3600000)
+  , Data 3 34 (269810504300 + (1 + 1) * 3600000)
+  , Data 4 32 (269810504300 + (1 + 2) * 3600000)
+  , Data 5 38 (269810504300 + (1 + 3) * 3600000)
   ]
 
 
 data3 : List Data
 data3 =
-  [ Data 2 35 (269810504300 + (1 + 0) * 30 * 24 * 3 * 3600000)
-  , Data 3 32 (269810504300 + (1 + 1) * 30 * 24 * 3 * 3600000)
-  , Data 4 38 (269810504300 + (1 + 2) * 30 * 24 * 3 * 3600000)
-  , Data 5 36 (269810504300 + (1 + 3) * 30 * 24 * 3 * 3600000)
+  [ Data 2 35 (269810504300 + (1 + 0) * 3600000)
+  , Data 3 32 (269810504300 + (1 + 1) * 3600000)
+  , Data 4 38 (269810504300 + (1 + 2) * 3600000)
+  , Data 5 36 (269810504300 + (1 + 3) * 3600000)
   ]
 
 
