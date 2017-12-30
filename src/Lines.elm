@@ -441,12 +441,12 @@ viewCustom config lines =
   container <|
     Svg.svg attributes
       [ Svg.defs [] [ clipPath config system ]
-      , Svg.g [ Attributes.class "junk--below" ] junk.below
-      , Svg.g [ Attributes.class "lines" ] viewLines
+      , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
+      , Svg.g [ Attributes.class "chart__lines" ] viewLines
       , Axis.viewHorizontal system config.intersection allData config.x
       , Axis.viewVertical   system config.intersection allData config.y
       , viewLegends
-      , Svg.g [ Attributes.class "junk--above" ] junk.above
+      , Svg.g [ Attributes.class "chart__junk--above" ] junk.above
       ]
 
 

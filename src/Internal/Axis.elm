@@ -250,10 +250,10 @@ viewHorizontal system intersection data dimension =
         viewTick ( position, tick ) =
           viewHorizontalTick system config (at position) tick
     in
-    g [ class "axis--horizontal" ]
+    g [ class "chart__axis--horizontal" ]
       [ viewHorizontalTitle system at config
       , viewMaybe config.line (apply2 system.xData system.x >> viewAxisLine)
-      , g [ class "ticks" ] (List.map viewTick config.ticks)
+      , g [ class "chart__ticks" ] (List.map viewTick config.ticks)
       ]
 
 
@@ -282,10 +282,10 @@ viewVertical system intersection data dimension =
         viewTick ( position, tick ) =
           viewVerticalTick system config (at position) tick
     in
-    g [ class "axis--vertical" ]
+    g [ class "chart__axis--vertical" ]
       [ viewVerticalTitle system at config
       , viewMaybe config.line (apply2 system.yData system.y >> viewAxisLine)
-      , g [ class "ticks" ] (List.map viewTick config.ticks)
+      , g [ class "chart__ticks" ] (List.map viewTick config.ticks)
       ]
 
 
@@ -299,7 +299,7 @@ viewHorizontalTitle system at { title } =
     position =
       at (title.position system.x)
   in
-  g [ class "title"
+  g [ class "chart__title"
     , transform
         [ move system position.x position.y
         , offset title.xOffset (title.yOffset + 40)
@@ -315,7 +315,7 @@ viewVerticalTitle system at { title } =
     position =
       at (title.position system.y)
   in
-  g [ class "title"
+  g [ class "chart__title"
     , transform
         [ move system position.x position.y
         , offset (title.xOffset - 5) (title.yOffset - 15)
@@ -350,7 +350,7 @@ attributesLine { events, width, color } =
 
 viewHorizontalTick : Coordinate.System -> ViewConfig msg -> Point -> Tick.Tick msg -> Svg msg
 viewHorizontalTick system config ({ x, y } as point) tick =
-  g [ class "tick" ]
+  g [ class "chart__tick" ]
     [ xTick system (lengthOfTick config tick) (attributesTick tick) y x
     , viewMaybe tick.label (viewHorizontalLabel system config point)
     ]
@@ -358,7 +358,7 @@ viewHorizontalTick system config ({ x, y } as point) tick =
 
 viewVerticalTick : Coordinate.System -> ViewConfig msg -> Point -> Tick.Tick msg -> Svg msg
 viewVerticalTick system config ({ x, y } as point) tick =
-  g [ class "tick" ]
+  g [ class "chart__tick" ]
     [ yTick system (lengthOfTick config tick) (attributesTick tick) x y
     , viewMaybe tick.label (viewVerticalLabel system config point)
     ]
