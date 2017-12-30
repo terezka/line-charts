@@ -228,7 +228,7 @@ isMaybe hovering datum =
 
 
 {-| -}
-type alias Style = -- TODO size divide by pi
+type alias Style =
   Dot.Style
 
 

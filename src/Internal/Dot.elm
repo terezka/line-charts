@@ -29,8 +29,8 @@ type Look data =
 default : Look data
 default =
   Look
-    { normal = disconnected 70 2
-    , emphasized = aura 50 4 0.5
+    { normal = disconnected 10 2
+    , emphasized = aura 7 4 0.5
     , isEmphasized = always False
     }
 
@@ -40,7 +40,7 @@ static : Style -> Look data
 static style =
   Look
     { normal = style
-    , emphasized = aura 50 4 0.5
+    , emphasized = aura 5 4 0.5
     , isEmphasized = always False
     }
 
@@ -149,15 +149,16 @@ viewSample (Look config) shape =
 
 
 viewShape : Shape -> Float -> Variety -> Color.Color -> Coordinate.System -> Point -> Svg msg
-viewShape shape =
+viewShape shape radius =
+  let size = 2 * pi * radius in
   case shape of
-    Circle -> viewCircle []
-    Triangle -> viewTriangle []
-    Square -> viewSquare []
-    Diamond -> viewDiamond []
-    Cross -> viewCross []
-    Plus -> viewPlus []
-    None -> \_ _ _ _ _ -> Svg.text ""
+    Circle -> viewCircle [] size
+    Triangle -> viewTriangle [] size
+    Square -> viewSquare [] size
+    Diamond -> viewDiamond [] size
+    Cross -> viewCross [] size
+    Plus -> viewPlus [] size
+    None -> \_ _ _ _ -> Svg.text ""
 
 
 viewCircle : List (Svg.Attribute msg) -> Float -> Variety -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
