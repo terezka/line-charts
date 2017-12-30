@@ -10,7 +10,6 @@ import Lines.Axis as Axis
 import Lines.Axis.Tick as Tick
 import Lines.Axis.Title as Title
 import Lines.Axis.Range as Range
-import Lines.Axis.Line as AxisLine
 import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
 import Lines.Legends as Legends
@@ -36,10 +35,10 @@ main =
     , y =
         { title = Title.default "Heart attacks"
         , variable = .heartattacks
-        , pixels = 500
+        , pixels = 900
         , padding = 20
         , range = Range.default
-        , axis = Axis.default
+        , axis = Axis.float (Axis.exactly 90)
         }
     , intersection = Intersection.default
     , junk = Junk.none
@@ -79,28 +78,28 @@ type alias Data =
 
 data1 : List Data
 data1 =
-  [ Data 1 34 (269810504300 + (1 + 0) * 3600000)
-  , Data 2 36 (269810504300 + (1 + 1) * 3600000)
-  , Data 3 36.5 (269810504300 + (1 + 2) * 3600000)
-  , Data 9 34 (269810504300 + (1 + 3) * 3600000)
+  [ Data 1 0.00034 (269810504300 + (1 + 0) * 3600000)
+  , Data 2 0.00036 (269810504300 + (1 + 1) * 3600000)
+  , Data 3 0.000365 (269810504300 + (1 + 2) * 3600000)
+  , Data 9 0.00034 (269810504300 + (1 + 3) * 3600000)
   ]
 
 
 data2 : List Data
 data2 =
-  [ Data 2 32 (269810504300 + (1 + 0) * 3600000)
-  , Data 3 34 (269810504300 + (1 + 1) * 3600000)
-  , Data 4 32 (269810504300 + (1 + 2) * 3600000)
-  , Data 5 38 (269810504300 + (1 + 3) * 3600000)
+  [ Data 2 0.00032 (269810504300 + (1 + 0) * 3600000)
+  , Data 3 0.00034 (269810504300 + (1 + 1) * 3600000)
+  , Data 4 0.00032 (269810504300 + (1 + 2) * 3600000)
+  , Data 5 0.00038 (269810504300 + (1 + 3) * 3600000)
   ]
 
 
 data3 : List Data
 data3 =
-  [ Data 2 35 (269810504300 + (1 + 0) * 3600000)
-  , Data 3 32 (269810504300 + (1 + 1) * 3600000)
-  , Data 4 38 (269810504300 + (1 + 2) * 3600000)
-  , Data 5 36 (269810504300 + (1 + 3) * 3600000)
+  [ Data 2 0.00035 (269810504300 + (1 + 0) * 3600000)
+  , Data 3 0.00032 (269810504300 + (1 + 1) * 3600000)
+  , Data 4 0.00038 (269810504300 + (1 + 2) * 3600000)
+  , Data 5 0.00036 (269810504300 + (1 + 3) * 3600000)
   ]
 
 

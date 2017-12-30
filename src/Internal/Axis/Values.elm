@@ -64,18 +64,26 @@ values allowDecimals exact amountRough range =
       interval =
         getInterval intervalRough allowDecimals exact
 
-      ceilingTo number prec =
-        prec * toFloat (ceiling (number / prec))
-
       beginning =
-        ceilingTo range.min interval
+        getBeginning range.min interval
     in
     positions range beginning interval 0 []
 
 
+getBeginning : Float -> Float -> Float
+getBeginning min interval =
+  let
+    multiple =
+      correctFloat (getPrecision interval) (min / interval)
+  in
+    if multiple == toFloat (round multiple)
+      then min
+      else ceilingTo interval min
+
+
 positions : Coordinate.Range -> Float -> Float -> Float -> List Float -> List Float
 positions range beginning interval m acc =
-  let next = correctFloat (beginning + (m * interval)) (getPrecision interval)
+  let next = correctFloat (getPrecision interval) (beginning + (m * interval))
   in if next > range.max then acc else positions range beginning interval (m + 1) (acc ++ [ next ])
 
 
@@ -118,8 +126,11 @@ getInterval intervalRaw allowDecimals hasTickAmount =
         findMultipleExact multiples
       else
         findMultiple multiples
+
+    precision =
+      getPrecision magnitude + getPrecision multiple
   in
-  correctFloat (multiple * magnitude) (getPrecision magnitude + getPrecision multiple)
+  correctFloat precision (multiple * magnitude)
 
 
 getMultiples : Float -> Bool -> Bool -> List Float
@@ -143,28 +154,27 @@ getMultiples magnitude allowDecimals hasTickAmount =
 
 
 {-| -}
-correctFloat : Float -> Int -> Float
-correctFloat number prec =
-  case String.split "." (toString number) of -- TODO
-    [ before, after ] ->
-        let
-          afterSafe = after ++ String.repeat (prec + 2) "0"
-          toFloatSafe = String.toFloat >> Result.withDefault 0
-          decimals = String.slice 0 (prec + 1) <| afterSafe
-        in
-          toFloatSafe <| Round.round prec <| toFloatSafe <| before ++ "." ++ decimals
-
-    _ ->
-       number
-
+correctFloat : Int -> Float -> Float
+correctFloat prec =
+  Round.round prec >> String.toFloat >> Result.withDefault 0
 
 
 {-| -}
 getPrecision : Float -> Int
-getPrecision interval =
-  case String.split "." (toString interval) of -- TODO
+getPrecision number =
+  case String.split "e" (toString number) of
     [ before, after ] ->
-        String.length after
+      String.toInt after |> Result.withDefault 0 |> abs
 
     _ ->
-       0
+      case String.split "." (toString number) of
+        [ before, after ] ->
+            String.length after
+
+        _ ->
+           0
+
+
+ceilingTo : Float -> Float -> Float
+ceilingTo prec number =
+  prec * toFloat (ceiling (number / prec))
