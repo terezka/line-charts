@@ -3,12 +3,13 @@ module Lines.Axis exposing
   , exactly, around
   , int, time, float
   , intCustom, timeCustom, floatCustom
+  , dashed
   , Config
   )
 
 {-|
 
-@docs Axis, exactly, around, int, time, float, intCustom, timeCustom, floatCustom, Config
+@docs Axis, exactly, around, int, time, float, intCustom, timeCustom, floatCustom, dashed, Config
 
 -}
 
@@ -16,6 +17,7 @@ import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Axis as Axis
 import Internal.Axis.Values as Values
 import Lines.Axis.Tick as Tick
+import Lines.Axis.Line as Line
 
 
 {-| -}
@@ -80,9 +82,9 @@ floatCustom =
 
 
 {-| -}
-dataCustom : Config data msg -> Axis data msg
-dataCustom =
-   Axis.dataCustom
+dashed : Config data msg -> Axis data msg
+dashed =
+   Axis.dashed
 
 
 {-| -}
@@ -97,7 +99,7 @@ custom =
 
 {-| -}
 type alias Config unit msg =
-  Axis.Config unit msg
-
-
--- TODO config makes
+  { line : Maybe (Line.Line msg)
+  , tick : Int -> unit -> Tick.Tick msg
+  , direction : Tick.Direction
+  }

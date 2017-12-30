@@ -2,7 +2,7 @@ module Internal.Axis exposing
   ( Axis
   , exactly, around
   , int, time, float
-  , intCustom, timeCustom, floatCustom, dataCustom, custom
+  , intCustom, timeCustom, floatCustom, dashed, custom
   , Config, intConfig, timeConfig, floatConfig
   -- INTERNAL
   , viewHorizontal, viewVertical
@@ -95,8 +95,8 @@ floatCustom amount =
 
 
 {-| -}
-dataCustom : Config data msg -> Axis data msg
-dataCustom =
+dashed : Config data msg -> Axis data msg
+dashed =
    AxisData
 
 
@@ -169,7 +169,7 @@ ticks range variable data axis =
       List.indexedMap withPosition data
 
 
-line : Axis data msg -> Maybe (Coordinate.Range -> Line.Config msg)
+line : Axis data msg -> Maybe (Coordinate.Range -> Coordinate.Range -> Line.Config msg)
 line axis =
   let toConfig = Maybe.map Line.config in
   case axis of
@@ -194,7 +194,7 @@ direction axis =
 
 type alias ViewConfig msg =
   { padding : Float
-  , line : Maybe (Coordinate.Range -> Line.Config msg)
+  , line : Maybe (Coordinate.Range -> Coordinate.Range -> Line.Config msg)
   , ticks : List ( Float, Tick.Tick msg )
   , direction : Direction
   , intersection : Float
@@ -208,7 +208,7 @@ viewHorizontal system intersection data dimension =
     let
         config =
           { padding = dimension.padding
-          , line = line dimension.axis -- TODO all this .axis should go to internal.axis
+          , line = line dimension.axis
           , ticks = ticks system.x dimension.variable data dimension.axis
           , direction = direction dimension.axis
           , intersection = Intersection.getY intersection system
@@ -229,7 +229,7 @@ viewHorizontal system intersection data dimension =
     in
     g [ class "axis--horizontal" ]
       [ viewHorizontalTitle system at config
-      , viewMaybe config.line (apply system.x >> viewAxisLine)
+      , viewMaybe config.line (apply2 system.xData system.x >> viewAxisLine)
       , g [ class "ticks" ] (List.map viewTick config.ticks)
       ]
 
@@ -240,7 +240,7 @@ viewVertical system intersection data dimension =
     let
         config =
           { padding = dimension.padding
-          , line = line dimension.axis -- TODO all this .axis should go to internal.axis
+          , line = line dimension.axis
           , ticks = ticks system.y dimension.variable data dimension.axis
           , direction = direction dimension.axis
           , intersection = Intersection.getX intersection system
@@ -261,7 +261,7 @@ viewVertical system intersection data dimension =
     in
     g [ class "axis--vertical" ]
       [ viewVerticalTitle system at config
-      , viewMaybe config.line (apply system.y >> viewAxisLine)
+      , viewMaybe config.line (apply2 system.yData system.y >> viewAxisLine)
       , g [ class "ticks" ] (List.map viewTick config.ticks)
       ]
 

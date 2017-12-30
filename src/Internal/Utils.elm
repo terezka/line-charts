@@ -18,6 +18,12 @@ apply stuff toNewStuff =
 
 
 {-| -}
+apply2 : a -> b -> (a -> b -> c) -> c
+apply2 stuff1 stuff2 toNewStuff =
+    toNewStuff stuff1 stuff2
+
+
+{-| -}
 concat : List a -> List a -> List a -> List a
 concat first second third =
   first ++ second ++ third

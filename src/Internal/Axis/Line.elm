@@ -1,4 +1,4 @@
-module Internal.Axis.Line exposing (Line, default, fat, Config, custom, config)
+module Internal.Axis.Line exposing (Line, default, fat, rangeFrame, Config, custom, config)
 
 
 import Svg exposing (Attribute)
@@ -8,13 +8,13 @@ import Internal.Coordinate as Coordinate
 
 {-| -}
 type Line msg =
-  Line (Coordinate.Range -> Config msg)
+  Line (Coordinate.Range -> Coordinate.Range -> Config msg)
 
 
 {-| -}
 default : Line msg
 default =
-  Line <| \{min, max} ->
+  Line <| \_ {min, max} ->
     { color = Color.gray
     , width = 1
     , events = []
@@ -26,9 +26,21 @@ default =
 {-| -}
 fat : Line msg
 fat =
-  Line <| \{min, max} ->
+  Line <| \_ {min, max} ->
     { color = Color.gray
     , width = 3
+    , events = []
+    , start = min
+    , end = max
+    }
+
+
+{-| -}
+rangeFrame : Line msg
+rangeFrame =
+  Line <| \{min, max} _ ->
+    { color = Color.gray
+    , width = 1
     , events = []
     , start = min
     , end = max
@@ -50,7 +62,7 @@ type alias Config msg =
 
 
 {-| -}
-custom : (Coordinate.Range -> Config msg) -> Line msg
+custom : (Coordinate.Range -> Coordinate.Range -> Config msg) -> Line msg
 custom =
   Line
 
@@ -60,6 +72,6 @@ custom =
 
 
 {-| -}
-config : Line msg -> Coordinate.Range -> Config msg
+config : Line msg -> Coordinate.Range -> Coordinate.Range -> Config msg
 config (Line config) =
   config

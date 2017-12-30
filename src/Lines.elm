@@ -390,15 +390,21 @@ viewCustom config lines =
       Coordinate.Frame config.margin
         (Coordinate.Size config.x.pixels config.y.pixels)
 
+    xRange =
+      Coordinate.range (.point >> .x) allPoints
+
+    yRange =
+      Coordinate.range (.point >> .y) allPoints
+
     system =
       { frame = frame
-      , x = allPoints
-              |> Coordinate.range (.point >> .x)
+      , x = xRange
               |> Range.apply config.x.range
-      , y = allPoints
-              |> Coordinate.range (.point >> .y)
+      , y = yRange
               |> adjustDomainRange
               |> Range.apply config.y.range
+      , xData = xRange
+      , yData = yRange
       }
 
     adjustDomainRange domain =

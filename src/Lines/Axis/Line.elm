@@ -1,8 +1,8 @@
-module Lines.Axis.Line exposing (Line, default, fat, Config, custom)
+module Lines.Axis.Line exposing (Line, default, fat, rangeFrame, Config, custom)
 
 {-|
 
-@docs Line, default, fat, Config, custom
+@docs Line, default, fat, Config, custom, rangeFrame
 
 -}
 
@@ -29,6 +29,11 @@ fat =
   Line.fat
 
 
+{-| -}
+rangeFrame : Line msg
+rangeFrame =
+  Line.rangeFrame
+
 
 -- CUSTOM
 
@@ -44,6 +49,6 @@ type alias Config msg =
 
 
 {-| -}
-custom : (Coordinate.Range -> Config msg) -> Line msg
+custom : (Coordinate.Range -> Coordinate.Range -> Config msg) -> Line msg
 custom =
   Line.custom

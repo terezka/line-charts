@@ -31,6 +31,8 @@ type alias System =
   { frame : Frame
   , x : Range
   , y : Range
+  , xData : Range
+  , yData : Range
   }
 
 

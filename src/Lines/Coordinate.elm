@@ -91,7 +91,7 @@ type alias Margin =
 
   - The `frame` which is information about the size and margins of your chart.
   - The `x` which is the minimum and maximum of your range.
-  - The `y` which is the minimum and maximum of your domain.
+  - The `y` which is the minimum and maximum of your domain. TODO
 
 This is all the information we need for translating your data coordinates into
 SVG coordinates.
@@ -100,6 +100,8 @@ type alias System =
   { frame : Frame
   , x : Range
   , y : Range
+  , xData : Range
+  , yData : Range
   }
 
 
