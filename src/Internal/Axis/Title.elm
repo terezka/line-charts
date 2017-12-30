@@ -30,19 +30,19 @@ default title =
 
 
 {-| -}
-at : String -> (Coordinate.Range -> Float) -> (Float, Float) -> Title msg
-at title position (xOffset, yOffset) =
+at : (Coordinate.Range -> Float) -> Float -> Float -> String -> Title msg
+at position xOffset yOffset title =
   Title
     { view = viewText title
-    , position = .max
+    , position = position
     , xOffset = xOffset
     , yOffset = yOffset
     }
 
 
 {-| -}
-custom : Svg msg -> (Coordinate.Range -> Float) -> (Float, Float) -> Title msg
-custom view position (xOffset, yOffset) =
+custom : (Coordinate.Range -> Float) -> Float -> Float -> Svg msg -> Title msg
+custom position xOffset yOffset view =
   Title
     { view = view
     , position = .max
@@ -60,7 +60,8 @@ viewText string =
   Svg.text_ [] [ Svg.tspan [] [ Svg.text string ] ]
 
 
---
+
+-- INTERNAL
 
 
 {-| -}
