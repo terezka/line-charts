@@ -23,12 +23,12 @@ default =
 
 
 {-| -}
-at : String -> (Coordinate.Range -> Float) -> (Float, Float) -> Title msg
+at : (Coordinate.Range -> Float) -> Float -> Float -> String -> Title msg
 at =
   Title.at
 
 
 {-| -}
-custom : Svg msg -> (Coordinate.Range -> Float) -> (Float, Float) -> Title msg
+custom : (Coordinate.Range -> Float) -> Float -> Float -> Svg msg -> Title msg
 custom =
   Title.custom
