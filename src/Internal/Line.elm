@@ -90,7 +90,7 @@ static : Style -> Look data
 static normal =
   Look
     { normal = normal
-    , emphasized = style 2 identity
+    , emphasized = normal
     , isEmphasized = always False
     }
 
