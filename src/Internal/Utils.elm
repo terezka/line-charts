@@ -81,7 +81,7 @@ last list =
 {-| -}
 toClipPathId : String -> String
 toClipPathId id =
-  "clip-path__" ++ id
+  "chart__clip-path--" ++ id
 
 
 {-| -}

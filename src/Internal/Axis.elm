@@ -1,5 +1,5 @@
 module Internal.Axis exposing
-  ( Axis
+  ( Axis, default
   , exactly, around
   , int, time, float
   , intCustom, timeCustom, floatCustom, dashed, custom
@@ -27,7 +27,7 @@ import Internal.Utils exposing (..)
 type alias Dimension data msg =
   { title : Title.Title msg
   , variable : data -> Float
-  , pixels : Float -- TODO
+  , pixels : Int
   , padding : Float
   , range : Range.Range
   , axis : Axis data msg
@@ -36,7 +36,8 @@ type alias Dimension data msg =
 
 {-| -}
 type Axis data msg
-  = AxisInt (Coordinate.Range -> List Int) (Config Int msg)
+  = AxisDefault
+  | AxisInt (Coordinate.Range -> List Int) (Config Int msg)
   | AxisTime (Coordinate.Range -> List Tick.Time) (Config Tick.Time msg)
   | AxisFloat (Coordinate.Range -> List Float) (Config Float msg)
   | AxisData (Config data msg)
@@ -44,6 +45,12 @@ type Axis data msg
 
 
 -- API / AXIS
+
+
+{-| -}
+default : Axis data msg
+default =
+  AxisDefault
 
 
 {-| -}
@@ -61,19 +68,19 @@ around =
 {-| -}
 int : Values.Amount -> Axis data msg
 int amount =
-   AxisInt (Values.int amount) intConfig
+  AxisInt (Values.int amount) intConfig
 
 
 {-| -}
 time : Values.Amount -> Axis data msg
 time amount =
-   AxisTime (Values.time amount) timeConfig
+  AxisTime (Values.time amount) timeConfig
 
 
 {-| -}
 float : Values.Amount -> Axis data msg
 float amount =
-   AxisFloat (Values.float amount) floatConfig
+  AxisFloat (Values.float amount) floatConfig
 
 
 {-| -}
@@ -149,9 +156,13 @@ floatConfig =
 -- INTERNAL
 
 
-ticks : Coordinate.Range -> (data -> Float) -> List data -> Axis data msg -> List ( Float, Tick.Tick msg )
-ticks range variable data axis =
+ticks : Coordinate.Range -> (data -> Float) -> Int -> List data -> Axis data msg -> List ( Float, Tick.Tick msg )
+ticks range variable length data axis =
   case axis of
+    AxisDefault ->
+      let withPosition i v = ( v, Tick.float i v ) in
+      List.indexedMap withPosition (defaultValues length range)
+
     AxisInt values config ->
       let withPosition i v = ( toFloat v, config.tick i v ) in
       List.indexedMap withPosition (values range)
@@ -169,10 +180,21 @@ ticks range variable data axis =
       List.indexedMap withPosition data
 
 
+defaultValues : Int -> Coordinate.Range -> List Float
+defaultValues length =
+  Values.float (defaultAmount length)
+
+
+defaultAmount : Int -> Values.Amount
+defaultAmount length =
+  around <| length // 90
+
+
 line : Axis data msg -> Maybe (Coordinate.Range -> Coordinate.Range -> Line.Config msg)
 line axis =
   let toConfig = Maybe.map Line.config in
   case axis of
+    AxisDefault             -> toConfig (Just Line.default)
     AxisInt values config   -> toConfig config.line
     AxisTime values config  -> toConfig config.line
     AxisFloat values config -> toConfig config.line
@@ -182,6 +204,7 @@ line axis =
 direction : Axis data msg -> Direction
 direction axis =
   case axis of
+    AxisDefault             -> Tick.Negative
     AxisInt values config   -> config.direction
     AxisTime values config  -> config.direction
     AxisFloat values config -> config.direction
@@ -209,7 +232,7 @@ viewHorizontal system intersection data dimension =
         config =
           { padding = dimension.padding
           , line = line dimension.axis
-          , ticks = ticks system.x dimension.variable data dimension.axis
+          , ticks = ticks system.x dimension.variable dimension.pixels data dimension.axis
           , direction = direction dimension.axis
           , intersection = Intersection.getY intersection system
           , title = Title.config dimension.title
@@ -227,10 +250,10 @@ viewHorizontal system intersection data dimension =
         viewTick ( position, tick ) =
           viewHorizontalTick system config (at position) tick
     in
-    g [ class "axis--horizontal" ]
+    g [ class "chart__axis--horizontal" ]
       [ viewHorizontalTitle system at config
       , viewMaybe config.line (apply2 system.xData system.x >> viewAxisLine)
-      , g [ class "ticks" ] (List.map viewTick config.ticks)
+      , g [ class "chart__ticks" ] (List.map viewTick config.ticks)
       ]
 
 
@@ -241,7 +264,7 @@ viewVertical system intersection data dimension =
         config =
           { padding = dimension.padding
           , line = line dimension.axis
-          , ticks = ticks system.y dimension.variable data dimension.axis
+          , ticks = ticks system.y dimension.variable dimension.pixels data dimension.axis
           , direction = direction dimension.axis
           , intersection = Intersection.getX intersection system
           , title = Title.config dimension.title
@@ -259,10 +282,10 @@ viewVertical system intersection data dimension =
         viewTick ( position, tick ) =
           viewVerticalTick system config (at position) tick
     in
-    g [ class "axis--vertical" ]
+    g [ class "chart__axis--vertical" ]
       [ viewVerticalTitle system at config
       , viewMaybe config.line (apply2 system.yData system.y >> viewAxisLine)
-      , g [ class "ticks" ] (List.map viewTick config.ticks)
+      , g [ class "chart__ticks" ] (List.map viewTick config.ticks)
       ]
 
 
@@ -276,7 +299,7 @@ viewHorizontalTitle system at { title } =
     position =
       at (title.position system.x)
   in
-  g [ class "title"
+  g [ class "chart__title"
     , transform
         [ move system position.x position.y
         , offset title.xOffset (title.yOffset + 40)
@@ -292,7 +315,7 @@ viewVerticalTitle system at { title } =
     position =
       at (title.position system.y)
   in
-  g [ class "title"
+  g [ class "chart__title"
     , transform
         [ move system position.x position.y
         , offset (title.xOffset - 5) (title.yOffset - 15)
@@ -327,7 +350,7 @@ attributesLine { events, width, color } =
 
 viewHorizontalTick : Coordinate.System -> ViewConfig msg -> Point -> Tick.Tick msg -> Svg msg
 viewHorizontalTick system config ({ x, y } as point) tick =
-  g [ class "tick" ]
+  g [ class "chart__tick" ]
     [ xTick system (lengthOfTick config tick) (attributesTick tick) y x
     , viewMaybe tick.label (viewHorizontalLabel system config point)
     ]
@@ -335,7 +358,7 @@ viewHorizontalTick system config ({ x, y } as point) tick =
 
 viewVerticalTick : Coordinate.System -> ViewConfig msg -> Point -> Tick.Tick msg -> Svg msg
 viewVerticalTick system config ({ x, y } as point) tick =
-  g [ class "tick" ]
+  g [ class "chart__tick" ]
     [ yTick system (lengthOfTick config tick) (attributesTick tick) x y
     , viewMaybe tick.label (viewVerticalLabel system config point)
     ]

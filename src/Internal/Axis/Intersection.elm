@@ -20,8 +20,8 @@ default =
 
 
 {-| -}
-at : ( Float, Float ) -> Intersection
-at ( x, y ) =
+at : Float -> Float -> Intersection
+at x y =
   custom (always x) (always y)
 
 

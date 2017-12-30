@@ -23,12 +23,12 @@ default =
 
 
 {-| -}
-at : ( Float, Float ) -> Intersection
+at : Float -> Float -> Intersection
 at =
   Intersection.at
 
 
-{-| TODO shoudl this be a tuple? -}
+{-| -}
 custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Intersection
 custom =
   Intersection.custom

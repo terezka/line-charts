@@ -76,7 +76,7 @@ default =
 
 
 {-| -}
-wider : Int -> Look data
+wider : Float -> Look data
 wider width =
   Look
     { normal = style width identity
@@ -90,7 +90,7 @@ static : Style -> Look data
 static normal =
   Look
     { normal = normal
-    , emphasized = style 2 identity
+    , emphasized = normal
     , isEmphasized = always False
     }
 
@@ -112,13 +112,13 @@ emphasizable normal emphasized isEmphasized =
 {-| -}
 type Style =
   Style
-    { width : Int -- TODO Float
+    { width : Float
     , color : Color.Color -> Color.Color
     }
 
 
 {-| -}
-style : Int -> (Color.Color -> Color.Color) -> Style
+style : Float -> (Color.Color -> Color.Color) -> Style
 style width color =
   Style { width = width, color = color }
 
@@ -143,12 +143,11 @@ view system dotLook interpolation lineLook areaOpacity id (Line line) dataPoints
     viewDot =
       Dot.view dotLook line.shape line.color system
   in
-  -- TODO prefix classes
-  Svg.g [ Attributes.class "line" ]
+  Svg.g [ Attributes.class "chart__line" ]
     [ Utils.viewIf (areaOpacity > 0) <| \() ->
         viewArea system lineLook interpolation line.color areaOpacity id dataPoints
     , viewLine system lineLook interpolation line.color line.dashing id dataPoints
-    , Svg.g [ Attributes.class "dots" ] <| List.map viewDot dataPoints
+    , Svg.g [ Attributes.class "chart__dots" ] <| List.map viewDot dataPoints
     ]
 
 
@@ -194,10 +193,10 @@ toLineAttributes (Look look) mainColor dashing dataPoints =
         else look.normal
 
     width =
-      toFloat style.width / 2
+      style.width / 2
   in
       [ Attributes.style "pointer-events: none;"
-      , Attributes.class "interpolation__line"
+      , Attributes.class "chart__interpolation__line"
       , Attributes.stroke (style.color mainColor)
       , Attributes.strokeWidth (toString width)
       , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
@@ -259,7 +258,7 @@ toAreaAttributes (Look look) mainColor opacity dataPoints =
     color =
       style.color mainColor
   in
-  [ Attributes.class "interpolation__area"
+  [ Attributes.class "chart__interpolation__area"
   , Attributes.fill color
   , Attributes.fillOpacity (toString opacity)
   ]

@@ -296,7 +296,7 @@ type alias Config data msg =
 type alias Dimension data msg =
   { title : Title.Title msg
   , variable : data -> Float
-  , pixels : Float -- TODO
+  , pixels : Int
   , padding : Float
   , range : Range.Range
   , axis : Axis.Axis data msg
@@ -388,7 +388,7 @@ viewCustom config lines =
 
     frame =
       Coordinate.Frame config.margin
-        (Coordinate.Size config.x.pixels config.y.pixels)
+        (Coordinate.Size (toFloat config.x.pixels) (toFloat config.y.pixels))
 
     xRange =
       Coordinate.range (.point >> .x) allPoints
@@ -441,12 +441,12 @@ viewCustom config lines =
   container <|
     Svg.svg attributes
       [ Svg.defs [] [ clipPath config system ]
-      , Svg.g [ Attributes.class "junk--below" ] junk.below
-      , Svg.g [ Attributes.class "lines" ] viewLines
+      , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
+      , Svg.g [ Attributes.class "chart__lines" ] viewLines
       , Axis.viewHorizontal system config.intersection allData config.x
       , Axis.viewVertical   system config.intersection allData config.y
       , viewLegends
-      , Svg.g [ Attributes.class "junk--above" ] junk.above
+      , Svg.g [ Attributes.class "chart__junk--above" ] junk.above
       ]
 
 

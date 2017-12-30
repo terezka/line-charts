@@ -14,10 +14,10 @@ module Lines.Line exposing
 
 -}
 
+import Lines.Color as Color
 import Internal.Line as Line
 
 
--- TODO add style creator
 
 {-| -}
 type alias Look data =
@@ -36,7 +36,7 @@ default =
 
 
 {-| -}
-wider : Int -> Look data
+wider : Float -> Look data
 wider =
   Line.wider
 
@@ -45,6 +45,12 @@ wider =
 static : Style -> Look data
 static =
   Line.static
+
+
+{-| -}
+style : Float -> (Color.Color -> Color.Color) -> Style
+style =
+  Line.style
 
 
 {-| -}

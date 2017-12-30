@@ -41,7 +41,7 @@ vertical system userAttributes x y1 y2 =
 
 xTicks : Coordinate.System -> Float -> List (Attribute msg) -> Float -> List Float -> Svg msg
 xTicks system height userAttributes y xs =
-  g [ Attributes.class "x-ticks" ] (List.map (xTick system height userAttributes y) xs)
+  g [ Attributes.class "chart__x-ticks" ] (List.map (xTick system height userAttributes y) xs)
 
 
 xTick : Coordinate.System -> Float -> List (Attribute msg) -> Float -> Float -> Svg msg
@@ -62,7 +62,7 @@ xTick system height userAttributes y x =
 
 yTicks : Coordinate.System -> Float -> List (Attribute msg) -> Float -> List Float -> Svg msg
 yTicks system width userAttributes x ys =
-  g [ Attributes.class "y-ticks" ] (List.map (yTick system width userAttributes x) ys)
+  g [ Attributes.class "chart__y-ticks" ] (List.map (yTick system width userAttributes x) ys)
 
 
 yTick : Coordinate.System -> Float -> List (Attribute msg) -> Float -> Float -> Svg msg
@@ -70,7 +70,7 @@ yTick system width userAttributes x y =
   let
     attributes =
       concat
-        [ Attributes.class "tick"
+        [ Attributes.class "chart__tick"
         , Attributes.stroke Color.gray
         ]
         userAttributes
