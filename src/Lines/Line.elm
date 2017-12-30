@@ -36,7 +36,7 @@ default =
 
 
 {-| -}
-wider : Int -> Look data
+wider : Float -> Look data
 wider =
   Line.wider
 

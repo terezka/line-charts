@@ -76,7 +76,7 @@ default =
 
 
 {-| -}
-wider : Int -> Look data
+wider : Float -> Look data
 wider width =
   Look
     { normal = style width identity
@@ -112,13 +112,13 @@ emphasizable normal emphasized isEmphasized =
 {-| -}
 type Style =
   Style
-    { width : Int -- TODO Float
+    { width : Float
     , color : Color.Color -> Color.Color
     }
 
 
 {-| -}
-style : Int -> (Color.Color -> Color.Color) -> Style
+style : Float -> (Color.Color -> Color.Color) -> Style
 style width color =
   Style { width = width, color = color }
 
@@ -194,7 +194,7 @@ toLineAttributes (Look look) mainColor dashing dataPoints =
         else look.normal
 
     width =
-      toFloat style.width / 2
+      style.width / 2
   in
       [ Attributes.style "pointer-events: none;"
       , Attributes.class "interpolation__line"
