@@ -14,11 +14,12 @@ default =
   Range identity
 
 
-{-| -}
+{-| TODO check this -}
 padded : Float -> Float -> Range
 padded padMin padMax =
   Range <| \{ min, max } ->
-    Coordinate.Range (min * padMin) (max * padMax)
+    let range = max - min in
+    Coordinate.Range (min - range * padMin) (max + range * padMax)
 
 
 {-| -}
@@ -32,11 +33,11 @@ window min max =
 custom : (Coordinate.Range -> (Float, Float)) -> Range
 custom editRange =
   Range <| \range ->
-    let ( min, max ) = editRange range
-    in Coordinate.Range min max
+    let ( min, max ) = editRange range in
+    Coordinate.Range min max
 
 
---
+-- INTERNAL
 
 
 {-| -}
