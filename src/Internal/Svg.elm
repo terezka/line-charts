@@ -39,6 +39,18 @@ vertical system userAttributes x y1 y2 =
       ]
 
 
+horizontalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Svg msg
+horizontalGrid system userAttributes padding y =
+  let offset = Coordinate.scaleDataX system padding in
+  horizontal system userAttributes y (system.x.min - offset) system.x.max
+
+
+verticalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Svg msg
+verticalGrid system userAttributes padding x =
+  let offset = Coordinate.scaleDataY system padding in
+  vertical system userAttributes x (system.y.min - offset) system.y.max
+
+
 xTicks : Coordinate.System -> Float -> List (Attribute msg) -> Float -> List Float -> Svg msg
 xTicks system height userAttributes y xs =
   g [ Attributes.class "chart__x-ticks" ] (List.map (xTick system height userAttributes y) xs)

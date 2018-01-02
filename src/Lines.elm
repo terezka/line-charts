@@ -31,6 +31,7 @@ import Lines.Junk as Junk
 import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
+import Internal.Svg as Svg
 import Internal.Events as Events
 import Internal.Interpolation as Interpolation
 import Internal.Junk
@@ -416,6 +417,7 @@ viewCustom config lines =
     -- View
     junk =
       Internal.Junk.getLayers config.junk system
+        |> Internal.Junk.addGrid (viewGrids config system allData)
 
     container plot =
       Html.div [] (plot :: junk.html)
@@ -466,6 +468,27 @@ clipPath { id } system =
       []
     ]
 
+
+viewGrids : Config data msg -> Coordinate.System -> List data -> List (Svg.Svg msg)
+viewGrids config system data =
+  let
+    verticalGrids =
+      List.filterMap grid <| Axis.ticks system.x config.x data
+
+    horizontalGrids =
+      List.filterMap grid <| Axis.ticks system.y config.y data
+
+    grid ( number, tick ) =
+      Maybe.map (\g ->  ( number, g )) tick.grid
+
+    line draw padding ( at, grid ) =
+      draw system (attributes grid) padding at
+
+    attributes { width, color } =
+      [ Attributes.strokeWidth (toString width), Attributes.stroke color ]
+  in
+    List.map (line Svg.horizontalGrid config.x.padding) horizontalGrids ++
+    List.map (line Svg.verticalGrid config.y.padding) verticalGrids
 
 
 -- INTERNAL / DEFAULTS

@@ -1,9 +1,9 @@
-module Lines.Color exposing (Color, pink, blue, orange, gray, black)
+module Lines.Color exposing (Color, pink, blue, orange, gray, grayLight, black)
 
 {-|
 
 # Defaults
-@docs Color, pink, blue, orange, gray, black
+@docs Color, pink, blue, orange, gray, grayLight, black
 
 -}
 
@@ -36,6 +36,12 @@ blue =
 gray : Color
 gray =
   "#a3a3a3"
+
+
+{-| -}
+grayLight : Color
+grayLight =
+  "#f3f3f3"
 
 
 {-| -}

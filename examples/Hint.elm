@@ -69,7 +69,7 @@ view model =
           , pixels = 400
           , padding = 20
           , range = Range.default
-          , axis = Axis.float (Axis.exactly 10)
+          , axis = Axis.float (Axis.exactly 10) -- TODO what about additional ticks (special marks?) (maybe in junk?)
           }
       , intersection = Intersection.default
       , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
@@ -103,7 +103,7 @@ junk hint =
               [ SvgA.x "0", SvgA.dy "1em" ]
               [ Svg.text <| label ++ ": " ++ toString value ]
       in
-      { below = List.map (Junk.gridHorizontal system []) [ 0, 1, 2 ]
+      { below = []
       , above = [ viewHint ]
       , html = []
       }

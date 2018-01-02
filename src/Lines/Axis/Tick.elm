@@ -1,11 +1,11 @@
 module Lines.Axis.Tick exposing
-  ( Tick, int, time, Time, Unit(..), Interval, float
+  ( Tick, Grid, int, time, Time, Unit(..), Interval, float
   , Direction, negative, positive
   )
 
 {-|
 
-@docs Tick, int, time, Time, Unit, Interval, float
+@docs Tick, Grid, int, time, Time, Unit, Interval, float
 @docs Direction, negative, positive
 
 -}
@@ -28,6 +28,14 @@ type alias Tick msg =
   , events : List (Attribute msg)
   , length : Float
   , label : Maybe (Svg msg)
+  , grid : Maybe Grid
+  }
+
+
+{-| -}
+type alias Grid =
+  { width : Float
+  , color : Color.Color
   }
 
 
@@ -39,6 +47,7 @@ int _ n =
   , events = []
   , length = 5
   , label = Just <| viewText (toString n)
+  , grid = Just (Grid 1 Color.grayLight)
   }
 
 
@@ -78,6 +87,7 @@ time _ time =
   , events = []
   , length = 5
   , label = Just <| viewText (format time)
+  , grid = Just (Grid 1 Color.grayLight)
   }
 
 
@@ -90,6 +100,7 @@ float _ n =
   , events = []
   , length = 5
   , label = Just <| viewText (toString n)
+  , grid = Just (Grid 1 Color.grayLight)
   }
 
 

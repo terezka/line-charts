@@ -25,3 +25,9 @@ type alias Layers msg =
 getLayers : Junk msg -> Coordinate.System -> Layers msg
 getLayers (Junk toLayers) =
   toLayers
+
+
+{-| -}
+addGrid : List (Svg msg) -> Layers msg -> Layers msg
+addGrid grid layers =
+  { layers | below = grid ++ layers.below }

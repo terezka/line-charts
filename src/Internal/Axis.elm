@@ -5,7 +5,7 @@ module Internal.Axis exposing
   , intCustom, timeCustom, floatCustom, dashed, custom
   , Config, intConfig, timeConfig, floatConfig
   -- INTERNAL
-  , viewHorizontal, viewVertical
+  , ticks, viewHorizontal, viewVertical
   )
 
 
@@ -156,12 +156,12 @@ floatConfig =
 -- INTERNAL
 
 
-ticks : Coordinate.Range -> (data -> Float) -> Int -> List data -> Axis data msg -> List ( Float, Tick.Tick msg )
-ticks range variable length data axis =
+ticks : Coordinate.Range -> Dimension data msg ->  List data -> List ( Float, Tick.Tick msg )
+ticks range { variable, pixels, axis } data =
   case axis of
     AxisDefault ->
       let withPosition i v = ( v, Tick.float i v ) in
-      List.indexedMap withPosition (defaultValues length range)
+      List.indexedMap withPosition (defaultValues pixels range)
 
     AxisInt values config ->
       let withPosition i v = ( toFloat v, config.tick i v ) in
@@ -232,7 +232,7 @@ viewHorizontal system intersection data dimension =
         config =
           { padding = dimension.padding
           , line = line dimension.axis
-          , ticks = ticks system.x dimension.variable dimension.pixels data dimension.axis
+          , ticks = ticks system.x dimension data
           , direction = direction dimension.axis
           , intersection = Intersection.getY intersection system
           , title = Title.config dimension.title
@@ -264,7 +264,7 @@ viewVertical system intersection data dimension =
         config =
           { padding = dimension.padding
           , line = line dimension.axis
-          , ticks = ticks system.y dimension.variable dimension.pixels data dimension.axis
+          , ticks = ticks system.y dimension data
           , direction = direction dimension.axis
           , intersection = Intersection.getX intersection system
           , title = Title.config dimension.title

@@ -1,7 +1,7 @@
 module Lines.Junk exposing
   ( Junk, Layers, none, custom
   , Transfrom, transform, move, offset
-  , gridVertical, gridHorizontal, text
+  , vertical, horizontal, text
   )
 
 {-|
@@ -13,7 +13,7 @@ module Lines.Junk exposing
 @docs Junk, custom, Layers
 
 # Common junk
-@docs gridVertical, gridHorizontal, text
+@docs vertical, horizontal, text
 
 # Placing helpers
 @docs Transfrom, transform, move, offset
@@ -89,7 +89,7 @@ you want in the resulting `Layers` type. Here's an example of adding grid lines.
 
     gridLines : Coordinate.System -> List (Svg msg)
     gridLines system =
-      List.map (Junk.gridHorizontal system []) (Axis.defaultInterval system.y)
+      List.map (Junk.horizontal system []) (Axis.defaultInterval system.y)
 
 -}
 custom : (Coordinate.System -> Layers msg) -> Junk msg
@@ -155,18 +155,18 @@ transform =
 
     gridLines : Coordinate.System -> List (Svg msg)
     gridLines system =
-      List.map (Junk.gridVertical system []) (Axis.defaultInterval system.x)
+      List.map (Junk.vertical system []) (Axis.defaultInterval system.x) -- TODO
 -}
-gridVertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
-gridVertical system attribuets at =
-  Svg.vertical system attribuets at system.y.min system.y.max
+vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
+vertical system attributes at =
+  Svg.vertical system attributes at system.y.min system.y.max
 
 
 {-| A grid line that takes up the full length of your horizontal axis.
 -}
-gridHorizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
-gridHorizontal system attribuets at =
-  Svg.horizontal system attribuets at system.x.min system.x.max
+horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
+horizontal system attributes at =
+  Svg.horizontal system attributes at system.x.min system.x.max
 
 
 
