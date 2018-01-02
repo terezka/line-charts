@@ -1,4 +1,4 @@
-module Internal.Axis.Line exposing (Line, default, fat, rangeFrame, Config, custom, config)
+module Internal.Axis.Line exposing (Line, none, default, fat, rangeFrame, Config, custom, config)
 
 
 import Svg exposing (Attribute)
@@ -9,6 +9,18 @@ import Internal.Coordinate as Coordinate
 {-| -}
 type Line msg =
   Line (Coordinate.Range -> Coordinate.Range -> Config msg)
+
+
+{-| -}
+none : Line msg
+none =
+  Line <| \_ {min, max} ->
+    { color = "transparent"
+    , width = 0
+    , events = []
+    , start = min
+    , end = max
+    }
 
 
 {-| -}

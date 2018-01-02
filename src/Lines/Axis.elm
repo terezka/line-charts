@@ -105,7 +105,7 @@ custom =
 
 {-| -}
 type alias Config unit msg =
-  { line : Maybe (Line.Line msg)
+  { line : Line.Line msg
   , tick : Int -> unit -> Tick.Tick msg
   , direction : Tick.Direction
   }

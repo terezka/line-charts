@@ -119,7 +119,7 @@ custom =
 
 {-| -}
 type alias Config unit msg =
-  { line : Maybe (Line.Line msg)
+  { line : Line.Line msg
   , tick : Int -> unit -> Tick.Tick msg
   , direction : Direction
   }
@@ -128,7 +128,7 @@ type alias Config unit msg =
 {-| -}
 intConfig : Config Int msg
 intConfig =
-  { line = Just Line.default
+  { line = Line.default
   , direction = Tick.negative
   , tick = Tick.int
   }
@@ -137,7 +137,7 @@ intConfig =
 {-| -}
 timeConfig : Config Tick.Time msg
 timeConfig =
-  { line = Just Line.default
+  { line = Line.default
   , direction = Tick.negative
   , tick = Tick.time
   }
@@ -146,7 +146,7 @@ timeConfig =
 {-| -}
 floatConfig : Config Float msg
 floatConfig =
-  { line = Just Line.default
+  { line = Line.default
   , direction = Tick.negative
   , tick = Tick.float
   }
@@ -190,15 +190,14 @@ defaultAmount length =
   around <| length // 90
 
 
-line : Axis data msg -> Maybe (Coordinate.Range -> Coordinate.Range -> Line.Config msg)
+line : Axis data msg -> Coordinate.Range -> Coordinate.Range -> Line.Config msg
 line axis =
-  let toConfig = Maybe.map Line.config in
   case axis of
-    AxisDefault             -> toConfig (Just Line.default)
-    AxisInt values config   -> toConfig config.line
-    AxisTime values config  -> toConfig config.line
-    AxisFloat values config -> toConfig config.line
-    AxisData config         -> toConfig config.line
+    AxisDefault             -> Line.config Line.default
+    AxisInt values config   -> Line.config config.line
+    AxisTime values config  -> Line.config config.line
+    AxisFloat values config -> Line.config config.line
+    AxisData config         -> Line.config config.line
 
 
 direction : Axis data msg -> Direction
@@ -217,7 +216,7 @@ direction axis =
 
 type alias ViewConfig msg =
   { padding : Float
-  , line : Maybe (Coordinate.Range -> Coordinate.Range -> Line.Config msg)
+  , line : Coordinate.Range -> Coordinate.Range -> Line.Config msg
   , ticks : List ( Float, Tick.Tick msg )
   , direction : Direction
   , intersection : Float
@@ -252,7 +251,7 @@ viewHorizontal system intersection data dimension =
     in
     g [ class "chart__axis--horizontal" ]
       [ viewHorizontalTitle system at config
-      , viewMaybe config.line (apply2 system.xData system.x >> viewAxisLine)
+      , viewAxisLine (config.line system.xData system.x)
       , g [ class "chart__ticks" ] (List.map viewTick config.ticks)
       ]
 
@@ -284,7 +283,7 @@ viewVertical system intersection data dimension =
     in
     g [ class "chart__axis--vertical" ]
       [ viewVerticalTitle system at config
-      , viewMaybe config.line (apply2 system.yData system.y >> viewAxisLine)
+      , viewAxisLine (config.line system.yData system.y)
       , g [ class "chart__ticks" ] (List.map viewTick config.ticks)
       ]
 
