@@ -15,30 +15,32 @@ import Lines.Coordinate as Coordinate
 import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Legends as Legends
+import Lines.Grid as Grid
 
 
 main : Svg msg
 main =
   -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3 ]
+  -- TODO two points don't draw
   Lines.viewCustom
-    { margin = Coordinate.Margin 40 150 90 150
+    { margin = Coordinate.Margin 150 150 150 150
     , attributes = [ Attributes.style "font-family: monospace;" ]
     , events = []
     , x =
         { title = Title.default "Time"
         , variable = .date
-        , pixels = 650
+        , pixels = 750
         , padding = 20
         , range = Range.default
-        , axis = Axis.time (Axis.around 4)
+        , axis = Axis.time (Axis.around 10)
         }
     , y =
         { title = Title.default "Heart attacks"
         , variable = .heartattacks
-        , pixels = 900
+        , pixels = 650
         , padding = 20
         , range = Range.default
-        , axis = Axis.float (Axis.exactly 90)
+        , axis = Axis.float (Axis.exactly 10)
         }
     , intersection = Intersection.default
     , junk = Junk.none
@@ -46,12 +48,13 @@ main =
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
+    , grid = Grid.default
     , areaOpacity = 0
     , id = "chart"
     }
     [ Lines.line Color.blue Dot.triangle "1" data1
     , Lines.line Color.pink Dot.diamond "2" data2
-    , Lines.line Color.orange Dot.cross "3" data3
+    , Lines.line Color.orange Dot.cross "3" data3_a
     ]
 
 
@@ -62,7 +65,7 @@ tick _ data =
   , events = []
   , length = 7
   , label = Just <| Junk.text (toString data.heartattacks)
-  , grid = Nothing
+  , grid = False
   }
 
 
@@ -95,8 +98,8 @@ data2 =
   ]
 
 
-data3 : List Data
-data3 =
+data3_a : List Data
+data3_a =
   [ Data 2 0.00035 (269810504300 + (1 + 0) * 3600000)
   , Data 3 0.00032 (269810504300 + (1 + 1) * 3600000)
   , Data 4 0.00038 (269810504300 + (1 + 2) * 3600000)
@@ -104,10 +107,11 @@ data3 =
   ]
 
 
-data3_5 : List Data
-data3_5 =
-  [ Data 6 36 (269849424300 + 4 * 2 * 3600000)
-  , Data 7 36 (269849424300 + 5 * 2 * 3600000)
+data3_b : List Data
+data3_b =
+  [ Data 6 0.00036 (269810504300 + (1 + 4) * 3600000)
+  , Data 7 0.00036 (269810504300 + (1 + 5) * 3600000)
+  , Data 9 0.00036 (269810504300 + (1 + 6) * 3600000)
   ]
 
 

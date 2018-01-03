@@ -28,9 +28,11 @@ import Svg
 import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Junk as Junk
+import Lines.Coordinate
 import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
+import Internal.Grid as Grid
 import Internal.Svg as Svg
 import Internal.Events as Events
 import Internal.Interpolation as Interpolation
@@ -289,6 +291,7 @@ type alias Config data msg =
   , attributes : List (Svg.Attribute msg)
   , events : List (Events.Event data msg)
   , junk : Junk.Junk msg
+  , grid : Grid.Grid
   , id : String
   }
 
@@ -417,7 +420,12 @@ viewCustom config lines =
     -- View
     junk =
       Internal.Junk.getLayers config.junk system
-        |> Internal.Junk.addGrid (viewGrids config system allData)
+        |> Internal.Junk.addGrid viewGrid
+
+    viewGrid =
+      case config.grid of
+        Grid.Dotted color      -> viewGridDots config system color allData
+        Grid.Lines width color -> viewGridLines config system width color allData
 
     container plot =
       Html.div [] (plot :: junk.html)
@@ -469,8 +477,8 @@ clipPath { id } system =
     ]
 
 
-viewGrids : Config data msg -> Coordinate.System -> List data -> List (Svg.Svg msg)
-viewGrids config system data =
+viewGridLines : Config data msg -> Coordinate.System -> Float -> Color.Color -> List data -> List (Svg.Svg msg)
+viewGridLines config system width color data =
   let
     verticalGrids =
       List.filterMap grid <| Axis.ticks system.x config.x data
@@ -479,16 +487,50 @@ viewGrids config system data =
       List.filterMap grid <| Axis.ticks system.y config.y data
 
     grid ( number, tick ) =
-      Maybe.map (\g ->  ( number, g )) tick.grid
+      if tick.grid then Just number else Nothing
 
-    line draw padding ( at, grid ) =
-      draw system (attributes grid) padding at
+    view line padding number =
+      line system attributes padding number
 
-    attributes { width, color } =
+    attributes =
       [ Attributes.strokeWidth (toString width), Attributes.stroke color ]
   in
-    List.map (line Svg.horizontalGrid config.x.padding) horizontalGrids ++
-    List.map (line Svg.verticalGrid config.y.padding) verticalGrids
+    List.map (view Svg.horizontalGrid config.y.padding) horizontalGrids ++
+    List.map (view Svg.verticalGrid config.x.padding) verticalGrids
+
+
+viewGridDots : Config data msg -> Coordinate.System -> Color.Color -> List data -> List (Svg.Svg msg)
+viewGridDots config system color data =
+  let
+    verticalGrids =
+      List.filterMap grid <| Axis.ticks system.x config.x data
+
+    horizontalGrids =
+      List.filterMap grid <| Axis.ticks system.y config.y data
+
+    grid ( number, tick ) =
+      if tick.grid then Just number else Nothing
+
+    dots =
+      List.concatMap dots_ verticalGrids
+
+    dots_ g =
+      List.map (dot g) horizontalGrids
+
+    dot at1 at2 =
+      Lines.Coordinate.toSVG system <| Coordinate.Point at1 at2
+
+    circle point =
+      Svg.circle
+        [ Attributes.cx (toString point.x)
+        , Attributes.cy (toString point.y)
+        , Attributes.r "1"
+        , Attributes.fill color
+        ]
+        []
+  in
+    List.map circle dots
+
 
 
 -- INTERNAL / DEFAULTS
@@ -521,6 +563,7 @@ defaultConfig toX toY =
   , legends = Legends.default
   , line = Line.default
   , dot = Dot.default
+  , grid = Grid.default 
   , areaOpacity = 0
   , id = "chart"
   }

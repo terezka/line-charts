@@ -1,11 +1,11 @@
 module Lines.Axis.Tick exposing
-  ( Tick, Grid, int, time, Time, Unit(..), Interval, float
+  ( Tick, int, time, Time, Unit(..), Interval, float
   , Direction, negative, positive
   )
 
 {-|
 
-@docs Tick, Grid, int, time, Time, Unit, Interval, float
+@docs Tick, int, time, Time, Unit, Interval, float
 @docs Direction, negative, positive
 
 -}
@@ -18,6 +18,7 @@ import Date.Extra as Date
 import Date.Format
 
 
+
 -- TICKS
 
 
@@ -28,14 +29,7 @@ type alias Tick msg =
   , events : List (Attribute msg)
   , length : Float
   , label : Maybe (Svg msg)
-  , grid : Maybe Grid
-  }
-
-
-{-| -}
-type alias Grid =
-  { width : Float
-  , color : Color.Color
+  , grid : Bool
   }
 
 
@@ -47,7 +41,7 @@ int _ n =
   , events = []
   , length = 5
   , label = Just <| viewText (toString n)
-  , grid = Just (Grid 1 Color.grayLight)
+  , grid = True
   }
 
 
@@ -87,9 +81,8 @@ time _ time =
   , events = []
   , length = 5
   , label = Just <| viewText (format time)
-  , grid = Just (Grid 1 Color.grayLight)
+  , grid = True
   }
-
 
 
 {-| -}
@@ -100,7 +93,7 @@ float _ n =
   , events = []
   , length = 5
   , label = Just <| viewText (toString n)
-  , grid = Just (Grid 1 Color.grayLight)
+  , grid = True
   }
 
 
