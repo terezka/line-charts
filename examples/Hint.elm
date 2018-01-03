@@ -61,7 +61,8 @@ view model =
           , pixels = 650
           , padding = 20
           , range = Range.default
-          , axis = Axis.time (Axis.around 4)
+          , axis = Axis.int (Axis.around 5)
+          -- TODO revisit values, especially int TODO round to "nice" numbers
           }
       , y =
           { title = Title.default "weight (kg)"
@@ -69,7 +70,7 @@ view model =
           , pixels = 400
           , padding = 20
           , range = Range.default
-          , axis = Axis.float (Axis.exactly 10) -- TODO what about additional ticks (special marks?) (maybe in junk?)
+          , axis = Axis.float (Axis.around 5) -- TODO what about additional ticks (special marks?) (maybe in junk?)
           }
       , intersection = Intersection.default
       , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none

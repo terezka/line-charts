@@ -62,6 +62,7 @@ tick _ data =
   , events = []
   , length = 7
   , label = Just <| Junk.text (toString data.heartattacks)
+  , grid = Nothing
   }
 
 
