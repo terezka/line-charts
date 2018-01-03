@@ -146,7 +146,7 @@ getMultiples magnitude allowDecimals hasTickAmount =
       defaults
     else
       if magnitude == 1 then
-        List.filter (\n -> toFloat (round n) /= n) defaults
+        List.filter (\n -> toFloat (round n) == n) defaults
       else if magnitude <= 0.1 then
         [ 1 / magnitude ]
       else
