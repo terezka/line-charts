@@ -74,7 +74,7 @@ getBeginning : Float -> Float -> Float
 getBeginning min interval =
   let
     multiple =
-      correctFloat (getPrecision interval) (min / interval)
+      correctFloat (getPrecision interval + 1) (min / interval)
   in
     if multiple == toFloat (round multiple)
       then min
