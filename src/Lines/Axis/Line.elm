@@ -1,8 +1,8 @@
-module Lines.Axis.Line exposing (Line, default, fat, rangeFrame, Config, custom)
+module Lines.Axis.Line exposing (Line, none, default, fat, rangeFrame, Config, custom)
 
 {-|
 
-@docs Line, default, fat, Config, custom, rangeFrame
+@docs Line, none, default, fat, Config, custom, rangeFrame
 
 -}
 
@@ -15,6 +15,12 @@ import Internal.Axis.Line as Line
 {-| -}
 type alias Line msg =
   Line.Line msg
+
+
+{-| -}
+none : Line msg
+none =
+  Line.none
 
 
 {-| -}
@@ -33,6 +39,7 @@ fat =
 rangeFrame : Line msg
 rangeFrame =
   Line.rangeFrame
+
 
 
 -- CUSTOM
