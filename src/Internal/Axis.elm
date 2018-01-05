@@ -278,9 +278,9 @@ attributesTick { width, color } =
 
 
 viewHorizontalLabel : Coordinate.System -> Tick.Tick msg -> Point -> Svg msg -> Svg msg
-viewHorizontalLabel system { direction } position view =
+viewHorizontalLabel system { direction, length } position view =
   let
-    yOffset = if Tick.isPositive direction then -10 else 20
+    yOffset = if Tick.isPositive direction then -5 - length else 15 + length
   in
   g [ transform [ move system position.x position.y, offset 0 yOffset ]
     , anchorStyle Middle
@@ -289,10 +289,10 @@ viewHorizontalLabel system { direction } position view =
 
 
 viewVerticalLabel : Coordinate.System -> Tick.Tick msg -> Point -> Svg msg -> Svg msg
-viewVerticalLabel system { direction } position view =
+viewVerticalLabel system { direction, length } position view =
   let
     anchor = if Tick.isPositive direction then Start else End
-    xOffset = if Tick.isPositive direction then 10 else -10
+    xOffset = if Tick.isPositive direction then 5 + length else -5 - length
   in
   g [ transform [ move system position.x position.y, offset xOffset 5 ]
     , anchorStyle anchor
