@@ -91,7 +91,7 @@ type alias Margin =
 
   - The `frame` which is information about the size and margins of your chart.
   - The `x` which is the minimum and maximum of your range.
-  - The `y` which is the minimum and maximum of your domain. TODO
+  - The `y` which is the minimum and maximum of your domain.
 
 This is all the information we need for translating your data coordinates into
 SVG coordinates.

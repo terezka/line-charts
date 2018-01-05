@@ -339,7 +339,7 @@ available customizations. The example below adds color to the area below the lin
 which the area under the curve _matters_. Typically, this would be when you
 have an quantity changing with respect to time. In that case, the area under
 the curve shows how much the quantity changed. However if that amount is not
-significant, it's best to leave it out. -- TODO revise
+significant, it's best to leave it out.
 
     chart : Html msg
     chart =
@@ -422,7 +422,7 @@ viewCustom config lines =
 
     viewLegends =
       Legends.view system
-        config.line 
+        config.line
         config.dot
         config.legends
         config.areaOpacity

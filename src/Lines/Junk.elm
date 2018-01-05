@@ -157,7 +157,7 @@ transform =
 
     gridLines : Coordinate.System -> List (Svg msg)
     gridLines system =
-      List.map (Junk.vertical system []) (Axis.defaultInterval system.x) -- TODO
+      List.map (Junk.vertical system []) (Axis.defaultInterval system.x) 
 -}
 vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Svg.Svg msg
 vertical =
