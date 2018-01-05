@@ -28,12 +28,10 @@ import Svg
 import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Junk as Junk
-import Lines.Coordinate
 import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
 import Internal.Grid as Grid
-import Internal.Svg as Svg
 import Internal.Events as Events
 import Internal.Interpolation as Interpolation
 import Internal.Junk
@@ -430,9 +428,7 @@ viewCustom config lines =
         |> Internal.Junk.addGrid viewGrid
 
     viewGrid =
-      case config.grid of
-        Grid.Dotted color      -> viewGridDots config system color allData
-        Grid.Lines width color -> viewGridLines config system width color allData
+      Grid.view system config.x config.y config.grid
 
     container plot =
       Html.div [] (plot :: junk.html)
@@ -460,8 +456,8 @@ viewCustom config lines =
       [ Svg.defs [] [ clipPath config system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
       , Svg.g [ Attributes.class "chart__lines" ] viewLines
-      , Axis.viewHorizontal system config.intersection allData config.x
-      , Axis.viewVertical   system config.intersection allData config.y
+      , Axis.viewHorizontal system config.intersection config.x
+      , Axis.viewVertical   system config.intersection config.y
       , viewLegends
       , Svg.g [ Attributes.class "chart__junk--above" ] junk.above
       ]
@@ -482,58 +478,6 @@ clipPath { id } system =
       ]
       []
     ]
-
-
-viewGridLines : Config data msg -> Coordinate.System -> Float -> Color.Color -> List data -> List (Svg.Svg msg)
-viewGridLines config system width color data =
-  let
-    verticalGrids =
-      List.filterMap grid <| Axis.ticks system.xData system.x config.x data
-
-    horizontalGrids =
-      List.filterMap grid <| Axis.ticks system.yData system.y config.y data
-
-    grid tick =
-      if tick.grid then Just tick.position else Nothing
-
-    attributes =
-      [ Attributes.strokeWidth (toString width), Attributes.stroke color ]
-  in
-    List.map (Svg.horizontalGrid system attributes) horizontalGrids ++
-    List.map (Svg.verticalGrid system attributes) verticalGrids
-
-
-viewGridDots : Config data msg -> Coordinate.System -> Color.Color -> List data -> List (Svg.Svg msg)
-viewGridDots config system color data =
-  let
-    verticalGrids =
-      List.filterMap grid <| Axis.ticks system.xData system.x config.x data
-
-    horizontalGrids =
-      List.filterMap grid <| Axis.ticks system.yData system.y config.y data
-
-    grid tick =
-      if tick.grid then Just tick.position else Nothing
-
-    dots =
-      List.concatMap dots_ verticalGrids
-
-    dots_ g =
-      List.map (dot g) horizontalGrids
-
-    dot at1 at2 =
-      Lines.Coordinate.toSVG system <| Coordinate.Point at1 at2
-
-    circle point =
-      Svg.circle
-        [ Attributes.cx (toString point.x)
-        , Attributes.cy (toString point.y)
-        , Attributes.r "1"
-        , Attributes.fill color
-        ]
-        []
-  in
-    List.map circle dots
 
 
 

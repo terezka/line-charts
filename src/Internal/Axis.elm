@@ -1,5 +1,6 @@
 module Internal.Axis exposing
-  ( Axis, default
+  ( Dimension
+  , Axis, default
   , int, time, float
   , intCustom, timeCustom, floatCustom, custom
   -- INTERNAL
@@ -104,8 +105,8 @@ custom =
 -- INTERNAL
 
 
-ticks : Coordinate.Range -> Coordinate.Range -> Dimension data msg -> List data -> List (Tick.Tick msg)
-ticks dataRange range { variable, pixels, axis } data =
+ticks : Coordinate.Range -> Coordinate.Range -> Dimension data msg -> List (Tick.Tick msg)
+ticks dataRange range { variable, pixels, axis } =
   case axis of
     Default ->
       let amount = Values.around (pixels // 70) in
@@ -134,12 +135,12 @@ type alias ViewConfig msg =
 
 
 {-| -}
-viewHorizontal : Coordinate.System -> Intersection.Intersection -> List data -> Dimension data msg -> Svg msg
-viewHorizontal system intersection data dimension =
+viewHorizontal : Coordinate.System -> Intersection.Intersection -> Dimension data msg -> Svg msg
+viewHorizontal system intersection dimension =
     let
         config =
           { line = line dimension.axis
-          , ticks = ticks system.xData system.x dimension data
+          , ticks = ticks system.xData system.x dimension
           , intersection = Intersection.getY intersection system
           , title = Title.config dimension.title
           }
@@ -161,12 +162,12 @@ viewHorizontal system intersection data dimension =
 
 
 {-| -}
-viewVertical : Coordinate.System -> Intersection.Intersection -> List data -> Dimension data msg -> Svg msg
-viewVertical system intersection data dimension =
+viewVertical : Coordinate.System -> Intersection.Intersection -> Dimension data msg -> Svg msg
+viewVertical system intersection dimension =
     let
         config =
           { line = line dimension.axis
-          , ticks = ticks system.yData system.y dimension data
+          , ticks = ticks system.yData system.y dimension
           , intersection = Intersection.getX intersection system
           , title = Title.config dimension.title
           }
