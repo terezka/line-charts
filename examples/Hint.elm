@@ -52,7 +52,7 @@ update msg model =
 
 -- VIEW
 
-
+-- TODO tick offset and direction
 view : Model -> Svg Msg
 view model =
     Lines.viewCustom
@@ -66,10 +66,10 @@ view model =
           , padding = 20
           , range = Range.default
           , axis =
-            Axis.custom AxisLine.default <| \data range ->
-              (Maybe.map (hoverTick >> List.singleton) model.hovering |> Maybe.withDefault []) ++
-              List.map Tick.float (Values.float (Values.Around 4) range) ++
-              List.map Tick.float [ data.min, data.max ]
+              Axis.custom AxisLine.default <| \data range ->
+                (Maybe.map (hoverTick >> List.singleton) model.hovering |> Maybe.withDefault []) ++
+                List.map Tick.float (Values.float (Values.Around 4) range) ++
+                List.map Tick.float [ data.min, data.max ]
           }
       , y =
           { title = Title.default "weight (kg)"

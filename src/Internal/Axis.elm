@@ -35,8 +35,8 @@ type alias Dimension data msg =
 {-| -}
 type Axis data msg
   = Default
-  | Custom (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
-  | Data   (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) (data -> Tick.Tick msg)
+  | Custom (Line.Line msg) Direction (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
+  | Data   (Line.Line msg) Direction (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) (data -> Tick.Tick msg)
 
 
 
@@ -52,33 +52,33 @@ default =
 {-| -}
 int : Int -> Axis data msg
 int amount =
-  custom Line.default <| \_ range ->
+  custom Line.default Tick.negative <| \_ range ->
     List.map Tick.int <| Values.int (Values.around amount) range
 
 
 {-| -}
 float : Int -> Axis data msg
 float amount =
-  custom Line.default <| \_ range ->
+  custom Line.default Tick.negative <| \_ range ->
     List.map Tick.float <| Values.float (Values.around amount) range
 
 
 {-| -}
 time : Int -> Axis data msg
 time amount =
-  custom Line.default <| \_ range ->
+  custom Line.default Tick.negative <| \_ range ->
     List.map Tick.time <| Values.time amount range
 
 
 {-| TODO use variable to make data tick -}
-dashed : Line.Line msg -> (data -> Tick.Tick msg) -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
-dashed line dataTick ticks =
-  Data line ticks dataTick
+dashed : Line.Line msg -> Direction -> (data -> Tick.Tick msg) -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+dashed line direction dataTick ticks =
+  Data line direction ticks dataTick
 
 
 {-| -}
-custom : Line.Line msg -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
-custom  =
+custom : Line.Line msg -> Direction -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+custom =
   Custom
 
 
@@ -92,10 +92,10 @@ ticks dataRange range { variable, pixels, axis } data =
     Default ->
       List.map Tick.float (defaultValues pixels range)
 
-    Custom line values ->
+    Custom line direction values ->
       values dataRange range
 
-    Data line values tick ->
+    Data line direction values tick ->
       values dataRange range ++ List.map tick data
 
 
@@ -112,17 +112,17 @@ defaultAmount length =
 line : Axis data msg -> Coordinate.Range -> Coordinate.Range -> Line.Config msg
 line axis =
   case axis of
-    Default               -> Line.config Line.default
-    Custom line values    -> Line.config line
-    Data line values tick -> Line.config line
+    Default                         -> Line.config Line.default
+    Custom line direction values    -> Line.config line
+    Data line direction values tick -> Line.config line
 
 
 direction : Axis data msg -> Direction
 direction axis =
   case axis of
-    Default               -> Tick.Negative
-    Custom line values    -> Tick.Negative
-    Data line values tick -> Tick.Negative
+    Default                         -> Tick.negative
+    Custom line direction values    -> direction
+    Data line direction values tick -> direction
 
 
 

@@ -35,8 +35,8 @@ main =
         , padding = 20
         , range = Range.default
         , axis =
-            Axis.custom AxisLine.default <| \data range ->
-              List.map timeTick (Values.time (Values.around 10) range)
+            Axis.custom AxisLine.default Tick.negative <| \data range ->
+              List.map timeTick (Values.time 10 range)
         }
     , y =
         { title = Title.default "Heart attacks"
