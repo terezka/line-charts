@@ -50,7 +50,7 @@ update msg model =
 
 -- VIEW
 
--- TODO tick offset
+-- TODO broken data
 -- TODO consider tick space tolerance as determinating factor of tick amount
 view : Model -> Svg Msg
 view model =
@@ -92,7 +92,6 @@ dataTick : Info -> Tick.Tick msg
 dataTick n =
   { color = Color.gray
   , width = 1
-  , events = []
   , length = 5
   , label = Nothing
   , grid = True
@@ -106,7 +105,6 @@ hoverTick variable hovering =
   let n = variable hovering in
   { color = Color.gray
   , width = 1
-  , events = []
   , length = 7
   , label = Just <| Junk.text Color.black (toString n)
   , grid = True
@@ -119,7 +117,6 @@ specialTick : Float -> Tick.Tick msg
 specialTick n =
   { color = Color.gray
   , width = 1
-  , events = []
   , length = 5
   , label = Just <| Junk.text Color.pink (toString n)
   , grid = True

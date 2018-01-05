@@ -10,8 +10,6 @@ import Internal.Axis.Range as Range
 import Lines.Coordinate as Coordinate
 
 
--- TODO: Add adjust for nice ticks?
-
 
 {-| -}
 type alias Range =
@@ -37,6 +35,6 @@ window =
 
 
 {-| -}
-custom : (Coordinate.Range -> (Float, Float)) -> Range
+custom : (Coordinate.Range -> ( Float, Float )) -> Range
 custom =
   Range.custom
