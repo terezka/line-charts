@@ -360,7 +360,7 @@ significant, it's best to leave it out. -- TODO revise
     chartConfig =
       { id = "chart"
       , margin = Coordinate.Margin 30 120 90 120
-      , x = Dimension.default 650 "Age" .age
+      , x = Dimension.default 650 "Age (years)" .age
       , y = Dimension.default 400 "Weight (kg)" .weight
       , grid = Grid.default
       , areaOpacity = 0.25 -- Changed from the default!

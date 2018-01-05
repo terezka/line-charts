@@ -1,7 +1,11 @@
 module Lines.Grid exposing (Grid, default, dotted, lines)
 
 
-{-| -}
+{-|
+
+@docs Grid, default, dotted, lines
+
+-}
 
 import Lines.Color as Color
 import Internal.Grid as Grid
