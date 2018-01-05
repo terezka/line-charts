@@ -53,7 +53,6 @@ update msg model =
 -- TODO tick offset
 -- TODO consider tick space tolerance as determinating factor of tick amount
 -- TODO figure out error in range to pixel offset
--- TODO two point line
 view : Model -> Svg Msg
 view model =
     Lines.viewCustom

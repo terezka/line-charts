@@ -21,7 +21,6 @@ import Lines.Grid as Grid
 main : Svg msg
 main =
   -- Lines.view3 .magnesium .heartattacks data1 data2 data3_a
-  -- TODO two points don't draw
   Lines.viewCustom
     { margin = Coordinate.Margin 150 150 150 150
     , attributes = [ Attributes.style "font-family: monospace;" ]
@@ -53,6 +52,7 @@ main =
     [ Lines.line Color.blue Dot.circle "1" data1
     , Lines.line Color.pink Dot.circle "2" data2
     , Lines.line Color.orange Dot.circle "3" data3_a
+    , Lines.line Color.orange Dot.circle "3" data3_b
     ]
 
 
@@ -108,7 +108,7 @@ data3_a =
 data3_b : List Data
 data3_b =
   [ Data 6 0.00036 (269810504300 + (1 + 4) * 3600000)
-  , Data 7 0.00036 (269810504300 + (1 + 5) * 3600000)
+  , Data 7 0.00037 (269810504300 + (1 + 5) * 3600000)
   , Data 9 0.00036 (269810504300 + (1 + 6) * 3600000)
   ]
 
