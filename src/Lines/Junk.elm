@@ -159,16 +159,16 @@ transform =
     gridLines system =
       List.map (Junk.vertical system []) (Axis.defaultInterval system.x) -- TODO
 -}
-vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
-vertical system attributes at =
-  Svg.vertical system attributes at system.y.min system.y.max
+vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Svg.Svg msg
+vertical =
+  Svg.vertical
 
 
 {-| A grid line that takes up the full length of your horizontal axis.
 -}
-horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
-horizontal system attributes at =
-  Svg.horizontal system attributes at system.x.min system.x.max
+horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float ->  Float -> Svg.Svg msg
+horizontal =
+  Svg.horizontal
 
 
 

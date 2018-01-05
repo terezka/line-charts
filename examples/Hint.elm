@@ -13,7 +13,6 @@ import Lines.Coordinate as Coordinate
 import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Axis.Tick as Tick
-import Lines.Axis.Line as AxisLine
 import Lines.Events as Events
 import Lines.Grid as Grid
 import Lines.Legends as Legends
@@ -53,6 +52,8 @@ update msg model =
 
 -- TODO tick offset
 -- TODO consider tick space tolerance as determinating factor of tick amount
+-- TODO figure out error in range to pixel offset
+-- TODO two point line
 view : Model -> Svg Msg
 view model =
     Lines.viewCustom
@@ -64,14 +65,14 @@ view model =
           , variable = .age
           , pixels = 650
           , range = Range.padded 20 0
-          , axis = Axis.floatCustom 10 AxisLine.rangeFrame specialTick
+          , axis = Axis.float 10
           }
       , y =
           { title = Title.default "weight (kg)"
           , variable = .weight
           , pixels = 400
           , range = Range.padded 20 0
-          , axis = Axis.floatCustom 8 AxisLine.rangeFrame specialTick
+          , axis = Axis.float 8
           }
       , intersection = Intersection.default
       , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
@@ -80,7 +81,7 @@ view model =
       , line = Line.wider 2
       , dot = Dot.emphasizable (Dot.disconnected 10 2) (Dot.aura 7 5 0.25) (Dot.isMaybe model.hovering)
       , areaOpacity = 0
-      , grid = Grid.lines 1 Color.grayLight
+      , grid = Grid.default
       , id = "chart"
       }
       [ Lines.line Color.blue Dot.circle "bob" bob
@@ -149,8 +150,8 @@ junk hint =
       in
       { below = []
       , above =
-          [ Junk.vertical system [ SvgA.strokeDasharray "1 2" ] hint.age
-          , Junk.horizontal system [ SvgA.strokeDasharray "1 2" ] hint.weight
+          [ Junk.vertical   system [ SvgA.strokeDasharray "1 4" ] hint.age system.y.min system.y.max
+          , Junk.horizontal system [ SvgA.strokeDasharray "1 4" ] hint.weight system.x.min system.x.max
           ]
       , html = []
       }
