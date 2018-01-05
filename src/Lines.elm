@@ -385,47 +385,17 @@ viewCustom config lines =
         (config.x.variable datum)
         (config.y.variable datum)
 
-    -- System
-    allPoints =
+    allDataPoints =
       List.concat dataPoints
 
-    frame =
-      Coordinate.Frame config.margin
-        (Coordinate.Size (toFloat config.x.pixels) (toFloat config.y.pixels))
-
-    xRange =
-      Coordinate.range (.point >> .x) allPoints
-
-    yRange =
-      Coordinate.range (.point >> .y) allPoints
-
-    systemRaw =
-      { frame = frame
-      , x = xRange
-      , y = adjustDomainRange yRange
-      , xData = xRange
-      , yData = yRange
-      }
-
+    -- System
     system =
-      { systemRaw
-      | x = Range.applyX config.x.range systemRaw
-      , y = Range.applyY config.y.range systemRaw
-      }
-
-    adjustDomainRange domain =
-      if config.areaOpacity > 0 then
-        Coordinate.ground domain
-      else
-        domain
+      toSystem config allDataPoints
 
     -- View
     junk =
       Internal.Junk.getLayers config.junk system
-        |> Internal.Junk.addGrid viewGrid
-
-    viewGrid =
-      Grid.view system config.x config.y config.grid
+        |> Internal.Junk.addGrid (Grid.view system config.x config.y config.grid)
 
     container plot =
       Html.div [] (plot :: junk.html)
@@ -433,20 +403,31 @@ viewCustom config lines =
     attributes =
       List.concat
         [ config.attributes
-        , Events.toAttributes allPoints system config.events
+        , Events.toAttributes allDataPoints system config.events
         , [ Attributes.width <| toString system.frame.size.width
           , Attributes.height <| toString system.frame.size.height
           ]
         ]
 
-    viewLine =
-      Line.view system config.dot config.interpolation config.line config.areaOpacity config.id
-
     viewLines =
       List.map2 viewLine lines dataPoints
 
+    viewLine =
+      Line.view system
+        config.dot
+        config.interpolation
+        config.line
+        config.areaOpacity
+        config.id
+
     viewLegends =
-      Legends.view system config.line config.dot config.legends config.areaOpacity lines dataPoints
+      Legends.view system
+        config.line 
+        config.dot
+        config.legends
+        config.areaOpacity
+        lines
+        dataPoints
   in
   container <|
     Svg.svg attributes
@@ -475,6 +456,34 @@ clipPath { id } system =
       ]
       []
     ]
+
+
+toSystem : Config data msg -> List (Coordinate.DataPoint data) -> Coordinate.System
+toSystem config data =
+  let
+    isArea = config.areaOpacity > 0
+    size   = Coordinate.Size (toFloat config.x.pixels) (toFloat config.y.pixels)
+    frame  = Coordinate.Frame config.margin size
+    xRange = Coordinate.range (.point >> .x) data
+    yRange = Coordinate.range (.point >> .y) data
+
+    system =
+      { frame = frame
+      , x = xRange
+      , y = adjustDomainRange yRange
+      , xData = xRange
+      , yData = yRange
+      }
+
+    adjustDomainRange domain =
+      if isArea
+        then Coordinate.ground domain
+        else domain
+  in
+  { system
+  | x = Range.applyX config.x.range system
+  , y = Range.applyY config.y.range system
+  }
 
 
 
