@@ -12,7 +12,6 @@ import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
 import Lines.Legends as Legends
 import Lines.Line as Line
-import Lines.Axis.Tick as Tick
 import Lines.Events as Events
 import Lines.Grid as Grid
 import Lines.Legends as Legends
@@ -50,8 +49,7 @@ update msg model =
 
 -- VIEW
 
--- TODO broken data
--- TODO consider tick space tolerance as determinating factor of tick amount
+
 view : Model -> Svg Msg
 view model =
     Lines.viewCustom
@@ -76,7 +74,7 @@ view model =
       , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
       , interpolation = Lines.monotone
       , legends = Legends.default
-      , line = Line.wider 2
+      , line = Line.default
       , dot = Dot.emphasizable (Dot.disconnected 10 2) (Dot.aura 7 5 0.25) (Dot.isMaybe model.hovering)
       , areaOpacity = 0
       , grid = Grid.default
@@ -88,64 +86,14 @@ view model =
       ]
 
 
-dataTick : Info -> Tick.Tick msg
-dataTick n =
-  { color = Color.gray
-  , width = 1
-  , length = 5
-  , label = Nothing
-  , grid = True
-  , direction = Tick.negative
-  , position = n.weight
-  }
-
-
-hoverTick : (Info -> Float) -> Info -> Tick.Tick msg
-hoverTick variable hovering =
-  let n = variable hovering in
-  { color = Color.gray
-  , width = 1
-  , length = 7
-  , label = Just <| Junk.text Color.black (toString n)
-  , grid = True
-  , direction = Tick.positive
-  , position = n
-  }
-
-
-specialTick : Float -> Tick.Tick msg
-specialTick n =
-  { color = Color.gray
-  , width = 1
-  , length = 5
-  , label = Just <| Junk.text Color.pink (toString n)
-  , grid = True
-  , direction = Tick.negative
-  , position = n
-  }
-
-
 
 junk : Info -> Junk.Junk Msg
 junk hint =
     Junk.custom <| \system ->
-      let
-          viewHint =
-              g [ transform [ move system hint.age hint.weight, offset 20 10 ] ]
-                [ text_ []
-                    [ viewDimension "weight" hint.weight
-                    , viewDimension "age" hint.age
-                    ]
-                ]
-
-          viewDimension label value =
-            tspan
-              [ SvgA.x "0", SvgA.dy "1em" ]
-              [ Svg.text <| label ++ ": " ++ toString value ]
-      in
       { below = []
       , above =
-          [ Junk.vertical   system [ SvgA.strokeDasharray "1 4" ] hint.age system.y.min system.y.max
+          [ tooltip system hint
+          , Junk.vertical   system [ SvgA.strokeDasharray "1 4" ] hint.age system.y.min system.y.max
           , Junk.horizontal system [ SvgA.strokeDasharray "1 4" ] hint.weight system.x.min system.x.max
           ]
       , html = []
@@ -155,11 +103,7 @@ junk hint =
 tooltip : Coordinate.System -> Info -> Svg msg
 tooltip system hovered =
   Svg.g
-    [ Junk.transform
-        [ Junk.move system hovered.age hovered.weight
-        , Junk.offset 20 10
-        ]
-    ]
+    [ Junk.transform [ Junk.offset 520 100 ] ]
     [ Svg.text_ []
         [ dimension "Age" hovered.age
         , dimension "Weight" hovered.weight
@@ -171,6 +115,7 @@ dimension label value =
   Svg.tspan
     [ SvgA.x "0", SvgA.dy "1em" ]
     [ Svg.text <| label ++ ": " ++ toString value ]
+
 
 
 -- DATA

@@ -1,5 +1,5 @@
 module Lines.Line exposing
-  ( Look, Style, default, wider, static, emphasizable, hasMaybe )
+  ( Look, Style, default, wider, static, style, emphasizable, hasMaybe )
 
 {-|
 
@@ -7,7 +7,7 @@ module Lines.Line exposing
 @docs default
 
 # Customizations
-@docs Look, Style, wider, static, emphasizable
+@docs Look, Style, wider, static, style, emphasizable
 
 ### Emphasizable helpers
 @docs hasMaybe
