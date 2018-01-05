@@ -1,9 +1,7 @@
 module Internal.Axis exposing
   ( Axis, default
-  , exactly, around
   , int, time, float
-  , intCustom, timeCustom, floatCustom, dashed, custom
-  , Config, intConfig, timeConfig, floatConfig
+  , dashed, custom
   -- INTERNAL
   , ticks, viewHorizontal, viewVertical
   )
@@ -36,11 +34,9 @@ type alias Dimension data msg =
 
 {-| -}
 type Axis data msg
-  = AxisDefault
-  | AxisInt (Coordinate.Range -> List Int) (Config Int msg)
-  | AxisTime (Coordinate.Range -> List Tick.Time) (Config Tick.Time msg)
-  | AxisFloat (Coordinate.Range -> List Float) (Config Float msg)
-  | AxisData (Config data msg)
+  = Default
+  | Custom (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
+  | Data   (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) (data -> Tick.Tick msg)
 
 
 
@@ -50,134 +46,57 @@ type Axis data msg
 {-| -}
 default : Axis data msg
 default =
-  AxisDefault
+  Default
 
 
 {-| -}
-exactly : Int -> Values.Amount
-exactly =
-  Values.Exactly
-
-
-{-| -}
-around : Int -> Values.Amount
-around =
-  Values.Around
-
-
-{-| -}
-int : Values.Amount -> Axis data msg
+int : Int -> Axis data msg
 int amount =
-  AxisInt (Values.int amount) intConfig
+  custom Line.default <| \_ range ->
+    List.map Tick.int <| Values.int (Values.around amount) range
 
 
 {-| -}
-time : Values.Amount -> Axis data msg
-time amount =
-  AxisTime (Values.time amount) timeConfig
-
-
-{-| -}
-float : Values.Amount -> Axis data msg
+float : Int -> Axis data msg
 float amount =
-  AxisFloat (Values.float amount) floatConfig
+  custom Line.default <| \_ range ->
+    List.map Tick.float <| Values.float (Values.around amount) range
 
 
 {-| -}
-intCustom : Values.Amount -> Config Int msg -> Axis data msg
-intCustom amount =
-  AxisInt (Values.int amount)
+time : Int -> Axis data msg
+time amount =
+  custom Line.default <| \_ range ->
+    List.map Tick.time <| Values.time amount range
+
+
+{-| TODO use variable to make data tick -}
+dashed : Line.Line msg -> (data -> Tick.Tick msg) -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+dashed line dataTick ticks =
+  Data line ticks dataTick
 
 
 {-| -}
-timeCustom : Values.Amount -> Config Tick.Time msg -> Axis data msg
-timeCustom amount =
-  AxisTime (Values.time amount)
-
-
-{-| -}
-floatCustom : Values.Amount -> Config Float msg -> Axis data msg
-floatCustom amount =
-  AxisFloat (Values.float amount)
-
-
-{-| -}
-dashed : Config data msg -> Axis data msg
-dashed =
-   AxisData
-
-
-{-| -}
-custom : (Coordinate.Range -> List Float) -> Config Float msg -> Axis data msg
-custom =
-  AxisFloat
-
-
-
--- API / CONFIG
-
-
-{-| -}
-type alias Config unit msg =
-  { line : Line.Line msg
-  , tick : Int -> unit -> Tick.Tick msg
-  , direction : Direction
-  }
-
-
-{-| -}
-intConfig : Config Int msg
-intConfig =
-  { line = Line.default
-  , direction = Tick.negative
-  , tick = Tick.int
-  }
-
-
-{-| -}
-timeConfig : Config Tick.Time msg
-timeConfig =
-  { line = Line.default
-  , direction = Tick.negative
-  , tick = Tick.time
-  }
-
-
-{-| -}
-floatConfig : Config Float msg
-floatConfig =
-  { line = Line.default
-  , direction = Tick.negative
-  , tick = Tick.float
-  }
+custom : Line.Line msg -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+custom  =
+  Custom
 
 
 
 -- INTERNAL
 
 
-ticks : Coordinate.Range -> Dimension data msg ->  List data -> List ( Float, Tick.Tick msg )
-ticks range { variable, pixels, axis } data =
+ticks : Coordinate.Range -> Coordinate.Range -> Dimension data msg -> List data -> List (Tick.Tick msg)
+ticks dataRange range { variable, pixels, axis } data =
   case axis of
-    AxisDefault ->
-      let withPosition i v = ( v, Tick.float i v ) in
-      List.indexedMap withPosition (defaultValues pixels range)
+    Default ->
+      List.map Tick.float (defaultValues pixels range)
 
-    AxisInt values config ->
-      let withPosition i v = ( toFloat v, config.tick i v ) in
-      List.indexedMap withPosition (values range)
+    Custom line values ->
+      values dataRange range
 
-    AxisTime values config ->
-      let withPosition i v = ( v.timestamp, config.tick i v ) in
-      List.indexedMap withPosition (values range)
-
-    AxisFloat values config ->
-      let withPosition i v = ( v, config.tick i v ) in
-      List.indexedMap withPosition (values range)
-
-    AxisData config ->
-      let withPosition i v = ( variable v, config.tick i v ) in
-      List.indexedMap withPosition data
+    Data line values tick ->
+      values dataRange range ++ List.map tick data
 
 
 defaultValues : Int -> Coordinate.Range -> List Float
@@ -187,27 +106,23 @@ defaultValues length =
 
 defaultAmount : Int -> Values.Amount
 defaultAmount length =
-  around <| length // 90
+  Values.around <| length // 90
 
 
 line : Axis data msg -> Coordinate.Range -> Coordinate.Range -> Line.Config msg
 line axis =
   case axis of
-    AxisDefault             -> Line.config Line.default
-    AxisInt values config   -> Line.config config.line
-    AxisTime values config  -> Line.config config.line
-    AxisFloat values config -> Line.config config.line
-    AxisData config         -> Line.config config.line
+    Default               -> Line.config Line.default
+    Custom line values    -> Line.config line
+    Data line values tick -> Line.config line
 
 
 direction : Axis data msg -> Direction
 direction axis =
   case axis of
-    AxisDefault             -> Tick.Negative
-    AxisInt values config   -> config.direction
-    AxisTime values config  -> config.direction
-    AxisFloat values config -> config.direction
-    AxisData config         -> config.direction
+    Default               -> Tick.Negative
+    Custom line values    -> Tick.Negative
+    Data line values tick -> Tick.Negative
 
 
 
@@ -217,7 +132,7 @@ direction axis =
 type alias ViewConfig msg =
   { padding : Float
   , line : Coordinate.Range -> Coordinate.Range -> Line.Config msg
-  , ticks : List ( Float, Tick.Tick msg )
+  , ticks : List (Tick.Tick msg)
   , direction : Direction
   , intersection : Float
   , title : Title.Config msg
@@ -231,7 +146,7 @@ viewHorizontal system intersection data dimension =
         config =
           { padding = dimension.padding
           , line = line dimension.axis
-          , ticks = ticks system.x dimension data
+          , ticks = ticks system.xData system.x dimension data
           , direction = direction dimension.axis
           , intersection = Intersection.getY intersection system
           , title = Title.config dimension.title
@@ -246,8 +161,8 @@ viewHorizontal system intersection data dimension =
         viewAxisLine =
           viewHorizontalAxisLine system axisPosition
 
-        viewTick ( position, tick ) =
-          viewHorizontalTick system config (at position) tick
+        viewTick tick =
+          viewHorizontalTick system config (at tick.position) tick
     in
     g [ class "chart__axis--horizontal" ]
       [ viewHorizontalTitle system at config
@@ -263,7 +178,7 @@ viewVertical system intersection data dimension =
         config =
           { padding = dimension.padding
           , line = line dimension.axis
-          , ticks = ticks system.y dimension data
+          , ticks = ticks system.yData system.y dimension data
           , direction = direction dimension.axis
           , intersection = Intersection.getX intersection system
           , title = Title.config dimension.title
@@ -278,8 +193,8 @@ viewVertical system intersection data dimension =
         viewAxisLine =
           viewVerticalAxisLine system axisPosition
 
-        viewTick ( position, tick ) =
-          viewVerticalTick system config (at position) tick
+        viewTick tick =
+          viewVerticalTick system config (at tick.position) tick
     in
     g [ class "chart__axis--vertical" ]
       [ viewVerticalTitle system at config

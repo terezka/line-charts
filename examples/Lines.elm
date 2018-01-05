@@ -8,6 +8,7 @@ import Lines.Color as Color
 import Lines.Dot as Dot
 import Lines.Axis as Axis
 import Lines.Axis.Tick as Tick
+import Lines.Axis.Line as AxisLine
 import Lines.Axis.Title as Title
 import Lines.Axis.Range as Range
 import Lines.Axis.Intersection as Intersection
@@ -16,6 +17,7 @@ import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Legends as Legends
 import Lines.Grid as Grid
+import Lines.Axis.Values as Values
 
 
 main : Svg msg
@@ -32,7 +34,9 @@ main =
         , pixels = 750
         , padding = 20
         , range = Range.default
-        , axis = Axis.time (Axis.around 10)
+        , axis =
+            Axis.custom AxisLine.default <| \data range ->
+              List.map timeTick (Values.time (Values.around 10) range)
         }
     , y =
         { title = Title.default "Heart attacks"
@@ -40,7 +44,7 @@ main =
         , pixels = 650
         , padding = 20
         , range = Range.default
-        , axis = Axis.float (Axis.exactly 10)
+        , axis = Axis.float 9
         }
     , intersection = Intersection.default
     , junk = Junk.none
@@ -52,21 +56,20 @@ main =
     , areaOpacity = 0
     , id = "chart"
     }
-    [ Lines.line Color.blue Dot.triangle "1" data1
-    , Lines.line Color.pink Dot.diamond "2" data2
-    , Lines.line Color.orange Dot.cross "3" data3_a
+    [ Lines.line Color.blue Dot.circle "1" data1
+    , Lines.line Color.pink Dot.circle "2" data2
+    , Lines.line Color.orange Dot.circle "3" data3_a
     ]
 
 
-tick : Int -> Data -> Tick.Tick msg
-tick _ data =
-  { color = Color.orange
-  , width = 2
-  , events = []
-  , length = 7
-  , label = Just <| Junk.text (toString data.heartattacks)
-  , grid = False
-  }
+
+timeTick : Tick.Time -> Tick.Tick msg
+timeTick time =
+  let tick = Tick.time time in
+  if time.change == Nothing then
+    { tick | label = Just <| Svg.text_ [ Attributes.fill Color.gray ] [ Svg.tspan [] [ Svg.text (Tick.format time) ] ] }
+  else
+    tick
 
 
 

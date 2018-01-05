@@ -481,13 +481,13 @@ viewGridLines : Config data msg -> Coordinate.System -> Float -> Color.Color -> 
 viewGridLines config system width color data =
   let
     verticalGrids =
-      List.filterMap grid <| Axis.ticks system.x config.x data
+      List.filterMap grid <| Axis.ticks system.xData system.x config.x data
 
     horizontalGrids =
-      List.filterMap grid <| Axis.ticks system.y config.y data
+      List.filterMap grid <| Axis.ticks system.yData system.y config.y data
 
-    grid ( number, tick ) =
-      if tick.grid then Just number else Nothing
+    grid tick =
+      if tick.grid then Just tick.position else Nothing
 
     view line padding number =
       line system attributes padding number
@@ -503,13 +503,13 @@ viewGridDots : Config data msg -> Coordinate.System -> Color.Color -> List data 
 viewGridDots config system color data =
   let
     verticalGrids =
-      List.filterMap grid <| Axis.ticks system.x config.x data
+      List.filterMap grid <| Axis.ticks system.xData system.x config.x data
 
     horizontalGrids =
-      List.filterMap grid <| Axis.ticks system.y config.y data
+      List.filterMap grid <| Axis.ticks system.yData system.y config.y data
 
-    grid ( number, tick ) =
-      if tick.grid then Just number else Nothing
+    grid tick =
+      if tick.grid then Just tick.position else Nothing
 
     dots =
       List.concatMap dots_ verticalGrids
@@ -547,7 +547,7 @@ defaultConfig toX toY =
       , pixels = 650
       , padding = 20
       , range = Range.default
-      , axis = Axis.float (Axis.around 10)
+      , axis = Axis.float 10
       }
   , y =
       { title = Title.default ""
@@ -555,7 +555,7 @@ defaultConfig toX toY =
       , pixels = 400
       , padding = 20
       , range = Range.default
-      , axis = Axis.float (Axis.around 10)
+      , axis = Axis.float 10
       }
   , intersection = Intersection.default
   , junk = Junk.none
@@ -563,7 +563,7 @@ defaultConfig toX toY =
   , legends = Legends.default
   , line = Line.default
   , dot = Dot.default
-  , grid = Grid.default 
+  , grid = Grid.default
   , areaOpacity = 0
   , id = "chart"
   }

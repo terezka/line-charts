@@ -12,8 +12,12 @@ import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
 import Lines.Legends as Legends
 import Lines.Line as Line
+import Lines.Axis.Tick as Tick
+import Lines.Axis.Line as AxisLine
 import Lines.Events as Events
+import Lines.Grid as Grid
 import Lines.Legends as Legends
+import Internal.Axis.Values as Values -- TODO
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import Svg.Attributes as SvgA
 
@@ -61,8 +65,11 @@ view model =
           , pixels = 650
           , padding = 20
           , range = Range.default
-          , axis = Axis.int (Axis.around 5)
-          -- TODO revisit values, especially int TODO round to "nice" numbers
+          , axis =
+            Axis.custom AxisLine.default <| \data range ->
+              (Maybe.map (hoverTick >> List.singleton) model.hovering |> Maybe.withDefault []) ++
+              List.map Tick.float (Values.float (Values.Around 4) range) ++
+              List.map Tick.float [ data.min, data.max ]
           }
       , y =
           { title = Title.default "weight (kg)"
@@ -70,7 +77,7 @@ view model =
           , pixels = 400
           , padding = 20
           , range = Range.default
-          , axis = Axis.float (Axis.around 5) -- TODO what about additional ticks (special marks?) (maybe in junk?)
+          , axis = Axis.dashed AxisLine.default dataTick <| \_ _ -> []
           }
       , intersection = Intersection.default
       , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
@@ -79,12 +86,37 @@ view model =
       , line = Line.wider 2
       , dot = Dot.emphasizable (Dot.disconnected 10 2) (Dot.aura 7 5 0.25) (Dot.isMaybe model.hovering)
       , areaOpacity = 0
+      , grid = Grid.lines 1 Color.grayLight
       , id = "chart"
       }
       [ Lines.line Color.blue Dot.circle "bob" bob
       , Lines.line Color.orange Dot.triangle "alice" alice
       , Lines.line Color.pink Dot.square "chuck" chuck
       ]
+
+
+dataTick : Info -> Tick.Tick msg
+dataTick n =
+  { color = Color.gray
+  , width = 1
+  , events = []
+  , length = 5
+  , label = Just <| Junk.text (toString n.weight)
+  , grid = True
+  , position = n.weight
+  }
+
+
+hoverTick : Info -> Tick.Tick msg
+hoverTick n =
+  { color = Color.gray
+  , width = 1
+  , events = []
+  , length = -7
+  , label = Just <| g [ transform [ offset 0 -30 ] ] [ Junk.text (toString n.age) ]
+  , grid = True
+  , position = n.age
+  }
 
 
 junk : Info -> Junk.Junk Msg
@@ -146,6 +178,7 @@ alice : List Info
 alice =
   [ Info 4 24 0.94 0
   , Info 25 75 1.73 25000
+  , Info 30 56 1.75 44000
   , Info 43 83 1.75 40000
   ]
 
@@ -154,6 +187,7 @@ bob : List Info
 bob =
   [ Info 4 22 1.01 0
   , Info 25 75 1.87 28000
+  , Info 32 79 1.85 45000
   , Info 43 77 1.87 52000
   ]
 
@@ -162,6 +196,7 @@ chuck : List Info
 chuck =
   [ Info 4 21 0.98 0
   , Info 25 89 1.83 85000
+  , Info 33 90 1.85 90000
   , Info 43 95 1.84 120000
   ]
 

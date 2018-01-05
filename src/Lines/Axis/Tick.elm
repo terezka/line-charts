@@ -1,12 +1,14 @@
 module Lines.Axis.Tick exposing
   ( Tick, int, time, Time, Unit(..), Interval, float
   , Direction, negative, positive
+  , format
   )
 
 {-|
 
 @docs Tick, int, time, Time, Unit, Interval, float
 @docs Direction, negative, positive
+@docs format
 
 -}
 
@@ -30,18 +32,20 @@ type alias Tick msg =
   , length : Float
   , label : Maybe (Svg msg)
   , grid : Bool
+  , position : Float
   }
 
 
 {-| -}
-int : Int -> Int -> Tick msg
-int _ n =
+int : Int -> Tick msg
+int n =
   { color = Color.gray
   , width = 1
   , events = []
   , length = 5
   , label = Just <| viewText (toString n)
   , grid = True
+  , position = toFloat n
   }
 
 
@@ -74,26 +78,28 @@ type alias Interval =
 
 
 {-| -}
-time : Int -> Time -> Tick msg
-time _ time =
+time : Time -> Tick msg
+time time =
   { color = Color.gray
   , width = 1
   , events = []
   , length = 5
   , label = Just <| viewText (format time)
   , grid = True
+  , position = time.timestamp
   }
 
 
 {-| -}
-float : Int -> Float -> Tick msg
-float _ n =
+float :  Float -> Tick msg
+float n =
   { color = Color.gray
   , width = 1
   , events = []
   , length = 5
   , label = Just <| viewText (toString n)
   , grid = True
+  , position = n
   }
 
 
@@ -118,15 +124,7 @@ positive =
   Tick.Positive
 
 
-
--- INTERNAL
-
-
-viewText : String -> Svg msg
-viewText string =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text string ] ]
-
-
+{-| -}
 format : Time -> String
 format { change, interval, timestamp } =
   case change of
@@ -160,3 +158,12 @@ formatBold unit =
       Week        -> Date.toFormattedString "'Week' w"
       Month       -> Date.Format.format "%b"
       Year        -> Date.Format.format "%Y"
+
+
+
+-- INTERNAL
+
+
+viewText : String -> Svg msg
+viewText string =
+  Svg.text_ [] [ Svg.tspan [] [ Svg.text string ] ]
