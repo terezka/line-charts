@@ -33,9 +33,9 @@ type alias Tick msg =
   , color : Color.Color
   , width : Float
   , length : Float
-  , label : Maybe (Svg msg)
-  , direction : Direction
   , grid : Bool
+  , direction : Direction
+  , label : Maybe (Svg msg)
   }
 
 
@@ -63,26 +63,26 @@ positive =
 {-| -}
 int : Int -> Tick msg
 int n =
-  { color = Color.gray
+  { position = toFloat n
+  , color = Color.gray
   , width = 1
   , length = 5
-  , label = Just <| Junk.text Color.inherit (toString n)
   , grid = True
   , direction = negative
-  , position = toFloat n
+  , label = Just <| Junk.text Color.inherit (toString n)
   }
 
 
 {-| -}
 float : Float -> Tick msg
 float n =
-  { color = Color.gray
+  { position = n
+  , color = Color.gray
   , width = 1
   , length = 5
-  , label = Just <| Junk.text Color.inherit (toString n)
   , grid = True
   , direction = negative
-  , position = n
+  , label = Just <| Junk.text Color.inherit (toString n)
   }
 
 
@@ -121,13 +121,13 @@ type alias Interval =
 {-| -}
 time : Time -> Tick msg
 time time =
-  { color = Color.gray
+  { position = time.timestamp
+  , color = Color.gray
   , width = 1
   , length = 5
-  , label = Just <| Junk.text Color.inherit (format time)
   , grid = True
   , direction = negative
-  , position = time.timestamp
+  , label = Just <| Junk.text Color.inherit (format time)
   }
 
 
