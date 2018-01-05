@@ -29,14 +29,13 @@ import Date.Format
 
 {-| -}
 type alias Tick msg =
-  { color : Color.Color
+  { position : Float
+  , color : Color.Color
   , width : Float
-  , events : List (Attribute msg)
   , length : Float
   , label : Maybe (Svg msg)
-  , grid : Bool
   , direction : Direction
-  , position : Float
+  , grid : Bool
   }
 
 
@@ -66,7 +65,6 @@ int : Int -> Tick msg
 int n =
   { color = Color.gray
   , width = 1
-  , events = []
   , length = 5
   , label = Just <| Junk.text Color.inherit (toString n)
   , grid = True
@@ -80,7 +78,6 @@ float : Float -> Tick msg
 float n =
   { color = Color.gray
   , width = 1
-  , events = []
   , length = 5
   , label = Just <| Junk.text Color.inherit (toString n)
   , grid = True
@@ -126,7 +123,6 @@ time : Time -> Tick msg
 time time =
   { color = Color.gray
   , width = 1
-  , events = []
   , length = 5
   , label = Just <| Junk.text Color.inherit (format time)
   , grid = True
