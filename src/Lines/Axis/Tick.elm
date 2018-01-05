@@ -1,16 +1,24 @@
 module Lines.Axis.Tick exposing
-  ( Tick, int, time, Time, Unit(..), Interval, float
-  , hover, frame
+  ( Tick
   , Direction, negative, positive
-  , format
+  , int, float
+  , time, Time, Unit(..), Interval, format
+  , hover, frame
   )
 
 {-|
 
+# Quick start
 @docs Tick, int, float
+
+# Definition
+@docs Tick, Direction, negative, positive
+
+# Time tick
 @docs time, Time, Unit, Interval, format
+
+# Groups
 @docs hover, frame
-@docs Direction, negative, positive
 
 -}
 
@@ -23,8 +31,6 @@ import Date
 import Date.Extra as Date
 import Date.Format
 
-
--- TICKS
 
 
 {-| -}

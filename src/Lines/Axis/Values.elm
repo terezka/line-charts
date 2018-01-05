@@ -3,7 +3,8 @@ module Lines.Axis.Values exposing (Amount, around, exactly, int, time, float, in
 
 {-|
 
-@docs Amount, around, exactly, int, time, float, interval
+# Values
+@docs Amount, around, exactly, int, float, time, interval
 
 -}
 

@@ -2,7 +2,11 @@ module Lines.Axis.Range exposing (Range, default, padded, window, custom)
 
 {-|
 
-@docs Range, default, padded, window, custom
+# Quick start
+@docs Range, default
+
+# Customizing
+@docs padded, window, custom
 
 -}
 

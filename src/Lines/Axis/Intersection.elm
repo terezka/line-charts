@@ -2,7 +2,11 @@ module Lines.Axis.Intersection exposing (Intersection, default, at, custom)
 
 {-|
 
-@docs Intersection, default, at, custom
+# Quick start
+@docs Intersection, default
+
+# Customizing
+@docs at, custom
 
 -}
 

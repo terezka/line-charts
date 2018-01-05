@@ -2,7 +2,14 @@ module Lines.Axis.Line exposing (Line, none, default, full, rangeFrame, Config, 
 
 {-|
 
-@docs Line, none, default, full, Config, custom, rangeFrame
+# Quick start
+@docs Line, none, default
+
+# Alternatives
+@docs full, rangeFrame
+
+# Customizing
+@docs Config, custom
 
 -}
 

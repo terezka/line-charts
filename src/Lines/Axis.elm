@@ -6,7 +6,11 @@ module Lines.Axis exposing
 
 {-|
 
-@docs Axis, int, time, float, intCustom, timeCustom, floatCustom, custom
+# Quick start
+@docs Axis, int, time, float
+
+# Customizing
+@docs intCustom, timeCustom, floatCustom, custom
 
 -}
 
