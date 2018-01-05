@@ -1,46 +1,53 @@
-module Internal.Axis.Range exposing (Range, default, padded, window, custom, apply)
+module Internal.Axis.Range exposing (Range, default, padded, window, custom, applyX, applyY)
 
-import Internal.Coordinate as Coordinate
+import Lines.Coordinate as Coordinate
 
 
 {-| -}
-type Range =
-  Range (Coordinate.Range -> Coordinate.Range)
+type Range
+  = Range ((Float -> Float) -> Coordinate.Range -> Coordinate.Range)
 
 
 {-| -}
 default : Range
 default =
-  Range identity
+  padded 20 20
 
 
-{-| TODO check this -}
+{-| -}
 padded : Float -> Float -> Range
 padded padMin padMax =
-  Range <| \{ min, max } ->
+  Range <| \scale { min, max } ->
     let range = max - min in
-    Coordinate.Range (min - range * padMin) (max + range * padMax)
+    Coordinate.Range (min - scale padMin) (max + scale padMax)
 
 
 {-| -}
 window : Float -> Float -> Range
 window min max =
-  Range <| \_ ->
+  Range <| \_ _ ->
     Coordinate.Range min max
 
 
 {-| -}
 custom : (Coordinate.Range -> (Float, Float)) -> Range
 custom editRange =
-  Range <| \range ->
+  Range <| \_ range ->
     let ( min, max ) = editRange range in
     Coordinate.Range min max
+
 
 
 -- INTERNAL
 
 
 {-| -}
-apply : Range -> Coordinate.Range -> Coordinate.Range
-apply (Range func) =
-  func
+applyX : Range -> Coordinate.System -> Coordinate.Range
+applyX (Range func) system =
+  func (Coordinate.scaleDataX system) system.x
+
+
+{-| -}
+applyY : Range -> Coordinate.System -> Coordinate.Range
+applyY (Range func) system =
+  func (Coordinate.scaleDataY system) system.y

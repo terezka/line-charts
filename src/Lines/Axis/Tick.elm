@@ -76,7 +76,7 @@ int n =
 
 
 {-| -}
-float :  Float -> Tick msg
+float : Float -> Tick msg
 float n =
   { color = Color.gray
   , width = 1

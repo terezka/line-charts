@@ -21,12 +21,11 @@ import Internal.Svg as Svg exposing (..)
 import Internal.Utils exposing (..)
 
 
-{-| -}
+{-| TODO -}
 type alias Dimension data msg =
   { title : Title.Title msg
   , variable : data -> Float
   , pixels : Int
-  , padding : Float
   , range : Range.Range
   , axis : Axis data msg
   }
@@ -51,23 +50,23 @@ default =
 {-| -}
 int : Int -> Axis data msg
 int amount =
-  custom Line.default <| \_ range ->
-    List.map Tick.int <| Values.int (Values.around amount) range
+  custom Line.default <| \data range ->
+    List.map Tick.int <| Values.int (Values.around amount) data
 
 
 
 {-| -}
 float : Int -> Axis data msg
 float amount =
-  custom Line.default <| \_ range ->
-    List.map Tick.float <| Values.float (Values.around amount) range
+  custom Line.default <| \data range ->
+    List.map Tick.float <| Values.float (Values.around amount) data
 
 
 {-| -}
 time : Int -> Axis data msg
 time amount =
-  custom Line.default <| \_ range ->
-    List.map Tick.time <| Values.time amount range
+  custom Line.default <| \data range ->
+    List.map Tick.time <| Values.time amount data
 
 
 
@@ -77,22 +76,22 @@ time amount =
 {-| -}
 intCustom : Int -> Line.Line msg -> (Int -> Tick.Tick msg) -> Axis data msg
 intCustom amount line tick =
-  custom line <| \_ range ->
-    List.map tick <| Values.int (Values.around amount) range
+  custom line <| \data range ->
+    List.map tick <| Values.int (Values.around amount) data
 
 
 {-| -}
 floatCustom : Int -> Line.Line msg -> (Float -> Tick.Tick msg) -> Axis data msg
 floatCustom amount line tick =
-  custom line <| \_ range ->
-    List.map tick <| Values.float (Values.around amount) range
+  custom line <| \data range ->
+    List.map tick <| Values.float (Values.around amount) data
 
 
 {-| -}
 timeCustom : Int -> Line.Line msg -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
 timeCustom amount line tick =
-  custom line <| \_ range ->
-    List.map tick <| Values.time amount range
+  custom line <| \data range ->
+    List.map tick <| Values.time amount data
 
 
 {-| -}
@@ -136,8 +135,7 @@ line axis =
 
 
 type alias ViewConfig msg =
-  { padding : Float
-  , line : Coordinate.Range -> Coordinate.Range -> Line.Config msg
+  { line : Coordinate.Range -> Coordinate.Range -> Line.Config msg
   , ticks : List (Tick.Tick msg)
   , intersection : Float
   , title : Title.Config msg
@@ -149,21 +147,17 @@ viewHorizontal : Coordinate.System -> Intersection.Intersection -> List data -> 
 viewHorizontal system intersection data dimension =
     let
         config =
-          { padding = dimension.padding
-          , line = line dimension.axis
+          { line = line dimension.axis
           , ticks = ticks system.xData system.x dimension data
           , intersection = Intersection.getY intersection system
           , title = Title.config dimension.title
           }
 
-        axisPosition =
-          config.intersection - scaleDataY system config.padding
-
         at x =
-          { x = x, y = axisPosition }
+          { x = x, y = config.intersection }
 
         viewAxisLine =
-          viewHorizontalAxisLine system axisPosition
+          viewHorizontalAxisLine system config.intersection
 
         viewTick tick =
           viewHorizontalTick system config (at tick.position) tick
@@ -180,21 +174,17 @@ viewVertical : Coordinate.System -> Intersection.Intersection -> List data -> Di
 viewVertical system intersection data dimension =
     let
         config =
-          { padding = dimension.padding
-          , line = line dimension.axis
+          { line = line dimension.axis
           , ticks = ticks system.yData system.y dimension data
           , intersection = Intersection.getX intersection system
           , title = Title.config dimension.title
           }
 
-        axisPosition =
-          config.intersection - scaleDataX system config.padding
-
         at y =
-          { x = axisPosition, y = y }
+          { x = config.intersection, y = y }
 
         viewAxisLine =
-          viewVerticalAxisLine system axisPosition
+          viewVerticalAxisLine system config.intersection
 
         viewTick tick =
           viewVerticalTick system config (at tick.position) tick

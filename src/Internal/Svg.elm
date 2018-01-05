@@ -39,16 +39,14 @@ vertical system userAttributes x y1 y2 =
       ]
 
 
-horizontalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Svg msg
-horizontalGrid system userAttributes padding y =
-  let offset = Coordinate.scaleDataX system padding in
-  horizontal system userAttributes y (system.x.min - offset) system.x.max
+horizontalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Svg msg
+horizontalGrid system userAttributes y =
+  horizontal system userAttributes y system.x.min system.x.max
 
 
-verticalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Svg msg
-verticalGrid system userAttributes padding x =
-  let offset = Coordinate.scaleDataY system padding in
-  vertical system userAttributes x (system.y.min - offset) system.y.max
+verticalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Svg msg
+verticalGrid system userAttributes x =
+  vertical system userAttributes x system.y.min system.y.max
 
 
 xTicks : Coordinate.System -> Float -> List (Attribute msg) -> Float -> List Float -> Svg msg

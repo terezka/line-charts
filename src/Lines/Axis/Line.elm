@@ -1,8 +1,8 @@
-module Lines.Axis.Line exposing (Line, none, default, fat, rangeFrame, Config, custom)
+module Lines.Axis.Line exposing (Line, none, default, full, rangeFrame, Config, custom)
 
 {-|
 
-@docs Line, none, default, fat, Config, custom, rangeFrame
+@docs Line, none, default, full, Config, custom, rangeFrame
 
 -}
 
@@ -30,9 +30,9 @@ default =
 
 
 {-| -}
-fat : Line msg
-fat =
-  Line.fat
+full : Line msg
+full =
+  Line.full
 
 
 {-| -}

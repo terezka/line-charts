@@ -301,7 +301,6 @@ type alias Dimension data msg =
   { title : Title.Title msg
   , variable : data -> Float
   , pixels : Int
-  , padding : Float
   , range : Range.Range
   , axis : Axis.Axis data msg
   }
@@ -400,15 +399,18 @@ viewCustom config lines =
     yRange =
       Coordinate.range (.point >> .y) allPoints
 
-    system =
+    systemRaw =
       { frame = frame
       , x = xRange
-              |> Range.apply config.x.range
-      , y = yRange
-              |> adjustDomainRange
-              |> Range.apply config.y.range
+      , y = adjustDomainRange yRange
       , xData = xRange
       , yData = yRange
+      }
+
+    system =
+      { systemRaw
+      | x = Range.applyX config.x.range systemRaw
+      , y = Range.applyY config.y.range systemRaw
       }
 
     adjustDomainRange domain =
@@ -489,14 +491,11 @@ viewGridLines config system width color data =
     grid tick =
       if tick.grid then Just tick.position else Nothing
 
-    view line padding number =
-      line system attributes padding number
-
     attributes =
       [ Attributes.strokeWidth (toString width), Attributes.stroke color ]
   in
-    List.map (view Svg.horizontalGrid config.y.padding) horizontalGrids ++
-    List.map (view Svg.verticalGrid config.x.padding) verticalGrids
+    List.map (Svg.horizontalGrid system attributes) horizontalGrids ++
+    List.map (Svg.verticalGrid system attributes) verticalGrids
 
 
 viewGridDots : Config data msg -> Coordinate.System -> Color.Color -> List data -> List (Svg.Svg msg)
@@ -545,7 +544,6 @@ defaultConfig toX toY =
       { title = Title.default ""
       , variable = toX
       , pixels = 650
-      , padding = 20
       , range = Range.default
       , axis = Axis.float 10
       }
@@ -553,7 +551,6 @@ defaultConfig toX toY =
       { title = Title.default ""
       , variable = toY
       , pixels = 400
-      , padding = 20
       , range = Range.default
       , axis = Axis.float 10
       }

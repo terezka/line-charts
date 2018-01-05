@@ -63,21 +63,18 @@ view model =
           { title = Title.at .max 0 10 "age (years)"
           , variable = .age
           , pixels = 650
-          , padding = 20
-          , range = Range.padded 0.1 0.1
-          , axis = Axis.floatCustom 10 AxisLine.default specialTick
+          , range = Range.padded 20 0
+          , axis = Axis.floatCustom 10 AxisLine.rangeFrame specialTick
           }
       , y =
           { title = Title.default "weight (kg)"
           , variable = .weight
           , pixels = 400
-          , padding = 20
-          , range = Range.default
-          , axis = Axis.custom AxisLine.default <| \data range ->
-                List.map dataTick (List.concat [ bob, alice, chuck ])
+          , range = Range.padded 20 0
+          , axis = Axis.floatCustom 8 AxisLine.rangeFrame specialTick
           }
       , intersection = Intersection.default
-      , junk = Junk.none -- Maybe.map junk model.hovering |> Maybe.withDefault
+      , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
       , interpolation = Lines.monotone
       , legends = Legends.default
       , line = Line.wider 2
@@ -151,7 +148,10 @@ junk hint =
               [ Svg.text <| label ++ ": " ++ toString value ]
       in
       { below = []
-      , above = [ viewHint ]
+      , above =
+          [ Junk.vertical system [ SvgA.strokeDasharray "1 2" ] hint.age
+          , Junk.horizontal system [ SvgA.strokeDasharray "1 2" ] hint.weight
+          ]
       , html = []
       }
 
