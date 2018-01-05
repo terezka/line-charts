@@ -108,7 +108,8 @@ line (Axis line _) =
   Line.config line
 
 
--- VIEW
+
+-- INTERNAL / VIEW
 
 
 type alias ViewConfig msg =
@@ -174,7 +175,7 @@ viewVertical system intersection dimension =
 
 
 
--- VIEW TITLE
+-- INTERNAL / VIEW / TITLE
 
 
 viewHorizontalTitle : Coordinate.System -> (Float -> Point) -> ViewConfig msg -> Svg msg
@@ -210,7 +211,7 @@ viewVerticalTitle system at { title } =
 
 
 
--- VIEW LINE
+-- INTERNAL / VIEW / LINE
 
 
 viewHorizontalAxisLine : Coordinate.System -> Float -> Line.Config msg -> Svg msg
@@ -229,7 +230,7 @@ attributesLine { events, width, color } =
 
 
 
--- VIEW TICK
+-- INTERNAL / VIEW / TICK
 
 
 viewHorizontalTick : Coordinate.System -> ViewConfig msg -> Point -> Tick.Tick msg -> Svg msg
@@ -256,7 +257,6 @@ lengthOfTick { length, direction } =
 attributesTick : Tick.Tick msg -> List (Svg.Attribute msg)
 attributesTick { width, color } =
   [ strokeWidth (toString width), stroke color ]
-
 
 
 viewHorizontalLabel : Coordinate.System -> Tick.Tick msg -> Point -> Svg msg -> Svg msg
