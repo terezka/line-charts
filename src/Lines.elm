@@ -373,9 +373,6 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
 viewCustom config lines =
   let
-    allData =
-      List.concatMap (.data << Line.lineConfig) lines
-
     -- Data points
     dataPoints =
       List.map (List.map dataPoint << .data << Line.lineConfig) lines
