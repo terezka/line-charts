@@ -442,8 +442,8 @@ viewCustom config lines =
       [ Svg.defs [] [ clipPath config system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
       , Svg.g [ Attributes.class "chart__lines" ] viewLines
-      , Axis.viewHorizontal system config.intersection config.x
-      , Axis.viewVertical   system config.intersection config.y
+      , Axis.viewHorizontal system config.intersection config.x.title config.x.axis
+      , Axis.viewVertical   system config.intersection config.y.title config.y.axis
       , viewLegends
       , Svg.g [ Attributes.class "chart__junk--above" ] junk.above
       ]

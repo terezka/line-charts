@@ -8,6 +8,7 @@ import Svg.Attributes as Attributes
 import Internal.Svg as Svg
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate
+import Lines.Dimension as Dimension
 import Internal.Axis as Axis
 
 
@@ -40,7 +41,7 @@ lines =
 
 
 {-| -}
-view : Coordinate.System -> Axis.Dimension data msg -> Axis.Dimension data msg -> Grid -> List (Svg.Svg msg)
+view : Coordinate.System -> Dimension.Dimension data msg -> Dimension.Dimension data msg -> Grid -> List (Svg.Svg msg)
 view system xDimension yDimension grid =
   let
     verticals =

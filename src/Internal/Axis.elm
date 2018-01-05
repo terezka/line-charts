@@ -1,6 +1,5 @@
 module Internal.Axis exposing
-  ( Dimension
-  , Axis
+  ( Axis
   , int, time, float
   , intCustom, timeCustom, floatCustom, custom
   -- INTERNAL
@@ -15,21 +14,13 @@ import Lines.Axis.Tick as Tick exposing (Direction)
 import Internal.Axis.Tick as Tick
 import Internal.Axis.Line as Line
 import Internal.Axis.Intersection as Intersection
-import Internal.Axis.Range as Range
 import Internal.Axis.Title as Title
 import Internal.Axis.Values as Values
 import Internal.Svg as Svg exposing (..)
 import Internal.Utils exposing (..)
 
 
-{-| -}
-type alias Dimension data msg =
-  { title : Title.Title msg
-  , variable : data -> Float
-  , pixels : Int
-  , range : Range.Range
-  , axis : Axis data msg
-  }
+-- AXIS
 
 
 {-| -}
@@ -38,7 +29,7 @@ type Axis data msg
 
 
 
--- AXIS
+-- API
 
 
 {-| -}
@@ -64,7 +55,7 @@ time amount =
 
 
 
--- CUSTOMS
+-- API / CUSTOM
 
 
 {-| -}
@@ -86,6 +77,10 @@ timeCustom : Int -> Line.Line msg -> (Tick.Time -> Tick.Tick msg) -> Axis data m
 timeCustom amount line tick =
   custom line <| \data range ->
     List.map tick <| Values.time amount data
+
+
+
+-- API / VERY CUSTOM
 
 
 {-| -}
@@ -121,14 +116,14 @@ type alias ViewConfig msg =
 
 
 {-| -}
-viewHorizontal : Coordinate.System -> Intersection.Intersection -> Dimension data msg -> Svg msg
-viewHorizontal system intersection dimension =
+viewHorizontal : Coordinate.System -> Intersection.Intersection -> Title.Title msg -> Axis data msg -> Svg msg
+viewHorizontal system intersection title axis =
     let
         config =
-          { line = line dimension.axis
-          , ticks = ticks system.xData system.x dimension.axis
+          { line = line axis
+          , ticks = ticks system.xData system.x axis
           , intersection = Intersection.getY intersection system
-          , title = Title.config dimension.title
+          , title = Title.config title
           }
 
         at x =
@@ -148,14 +143,14 @@ viewHorizontal system intersection dimension =
 
 
 {-| -}
-viewVertical : Coordinate.System -> Intersection.Intersection -> Dimension data msg -> Svg msg
-viewVertical system intersection dimension =
+viewVertical : Coordinate.System -> Intersection.Intersection -> Title.Title msg -> Axis data msg -> Svg msg
+viewVertical system intersection title axis =
     let
         config =
-          { line = line dimension.axis
-          , ticks = ticks system.yData system.y dimension.axis
+          { line = line axis
+          , ticks = ticks system.yData system.y axis
           , intersection = Intersection.getX intersection system
-          , title = Title.config dimension.title
+          , title = Title.config title
           }
 
         at y =
