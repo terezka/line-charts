@@ -9,6 +9,17 @@ import Internal.Path as Path exposing (..)
 import Internal.Utils exposing (..)
 
 
+{-| -}
+gridDot : Color.Color -> Point -> Svg msg
+gridDot color point =
+  Svg.circle
+    [ Attributes.cx (toString point.x)
+    , Attributes.cy (toString point.y)
+    , Attributes.r "1"
+    , Attributes.fill color
+    ]
+    []
+
 
 -- AXIS PRIMITIVES
 

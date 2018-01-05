@@ -68,19 +68,10 @@ viewDots system verticals horizontals color =
     dots_ g =
       List.map (dot g) horizontals
 
-    dot at1 at2 =
-      Coordinate.toSVG system <| Coordinate.Point at1 at2
-
-    circle point =
-      Svg.circle
-        [ Attributes.cx (toString point.x)
-        , Attributes.cy (toString point.y)
-        , Attributes.r "1"
-        , Attributes.fill color
-        ]
-        []
+    dot x y =
+      Coordinate.toSVG system (Coordinate.Point x y)
   in
-    List.map circle dots
+  List.map (Svg.gridDot color) dots
 
 
 viewLines : Coordinate.System -> List Float -> List Float -> Float -> Color.Color -> List (Svg.Svg msg)
@@ -89,5 +80,5 @@ viewLines system verticals horizontals width color =
     attributes =
       [ Attributes.strokeWidth (toString width), Attributes.stroke color ]
   in
-    List.map (Svg.horizontalGrid system attributes) horizontals ++
-    List.map (Svg.verticalGrid system attributes) verticals
+  List.map (Svg.horizontalGrid system attributes) horizontals ++
+  List.map (Svg.verticalGrid system attributes) verticals
