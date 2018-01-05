@@ -1,6 +1,7 @@
 module Internal.Axis exposing
   ( Axis, default
   , int, time, float
+  , intCustom, timeCustom, floatCustom
   , dashed, custom
   -- INTERNAL
   , ticks, viewHorizontal, viewVertical
@@ -49,11 +50,15 @@ default =
   Default
 
 
+-- EASY
+
+
 {-| -}
 int : Int -> Axis data msg
 int amount =
   custom Line.default <| \_ range ->
     List.map Tick.int <| Values.int (Values.around amount) range
+
 
 
 {-| -}
@@ -68,6 +73,35 @@ time : Int -> Axis data msg
 time amount =
   custom Line.default <| \_ range ->
     List.map Tick.time <| Values.time amount range
+
+
+
+-- CUSTOMS
+
+
+{-| -}
+intCustom : Int -> Line.Line msg -> (Int -> Tick.Tick msg) -> Axis data msg
+intCustom amount line tick =
+  custom line <| \_ range ->
+    List.map tick <| Values.int (Values.around amount) range
+
+
+{-| -}
+floatCustom : Int -> Line.Line msg -> (Float -> Tick.Tick msg) -> Axis data msg
+floatCustom amount line tick =
+  custom line <| \_ range ->
+    List.map tick <| Values.float (Values.around amount) range
+
+
+{-| -}
+timeCustom : Int -> Line.Line msg -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
+timeCustom amount line tick =
+  custom line <| \_ range ->
+    List.map tick <| Values.time amount range
+
+
+
+-- HARD
 
 
 {-| TODO use variable to make data tick -}

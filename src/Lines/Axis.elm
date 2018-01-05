@@ -1,12 +1,13 @@
 module Lines.Axis exposing
   ( Axis, default
   , int, time, float
+  , intCustom, timeCustom, floatCustom
   , dashed, custom
   )
 
 {-|
 
-@docs Axis, default, int, time, float, dashed, custom
+@docs Axis, default, int, time, float, intCustom, timeCustom, floatCustom, dashed, custom
 
 -}
 
@@ -42,7 +43,7 @@ int =
    Axis.int
 
 
-{-| TODO Change amount to int? -}
+{-| -}
 time : Int -> Axis data msg
 time =
    Axis.time
@@ -52,6 +53,25 @@ time =
 float : Int -> Axis data msg
 float =
    Axis.float
+
+
+{-| -}
+intCustom : Int -> Line.Line msg -> (Int -> Tick.Tick msg) -> Axis data msg
+intCustom =
+  Axis.intCustom
+
+
+{-| -}
+floatCustom : Int -> Line.Line msg -> (Float -> Tick.Tick msg) -> Axis data msg
+floatCustom =
+  Axis.floatCustom
+
+
+{-| -}
+timeCustom : Int -> Line.Line msg -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
+timeCustom =
+  Axis.timeCustom
+
 
 
 {-| -}

@@ -17,7 +17,6 @@ import Lines.Axis.Line as AxisLine
 import Lines.Events as Events
 import Lines.Grid as Grid
 import Lines.Legends as Legends
-import Internal.Axis.Values as Values -- TODO
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import Svg.Attributes as SvgA
 
@@ -65,11 +64,7 @@ view model =
           , pixels = 650
           , padding = 20
           , range = Range.padded 0.1 0.1
-          , axis =
-              Axis.custom AxisLine.rangeFrame <| \data range ->
-                Tick.hover (hoverTick .age) model.hovering ++
-                Tick.frame Tick.float data ++
-                List.map Tick.float (Values.float (Values.around 6) range)
+          , axis = Axis.floatCustom 10 AxisLine.rangeFrame specialTick
           }
       , y =
           { title = Title.default "weight (kg)"
@@ -124,6 +119,17 @@ hoverTick variable hovering =
   }
 
 
+specialTick : Float -> Tick.Tick msg
+specialTick n =
+  { color = Color.gray
+  , width = 1
+  , events = []
+  , length = 5
+  , label = Just <| Junk.text Color.pink (toString n)
+  , grid = False
+  , direction = Tick.negative
+  , position = n
+  }
 
 
 
