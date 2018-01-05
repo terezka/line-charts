@@ -55,12 +55,12 @@ float =
 
 
 {-| -}
-dashed : Line.Line msg -> Tick.Direction -> (data -> Tick.Tick msg) -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+dashed : Line.Line msg -> (data -> Tick.Tick msg) -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
 dashed =
    Axis.dashed
 
 
 {-| -}
-custom : Line.Line msg -> Tick.Direction -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+custom : Line.Line msg -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
 custom =
   Axis.custom

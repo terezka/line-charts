@@ -35,8 +35,8 @@ type alias Dimension data msg =
 {-| -}
 type Axis data msg
   = Default
-  | Custom (Line.Line msg) Direction (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
-  | Data   (Line.Line msg) Direction (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) (data -> Tick.Tick msg)
+  | Custom (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
+  | Data   (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) (data -> Tick.Tick msg)
 
 
 
@@ -52,32 +52,32 @@ default =
 {-| -}
 int : Int -> Axis data msg
 int amount =
-  custom Line.default Tick.negative <| \_ range ->
+  custom Line.default <| \_ range ->
     List.map Tick.int <| Values.int (Values.around amount) range
 
 
 {-| -}
 float : Int -> Axis data msg
 float amount =
-  custom Line.default Tick.negative <| \_ range ->
+  custom Line.default <| \_ range ->
     List.map Tick.float <| Values.float (Values.around amount) range
 
 
 {-| -}
 time : Int -> Axis data msg
 time amount =
-  custom Line.default Tick.negative <| \_ range ->
+  custom Line.default <| \_ range ->
     List.map Tick.time <| Values.time amount range
 
 
 {-| TODO use variable to make data tick -}
-dashed : Line.Line msg -> Direction -> (data -> Tick.Tick msg) -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
-dashed line direction dataTick ticks =
-  Data line direction ticks dataTick
+dashed : Line.Line msg -> (data -> Tick.Tick msg) -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+dashed line dataTick ticks =
+  Data line ticks dataTick
 
 
 {-| -}
-custom : Line.Line msg -> Direction -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+custom : Line.Line msg -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
 custom =
   Custom
 
@@ -92,10 +92,10 @@ ticks dataRange range { variable, pixels, axis } data =
     Default ->
       List.map Tick.float (defaultValues pixels range)
 
-    Custom line direction values ->
+    Custom line values ->
       values dataRange range
 
-    Data line direction values tick ->
+    Data line values tick ->
       values dataRange range ++ List.map tick data
 
 
@@ -112,18 +112,9 @@ defaultAmount length =
 line : Axis data msg -> Coordinate.Range -> Coordinate.Range -> Line.Config msg
 line axis =
   case axis of
-    Default                         -> Line.config Line.default
-    Custom line direction values    -> Line.config line
-    Data line direction values tick -> Line.config line
-
-
-direction : Axis data msg -> Direction
-direction axis =
-  case axis of
-    Default                         -> Tick.negative
-    Custom line direction values    -> direction
-    Data line direction values tick -> direction
-
+    Default               -> Line.config Line.default
+    Custom line values    -> Line.config line
+    Data line values tick -> Line.config line
 
 
 -- VIEW
@@ -133,7 +124,6 @@ type alias ViewConfig msg =
   { padding : Float
   , line : Coordinate.Range -> Coordinate.Range -> Line.Config msg
   , ticks : List (Tick.Tick msg)
-  , direction : Direction
   , intersection : Float
   , title : Title.Config msg
   }
@@ -147,7 +137,6 @@ viewHorizontal system intersection data dimension =
           { padding = dimension.padding
           , line = line dimension.axis
           , ticks = ticks system.xData system.x dimension data
-          , direction = direction dimension.axis
           , intersection = Intersection.getY intersection system
           , title = Title.config dimension.title
           }
@@ -179,7 +168,6 @@ viewVertical system intersection data dimension =
           { padding = dimension.padding
           , line = line dimension.axis
           , ticks = ticks system.yData system.y dimension data
-          , direction = direction dimension.axis
           , intersection = Intersection.getX intersection system
           , title = Title.config dimension.title
           }
@@ -265,21 +253,21 @@ attributesLine { events, width, color } =
 viewHorizontalTick : Coordinate.System -> ViewConfig msg -> Point -> Tick.Tick msg -> Svg msg
 viewHorizontalTick system config ({ x, y } as point) tick =
   g [ class "chart__tick" ]
-    [ xTick system (lengthOfTick config tick) (attributesTick tick) y x
-    , viewMaybe tick.label (viewHorizontalLabel system config point)
+    [ xTick system (lengthOfTick tick) (attributesTick tick) y x
+    , viewMaybe tick.label (viewHorizontalLabel system tick point)
     ]
 
 
 viewVerticalTick : Coordinate.System -> ViewConfig msg -> Point -> Tick.Tick msg -> Svg msg
 viewVerticalTick system config ({ x, y } as point) tick =
   g [ class "chart__tick" ]
-    [ yTick system (lengthOfTick config tick) (attributesTick tick) x y
-    , viewMaybe tick.label (viewVerticalLabel system config point)
+    [ yTick system (lengthOfTick tick) (attributesTick tick) x y
+    , viewMaybe tick.label (viewVerticalLabel system tick point)
     ]
 
 
-lengthOfTick : ViewConfig msg -> Tick.Tick msg -> Float
-lengthOfTick { direction } { length } =
+lengthOfTick : Tick.Tick msg -> Float
+lengthOfTick { length, direction } =
   if Tick.isPositive direction then -length else length
 
 
@@ -289,7 +277,7 @@ attributesTick { width, color } =
 
 
 
-viewHorizontalLabel : Coordinate.System -> ViewConfig msg -> Point -> Svg msg -> Svg msg
+viewHorizontalLabel : Coordinate.System -> Tick.Tick msg -> Point -> Svg msg -> Svg msg
 viewHorizontalLabel system { direction } position view =
   let
     yOffset = if Tick.isPositive direction then -10 else 20
@@ -300,7 +288,7 @@ viewHorizontalLabel system { direction } position view =
     [ view ]
 
 
-viewVerticalLabel : Coordinate.System -> ViewConfig msg -> Point -> Svg msg -> Svg msg
+viewVerticalLabel : Coordinate.System -> Tick.Tick msg -> Point -> Svg msg -> Svg msg
 viewVerticalLabel system { direction } position view =
   let
     anchor = if Tick.isPositive direction then Start else End

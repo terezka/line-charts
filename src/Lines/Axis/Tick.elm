@@ -33,8 +33,26 @@ type alias Tick msg =
   , length : Float
   , label : Maybe (Svg msg)
   , grid : Bool
+  , direction : Direction
   , position : Float
   }
+
+
+{-| -}
+type alias Direction =
+  Tick.Direction
+
+
+{-| -}
+negative : Direction
+negative =
+  Tick.Negative
+
+
+{-| -}
+positive : Direction
+positive =
+  Tick.Positive
 
 
 
@@ -50,6 +68,7 @@ int n =
   , length = 5
   , label = Just <| Junk.text Color.inherit (toString n)
   , grid = True
+  , direction = negative
   , position = toFloat n
   }
 
@@ -63,6 +82,7 @@ float n =
   , length = 5
   , label = Just <| Junk.text Color.inherit (toString n)
   , grid = True
+  , direction = negative
   , position = n
   }
 
@@ -108,6 +128,7 @@ time time =
   , length = 5
   , label = Just <| Junk.text Color.inherit (format time)
   , grid = True
+  , direction = negative
   , position = time.timestamp
   }
 
@@ -125,24 +146,9 @@ format { change, interval, timestamp } =
 
 
 
--- DIRECTION
 
 
 {-| -}
-type alias Direction =
-  Tick.Direction
-
-
-{-| -}
-negative : Direction
-negative =
-  Tick.Negative
-
-
-{-| -}
-positive : Direction
-positive =
-  Tick.Positive
 
 
 
