@@ -44,11 +44,11 @@ view : Coordinate.System -> Axis.Dimension data msg -> Axis.Dimension data msg -
 view system xDimension yDimension grid =
   let
     verticals =
-      Axis.ticks system.xData system.x xDimension
+      Axis.ticks system.xData system.x xDimension.axis
         |> List.filterMap hasGrid
 
     horizontals =
-      Axis.ticks system.yData system.y yDimension
+      Axis.ticks system.yData system.y yDimension.axis
         |> List.filterMap hasGrid
 
     hasGrid tick =

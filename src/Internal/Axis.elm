@@ -1,6 +1,6 @@
 module Internal.Axis exposing
   ( Dimension
-  , Axis, default
+  , Axis
   , int, time, float
   , intCustom, timeCustom, floatCustom, custom
   -- INTERNAL
@@ -34,18 +34,11 @@ type alias Dimension data msg =
 
 {-| -}
 type Axis data msg
-  = Default
-  | Custom (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
+  = Axis (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
 
 
 
 -- AXIS
-
-
-{-| -}
-default : Axis data msg
-default =
-  Default
 
 
 {-| -}
@@ -98,29 +91,21 @@ timeCustom amount line tick =
 {-| -}
 custom : Line.Line msg -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
 custom =
-  Custom
+  Axis
 
 
 
 -- INTERNAL
 
 
-ticks : Coordinate.Range -> Coordinate.Range -> Dimension data msg -> List (Tick.Tick msg)
-ticks dataRange range { variable, pixels, axis } =
-  case axis of
-    Default ->
-      let amount = Values.around (pixels // 70) in
-      List.map Tick.float (Values.float amount dataRange)
-
-    Custom line values ->
-      values dataRange range
+ticks : Coordinate.Range -> Coordinate.Range -> Axis data msg -> List (Tick.Tick msg)
+ticks dataRange range (Axis line values) =
+  values dataRange range
 
 
 line : Axis data msg -> Coordinate.Range -> Coordinate.Range -> Line.Config msg
-line axis =
-  case axis of
-    Default               -> Line.config Line.default
-    Custom line values    -> Line.config line
+line (Axis line _) =
+  Line.config line
 
 
 -- VIEW
@@ -140,7 +125,7 @@ viewHorizontal system intersection dimension =
     let
         config =
           { line = line dimension.axis
-          , ticks = ticks system.xData system.x dimension
+          , ticks = ticks system.xData system.x dimension.axis
           , intersection = Intersection.getY intersection system
           , title = Title.config dimension.title
           }
@@ -167,7 +152,7 @@ viewVertical system intersection dimension =
     let
         config =
           { line = line dimension.axis
-          , ticks = ticks system.yData system.y dimension
+          , ticks = ticks system.yData system.y dimension.axis
           , intersection = Intersection.getX intersection system
           , title = Title.config dimension.title
           }

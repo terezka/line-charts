@@ -5,15 +5,13 @@ import Lines as Lines
 import Lines.Junk as Junk exposing (..)
 import Lines.Color as Color
 import Lines.Dot as Dot
-import Lines.Axis as Axis
-import Lines.Axis.Title as Title
-import Lines.Axis.Range as Range
 import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
 import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Events as Events
 import Lines.Grid as Grid
+import Lines.Dimension as Dimension
 import Lines.Legends as Legends
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import Svg.Attributes as SvgA
@@ -56,20 +54,8 @@ view model =
       { margin = Coordinate.Margin 40 150 90 150
       , attributes = [ SvgA.style "font-family: monospace;" ]
       , events = Events.default Hover
-      , x =
-          { title = Title.at .max 0 10 "age (years)"
-          , variable = .age
-          , pixels = 650
-          , range = Range.padded 20 0
-          , axis = Axis.float 10
-          }
-      , y =
-          { title = Title.default "weight (kg)"
-          , variable = .weight
-          , pixels = 400
-          , range = Range.padded 20 0
-          , axis = Axis.float 8
-          }
+      , x = Dimension.default 650 "age (years)" .age
+      , y = Dimension.default 400 "weight (kg)" .weight
       , intersection = Intersection.default
       , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
       , interpolation = Lines.monotone

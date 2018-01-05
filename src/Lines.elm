@@ -1,7 +1,7 @@
 module Lines exposing
   ( view1, view2, view3
   , view, Line, line, dash
-  , viewCustom, Config, Dimension
+  , viewCustom, Config
   , Interpolation, linear, monotone
   )
 
@@ -14,7 +14,7 @@ module Lines exposing
 @docs view, Line, line, dash
 
 # Customize everything
-@docs viewCustom, Config, Dimension
+@docs viewCustom, Config
 
 ## Interpolations
 @docs Interpolation, linear, monotone
@@ -28,6 +28,7 @@ import Svg
 import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Junk as Junk
+import Lines.Dimension as Dimension
 import Internal.Axis as Axis
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
@@ -39,7 +40,6 @@ import Internal.Legends as Legends
 import Internal.Line as Line
 import Internal.Utils as Utils
 import Internal.Axis.Range as Range
-import Internal.Axis.Title as Title
 import Internal.Axis.Intersection as Intersection
 
 
@@ -92,9 +92,9 @@ _See the full example [here](https://ellie-app.com/s8kQfLfYZa1/1)._
 function like `bmi human = human.weight / human.height ^ 2` and create a
 chart of `.age` vs `bmi`. This allows you to keep your data set nice and minimal!
 
-**Note 2:** `view1` is just a function, so it will adjust as your data changes.
-If you get more data points or some data points are updated, the chart
-updates automatically!
+**Note 2:** `view1` is just a function, so it will update as your data changes.
+If you get more data points or some data points are changed, the chart
+refreshes automatically!
 
 -}
 view1 : (data -> Float) -> (data -> Float) -> List data -> Svg.Svg msg
@@ -104,8 +104,8 @@ view1 toX toY dataset =
 
 {-| Show a line chart with two data sets.
 
-Say you have two humans and you would like to see how they their weight relates
-to their age, we can display it like this:
+Say you have two humans and you would like to see how their weight relates
+to their age. We can display it like this:
 
     humanChart : Html msg
     humanChart =
@@ -139,8 +139,12 @@ view3 toX toY dataset1 dataset2 dataset3 =
 -- VIEW
 
 
-{-| Show any amount of lines in your chart. Additional customizations of your
-lines are also made available by the use of the function `line`.
+{-| Show any amount of lines in your chart.
+
+Try changing the color, the dot, or the title of a line, or see
+the `line` function for more information.
+
+See `viewCustom` for all other customizations.
 
     humanChart : Html msg
     humanChart =
@@ -177,12 +181,11 @@ Try changing the color or explore all the available dot shapes from `Lines.Dot`!
 
 _See the full example [here](https://ellie-app.com/stWdWjqGZa1/0)._
 
-Besides the color and the dot, you also pass the function a string title and
-the data for that line. These titles will show up in the legends.
+The string title will show up in the legends.
 
 If you are interested in customizing your legends, dot size or line width,
 check out `viewCustom`. For now though, I'd recommend you stick to `view` and
-get your lines right first, and then stepping up the complexity.
+get your lines and data right first, and then stepping up the complexity.
 
  -}
 line : Color.Color -> Dot.Shape -> String -> List data -> Line data
@@ -192,11 +195,11 @@ line =
 
 {-| Customize a dashed line.
 
-Works just like `line`, except it takes another argument second to last which
-is and array of floats describing your dashing pattern. See the
-SVG [`stroke-dasharray` documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
+Works just like `line`, except it takes another argument which is an array of
+floats describing your dashing pattern. See the SVG
+[`stroke-dasharray` documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
 for examples of patterns. Dashed lines are especially good for visualizing
-processed data, like averages or predicted values.
+processed data like averages or predicted values.
 
     humanChart : Html msg
     humanChart =
@@ -219,26 +222,34 @@ dash =
 -- VIEW / CUSTOM
 
 
-{-| The customizations available for your line chart viewed with `viewCustom`.
+{-| The customizations available for your chart. Use with `viewCustom`.
+
+  - `id`: Sets the id.
+    It's uniqueness is important for reasons you don't really need to know, so
+    please just make sure it is!
 
   - `margin`: Customizes the size and margins of your chart.
+    Arguments are organized like CSS margins: top right bottom left.
     See `Lines.Coordinate` for more information and examples.
 
-  - `x`: Customizes the look of your horizontal axis.
-    See `Lines.Axis` for more information and examples.
+  - `x`: Customizes your horizontal axis.
+    See `Lines.Dimension` for more information and examples.
 
-  - `y`: Customizes the look of your vertical axis.
-    See `Lines.Axis` for more information and examples.
+  - `y`: Customizes your vertical axis.
+    See `Lines.Dimension` for more information and examples.
 
-  - `interpolation`: Customizes the curve of your lines.
-    See the `Interpolation` type for more information and examples.
+  - `grid`: Customizes the style of your grid.
+    See `Lines.Grid` for more information and examples.
 
   - `areaOpacity`: Determines the opacity of the area under your line.
     The area is always the same color as your line, but the transparency
     can be altered with this property. Takes a number between 0 and 1.
 
-  - `legends`: Customizes your chart's legends.
-    See `Lines.Legends` for more information and examples.
+  - `intersection`: Determines where your axes meet.
+    See `Lines.Axis.Intersection` for more information and examples.
+
+  - `interpolation`: Customizes the curve of your lines.
+    See the `Interpolation` type for more information and examples.
 
   - `line`: Customizes your lines' width and color.
     See `Lines.Line` for more information and examples.
@@ -246,67 +257,61 @@ dash =
   - `dot`: Customizes your dots' size and style.
     See `Lines.Dot` for more information and examples.
 
-  - `attributes`: Customizes the SVG attributes added to the
-    `svg` element containing your chart.
+  - `legends`: Customizes your chart's legends.
+    See `Lines.Legends` for more information and examples.
 
-  - `events`: Customizes your chart's events, allowing you easily
-    make your chart interactive (adding tooltips, hover startes etc.).
+  - `attributes`: Customizes the SVG attributes added to the `svg` element
+    containing your chart.
+
+  - `events`: Customizes your chart's events, allowing you easily.
+    make your chart interactive (adding tooltips, hover states etc.).
     See `Lines.Events` for more information and examples.
 
   - `junk`: Gets its name from
     [Edward Tufte's concept of "chart junk"](https://en.wikipedia.org/wiki/Chartjunk).
-    Here you are allowed set your creativity loose and add whatever SVG or HTML fun
-    you can imagine. (This is also where you can add grid lines!)
+    Here you are finally allowed set your creativity loose and add whatever
+    SVG or HTML fun you can imagine.
     See `Lines.Junk` for more information and examples.
 
 
-The default configuration is the following (besides the `.age` and `.weight`,
-you have to provide your own x and y property). A good start would be to
-copy it and play around with customizations available for each property.
+Here is an example configuration. A good start would be to copy it and play
+around with customizations available for each property.
 
     chartConfig : Config data msg
     chartConfig =
-      { margin = Margin 40 150 90 150
-      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
-      , y = Axis.default (Axis.defaultTitle "" 0 0) .weight
-      , interpolation = Lines.linear
+      { id = "chart"
+      , margin = Coordinate.Margin 30 120 90 120
+      , x = Dimension.default 650 "Age" .age
+      , y = Dimension.default 400 "Weight (kg)" .weight
+      , grid = Grid.default
       , areaOpacity = 0
-      , legends = Legends.default
+      , intersection = Intersection.default
+      , interpolation = Lines.linear
       , line = Line.default
       , dot = Dot.default
-      , junk = Junk.none
+      , legends = Legends.default
       , attributes = []
       , events = []
-      , id = "chart"
+      , junk = Junk.none
       }
-
 -}
 type alias Config data msg =
-  { margin : Coordinate.Margin
-  , x : Dimension data msg
-  , y : Dimension data msg
+  { id : String
+  , margin : Coordinate.Margin
+  , x : Dimension.Dimension data msg
+  , y : Dimension.Dimension data msg
+  , grid : Grid.Grid
   , intersection : Intersection.Intersection
   , interpolation : Interpolation
   , areaOpacity : Float
-  , legends : Legends.Legends msg
   , line : Line.Look data
   , dot : Dot.Look data
+  , legends : Legends.Legends msg
   , attributes : List (Svg.Attribute msg)
   , events : List (Events.Event data msg)
   , junk : Junk.Junk msg
-  , grid : Grid.Grid
-  , id : String
   }
 
-
-{-| -}
-type alias Dimension data msg =
-  { title : Title.Title msg
-  , variable : data -> Float
-  , pixels : Int
-  , range : Range.Range
-  , axis : Axis.Axis data msg
-  }
 
 
 -- INTERPOLATIONS
@@ -332,14 +337,16 @@ monotone =
 
 
 
-{-| Customize your chart. See the `Config` type for information about the
-available customizations. The example below adds color to the area below the lines.
+{-| Customize your chart.
 
-**Note:** Speaking of areas, remember that area charts are for properties for
-which the area under the curve _matters_. Typically, this would be when you
+See the `Config` type for information about the available customizations.
+The example below adds color to the area below the lines.
+
+**Note:** Speaking of areas, remember that area charts are for data chart
+where the area under the curve _matters_. Typically, this would be when you
 have an quantity changing with respect to time. In that case, the area under
 the curve shows how much the quantity changed. However if that amount is not
-significant, it's best to leave it out.
+significant, it's best to leave it out. -- TODO revise
 
     chart : Html msg
     chart =
@@ -351,21 +358,22 @@ significant, it's best to leave it out.
 
     chartConfig : Config data msg
     chartConfig =
-      { frame = Frame (Margin 40 150 90 150) (Size 650 400)
-      , x = Axis.default (Axis.defaultTitle "" 0 0) .age
-      , y = Axis.default (Axis.defaultTitle "" 0 0) .income
-      , range = Limitation identity identity
-      , domain = Limitation identity identity
-      , interpolation = Lines.linear
+      { id = "chart"
+      , margin = Coordinate.Margin 30 120 90 120
+      , x = Dimension.default 650 "Age" .age
+      , y = Dimension.default 400 "Weight (kg)" .weight
+      , grid = Grid.default
       , areaOpacity = 0.25 -- Changed from the default!
-      , legends = Legends.default
+      , intersection = Intersection.default
+      , interpolation = Lines.linear
       , line = Line.default
       , dot = Dot.default
+      , legends = Legends.default
       , attributes = []
       , events = []
       , junk = Junk.none
-      , id = "chart"
       }
+
 
 _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 
@@ -492,32 +500,20 @@ toSystem config data =
 
 defaultConfig : (data -> Float) -> (data -> Float) -> Config data msg
 defaultConfig toX toY =
-  { margin = Coordinate.Margin 30 120 90 120
-  , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
-  , events = []
-  , x =
-      { title = Title.default ""
-      , variable = toX
-      , pixels = 650
-      , range = Range.default
-      , axis = Axis.default
-      }
-  , y =
-      { title = Title.default ""
-      , variable = toY
-      , pixels = 400
-      , range = Range.default
-      , axis = Axis.default
-      }
-  , intersection = Intersection.default
-  , junk = Junk.none
-  , interpolation = linear
-  , legends = Legends.default
-  , line = Line.default
-  , dot = Dot.default
+  { id = "chart"
+  , margin = Coordinate.Margin 30 120 90 120
+  , x = Dimension.default 650 "" toX
+  , y = Dimension.default 400 "" toY
   , grid = Grid.default
   , areaOpacity = 0
-  , id = "chart"
+  , intersection = Intersection.default
+  , interpolation = linear
+  , line = Line.default
+  , dot = Dot.default
+  , legends = Legends.default
+  , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
+  , events = []
+  , junk = Junk.none
   }
 
 

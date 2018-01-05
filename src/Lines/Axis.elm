@@ -1,12 +1,12 @@
 module Lines.Axis exposing
-  ( Axis, default
+  ( Axis
   , int, time, float
   , intCustom, timeCustom, floatCustom, custom
   )
 
 {-|
 
-@docs Axis, default, int, time, float, intCustom, timeCustom, floatCustom, custom
+@docs Axis, int, time, float, intCustom, timeCustom, floatCustom, custom
 
 -}
 
@@ -28,12 +28,6 @@ type alias Amount =
 
 
 -- API / AXIS
-
-
-{-| -}
-default : Axis data msg
-default =
-   Axis.default
 
 
 {-| -}
