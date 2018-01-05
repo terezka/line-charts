@@ -8,7 +8,6 @@ import Lines.Color as Color
 import Lines.Dot as Dot
 import Lines.Axis as Axis
 import Lines.Axis.Tick as Tick
-import Lines.Axis.Line as AxisLine
 import Lines.Axis.Title as Title
 import Lines.Axis.Range as Range
 import Lines.Axis.Intersection as Intersection
@@ -17,12 +16,11 @@ import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Legends as Legends
 import Lines.Grid as Grid
-import Lines.Axis.Values as Values
 
 
 main : Svg msg
 main =
-  -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3 ]
+  -- Lines.view3 .magnesium .heartattacks data1 data2 data3_a
   -- TODO two points don't draw
   Lines.viewCustom
     { margin = Coordinate.Margin 150 150 150 150
@@ -33,16 +31,14 @@ main =
         , variable = .date
         , pixels = 750
         , range = Range.padded 30 10
-        , axis = Axis.custom AxisLine.default <| \data range ->
-              List.map timeTick (Values.time 10 data)
+        , axis = Axis.time 10
         }
     , y =
         { title = Title.default "Heart attacks"
         , variable = .heartattacks
-        , pixels = 650
+        , pixels = 750
         , range = Range.padded 30 10
-        , axis = Axis.custom AxisLine.default <| \data range ->
-              List.map Tick.float (Values.float (Values.exactly 10) data)
+        , axis = Axis.float 10
         }
     , intersection = Intersection.default
     , junk = Junk.none
@@ -58,6 +54,7 @@ main =
     , Lines.line Color.pink Dot.circle "2" data2
     , Lines.line Color.orange Dot.circle "3" data3_a
     ]
+
 
 
 

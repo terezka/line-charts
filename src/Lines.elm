@@ -537,7 +537,7 @@ viewGridDots config system color data =
 
 defaultConfig : (data -> Float) -> (data -> Float) -> Config data msg
 defaultConfig toX toY =
-  { margin = Coordinate.Margin 40 150 90 150
+  { margin = Coordinate.Margin 30 120 90 120
   , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
   , events = []
   , x =
@@ -545,14 +545,14 @@ defaultConfig toX toY =
       , variable = toX
       , pixels = 650
       , range = Range.default
-      , axis = Axis.float 10
+      , axis = Axis.default
       }
   , y =
       { title = Title.default ""
       , variable = toY
       , pixels = 400
       , range = Range.default
-      , axis = Axis.float 10
+      , axis = Axis.default
       }
   , intersection = Intersection.default
   , junk = Junk.none

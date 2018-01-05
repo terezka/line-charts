@@ -15,7 +15,7 @@ type Grid
 {-| -}
 default : Grid
 default =
-  dotted "#d3d3d3"
+  lines 1 Color.grayLight
 
 
 {-| -}

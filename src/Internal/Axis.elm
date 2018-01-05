@@ -108,20 +108,11 @@ ticks : Coordinate.Range -> Coordinate.Range -> Dimension data msg -> List data 
 ticks dataRange range { variable, pixels, axis } data =
   case axis of
     Default ->
-      List.map Tick.float (defaultValues pixels range)
+      let amount = Values.around (pixels // 70) in
+      List.map Tick.float (Values.float amount dataRange)
 
     Custom line values ->
       values dataRange range
-
-
-defaultValues : Int -> Coordinate.Range -> List Float
-defaultValues length =
-  Values.float (defaultAmount length)
-
-
-defaultAmount : Int -> Values.Amount
-defaultAmount length =
-  Values.around <| length // 90
 
 
 line : Axis data msg -> Coordinate.Range -> Coordinate.Range -> Line.Config msg
