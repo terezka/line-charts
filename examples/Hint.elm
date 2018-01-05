@@ -51,7 +51,8 @@ update msg model =
 
 -- VIEW
 
--- TODO tick offset and direction
+-- TODO tick offset
+-- TODO consider tick space tolerance as determinating factor of tick amount
 view : Model -> Svg Msg
 view model =
     Lines.viewCustom
@@ -64,7 +65,7 @@ view model =
           , pixels = 650
           , padding = 20
           , range = Range.padded 0.1 0.1
-          , axis = Axis.floatCustom 10 AxisLine.rangeFrame specialTick
+          , axis = Axis.floatCustom 10 AxisLine.default specialTick
           }
       , y =
           { title = Title.default "weight (kg)"
@@ -72,9 +73,8 @@ view model =
           , pixels = 400
           , padding = 20
           , range = Range.default
-          , axis =
-              Axis.dashed AxisLine.none dataTick <| \_ _ ->
-                Tick.hover (hoverTick .weight) model.hovering
+          , axis = Axis.custom AxisLine.default <| \data range ->
+                List.map dataTick (List.concat [ bob, alice, chuck ])
           }
       , intersection = Intersection.default
       , junk = Junk.none -- Maybe.map junk model.hovering |> Maybe.withDefault
@@ -99,7 +99,7 @@ dataTick n =
   , events = []
   , length = 5
   , label = Nothing
-  , grid = False
+  , grid = True
   , direction = Tick.negative
   , position = n.weight
   }
@@ -126,7 +126,7 @@ specialTick n =
   , events = []
   , length = 5
   , label = Just <| Junk.text Color.pink (toString n)
-  , grid = False
+  , grid = True
   , direction = Tick.negative
   , position = n
   }

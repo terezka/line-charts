@@ -1,8 +1,7 @@
 module Internal.Axis exposing
   ( Axis, default
   , int, time, float
-  , intCustom, timeCustom, floatCustom
-  , dashed, custom
+  , intCustom, timeCustom, floatCustom, custom
   -- INTERNAL
   , ticks, viewHorizontal, viewVertical
   )
@@ -37,20 +36,16 @@ type alias Dimension data msg =
 type Axis data msg
   = Default
   | Custom (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
-  | Data   (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) (data -> Tick.Tick msg)
 
 
 
--- API / AXIS
+-- AXIS
 
 
 {-| -}
 default : Axis data msg
 default =
   Default
-
-
--- EASY
 
 
 {-| -}
@@ -100,16 +95,6 @@ timeCustom amount line tick =
     List.map tick <| Values.time amount range
 
 
-
--- HARD
-
-
-{-| TODO use variable to make data tick -}
-dashed : Line.Line msg -> (data -> Tick.Tick msg) -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
-dashed line dataTick ticks =
-  Data line ticks dataTick
-
-
 {-| -}
 custom : Line.Line msg -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
 custom =
@@ -129,9 +114,6 @@ ticks dataRange range { variable, pixels, axis } data =
     Custom line values ->
       values dataRange range
 
-    Data line values tick ->
-      values dataRange range ++ List.map tick data
-
 
 defaultValues : Int -> Coordinate.Range -> List Float
 defaultValues length =
@@ -148,7 +130,6 @@ line axis =
   case axis of
     Default               -> Line.config Line.default
     Custom line values    -> Line.config line
-    Data line values tick -> Line.config line
 
 
 -- VIEW

@@ -1,13 +1,12 @@
 module Lines.Axis exposing
   ( Axis, default
   , int, time, float
-  , intCustom, timeCustom, floatCustom
-  , dashed, custom
+  , intCustom, timeCustom, floatCustom, custom
   )
 
 {-|
 
-@docs Axis, default, int, time, float, intCustom, timeCustom, floatCustom, dashed, custom
+@docs Axis, default, int, time, float, intCustom, timeCustom, floatCustom, custom
 
 -}
 
@@ -71,13 +70,6 @@ floatCustom =
 timeCustom : Int -> Line.Line msg -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
 timeCustom =
   Axis.timeCustom
-
-
-
-{-| -}
-dashed : Line.Line msg -> (data -> Tick.Tick msg) -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
-dashed =
-   Axis.dashed
 
 
 {-| -}
