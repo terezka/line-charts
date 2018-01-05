@@ -1,5 +1,6 @@
 module Lines.Axis.Tick exposing
   ( Tick, int, time, Time, Unit(..), Interval, float
+  , hover, frame
   , Direction, negative, positive
   , format
   )
@@ -8,14 +9,15 @@ module Lines.Axis.Tick exposing
 
 @docs Tick, int, float
 @docs time, Time, Unit, Interval, format
+@docs hover, frame
 @docs Direction, negative, positive
 
-TODO move direction into tick
 -}
 
 import Svg exposing (Svg, Attribute)
 import Lines.Color as Color
 import Lines.Junk as Junk
+import Lines.Coordinate as Coordinate
 import Internal.Axis.Tick as Tick
 import Date
 import Date.Extra as Date
@@ -146,9 +148,19 @@ format { change, interval, timestamp } =
 
 
 
+-- GROUPS
 
 
 {-| -}
+hover : (data -> Tick msg) -> Maybe data -> List (Tick msg)
+hover tick =
+  Maybe.map (tick >> List.singleton) >> Maybe.withDefault []
+
+
+{-| -}
+frame : (Float -> Tick msg) -> Coordinate.Range -> List (Tick msg)
+frame tick data =
+  List.map tick [ data.min, data.max ]
 
 
 

@@ -60,16 +60,16 @@ view model =
       , attributes = [ SvgA.style "font-family: monospace;" ]
       , events = Events.default Hover
       , x =
-          { title = Title.default "age (years)"
+          { title = Title.at .max 0 10 "age (years)"
           , variable = .age
           , pixels = 650
           , padding = 20
-          , range = Range.default
+          , range = Range.padded 0.1 0.1
           , axis =
-              Axis.custom AxisLine.default <| \data range ->
+              Axis.custom AxisLine.rangeFrame <| \data range ->
                 Tick.hover (hoverTick .age) model.hovering ++
-                List.map Tick.float (Values.float (Values.around 4) range) ++
-                List.map Tick.float [ data.min, data.max ]
+                Tick.frame Tick.float data ++
+                List.map Tick.float (Values.float (Values.around 6) range)
           }
       , y =
           { title = Title.default "weight (kg)"
@@ -82,7 +82,7 @@ view model =
                 Tick.hover (hoverTick .weight) model.hovering
           }
       , intersection = Intersection.default
-      , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
+      , junk = Junk.none -- Maybe.map junk model.hovering |> Maybe.withDefault
       , interpolation = Lines.monotone
       , legends = Legends.default
       , line = Line.wider 2
