@@ -5,7 +5,9 @@ import Lines.Coordinate as Coordinate
 
 {-| -}
 type Range
-  = Range ((Float -> Float) -> Coordinate.Range -> Coordinate.Range)
+  = Padded Float Float
+  | Window Float Float
+  | Custom (Coordinate.Range -> Coordinate.Range)
 
 
 {-| -}
@@ -16,23 +18,20 @@ default =
 
 {-| -}
 padded : Float -> Float -> Range
-padded padMin padMax =
-  Range <| \scale { min, max } ->
-    let range = max - min in
-    Coordinate.Range (min - scale padMin) (max + scale padMax)
+padded =
+  Padded
 
 
 {-| -}
 window : Float -> Float -> Range
-window min max =
-  Range <| \_ _ ->
-    Coordinate.Range min max
+window =
+  Window
 
 
 {-| -}
-custom : (Coordinate.Range -> (Float, Float)) -> Range
+custom : (Coordinate.Range -> ( Float, Float )) -> Range
 custom editRange =
-  Range <| \_ range ->
+  Custom <| \range ->
     let ( min, max ) = editRange range in
     Coordinate.Range min max
 
@@ -43,11 +42,33 @@ custom editRange =
 
 {-| -}
 applyX : Range -> Coordinate.System -> Coordinate.Range
-applyX (Range func) system =
-  func (Coordinate.scaleDataX system) system.x
+applyX range system =
+  case range of
+    Padded padMin padMax ->
+      let
+        { frame } = system
+        { size } = frame
+        system_ = { system | frame = { frame | size = { size | width = size.width - padMin - padMax |> Basics.max 1 } } }
+        scale = Coordinate.scaleDataX system_
+      in
+      Coordinate.Range (system.x.min - scale padMin) (system.x.max + scale padMax)
+
+    Window min max -> Coordinate.Range min max
+    Custom toRange -> toRange system.x
 
 
 {-| -}
 applyY : Range -> Coordinate.System -> Coordinate.Range
-applyY (Range func) system =
-  func (Coordinate.scaleDataY system) system.y
+applyY range system =
+  case range of
+    Padded padMin padMax ->
+      let
+        { frame } = system
+        { size } = frame
+        system_ = { system | frame = { frame | size = { size | height = size.height - padMin - padMax |> Basics.max 1 } } }
+        scale = Coordinate.scaleDataY system_
+      in
+      Coordinate.Range (system.y.min - scale padMin) (system.y.max + scale padMax)
+
+    Window min max -> Coordinate.Range min max
+    Custom toRange -> toRange system.y

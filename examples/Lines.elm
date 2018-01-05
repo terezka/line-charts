@@ -32,18 +32,17 @@ main =
         { title = Title.default "Time"
         , variable = .date
         , pixels = 750
-        , padding = 20
-        , range = Range.default
-        , axis = Axis.custom AxisLine.default Tick.negative <| \data range ->
-              List.map timeTick (Values.time 10 range)
+        , range = Range.padded 30 10
+        , axis = Axis.custom AxisLine.default <| \data range ->
+              List.map timeTick (Values.time 10 data)
         }
     , y =
         { title = Title.default "Heart attacks"
         , variable = .heartattacks
         , pixels = 650
-        , padding = 20
-        , range = Range.default
-        , axis = Axis.float 9
+        , range = Range.padded 30 10
+        , axis = Axis.custom AxisLine.default <| \data range ->
+              List.map Tick.float (Values.float (Values.exactly 10) data)
         }
     , intersection = Intersection.default
     , junk = Junk.none
@@ -51,7 +50,7 @@ main =
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
-    , grid = Grid.default
+    , grid = Grid.lines 1 Color.grayLight
     , areaOpacity = 0
     , id = "chart"
     }
