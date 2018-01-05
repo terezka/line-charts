@@ -10,10 +10,10 @@ module Lines exposing
 # Quick start
 @docs view1, view2, view3
 
-# Customize lines
+# Customizing lines
 @docs view, Line, line, dash
 
-# Customize everything
+# Customizing everything
 @docs viewCustom, Config
 
 ## Interpolations
@@ -55,9 +55,9 @@ import Internal.Axis.Intersection as Intersection
 -- VIEW / SIMPLE
 
 
-{-| Show a line chart.
+{-|
 
-For example, if you want to show a few points, you can display it like this:
+** Show a line chart **
 
     type alias Point =
       { x : Float, y : Float }
@@ -65,34 +65,41 @@ For example, if you want to show a few points, you can display it like this:
     chart : Html msg
     chart =
       Lines.view1 .x .y
-        [ Point 0 2
-        , Point 5 5
-        , Point 10 10
-        ]
+        [ Point 0 2, Point 5 5, Point 10 10 ]
 
-_See the example [here](https://ellie-app.com/s5M4fxFwGa1/0)._
+_See the full example [here](https://ellie-app.com/s5M4fxFwGa1/0)._
+
+
+** Choosing your variables **
 
 Notice that we provide `.x` and `.y` to specify which data we want to show.
-So if we had more complex data points (like a human with an `age`, `weight`,
-`height`, and `income`) we can easily pick which two we want to display:
+So if we had more complex data structures, like a human with an `age`, `weight`,
+`height`, and `income`, we can easily pick which two properties we want to plot:
 
     aliceChart : Html msg
     aliceChart =
       Lines.view1 .age .weight
-        [ Info  4 24 0.94 0
-        , Info 25 75 1.73 25000
-        , Info 43 83 1.75 40000
+        [ Human  4 24 0.94 0
+        , Human 25 75 1.73 25000
+        , Human 43 83 1.75 40000
         ]
 
     -- Try changing .weight to .height
 
+
 _See the full example [here](https://ellie-app.com/s8kQfLfYZa1/1)._
 
-**Note 1:** Rather than using data like `.weight` directly, you can make a
+
+** Use any function as the variable **
+
+Rather than using data like `.weight` directly, you can make a
 function like `bmi human = human.weight / human.height ^ 2` and create a
 chart of `.age` vs `bmi`. This allows you to keep your data set nice and minimal!
 
-**Note 2:** `view1` is just a function, so it will update as your data changes.
+
+** The whole chart is just a function **
+
+`view1` is just a function, so it will update as your data changes.
 If you get more data points or some data points are changed, the chart
 refreshes automatically!
 
@@ -102,10 +109,12 @@ view1 toX toY dataset =
   view toX toY <| defaultLines [ dataset ]
 
 
-{-| Show a line chart with two data sets.
+{-|
+
+** Show a line chart with two lines **
 
 Say you have two humans and you would like to see how their weight relates
-to their age. We can display it like this:
+to their age. Here's how you could plot it.
 
     humanChart : Html msg
     humanChart =
@@ -119,7 +128,11 @@ view2 toX toY dataset1 dataset2 =
   view toX toY <| defaultLines [ dataset1, dataset2 ]
 
 
-{-| Show a line chart with three data sets. It works just like `view1` and `view2`.
+{-|
+
+** Show a line chart with three lines **
+
+It works just like `view1` and `view2`.
 
     humanChart : Html msg
     humanChart =
@@ -139,12 +152,12 @@ view3 toX toY dataset1 dataset2 dataset3 =
 -- VIEW
 
 
-{-| Show any amount of lines in your chart.
+{-|
+
+** Show any amount of lines **
 
 Try changing the color, the dot, or the title of a line, or see
 the `line` function for more information.
-
-See `viewCustom` for all other customizations.
 
     humanChart : Html msg
     humanChart =
@@ -155,6 +168,8 @@ See `viewCustom` for all other customizations.
         ]
 
 _See the full example [here](https://ellie-app.com/sgL9mdF7ra1/1)._
+
+See `viewCustom` for all other customizations.
 
 -}
 view : (data -> Float) -> (data -> Float) -> List (Line data) -> Svg.Svg msg
@@ -167,7 +182,9 @@ type alias Line data =
   Line.Line data
 
 
-{-| Customize a solid line.
+{-|
+
+** Customize a solid line **
 
 Try changing the color or explore all the available dot shapes from `Lines.Dot`!
 
@@ -181,11 +198,13 @@ Try changing the color or explore all the available dot shapes from `Lines.Dot`!
 
 _See the full example [here](https://ellie-app.com/stWdWjqGZa1/0)._
 
-The string title will show up in the legends.
 
-If you are interested in customizing your legends, dot size or line width,
-check out `viewCustom`. For now though, I'd recommend you stick to `view` and
-get your lines and data right first, and then stepping up the complexity.
+** Regarding the title **
+
+The string title will show up in the legends. If you are interested in
+customizing your legends, dot size or line width, check out `viewCustom`.
+For now though, I'd recommend you stick to `view` and get your lines and
+data right first, and then stepping up the complexity.
 
  -}
 line : Color.Color -> Dot.Shape -> String -> List data -> Line data
@@ -193,13 +212,15 @@ line =
   Line.line
 
 
-{-| Customize a dashed line.
+{-|
+
+** Customize a dashed line **
 
 Works just like `line`, except it takes another argument which is an array of
-floats describing your dashing pattern. See the SVG
-[`stroke-dasharray` documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
-for examples of patterns. Dashed lines are especially good for visualizing
-processed data like averages or predicted values.
+floats describing your dashing pattern. I'd recommend just typing in
+random numbers and see what happends, but alternativelly you can see the SVG `stroke-dasharray`
+[documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
+for examples of patterns.
 
     humanChart : Html msg
     humanChart =
@@ -210,7 +231,14 @@ processed data like averages or predicted values.
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
+    -- Try passing different numbers!
+
 _See the full example [here](https://ellie-app.com/syMhqfR8qa1/1)._
+
+** When should I use a dashed line? **
+
+Dashed lines are especially good for visualizing processed data like
+averages or predicted values.
 
 -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
@@ -222,66 +250,71 @@ dash =
 -- VIEW / CUSTOM
 
 
-{-| The customizations available for your chart. Use with `viewCustom`.
+{-|
 
-  - `id`: Sets the id.
-    It's uniqueness is important for reasons you don't really need to know, so
-    please just make sure it is!
+** Available customizations **
 
-  - `margin`: Customizes the size and margins of your chart.
+Use with `viewCustom`.
+
+  - **id**: Sets the id. It's uniqueness is important for reasons you
+    don't really need to know, so please just make sure it is!
+
+  - **margin**: Customizes the size and margins of your chart.
     Arguments are organized like CSS margins: top right bottom left.
     See `Lines.Coordinate` for more information and examples.
 
-  - `x`: Customizes your horizontal axis.
+  - **x**: Customizes your horizontal axis.
     See `Lines.Dimension` for more information and examples.
 
-  - `y`: Customizes your vertical axis.
+  - **y**: Customizes your vertical axis.
     See `Lines.Dimension` for more information and examples.
 
-  - `grid`: Customizes the style of your grid.
+  - **grid**: Customizes the style of your grid.
     See `Lines.Grid` for more information and examples.
 
-  - `areaOpacity`: Determines the opacity of the area under your line.
+  - **areaOpacity**: Determines the opacity of the area under your line.
     The area is always the same color as your line, but the transparency
     can be altered with this property. Takes a number between 0 and 1.
 
-  - `intersection`: Determines where your axes meet.
+  - **intersection**: Determines where your axes meet.
     See `Lines.Axis.Intersection` for more information and examples.
 
-  - `interpolation`: Customizes the curve of your lines.
+  - **interpolation**: Customizes the curve of your lines.
     See the `Interpolation` type for more information and examples.
 
-  - `line`: Customizes your lines' width and color.
+  - **line**: Customizes your lines' width and color.
     See `Lines.Line` for more information and examples.
 
-  - `dot`: Customizes your dots' size and style.
+  - **dot**: Customizes your dots' size and style.
     See `Lines.Dot` for more information and examples.
 
-  - `legends`: Customizes your chart's legends.
+  - **legends**: Customizes your chart's legends.
     See `Lines.Legends` for more information and examples.
 
-  - `attributes`: Customizes the SVG attributes added to the `svg` element
+  - **attributes**: Customizes the SVG attributes added to the `svg` element
     containing your chart.
 
-  - `events`: Customizes your chart's events, allowing you easily.
+  - **events**: Customizes your chart's events, allowing you easily.
     make your chart interactive (adding tooltips, hover states etc.).
     See `Lines.Events` for more information and examples.
 
-  - `junk`: Gets its name from
+  - **junk**: Gets its name from
     [Edward Tufte's concept of "chart junk"](https://en.wikipedia.org/wiki/Chartjunk).
     Here you are finally allowed set your creativity loose and add whatever
     SVG or HTML fun you can imagine.
     See `Lines.Junk` for more information and examples.
 
 
-Here is an example configuration. A good start would be to copy it and play
-around with customizations available for each property.
+** Example configuration **
 
-    chartConfig : Config data msg
+A good start would be to copy it and play around with customizations
+available for each property.
+
+    chartConfig : Config Info msg
     chartConfig =
       { id = "chart"
       , margin = Coordinate.Margin 30 120 90 120
-      , x = Dimension.default 650 "Age" .age
+      , x = Dimension.default 650 "Age (years)" .age
       , y = Dimension.default 400 "Weight (kg)" .weight
       , grid = Grid.default
       , areaOpacity = 0
@@ -294,6 +327,9 @@ around with customizations available for each property.
       , events = []
       , junk = Junk.none
       }
+
+_See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
+
 -}
 type alias Config data msg =
   { id : String
@@ -336,17 +372,16 @@ monotone =
   Interpolation.Monotone
 
 
+{-|
 
-{-| Customize your chart.
+** Customize everything **
 
-See the `Config` type for information about the available customizations.
+See the `Config` type for information about the available customizations
+... or copy the example below if you're lazy. No one will tell.
+
+** Example customiztion **
+
 The example below adds color to the area below the lines.
-
-**Note:** Speaking of areas, remember that area charts are for data chart
-where the area under the curve _matters_. Typically, this would be when you
-have an quantity changing with respect to time. In that case, the area under
-the curve shows how much the quantity changed. However if that amount is not
-significant, it's best to leave it out. -- TODO revise
 
     chart : Html msg
     chart =
@@ -356,7 +391,7 @@ significant, it's best to leave it out. -- TODO revise
         , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
-    chartConfig : Config data msg
+    chartConfig : Config Info msg
     chartConfig =
       { id = "chart"
       , margin = Coordinate.Margin 30 120 90 120
@@ -376,6 +411,15 @@ significant, it's best to leave it out. -- TODO revise
 
 
 _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
+
+
+** Speaking of area charts **
+
+Remember that area charts are for data chart
+where the area under the curve _matters_. Typically, this would be when you
+have an quantity changing with respect to time. In that case, the area under
+the curve shows how much the quantity changed. However if that amount is not
+significant, it's best to leave it out.
 
 -}
 viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
