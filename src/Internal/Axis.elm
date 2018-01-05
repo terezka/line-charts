@@ -21,7 +21,7 @@ import Internal.Svg as Svg exposing (..)
 import Internal.Utils exposing (..)
 
 
-{-| TODO -}
+{-| -}
 type alias Dimension data msg =
   { title : Title.Title msg
   , variable : data -> Float
