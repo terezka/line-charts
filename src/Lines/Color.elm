@@ -1,9 +1,9 @@
-module Lines.Color exposing (Color, pink, blue, orange, gray, grayLight, black)
+module Lines.Color exposing (Color, pink, blue, orange, gray, grayLight, black, inherit)
 
 {-|
 
 # Defaults
-@docs Color, pink, blue, orange, gray, grayLight, black
+@docs Color, pink, blue, orange, gray, grayLight, black, inherit
 
 -}
 
@@ -48,6 +48,12 @@ grayLight =
 transparent : Color
 transparent =
   "transparent"
+
+
+{-| -}
+inherit : Color
+inherit =
+  "inherit"
 
 
 {-| -}

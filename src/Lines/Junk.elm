@@ -23,7 +23,9 @@ module Lines.Junk exposing
 
 import Html
 import Svg
+import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
+import Lines.Color as Color
 import Internal.Junk
 import Internal.Svg as Svg
 
@@ -174,6 +176,6 @@ horizontal system attributes at =
 
 
 {-| -}
-text : String -> Svg.Svg msg
-text string =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text string ] ]
+text : Color.Color -> String -> Svg.Svg msg
+text color string =
+  Svg.text_ [ Attributes.fill color ] [ Svg.tspan [] [ Svg.text string ] ]

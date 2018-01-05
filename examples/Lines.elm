@@ -34,8 +34,7 @@ main =
         , pixels = 750
         , padding = 20
         , range = Range.default
-        , axis =
-            Axis.custom AxisLine.default Tick.negative <| \data range ->
+        , axis = Axis.custom AxisLine.default Tick.negative <| \data range ->
               List.map timeTick (Values.time 10 range)
         }
     , y =
@@ -67,7 +66,7 @@ timeTick : Tick.Time -> Tick.Tick msg
 timeTick time =
   let tick = Tick.time time in
   if time.change == Nothing then
-    { tick | label = Just <| Svg.text_ [ Attributes.fill Color.gray ] [ Svg.tspan [] [ Svg.text (Tick.format time) ] ] }
+    { tick | label = Just <| Junk.text Color.gray (Tick.format time) }
   else
     tick
 

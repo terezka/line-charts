@@ -6,19 +6,20 @@ module Lines.Axis.Tick exposing
 
 {-|
 
-@docs Tick, int, time, Time, Unit, Interval, float
+@docs Tick, int, float
+@docs time, Time, Unit, Interval, format
 @docs Direction, negative, positive
-@docs format
 
+TODO move direction into tick
 -}
 
 import Svg exposing (Svg, Attribute)
 import Lines.Color as Color
+import Lines.Junk as Junk
 import Internal.Axis.Tick as Tick
 import Date
 import Date.Extra as Date
 import Date.Format
-
 
 
 -- TICKS
@@ -36,6 +37,10 @@ type alias Tick msg =
   }
 
 
+
+-- NUMBERS
+
+
 {-| -}
 int : Int -> Tick msg
 int n =
@@ -43,10 +48,27 @@ int n =
   , width = 1
   , events = []
   , length = 5
-  , label = Just <| viewText (toString n)
+  , label = Just <| Junk.text Color.inherit (toString n)
   , grid = True
   , position = toFloat n
   }
+
+
+{-| -}
+float :  Float -> Tick msg
+float n =
+  { color = Color.gray
+  , width = 1
+  , events = []
+  , length = 5
+  , label = Just <| Junk.text Color.inherit (toString n)
+  , grid = True
+  , position = n
+  }
+
+
+
+-- TIME
 
 
 {-| -}
@@ -84,23 +106,22 @@ time time =
   , width = 1
   , events = []
   , length = 5
-  , label = Just <| viewText (format time)
+  , label = Just <| Junk.text Color.inherit (format time)
   , grid = True
   , position = time.timestamp
   }
 
 
+
+-- TIME / FORMATTING
+
+
 {-| -}
-float :  Float -> Tick msg
-float n =
-  { color = Color.gray
-  , width = 1
-  , events = []
-  , length = 5
-  , label = Just <| viewText (toString n)
-  , grid = True
-  , position = n
-  }
+format : Time -> String
+format { change, interval, timestamp } =
+  case change of
+    Just change -> formatBold change timestamp
+    Nothing     -> formatNorm interval.unit timestamp
 
 
 
@@ -124,12 +145,8 @@ positive =
   Tick.Positive
 
 
-{-| -}
-format : Time -> String
-format { change, interval, timestamp } =
-  case change of
-    Just change -> formatBold change timestamp
-    Nothing     -> formatNorm interval.unit timestamp
+
+-- INTERNAL
 
 
 formatNorm : Unit -> Float -> String
@@ -158,12 +175,3 @@ formatBold unit =
       Week        -> Date.toFormattedString "'Week' w"
       Month       -> Date.Format.format "%b"
       Year        -> Date.Format.format "%Y"
-
-
-
--- INTERNAL
-
-
-viewText : String -> Svg msg
-viewText string =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text string ] ]

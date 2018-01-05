@@ -66,9 +66,9 @@ view model =
           , padding = 20
           , range = Range.default
           , axis =
-              Axis.custom AxisLine.default <| \data range ->
-                (Maybe.map (hoverTick >> List.singleton) model.hovering |> Maybe.withDefault []) ++
-                List.map Tick.float (Values.float (Values.Around 4) range) ++
+              Axis.custom AxisLine.default Tick.negative <| \data range ->
+                hoverTick .age model.hovering ++
+                List.map Tick.float (Values.float (Values.around 4) range) ++
                 List.map Tick.float [ data.min, data.max ]
           }
       , y =
@@ -77,7 +77,8 @@ view model =
           , pixels = 400
           , padding = 20
           , range = Range.default
-          , axis = Axis.dashed AxisLine.default dataTick <| \_ _ -> []
+          , axis = Axis.dashed AxisLine.default Tick.negative dataTick <| \_ _ ->
+                    hoverTick .weight model.hovering
           }
       , intersection = Intersection.default
       , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
@@ -101,22 +102,27 @@ dataTick n =
   , width = 1
   , events = []
   , length = 5
-  , label = Just <| Junk.text (toString n.weight)
+  , label = Just <| Junk.text Color.gray (toString n.weight)
   , grid = True
   , position = n.weight
   }
 
 
-hoverTick : Info -> Tick.Tick msg
-hoverTick n =
-  { color = Color.gray
-  , width = 1
-  , events = []
-  , length = -7
-  , label = Just <| g [ transform [ offset 0 -30 ] ] [ Junk.text (toString n.age) ]
-  , grid = True
-  , position = n.age
-  }
+hoverTick : (Info -> Float) -> Maybe Info -> List (Tick.Tick msg)
+hoverTick variable hovering =
+  case hovering of
+    Nothing    -> []
+    Just info  ->
+      let n = variable info in
+      List.singleton <|
+        { color = Color.gray
+        , width = 1
+        , events = []
+        , length = 7
+        , label = Just <| Junk.text Color.black (toString n)
+        , grid = True
+        , position = n
+        }
 
 
 junk : Info -> Junk.Junk Msg
