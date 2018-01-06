@@ -1,5 +1,36 @@
-module Internal.Svg exposing (..)
+module Internal.Svg exposing
+  ( gridDot
+  , horizontal, vertical
+  , horizontalGrid, verticalGrid
+  , xTick, yTick
+  , Anchor(..), anchorStyle
+  , Transfrom, transform, move, offset
+  )
 
+{-|
+
+# Lines
+@docs horizontal, vertical
+
+# Grids
+
+## Dots
+@docs gridDot
+## Lines
+@docs horizontalGrid, verticalGrid
+
+# Axis
+@docs xTick, yTick
+
+# Helpers
+
+## Anchor
+@docs Anchor(..), anchorStyle
+
+## Transfrom
+@docs Transfrom, transform, move, offset
+
+-}
 
 import Svg exposing (Svg, Attribute, g)
 import Svg.Attributes as Attributes
@@ -7,6 +38,9 @@ import Lines.Color as Color
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Path as Path exposing (..)
 import Internal.Utils exposing (..)
+
+
+-- DOT
 
 
 {-| -}
@@ -21,9 +55,11 @@ gridDot color point =
     []
 
 
--- AXIS PRIMITIVES
+
+-- AXIS / GRID
 
 
+{-| -}
 horizontal : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Float -> Svg msg
 horizontal system userAttributes y x1 x2 =
   let
@@ -37,6 +73,7 @@ horizontal system userAttributes y x1 x2 =
       ]
 
 
+{-| -}
 vertical : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Float -> Svg msg
 vertical system userAttributes x y1 y2 =
   let
@@ -50,21 +87,23 @@ vertical system userAttributes x y1 y2 =
       ]
 
 
+{-| -}
 horizontalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Svg msg
 horizontalGrid system userAttributes y =
   horizontal system userAttributes y system.x.min system.x.max
 
 
+{-| -}
 verticalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Svg msg
 verticalGrid system userAttributes x =
   vertical system userAttributes x system.y.min system.y.max
 
 
-xTicks : Coordinate.System -> Float -> List (Attribute msg) -> Float -> List Float -> Svg msg
-xTicks system height userAttributes y xs =
-  g [ Attributes.class "chart__x-ticks" ] (List.map (xTick system height userAttributes y) xs)
+
+-- AXIS / TICK
 
 
+{-| -}
 xTick : Coordinate.System -> Float -> List (Attribute msg) -> Float -> Float -> Svg msg
 xTick system height userAttributes y x =
   let
@@ -81,11 +120,7 @@ xTick system height userAttributes y x =
     Svg.line attributes []
 
 
-yTicks : Coordinate.System -> Float -> List (Attribute msg) -> Float -> List Float -> Svg msg
-yTicks system width userAttributes x ys =
-  g [ Attributes.class "chart__y-ticks" ] (List.map (yTick system width userAttributes x) ys)
-
-
+{-| -}
 yTick : Coordinate.System -> Float -> List (Attribute msg) -> Float -> Float -> Svg msg
 yTick system width userAttributes x y =
   let
