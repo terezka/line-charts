@@ -5,11 +5,14 @@ module Internal.Legends exposing (..)
 import Svg exposing (Svg)
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
+import Lines.Junk as Junk
+import Lines.Color as Color
 import Internal.Coordinate exposing (DataPoint)
 import Internal.Dot as Dot
 import Internal.Line as Line
 import Internal.Utils as Utils
 import Internal.Svg as Svg
+import Lines.Junk as Junk
 
 
 
@@ -168,10 +171,5 @@ defaultLegend index { sample, label } =
     [ sample
     , Svg.g
         [ Svg.transform [ Svg.offset 40 4 ] ]
-        [ defaultLabel label ]
+        [ Junk.text Color.inherit label ]
     ]
-
-
-defaultLabel : String -> Svg msg
-defaultLabel label =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text label ] ]

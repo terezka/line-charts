@@ -1,7 +1,7 @@
 module Lines.Legends exposing
   ( none, default
   , Legends, Legend
-  , byEnding, byBeginning, defaultLabel
+  , byEnding, byBeginning
   , bucketed, bucketedCustom
   )
 
@@ -15,7 +15,7 @@ module Lines.Legends exposing
 
 ## Free legends
 The ones hanging by the line.
-@docs byEnding, byBeginning, defaultLabel
+@docs byEnding, byBeginning
 
 ## Bucketed legends
 The ones gathered in one spot.
@@ -72,11 +72,9 @@ type alias Legends msg
     chartConfig : Lines.Config data msg
     chartConfig =
       { ...
-      , legends = Legends.byEnding Legends.defaultLabel
+      , legends = Legends.byEnding (Junk.text "black")
       , ...
       }
-
-You can of course making your own label SVG elements to replace `defaultLabel`!
 
 -}
 byEnding : (String -> Svg.Svg msg) -> Legends msg
@@ -90,16 +88,6 @@ byBeginning : (String -> Svg.Svg msg) -> Legends msg
 byBeginning =
   Legends.Free Legends.Beginning
 
-
-{-| The default label.
-
-    defaultLabel : String -> Svg msg
-    defaultLabel label =
-      text_ [] [ tspan [] [ text label ] ]
--}
-defaultLabel : String -> Svg.Svg msg
-defaultLabel =
-  Legends.defaultLabel
 
 
 -- BUCKETED
@@ -138,19 +126,19 @@ in a SVG container of your liking.
 
     legends : Legends msg
     legends =
-      Legends.bucketedCustom \system legends ->
+      Legends.bucketedCustom 10 <| \system legends ->
         Svg.g
-          [ Svg.transform [ Svg.move system 100 120 ] ]
+          [ Junk.transform [ Junk.move system 100 120 ] ]
           (List.indexedMap viewLegend legends)
 
     viewLegend : Int -> Legend msg -> Svg msg
     viewLegend index { sample, label } =
        Svg.g
-        [ Svg.transform [ Svg.offset 20 (toFloat index * 20) ] ]
+        [ Junk.transform [ Junk.offset 20 (toFloat index * 20) ] ]
         [ sample
         , Svg.g
-            [ Svg.transform [ Svg.offset 40 4 ] ]
-            [ defaultLabel label ]
+            [ Junk.transform [ Junk.offset 40 4 ] ]
+            [ Junk.text Color.black label ]
         ]
 
 -}

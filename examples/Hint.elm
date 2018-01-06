@@ -55,6 +55,9 @@ view model =
         model.hovering
           |> Maybe.map (flip List.member data)
           |> Maybe.withDefault False
+
+      isPointHovered data =
+        Just data == model.hovering
     in
     Lines.viewCustom
       { margin = Coordinate.Margin 40 150 90 150
@@ -76,7 +79,7 @@ view model =
           Dot.emphasizable
             { normal = Dot.disconnected 10 2
             , emphasized = Dot.aura 7 5 0.25
-            , isEmphasized = \data -> Just data == model.hovering
+            , isEmphasized = isPointHovered
             }
       , areaOpacity = 0
       , grid = Grid.default
@@ -87,6 +90,16 @@ view model =
       , Lines.line Color.pink Dot.square "chuck" chuck
       ]
 
+
+viewLegend : Int -> Legends.Legend msg -> Svg.Svg msg
+viewLegend index { sample, label } =
+   Svg.g
+    [ Junk.transform [ Junk.offset 20 (toFloat index * 20) ] ]
+    [ sample
+    , Svg.g
+        [ Junk.transform [ Junk.offset 40 4 ] ]
+        [ Junk.text Color.black label ]
+    ]
 
 
 junk : Info -> Junk.Junk Msg
