@@ -344,7 +344,7 @@ type alias Config data msg =
   , dot : Dot.Look data
   , legends : Legends.Legends msg
   , attributes : List (Svg.Attribute msg)
-  , events : List (Events.Event data msg)
+  , events : Events.Events data msg
   , junk : Junk.Junk msg
   }
 
@@ -556,7 +556,7 @@ defaultConfig toX toY =
   , dot = Dot.default
   , legends = Legends.default
   , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
-  , events = []
+  , events = Events.default
   , junk = Junk.none
   }
 

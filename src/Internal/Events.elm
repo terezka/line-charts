@@ -1,34 +1,119 @@
 module Internal.Events exposing
-    ( Event, toEvent, toAttributes, decoder
-    , Searcher, findNearest, findNearestX, findWithin, findWithinX, cartesian, svg, searcher
+    ( Events, default, none, hover, hoverCustom, click, custom
+    , Event, onClick, onMouseMove, onMouseLeave, on
+    , Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
+    -- INTERNAL
+    , toAttributes
     )
 
 {-| -}
 
 import DOM
 import Svg
+import Svg.Events
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Coordinate exposing (DataPoint)
 import Internal.Utils exposing (withFirst)
 import Json.Decode as Json
 
 
-
 {-| -}
-type Event data msg
-    = Event (List (DataPoint data) -> System -> Svg.Attribute msg)
-
-
-{-| -}
-toEvent : (List (DataPoint data) -> System -> Svg.Attribute msg) -> Event data msg
-toEvent =
-  Event
+type Events data msg
+  = Events (List (Event data msg))
 
 
 {-| -}
-toAttributes : List (DataPoint data) -> System -> List (Event data msg) -> List (Svg.Attribute msg)
-toAttributes dataPoints system =
-    List.map (\(Event attribute) -> attribute dataPoints system)
+default : Events data msg
+default =
+  none
+
+
+{-| -}
+none : Events data msg
+none =
+  custom []
+
+
+{-| -}
+hover : (Maybe data -> msg) -> Events data msg
+hover msg =
+  custom
+    [ onMouseMove (getNearest msg)
+    , onMouseLeave (msg Nothing)
+    ]
+
+
+{-| -}
+hoverCustom :
+  { onMouseMove : Handler data msg
+  , onMouseLeave : msg
+  }
+  -> Events data msg
+hoverCustom config =
+  custom
+    [ onMouseMove config.onMouseMove
+    , onMouseLeave config.onMouseLeave
+    ]
+
+
+{-| -}
+click : (Maybe data -> msg) -> Events data msg
+click msg =
+  custom
+    [ onClick (getNearest msg) ]
+
+
+{-| -}
+custom : List (Event data msg) -> Events data msg
+custom =
+  Events
+
+
+
+-- EVENT
+
+
+{-| -}
+type Event data msg =
+  Event (List (DataPoint data) -> System -> Svg.Attribute msg)
+
+
+{-| -}
+onClick : Handler data msg -> Event data msg
+onClick handler =
+  Event <| \points system ->
+    Svg.Events.on "click" (decoder points system handler)
+
+
+{-| -}
+onMouseMove : Handler data msg -> Event data msg
+onMouseMove handler =
+  Event <| \points system ->
+    Svg.Events.on "mousemove" (decoder points system handler)
+
+
+{-| -}
+onMouseLeave : msg -> Event data msg
+onMouseLeave msg =
+  Event <| \_ _ ->
+    Svg.Events.on "mouseleave" (Json.succeed msg)
+
+
+{-| -}
+on : String -> Handler data msg -> Event data msg
+on event handler =
+  Event <| \points system ->
+    Svg.Events.on event (decoder points system handler)
+
+
+
+-- INTERNAL
+
+
+{-| -}
+toAttributes : List (DataPoint data) -> System -> Events data msg -> List (Svg.Attribute msg)
+toAttributes dataPoints system (Events events) =
+    List.map (\(Event event) -> event dataPoints system) events
 
 
 
@@ -36,14 +121,13 @@ toAttributes dataPoints system =
 
 
 {-| -}
-decoder : List (DataPoint data) -> System -> Searcher data hint -> (hint -> msg) -> Json.Decoder msg
-decoder points system searcher msg =
-  Json.map7
+decoder : List (DataPoint data) -> System -> Handler data msg -> Json.Decoder msg
+decoder points system handler =
+  Json.map6
     toCoordinate
     (Json.succeed points)
     (Json.succeed system)
-    (Json.succeed searcher)
-    (Json.succeed msg)
+    (Json.succeed handler)
     (Json.field "clientX" Json.float)
     (Json.field "clientY" Json.float)
     (DOM.target position)
@@ -57,16 +141,15 @@ position =
     ]
 
 
-toCoordinate : List (DataPoint data) -> System -> Searcher data hint -> (hint -> msg) -> Float -> Float -> DOM.Rectangle -> msg
-toCoordinate points system searcher msg mouseX mouseY { left, top } =
+toCoordinate : List (DataPoint data) -> System -> Handler data msg -> Float -> Float -> DOM.Rectangle -> msg
+toCoordinate points system handler mouseX mouseY { left, top } =
   Point (mouseX - left) (mouseY - top)
-    |> applySearcher searcher points system
-    |> msg
+    |> applyHandler handler points system
 
 
-applySearcher : Searcher data hint -> List (DataPoint data) -> System -> Point -> hint
-applySearcher (Searcher searcher) dataPoints system searched =
-  searcher dataPoints system searched
+applyHandler : Handler data msg -> List (DataPoint data) -> System -> Point -> msg
+applyHandler (Handler handler) dataPoints system coordinate =
+  handler dataPoints system coordinate
 
 
 
@@ -74,39 +157,41 @@ applySearcher (Searcher searcher) dataPoints system searched =
 
 
 {-| -}
-type Searcher data hint =
-  Searcher (List (DataPoint data) -> System -> Point -> hint)
+type Handler data msg =
+  Handler (List (DataPoint data) -> System -> Point -> msg)
 
 
 {-| -}
-svg : Searcher data Point
-svg =
-  Searcher <| \points system searched ->
-    searched
+getSvg : (Point -> msg) -> Handler data msg
+getSvg msg =
+  Handler <| \points system searched ->
+    msg searched
 
 
 {-| -}
-cartesian : Searcher data Point
-cartesian =
-  Searcher <| \points system searched ->
-    toCartesianSafe system searched
+getCartesian : (Point -> msg) -> Handler data msg
+getCartesian msg =
+  Handler <| \points system searched ->
+    msg (toCartesianSafe system searched)
 
 
 {-| -}
-findNearest : Searcher data (Maybe data)
-findNearest =
-  Searcher <| \points system searchedSvg ->
+getNearest : (Maybe data -> msg) -> Handler data msg
+getNearest msg =
+  Handler <| \points system searchedSvg ->
     let
       searched =
         toCartesianSafe system searchedSvg
     in
-    findNearestHelp points system searched |> Maybe.map .data
+    getNearestHelp points system searched
+      |> Maybe.map .data
+      |> msg
 
 
 {-| -}
-findWithin : Float -> Searcher data (Maybe data)
-findWithin radius =
-  Searcher <| \points system searchedSvg ->
+getWithin : Float -> (Maybe data -> msg) -> Handler data msg
+getWithin radius msg =
+  Handler <| \points system searchedSvg ->
     let
         searched =
           toCartesianSafe system searchedSvg
@@ -116,25 +201,28 @@ findWithin radius =
               then Just closest.data
               else Nothing
     in
-    findNearestHelp points system searched
+    getNearestHelp points system searched
         |> Maybe.andThen keepIfEligible
+        |> msg
 
 
 {-| -}
-findNearestX : Searcher data (List data)
-findNearestX =
-  Searcher <| \points system searchedSvg ->
+getNearestX : (List data -> msg) -> Handler data msg
+getNearestX msg =
+  Handler <| \points system searchedSvg ->
     let
       searched =
         toCartesianSafe system searchedSvg
     in
-    findNearestXHelp points system searched |> List.map .data
+    getNearestXHelp points system searched
+      |> List.map .data
+      |> msg
 
 
 {-| -}
-findWithinX : Float -> Searcher data (List data)
-findWithinX radius =
-  Searcher <| \points system searchedSvg ->
+getWithinX : Float ->  (List data -> msg) -> Handler data msg
+getWithinX radius msg =
+  Handler <| \points system searchedSvg ->
     let
         searched =
           toCartesianSafe system searchedSvg
@@ -142,23 +230,24 @@ findWithinX radius =
         keepIfEligible =
             withinRadiusX system radius searched << .point
     in
-    findNearestXHelp points system searched
+    getNearestXHelp points system searched
       |> List.filter keepIfEligible
       |> List.map .data
+      |> msg
 
 
 {-| -}
-searcher : (System -> Point -> hint) -> Searcher data hint
-searcher toHint =
-  Searcher (\_ -> toHint)
+handler : (System -> Point -> msg) -> Handler data msg
+handler toHint =
+  Handler (\_ -> toHint)
 
 
 
 -- HELPERS
 
 
-findNearestHelp : List (DataPoint data) -> System -> Point -> Maybe (DataPoint data)
-findNearestHelp points system searched =
+getNearestHelp : List (DataPoint data) -> System -> Point -> Maybe (DataPoint data)
+getNearestHelp points system searched =
   let
       distance_ =
           distance system searched
@@ -171,8 +260,8 @@ findNearestHelp points system searched =
   withFirst points (List.foldl getClosest)
 
 
-findNearestXHelp : List (DataPoint data) -> System -> Point -> List (DataPoint data)
-findNearestXHelp points system searched =
+getNearestXHelp : List (DataPoint data) -> System -> Point -> List (DataPoint data)
+getNearestXHelp points system searched =
   let
       distanceX_ =
           distanceX system searched

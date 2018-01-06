@@ -59,7 +59,7 @@ view model =
     Lines.viewCustom
       { margin = Coordinate.Margin 40 150 90 150
       , attributes = [ SvgA.style "font-family: monospace;" ]
-      , events = Events.default Hover
+      , events = Events.click Hover
       , x = Dimension.default 650 "age (years)" .age
       , y = Dimension.default 400 "weight (kg)" .weight
       , intersection = Intersection.default
