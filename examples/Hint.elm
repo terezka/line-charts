@@ -61,7 +61,12 @@ view model =
       , interpolation = Lines.monotone
       , legends = Legends.default
       , line = Line.default
-      , dot = Dot.emphasizable (Dot.disconnected 10 2) (Dot.aura 7 5 0.25) (Dot.isMaybe model.hovering)
+      , dot =
+          Dot.emphasizable
+            { normal = Dot.disconnected 10 2
+            , emphasized = Dot.aura 7 5 0.25
+            , isEmphasized = \data -> Just data == model.hovering
+            }
       , areaOpacity = 0
       , grid = Grid.default
       , id = "chart"

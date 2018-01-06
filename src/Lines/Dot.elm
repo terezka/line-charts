@@ -1,7 +1,7 @@
 module Lines.Dot exposing
   ( Shape, none, default1, default2, default3
   , circle, triangle, square, diamond, plus, cross
-  , Look, default, static, emphasizable, isMaybe
+  , Look, default, static, emphasizable
   , Style, bordered, disconnected, aura, full
   )
 
@@ -30,7 +30,7 @@ The following defaults are equivalent to `Dot.circle`, `Dot.triangle`, and
 @docs Shape, circle, triangle, square, diamond, plus, cross
 
 # Customizing dot style
-@docs Look, default, static, emphasizable, isMaybe
+@docs Look, default, static, emphasizable
 
 ## Styles
 @docs Style, full, disconnected, bordered, aura
@@ -182,45 +182,14 @@ the predicate in the third argument is fulfilled.
 
 TODO link
 -}
-emphasizable : Style -> Style -> (data -> Bool) -> Look data
+emphasizable :
+  { normal : Style
+  , emphasized : Style
+  , isEmphasized : data -> Bool
+  }
+  -> Look data
 emphasizable =
   Dot.emphasizable
-
-
-{-| Helper for `emphasizable`. Useful when combined with `Events.default` to get
-a hover effect.
-
-    type alias Model =
-      Maybe Info
-
-    type Msg =
-      Hover (Maybe Info)
-
-    update : Msg -> Model -> Model
-    update (Hover hovered) =
-      Model hovered
-
-    chartConfig : Model -> Lines.Config Info msg
-    chartConfig hovered =
-      { ...
-      , events = Events.default Hover
-      , dot = dotLook
-      , ...
-      }
-
-    dotLook : Dot.Look data
-    dotLook =
-      Dot.emphasizable
-        (Dot.full 50)
-        (Dot.aura 50 4 0.5)
-        (isMaybe hovered)
-
-
-TODO link
--}
-isMaybe : Maybe data -> data -> Bool
-isMaybe hovering datum =
-  Just datum == hovering
 
 
 
