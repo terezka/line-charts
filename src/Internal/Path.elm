@@ -2,7 +2,7 @@ module Internal.Path exposing (Command(..), view)
 
 {-| SVG path commands.
 
-@docs Command, Point, view
+@docs Command, view
 
 -}
 
@@ -65,7 +65,7 @@ toString command =
     CubicBeziersShort c1 p  -> "Q" ++ points [ c1, p ]
     QuadraticBeziers c1 p   -> "Q" ++ points [ c1, p ]
     QuadraticBeziersShort p -> "T" ++ point p
-    
+
     Arc rx ry xAxisRotation largeArcFlag sweepFlag p ->
       "A" ++ join
         [ Basics.toString rx
