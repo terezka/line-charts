@@ -14,6 +14,12 @@ type Junk msg =
 
 
 {-| -}
+none : Junk msg
+none =
+  Junk (\_ -> Layers [] [] [])
+
+
+{-| -}
 type alias Layers msg =
   { below : List (Svg msg)
   , above : List (Svg msg)

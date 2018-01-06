@@ -26,7 +26,7 @@ import Svg
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
 import Lines.Color as Color
-import Internal.Junk
+import Internal.Junk as Junk
 import Internal.Svg as Svg
 
 
@@ -38,7 +38,7 @@ import Internal.Svg as Svg
 -}
 none : Junk msg
 none =
-  Internal.Junk.Junk (\_ -> Layers [] [] [])
+  Junk.none
 
 
 
@@ -60,7 +60,7 @@ you can use junk to add that. To be used in the `Lines.Config` passed to
 
 -}
 type alias Junk msg =
-  Internal.Junk.Junk msg
+  Junk.Junk msg
 
 
 {-| The layers where you can put your junk. Junk in the `below` property will
@@ -96,7 +96,7 @@ you want in the resulting `Layers` type. Here's an example of adding grid lines.
 -}
 custom : (Coordinate.System -> Layers msg) -> Junk msg
 custom =
-  Internal.Junk.Junk
+  Junk.Junk
 
 
 
@@ -157,7 +157,7 @@ transform =
 
     gridLines : Coordinate.System -> List (Svg msg)
     gridLines system =
-      List.map (Junk.vertical system []) (Axis.defaultInterval system.x) 
+      List.map (Junk.vertical system []) (Axis.defaultInterval system.x)
 -}
 vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Svg.Svg msg
 vertical =
