@@ -44,7 +44,7 @@ import Internal.Legends as Legends
 -}
 none : Legends msg
 none =
-  Legends.None
+  Legends.none
 
 
 {-| Produces your lines legends in the top right corner. Use like `none`.
@@ -79,14 +79,14 @@ type alias Legends msg
 -}
 byEnding : (String -> Svg.Svg msg) -> Legends msg
 byEnding =
-  Legends.Free Legends.Ending
+  Legends.byEnding
 
 
 {-| Same as `byEnding`, except by the beginning!
 -}
 byBeginning : (String -> Svg.Svg msg) -> Legends msg
 byBeginning =
-  Legends.Free Legends.Beginning
+  Legends.byBeginning
 
 
 
@@ -144,4 +144,4 @@ in a SVG container of your liking.
 -}
 bucketedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Legends msg
 bucketedCustom =
-  Legends.Bucketed
+  Legends.bucketedCustom

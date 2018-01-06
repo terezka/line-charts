@@ -1,4 +1,10 @@
-module Internal.Legends exposing (..)
+module Internal.Legends exposing
+  ( Legends, default, none
+  , byEnding, byBeginning
+  , bucketed, bucketedCustom
+  -- INTERNAL
+  , view
+  )
 
 {-| -}
 
@@ -23,7 +29,7 @@ import Lines.Junk as Junk
 type Legends msg
   = None
   | Free Placement (String -> Svg msg)
-  | Bucketed SampleWidth (Coordinate.System -> List (Legend msg) -> Svg msg)
+  | Bucketed Float (Coordinate.System -> List (Legend msg) -> Svg msg)
 
 
 {-| -}
@@ -35,11 +41,6 @@ type Placement
 {-| -}
 type alias Container msg =
   Coordinate.System -> List (Legend msg) -> Svg msg
-
-
-{-| -}
-type alias SampleWidth =
-  Float
 
 
 {-| -}
@@ -56,36 +57,60 @@ default =
 
 
 {-| -}
+none : Legends msg
+none =
+  None
+
+
+{-| -}
+byEnding : (String -> Svg.Svg msg) -> Legends msg
+byEnding =
+  Free Ending
+
+
+{-| -}
+byBeginning : (String -> Svg.Svg msg) -> Legends msg
+byBeginning =
+  Free Beginning
+
+
+{-| -}
 bucketed : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends msg
 bucketed toX toY =
-  Bucketed 30 <| \system legends ->
-    Svg.g
-      [ Attributes.class "chart__legends"
-      , Svg.transform [ Svg.move system (toX system.x) (toY system.y) ]
-      ]
-      (List.indexedMap defaultLegend legends)
+  Bucketed 30 (defaultLegends toX toY)
+
+
+{-| -}
+bucketedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Legends msg
+bucketedCustom =
+  Bucketed
 
 
 
 -- VIEW
 
 
-view
-  :  Coordinate.System
-  -> Line.Look data
-  -> Dot.Look data
-  -> Legends msg
-  -> Float
-  -> List (Line.Line data)
-  -> List (List (DataPoint data))
-  -> Svg.Svg msg
-view system lineLook dotLook legends areaOpacity lines dataPoints =
-  case legends of
+{-| -}
+type alias Arguments data msg =
+  { system : Coordinate.System
+  , dotLook : Dot.Look data
+  , lineLook : Line.Look data
+  , areaOpacity : Float
+  , lines : List (Line.Line data)
+  , dataPoints : List (List (DataPoint data))
+  , legends : Legends msg
+  }
+
+
+{-| -}
+view : Arguments data msg -> Svg.Svg msg
+view arguments =
+  case arguments.legends of
     Free placement view ->
-      viewFrees system placement view lines dataPoints
+      viewFrees arguments placement view
 
     Bucketed sampleWidth container ->
-      viewBucketed system lineLook dotLook sampleWidth areaOpacity container lines
+      viewBucketed arguments sampleWidth container
 
     None ->
       Svg.text ""
@@ -95,66 +120,61 @@ view system lineLook dotLook legends areaOpacity lines dataPoints =
 -- VIEW / FREE
 
 
-viewFrees
-  :  Coordinate.System
-  -> Placement
-  -> (String -> Svg msg)
-  -> List (Line.Line data)
-  -> List (List (DataPoint data))
-  -> Svg.Svg msg
-viewFrees system placement view lines dataPoints =
+viewFrees : Arguments data msg -> Placement -> (String -> Svg msg) -> Svg.Svg msg
+viewFrees { system, lines, dataPoints } placement view =
   Svg.g [ Attributes.class "chart__legends" ] <|
     List.map2 (viewFree system placement view) lines dataPoints
 
 
 viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> List (DataPoint data) -> Svg.Svg msg
-viewFree system placement viewLabel (Line.Line line) dataPoints =
+viewFree system placement viewLabel line dataPoints =
   let
-    ( orderedPoints, anchor, xOffset ) =
-        case placement of
-          Beginning -> ( dataPoints, Svg.End, -10 )
-          Ending    -> ( List.reverse dataPoints, Svg.Start, 10 )
+    lineConfig =
+      Line.lineConfig line
 
-    transformation { x, y } =
+    ( orderedPoints, anchor, xOffset ) =
+      case placement of
+        Beginning -> ( dataPoints, Svg.End, -10 )
+        Ending    -> ( List.reverse dataPoints, Svg.Start, 10 )
+
+    transform { x, y } =
       Svg.transform [ Svg.move system x y, Svg.offset xOffset 3 ]
+
+    viewLegend { point } =
+      Svg.g
+        [ transform point, Svg.anchorStyle anchor ]
+        [ viewLabel lineConfig.label ]
   in
-  Utils.viewMaybe (List.head orderedPoints) <| \{ point } ->
-    Svg.g [ transformation point, Svg.anchorStyle anchor ] [ viewLabel line.label ]
+  Utils.viewMaybe (List.head orderedPoints) viewLegend
 
 
 
 -- VIEW / BUCKETED
 
 
-viewBucketed
-  : Coordinate.System
-  -> Line.Look data
-  -> Dot.Look data
-  -> SampleWidth
-  -> Float
-  -> Container msg
-  -> List (Line.Line data)
-  -> Svg.Svg msg
-viewBucketed system lineLook dotLook sampleWidth areaOpacity container lines =
+viewBucketed : Arguments data msg -> Float -> Container msg -> Svg.Svg msg
+viewBucketed arguments sampleWidth container =
   let
-    toConfig (Line.Line line) =
-      { sample = viewSample system lineLook dotLook sampleWidth areaOpacity line
-      , label = line.label
+    toLegend lineConfig =
+      { sample = viewSample arguments sampleWidth lineConfig
+      , label = lineConfig.label
       }
   in
-  container system <| List.map toConfig lines
+  container arguments.system <|
+    List.map (Line.lineConfig >> toLegend) arguments.lines
 
 
-viewSample : Coordinate.System -> Line.Look data -> Dot.Look data -> Float -> Float -> Line.LineConfig data -> Svg msg
-viewSample system lineLook dotLook sampleWidth areaOpacity line =
+viewSample : Arguments data msg -> Float -> Line.Config data -> Svg msg
+viewSample { system, lineLook, dotLook, areaOpacity } sampleWidth line =
   let
-    middle =
-      Coordinate.toData system <| Coordinate.Point (sampleWidth / 2) 0
+    dotPosition =
+      Coordinate.Point (sampleWidth / 2) 0
+        |> Coordinate.toData system
   in
   Svg.g
     [ Attributes.class "chart__sample" ]
     [ Line.viewSample lineLook line.color line.dashing areaOpacity sampleWidth
-    , Dot.viewSample dotLook line.shape line.color system middle
+    , Dot.viewSample dotLook line.shape line.color system dotPosition
     ]
 
 
@@ -162,10 +182,24 @@ viewSample system lineLook dotLook sampleWidth areaOpacity line =
 -- DEFAULTS
 
 
+defaultLegends
+  :  (Coordinate.Range -> Float)
+  -> (Coordinate.Range -> Float)
+  -> Coordinate.System
+  -> List (Legend msg)
+  -> Svg msg
+defaultLegends toX toY system legends =
+  Svg.g
+    [ Attributes.class "chart__legends"
+    , Svg.transform [ Svg.move system (toX system.x) (toY system.y) ]
+    ]
+    (List.indexedMap defaultLegend legends)
+
+
 defaultLegend : Int -> Legend msg -> Svg msg
 defaultLegend index { sample, label } =
    Svg.g
-    [ Attributes.class "chart__legend-container"
+    [ Attributes.class "chart__legend"
     , Svg.transform [ Svg.offset 20 (toFloat index * 20) ]
     ]
     [ sample

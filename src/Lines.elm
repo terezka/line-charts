@@ -473,13 +473,15 @@ viewCustom config lines =
         config.id
 
     viewLegends =
-      Legends.view system
-        config.line
-        config.dot
-        config.legends
-        config.areaOpacity
-        lines
-        dataPoints
+      Legends.view
+        { system = system
+        , dotLook = config.dot
+        , lineLook = config.line
+        , areaOpacity = config.areaOpacity
+        , lines = lines
+        , dataPoints = dataPoints
+        , legends = config.legends
+        }
   in
   container <|
     Svg.svg attributes

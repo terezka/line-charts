@@ -1,11 +1,14 @@
 module Internal.Line exposing
-  ( Line(..), LineConfig, lineConfig, line, dash
+  ( Line(..), Config, lineConfig, line, dash
   , Look, default, wider, static, emphasizable
   , Style, style
   , view, viewSample
   )
 
-{-| -}
+{-|
+
+
+-}
 
 import Svg
 import Svg.Attributes as Attributes
@@ -21,11 +24,11 @@ import Internal.Utils as Utils
 
 {-| -}
 type Line data =
-  Line (LineConfig data)
+  Line (Config data)
 
 
 {-| -}
-type alias LineConfig data =
+type alias Config data =
   { color : Color.Color
   , shape : Dot.Shape
   , dashing : List Float
@@ -35,7 +38,7 @@ type alias LineConfig data =
 
 
 {-| -}
-lineConfig : Line data -> LineConfig data
+lineConfig : Line data -> Config data
 lineConfig (Line line) =
   line
 
@@ -43,13 +46,13 @@ lineConfig (Line line) =
 {-| -}
 line : Color.Color -> Dot.Shape -> String -> List data -> Line data
 line color shape label data =
-  Line <| LineConfig color shape [] label data
+  Line <| Config color shape [] label data
 
 
 {-| -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
 dash color shape label dashing data =
-  Line <| LineConfig color shape dashing label data
+  Line <| Config color shape dashing label data
 
 
 
