@@ -3,10 +3,10 @@ module Lines.Axis.Title exposing (Title, default, at, custom)
 {-|
 
 # Quick start
-@docs Title, default
+@docs default
 
 # Definition
-@docs at, custom
+@docs Title, at, custom
 
 -}
 

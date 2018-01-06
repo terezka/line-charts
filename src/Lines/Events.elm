@@ -9,13 +9,13 @@ module Lines.Events exposing
 # Quick start
 @docs default, none
 
-# Effects
-@docs Events, hover, click
-
 # Events
-@docs custom, Event, onClick, onMouseMove, onMouseLeave, on
+@docs Events, hover, click, custom
 
-# Handlers
+## Singles
+@docs Event, onClick, onMouseMove, onMouseLeave, on
+
+## Handlers
 @docs Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
 
 -}

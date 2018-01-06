@@ -3,10 +3,10 @@ module Lines.Axis.Intersection exposing (Intersection, default, at, custom)
 {-|
 
 # Quick start
-@docs Intersection, default
+@docs default
 
 # Customizing
-@docs at, custom
+@docs Intersection, at, custom
 
 -}
 

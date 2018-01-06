@@ -1,13 +1,14 @@
 module Lines.Axis.Values exposing (Amount, around, exactly, int, time, float, interval)
 
-
 {-|
 
 # Values
-@docs Amount, around, exactly, int, float, time, interval
+@docs int, float, time, interval
+
+## Amount
+@docs Amount, around, exactly
 
 -}
-
 
 import Lines.Axis.Tick exposing (Time, Unit(..), Interval)
 import Internal.Axis.Values as Values

@@ -1,4 +1,8 @@
-module Lines.Axis.Line exposing (Line, none, default, full, rangeFrame, Config, custom)
+module Lines.Axis.Line exposing
+  ( Line, none, default
+  , full, rangeFrame
+  , Config, custom
+  )
 
 {-|
 

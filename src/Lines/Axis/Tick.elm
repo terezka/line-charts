@@ -9,7 +9,7 @@ module Lines.Axis.Tick exposing
 {-|
 
 # Quick start
-@docs Tick, int, float
+@docs int, float
 
 # Definition
 @docs Tick, Direction, negative, positive

@@ -3,10 +3,10 @@ module Lines.Grid exposing (Grid, default, dotted, lines)
 {-|
 
 # Quick start
-@docs Grid, default
+@docs default
 
 # Customizing
-@docs dotted, lines
+@docs Grid, dotted, lines
 
 -}
 

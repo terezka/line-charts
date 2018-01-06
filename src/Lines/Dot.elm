@@ -1,5 +1,5 @@
 module Lines.Dot exposing
-  ( Shape, none, default1, default2, default3
+  ( Shape, none
   , circle, triangle, square, diamond, plus, cross
   , Look, default, static, emphasizable
   , Style, bordered, disconnected, aura, full
@@ -8,23 +8,7 @@ module Lines.Dot exposing
 {-|
 
 # Quick start
-Can't be bothered to figure out about dots right now? I gotcha.
 @docs none
-
-## Easy defaults
-
-The following defaults are equivalent to `Dot.circle`, `Dot.triangle`, and
-`Dot.cross`, respectivily.
-
-    humanChart : Html msg
-    humanChart =
-      Lines.view .age .weight
-        [ Lines.line "red" Dot.default1 "Alice" alice
-        , Lines.line "blue" Dot.default2 "Bob" bob
-        , Lines.line "green" Dot.default3 "Chuck" chuck
-        ]
-
-@docs default1, default2, default3
 
 # Customizing dot shape
 @docs Shape, circle, triangle, square, diamond, plus, cross
@@ -54,24 +38,6 @@ import Internal.Dot as Dot
 none : Shape
 none =
   Dot.None
-
-
-{-| -}
-default1 : Shape
-default1 =
-  circle
-
-
-{-| -}
-default2 : Shape
-default2 =
-  triangle
-
-
-{-| -}
-default3 : Shape
-default3 =
-  cross
 
 
 

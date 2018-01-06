@@ -8,7 +8,7 @@ module Lines.Legends exposing
 {-|
 
 # Quick start
-@docs none, default
+@docs default, none
 
 # Customizations
 @docs Legends
