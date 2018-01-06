@@ -1,46 +1,74 @@
-module Internal.Axis.Range exposing (Range, default, padded, window, custom, apply)
+module Internal.Axis.Range exposing (Range, default, padded, window, custom, applyX, applyY)
 
-import Internal.Coordinate as Coordinate
+import Lines.Coordinate as Coordinate
 
 
 {-| -}
-type Range =
-  Range (Coordinate.Range -> Coordinate.Range)
+type Range
+  = Padded Float Float
+  | Window Float Float
+  | Custom (Coordinate.Range -> Coordinate.Range)
 
 
 {-| -}
 default : Range
 default =
-  Range identity
+  padded 20 20
 
 
-{-| TODO check this -}
+{-| -}
 padded : Float -> Float -> Range
-padded padMin padMax =
-  Range <| \{ min, max } ->
-    let range = max - min in
-    Coordinate.Range (min - range * padMin) (max + range * padMax)
+padded =
+  Padded
 
 
 {-| -}
 window : Float -> Float -> Range
-window min max =
-  Range <| \_ ->
-    Coordinate.Range min max
+window =
+  Window
 
 
 {-| -}
-custom : (Coordinate.Range -> (Float, Float)) -> Range
+custom : (Coordinate.Range -> ( Float, Float )) -> Range
 custom editRange =
-  Range <| \range ->
+  Custom <| \range ->
     let ( min, max ) = editRange range in
     Coordinate.Range min max
+
 
 
 -- INTERNAL
 
 
 {-| -}
-apply : Range -> Coordinate.Range -> Coordinate.Range
-apply (Range func) =
-  func
+applyX : Range -> Coordinate.System -> Coordinate.Range
+applyX range system =
+  case range of
+    Padded padMin padMax ->
+      let
+        { frame } = system
+        { size } = frame
+        system_ = { system | frame = { frame | size = { size | width = size.width - padMin - padMax |> Basics.max 1 } } }
+        scale = Coordinate.scaleDataX system_
+      in
+      Coordinate.Range (system.x.min - scale padMin) (system.x.max + scale padMax)
+
+    Window min max -> Coordinate.Range min max
+    Custom toRange -> toRange system.x
+
+
+{-| -}
+applyY : Range -> Coordinate.System -> Coordinate.Range
+applyY range system =
+  case range of
+    Padded padMin padMax ->
+      let
+        { frame } = system
+        { size } = frame
+        system_ = { system | frame = { frame | size = { size | height = size.height - padMin - padMax |> Basics.max 1 } } }
+        scale = Coordinate.scaleDataY system_
+      in
+      Coordinate.Range (system.y.min - scale padMin) (system.y.max + scale padMax)
+
+    Window min max -> Coordinate.Range min max
+    Custom toRange -> toRange system.y

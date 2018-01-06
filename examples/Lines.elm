@@ -15,30 +15,29 @@ import Lines.Coordinate as Coordinate
 import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Legends as Legends
+import Lines.Grid as Grid
 
 
 main : Svg msg
 main =
-  -- Lines.viewSimple .magnesium .heartattacks [ data1, data2, data3 ]
+  -- Lines.view3 .magnesium .heartattacks data1 data2 data3_a
   Lines.viewCustom
-    { margin = Coordinate.Margin 40 150 90 150
+    { margin = Coordinate.Margin 150 150 150 150
     , attributes = [ Attributes.style "font-family: monospace;" ]
     , events = []
     , x =
         { title = Title.default "Time"
         , variable = .date
-        , pixels = 650
-        , padding = 20
-        , range = Range.default
-        , axis = Axis.time (Axis.around 4)
+        , pixels = 750
+        , range = Range.padded 30 10
+        , axis = Axis.time 10
         }
     , y =
         { title = Title.default "Heart attacks"
         , variable = .heartattacks
-        , pixels = 900
-        , padding = 20
-        , range = Range.default
-        , axis = Axis.float (Axis.exactly 90)
+        , pixels = 750
+        , range = Range.padded 30 10
+        , axis = Axis.float 10
         }
     , intersection = Intersection.default
     , junk = Junk.none
@@ -46,23 +45,26 @@ main =
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
+    , grid = Grid.lines 1 Color.grayLight
     , areaOpacity = 0
     , id = "chart"
     }
-    [ Lines.line Color.blue Dot.triangle "1" data1
-    , Lines.line Color.pink Dot.diamond "2" data2
-    , Lines.line Color.orange Dot.cross "3" data3
+    [ Lines.line Color.blue Dot.circle "1" data1
+    , Lines.line Color.pink Dot.circle "2" data2
+    , Lines.line Color.orange Dot.circle "3" data3_a
+    , Lines.line Color.orange Dot.circle "3" data3_b
     ]
 
 
-tick : Int -> Data -> Tick.Tick msg
-tick _ data =
-  { color = Color.orange
-  , width = 2
-  , events = []
-  , length = 7
-  , label = Just <| Junk.text (toString data.heartattacks)
-  }
+
+
+timeTick : Tick.Time -> Tick.Tick msg
+timeTick time =
+  let tick = Tick.time time in
+  if time.change == Nothing then
+    { tick | label = Just <| Junk.text Color.gray (Tick.format time) }
+  else
+    tick
 
 
 
@@ -94,8 +96,8 @@ data2 =
   ]
 
 
-data3 : List Data
-data3 =
+data3_a : List Data
+data3_a =
   [ Data 2 0.00035 (269810504300 + (1 + 0) * 3600000)
   , Data 3 0.00032 (269810504300 + (1 + 1) * 3600000)
   , Data 4 0.00038 (269810504300 + (1 + 2) * 3600000)
@@ -103,10 +105,11 @@ data3 =
   ]
 
 
-data3_5 : List Data
-data3_5 =
-  [ Data 6 36 (269849424300 + 4 * 2 * 3600000)
-  , Data 7 36 (269849424300 + 5 * 2 * 3600000)
+data3_b : List Data
+data3_b =
+  [ Data 6 0.00036 (269810504300 + (1 + 4) * 3600000)
+  , Data 7 0.00037 (269810504300 + (1 + 5) * 3600000)
+  , Data 9 0.00036 (269810504300 + (1 + 6) * 3600000)
   ]
 
 

@@ -57,8 +57,8 @@ bucketed : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends
 bucketed toX toY =
   Bucketed 30 <| \system legends ->
     Svg.g
-      [ Svg.transform [ Svg.move system (toX system.x) (toY system.y) ]
-      , Attributes.class "chart__legends-container"
+      [ Attributes.class "chart__legends"
+      , Svg.transform [ Svg.move system (toX system.x) (toY system.y) ]
       ]
       (List.indexedMap defaultLegend legends)
 
@@ -162,8 +162,8 @@ viewSample system lineLook dotLook sampleWidth areaOpacity line =
 defaultLegend : Int -> Legend msg -> Svg msg
 defaultLegend index { sample, label } =
    Svg.g
-    [ Svg.transform [ Svg.offset 20 (toFloat index * 20) ]
-    , Attributes.class "chart__legend-container"
+    [ Attributes.class "chart__legend-container"
+    , Svg.transform [ Svg.offset 20 (toFloat index * 20) ]
     ]
     [ sample
     , Svg.g

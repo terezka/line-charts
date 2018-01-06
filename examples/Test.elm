@@ -38,7 +38,6 @@ bob : List Info
 bob =
     [ Info 4 22 1.01 0
     , Info 25 75 1.87 -98000
-    , Info 43 77 1.87 52000
     ]
 
 
@@ -60,29 +59,8 @@ average =
 
 humanChart : Html msg
 humanChart =
-    Lines.viewCustom (chartConfig .age .weight)
-        [ Lines.dash Color.pink Dot.none "Average" [ 2, 4 ] average
-        , Lines.line Color.blue Dot.none "Chuck" chuck
-        , Lines.line Color.orange Dot.none "Alice" alice
-        , Lines.line Color.gray Dot.none "Bob" bob
-        ]
+    Lines.view1 .age .weight bob
 
-
-chartConfig : (data -> Float) -> (data -> Float) -> Lines.Config data msg
-chartConfig toXValue toYValue =
-    { frame = Coordinate.Frame (Coordinate.Margin 40 150 90 150) (Coordinate.Size 650 400)
-    , attributes = [ Attributes.style "font-family: monospace;" ] -- Changed from the default!
-    , events = Events.none
-    , junk = Junk.none
-    , x = Axis.default (Axis.defaultTitle "" 0 0) toXValue
-    , y = Axis.default (Axis.defaultTitle "" 0 0) toYValue
-    , interpolation = Lines.linear
-    , legends = Legends.default
-    , line = Line.default
-    , dot = Dot.default
-    , areaOpacity = 0.25
-    , id = "achart"
-    }
 
 
 bmi : Info -> Float

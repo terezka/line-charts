@@ -2,15 +2,17 @@ module Lines.Axis.Range exposing (Range, default, padded, window, custom)
 
 {-|
 
-@docs Range, default, padded, window, custom
+# Quick start
+@docs Range, default
+
+# Customizing
+@docs padded, window, custom
 
 -}
 
 import Internal.Axis.Range as Range
 import Lines.Coordinate as Coordinate
 
-
--- TODO: Add adjust for nice ticks?
 
 
 {-| -}
@@ -37,6 +39,6 @@ window =
 
 
 {-| -}
-custom : (Coordinate.Range -> (Float, Float)) -> Range
+custom : (Coordinate.Range -> ( Float, Float )) -> Range
 custom =
   Range.custom

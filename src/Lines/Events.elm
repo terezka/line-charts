@@ -1,5 +1,5 @@
 module Lines.Events exposing
-  ( none, default
+  ( default
   , Event, onClick, onMouseMove, onMouseLeave, on
   , Searcher, svg, cartesian, findNearest, findNearestX, findWithin, findWithinX
   )
@@ -7,7 +7,7 @@ module Lines.Events exposing
 {-|
 
 # Quick start
-@docs none, default
+@docs default
 
 # Events
 @docs Event, onClick, onMouseMove, onMouseLeave, on
@@ -73,12 +73,6 @@ default msg =
     , onMouseLeave (msg Nothing)
     ]
 
-
-{-| Literally an empty list, just here for consistency. -- TODO should it just be removed then??
--}
-none : List (Event data msg)
-none =
-  []
 
 
 -- EVENTS

@@ -48,6 +48,9 @@ monotone points =
         monotoneCurve p0 p1 previousTangent nextTangent ++
         monotoneNext (p1 :: p2 :: rest) nextTangent
 
+    [ p0, p1 ] ->
+      linear [ p0, p1 ]
+
     _ ->
       []
 

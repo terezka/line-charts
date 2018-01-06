@@ -3,6 +3,17 @@ module Internal.Coordinate exposing (..)
 {-| -}
 
 
+
+{-| -}
+type alias System =
+  { frame : Frame
+  , x : Range
+  , y : Range
+  , xData : Range
+  , yData : Range
+  }
+
+
 {-| -}
 type alias Frame =
   { margin : Margin
@@ -27,16 +38,6 @@ type alias Margin =
 
 
 {-| -}
-type alias System =
-  { frame : Frame
-  , x : Range
-  , y : Range
-  , xData : Range
-  , yData : Range
-  }
-
-
-{-| -}
 type alias Range =
   { min : Float
   , max : Float
@@ -55,6 +56,10 @@ type alias Point =
   { x : Float
   , y : Float
   }
+
+
+
+-- HELPERS
 
 
 {-| -}

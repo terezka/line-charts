@@ -23,7 +23,9 @@ module Lines.Junk exposing
 
 import Html
 import Svg
+import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
+import Lines.Color as Color
 import Internal.Junk
 import Internal.Svg as Svg
 
@@ -155,18 +157,18 @@ transform =
 
     gridLines : Coordinate.System -> List (Svg msg)
     gridLines system =
-      List.map (Junk.vertical system []) (Axis.defaultInterval system.x) -- TODO
+      List.map (Junk.vertical system []) (Axis.defaultInterval system.x) 
 -}
-vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
-vertical system attributes at =
-  Svg.vertical system attributes at system.y.min system.y.max
+vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Svg.Svg msg
+vertical =
+  Svg.vertical
 
 
 {-| A grid line that takes up the full length of your horizontal axis.
 -}
-horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
-horizontal system attributes at =
-  Svg.horizontal system attributes at system.x.min system.x.max
+horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float ->  Float -> Svg.Svg msg
+horizontal =
+  Svg.horizontal
 
 
 
@@ -174,6 +176,6 @@ horizontal system attributes at =
 
 
 {-| -}
-text : String -> Svg.Svg msg
-text string =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text string ] ]
+text : Color.Color -> String -> Svg.Svg msg
+text color string =
+  Svg.text_ [ Attributes.fill color ] [ Svg.tspan [] [ Svg.text string ] ]

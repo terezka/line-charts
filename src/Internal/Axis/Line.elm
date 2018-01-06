@@ -1,4 +1,4 @@
-module Internal.Axis.Line exposing (Line, default, fat, rangeFrame, Config, custom, config)
+module Internal.Axis.Line exposing (Line, none, default, full, rangeFrame, Config, custom, config)
 
 
 import Svg exposing (Attribute)
@@ -12,11 +12,11 @@ type Line msg =
 
 
 {-| -}
-default : Line msg
-default =
+none : Line msg
+none =
   Line <| \_ {min, max} ->
-    { color = Color.gray
-    , width = 1
+    { color = "transparent"
+    , width = 0
     , events = []
     , start = min
     , end = max
@@ -24,11 +24,17 @@ default =
 
 
 {-| -}
-fat : Line msg
-fat =
+default : Line msg
+default =
+  rangeFrame
+
+
+{-| -}
+full : Line msg
+full =
   Line <| \_ {min, max} ->
     { color = Color.gray
-    , width = 3
+    , width = 1
     , events = []
     , start = min
     , end = max

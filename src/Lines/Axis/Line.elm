@@ -1,8 +1,15 @@
-module Lines.Axis.Line exposing (Line, default, fat, rangeFrame, Config, custom)
+module Lines.Axis.Line exposing (Line, none, default, full, rangeFrame, Config, custom)
 
 {-|
 
-@docs Line, default, fat, Config, custom, rangeFrame
+# Quick start
+@docs Line, none, default
+
+# Alternatives
+@docs full, rangeFrame
+
+# Customizing
+@docs Config, custom
 
 -}
 
@@ -18,21 +25,28 @@ type alias Line msg =
 
 
 {-| -}
+none : Line msg
+none =
+  Line.none
+
+
+{-| -}
 default : Line msg
 default =
   Line.default
 
 
 {-| -}
-fat : Line msg
-fat =
-  Line.fat
+full : Line msg
+full =
+  Line.full
 
 
 {-| -}
 rangeFrame : Line msg
 rangeFrame =
   Line.rangeFrame
+
 
 
 -- CUSTOM

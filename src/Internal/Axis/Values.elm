@@ -1,4 +1,4 @@
-module Internal.Axis.Values exposing (Amount(..), int, time, float, interval)
+module Internal.Axis.Values exposing (Amount, around, exactly, int, time, float, interval)
 
 
 import Round
@@ -14,20 +14,29 @@ type Amount
   | Around Int
 
 
+
+{-| -}
+around : Int -> Amount
+around =
+  Around
+
+
+{-| -}
+exactly : Int -> Amount
+exactly =
+  Exactly
+
+
+
+-- VALUES
+
+
 {-| -}
 int : Amount -> Coordinate.Range -> List Int
 int amount =
   case amount of
     Exactly amount -> List.map round << values False True amount
     Around amount  -> List.map round << values False False amount
-
-
-{-| -}
-time : Amount -> Coordinate.Range -> List Time
-time amount =
-  case amount of
-    Exactly amount -> Time.values amount
-    Around amount  -> Time.values amount
 
 
 {-| -}
@@ -49,6 +58,12 @@ interval intersection interval range =
           intersection - offset (intersection - range.min)
     in
     positions range beginning interval 0 []
+
+
+{-| -}
+time : Int -> Coordinate.Range -> List Time
+time =
+  Time.values
 
 
 
@@ -74,7 +89,7 @@ getBeginning : Float -> Float -> Float
 getBeginning min interval =
   let
     multiple =
-      correctFloat (getPrecision interval) (min / interval)
+      correctFloat (getPrecision interval + 1) (min / interval)
   in
     if multiple == toFloat (round multiple)
       then min
@@ -146,7 +161,7 @@ getMultiples magnitude allowDecimals hasTickAmount =
       defaults
     else
       if magnitude == 1 then
-        List.filter (\n -> toFloat (round n) /= n) defaults
+        List.filter (\n -> toFloat (round n) == n) defaults
       else if magnitude <= 0.1 then
         [ 1 / magnitude ]
       else
