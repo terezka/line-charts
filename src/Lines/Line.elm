@@ -54,7 +54,12 @@ style =
 
 
 {-| -}
-emphasizable : Style -> Style -> (List data -> Bool) -> Look data
+emphasizable :
+  { normal : Style
+  , emphasized : Style
+  , isEmphasized : List data -> Bool
+  }
+  -> Look data
 emphasizable =
   Line.emphasizable
 

@@ -50,6 +50,12 @@ update msg model =
 
 view : Model -> Svg Msg
 view model =
+    let
+      isLineHovered data =
+        model.hovering
+          |> Maybe.map (flip List.member data)
+          |> Maybe.withDefault False
+    in
     Lines.viewCustom
       { margin = Coordinate.Margin 40 150 90 150
       , attributes = [ SvgA.style "font-family: monospace;" ]
@@ -60,7 +66,12 @@ view model =
       , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
       , interpolation = Lines.monotone
       , legends = Legends.default
-      , line = Line.default
+      , line =
+          Line.emphasizable
+            { normal = Line.style 2 identity
+            , emphasized = Line.style 4 identity
+            , isEmphasized = isLineHovered
+            }
       , dot =
           Dot.emphasizable
             { normal = Dot.disconnected 10 2

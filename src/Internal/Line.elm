@@ -96,13 +96,14 @@ static normal =
 
 
 {-| -}
-emphasizable : Style -> Style -> (List data -> Bool) -> Look data
-emphasizable normal emphasized isEmphasized =
+emphasizable :
+  { normal : Style
+  , emphasized : Style
+  , isEmphasized : List data -> Bool
+  }
+  -> Look data
+emphasizable =
   Look
-    { normal = normal
-    , emphasized = emphasized
-    , isEmphasized = isEmphasized
-    }
 
 
 
