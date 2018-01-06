@@ -1,5 +1,8 @@
 module Lines.Line exposing
-  ( Look, Style, default, wider, static, style, emphasizable )
+  ( Look, default
+  , wider, static, emphasizable
+  , Style, style
+  )
 
 {-|
 
@@ -7,7 +10,10 @@ module Lines.Line exposing
 @docs default
 
 # Customizations
-@docs Look, Style, wider, static, style, emphasizable
+@docs Look, wider, static, emphasizable
+
+# Styles
+@docs Style, style
 
 -}
 

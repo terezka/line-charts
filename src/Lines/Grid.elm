@@ -1,6 +1,5 @@
 module Lines.Grid exposing (Grid, default, dotted, lines)
 
-
 {-|
 
 # Quick start

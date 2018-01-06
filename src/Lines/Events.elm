@@ -1,16 +1,19 @@
 module Lines.Events exposing
-  ( Events, default, none, hover, hoverCustom, click, custom
-  , Event, on
+  ( Events, default, none, hover, click, custom
+  , Event, onClick, onMouseMove, onMouseLeave, on
   , Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
   )
 
 {-|
 
 # Quick start
-@docs Events, default, none, hover, hoverCustom, click, custom
+@docs default, none
+
+# Effects
+@docs Events, hover, click
 
 # Events
-@docs Event, on
+@docs custom, Event, onClick, onMouseMove, onMouseLeave, on
 
 # Handlers
 @docs Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
@@ -49,16 +52,6 @@ hover =
 
 
 {-| -}
-hoverCustom :
-  { onMouseMove : Handler data msg
-  , onMouseLeave : msg
-  }
-  -> Events.Events data msg
-hoverCustom =
-  Events.hoverCustom
-
-
-{-| -}
 click : (Maybe data -> msg) -> Events.Events data msg
 click =
   Events.click
@@ -70,9 +63,31 @@ custom =
   Events.custom
 
 
+
+-- SINGLES
+
+
 {-| -}
 type alias Event data msg =
   Events.Event data msg
+
+
+{-| -}
+onClick : Handler data msg -> Event data msg
+onClick =
+  Events.onClick
+
+
+{-| -}
+onMouseMove : Handler data msg -> Event data msg
+onMouseMove =
+  Events.onMouseMove
+
+
+{-| -}
+onMouseLeave : msg -> Event data msg
+onMouseLeave =
+  Events.onMouseLeave
 
 
 {-| -}
@@ -94,8 +109,8 @@ used in an `Event`.
     events =
       [ Events.onMouseMove Events.findNearest Hover ]
 -}
-type alias Handler data hint =
-  Events.Handler data hint
+type alias Handler data msg =
+  Events.Handler data msg
 
 
 {-| Produces the SVG of the event.

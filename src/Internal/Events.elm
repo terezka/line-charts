@@ -1,5 +1,5 @@
 module Internal.Events exposing
-    ( Events, default, none, hover, hoverCustom, click, custom
+    ( Events, default, none, hover, click, custom
     , Event, onClick, onMouseMove, onMouseLeave, on
     , Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
     -- INTERNAL
@@ -40,19 +40,6 @@ hover msg =
   custom
     [ onMouseMove (getNearest msg)
     , onMouseLeave (msg Nothing)
-    ]
-
-
-{-| -}
-hoverCustom :
-  { onMouseMove : Handler data msg
-  , onMouseLeave : msg
-  }
-  -> Events data msg
-hoverCustom config =
-  custom
-    [ onMouseMove config.onMouseMove
-    , onMouseLeave config.onMouseLeave
     ]
 
 
