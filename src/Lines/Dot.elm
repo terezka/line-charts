@@ -124,7 +124,7 @@ default =
 
     dotLook : Dot.Look data
     dotLook =
-      Dot.static (Dot.full 50) -- TODO attributes?
+      Dot.static (Dot.full 50)
 -}
 static : Style -> Look data
 static =
