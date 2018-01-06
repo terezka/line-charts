@@ -1,5 +1,5 @@
 module Lines.Line exposing
-  ( Look, Style, default, wider, static, style, emphasizable, hasMaybe )
+  ( Look, Style, default, wider, static, style, emphasizable )
 
 {-|
 
@@ -8,9 +8,6 @@ module Lines.Line exposing
 
 # Customizations
 @docs Look, Style, wider, static, style, emphasizable
-
-### Emphasizable helpers
-@docs hasMaybe
 
 -}
 
@@ -62,11 +59,3 @@ emphasizable :
   -> Look data
 emphasizable =
   Line.emphasizable
-
-
-{-| -}
-hasMaybe : Maybe data -> List data -> Bool
-hasMaybe hovering data =
-  case hovering of
-    Just hovering -> List.member hovering data
-    Nothing       -> False
