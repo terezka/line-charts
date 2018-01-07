@@ -84,7 +84,7 @@ view model =
       , dot =
           Dot.emphasizable
             { normal = Dot.disconnected 10 2
-            , emphasized = Dot.aura 27 5 0.25
+            , emphasized = Dot.aura 7 5 0.25
             , isEmphasized = \data -> List.member data model.hoveringX
             }
       , areaOpacity = 0
