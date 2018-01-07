@@ -45,10 +45,11 @@ import Internal.Axis.Intersection as Intersection
 
 
 -- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
--- TODO prevent dots from going outside range
+-- TODO fix weird axis behavior on range.window
 -- TODO broken data
 -- TODO consider tick space tolerance as determinating factor of tick amount
 -- TODO Add range adjust for nice ticks?
+-- TODO stacked areas
 
 
 
@@ -492,7 +493,7 @@ viewCustom config lines =
   in
   container <|
     Svg.svg attributes
-      [ Svg.defs [] [ clipPath config system ]
+      [ Svg.defs [] [ chartArea config system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
       , Svg.g [ Attributes.class "chart__lines" ]       viewLines
       , Axis.viewHorizontal system config.intersection config.x.title config.x.axis
@@ -506,9 +507,9 @@ viewCustom config lines =
 -- INTERNAL
 
 
-clipPath : Config data msg -> Coordinate.System -> Svg.Svg msg
-clipPath { id } system =
-  Svg.clipPath [ Attributes.id (Utils.toClipPathId id) ]
+chartArea : Config data msg -> Coordinate.System -> Svg.Svg msg
+chartArea { id } system =
+  Svg.clipPath [ Attributes.id (Utils.toChartAreaId id) ]
     [ Svg.rect
       [ Attributes.x <| toString system.frame.margin.right
       , Attributes.y <| toString system.frame.margin.top

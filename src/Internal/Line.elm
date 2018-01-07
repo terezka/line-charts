@@ -145,6 +145,16 @@ type alias Arguments data =
 view : Arguments data -> Line data -> List (DataPoint data) -> Svg.Svg msg
 view arguments (Line lineConfig) dataPoints =
   let
+    system =
+      arguments.system
+
+    isWithinRange { point } =
+      clamp system.x.min system.x.max point.x == point.x &&
+      clamp system.y.min system.y.max point.y == point.y
+
+    dataPointsWithinRange =
+      List.filter isWithinRange dataPoints
+
     isArea =
       arguments.areaOpacity > 0
 
@@ -160,7 +170,7 @@ view arguments (Line lineConfig) dataPoints =
     [ Utils.viewIf isArea (viewArea arguments lineConfig dataPoints)
     , viewLine arguments lineConfig dataPoints
     , Svg.g [ Attributes.class "chart__dots" ] <|
-        List.map viewDot dataPoints
+        List.map viewDot dataPointsWithinRange
     ]
 
 
@@ -181,7 +191,7 @@ viewLine { system, lineLook, interpolation, id } linConfig dataPoints =
 
     lineAttributes =
       toLineAttributes lineLook linConfig dataPoints ++
-        [ Attributes.clipPath <| "url(#" ++ Utils.toClipPathId id ++ ")" ]
+        [ Attributes.clipPath <| "url(#" ++ Utils.toChartAreaId id ++ ")" ]
   in
   Path.view system lineAttributes commands
 
@@ -236,7 +246,7 @@ viewArea { system, lineLook, interpolation, areaOpacity, id } lineConfig dataPoi
 
     attributes =
       toAreaAttributes lineLook lineConfig areaOpacity dataPoints ++
-        [ Attributes.clipPath <| "url(#" ++ Utils.toClipPathId id ++ ")" ]
+        [ Attributes.clipPath <| "url(#" ++ Utils.toChartAreaId id ++ ")" ]
   in
   Path.view system attributes commands
 

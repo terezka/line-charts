@@ -92,9 +92,9 @@ last list =
 
 
 {-| -}
-toClipPathId : String -> String
-toClipPathId id =
-  "chart__clip-path--" ++ id
+toChartAreaId : String -> String
+toChartAreaId id =
+  "chart__chart-area--" ++ id
 
 
 {-| -}

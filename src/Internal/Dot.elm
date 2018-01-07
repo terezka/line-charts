@@ -123,8 +123,7 @@ full radius =
   style radius Full
 
 
-
--- VIEW
+-- INTERNAL / VIEW
 
 
 {-| -}
@@ -159,23 +158,25 @@ viewSample (Look config) shape color system =
 
 
 
--- VIEW / INTERNAL
+-- INTERNAL / VIEW / PARTS
 
 
 viewShape : Coordinate.System -> StyleConfig -> Shape -> Color.Color -> Point -> Svg msg
 viewShape system { radius, variety } shape color point =
   let size = 2 * pi * radius
       pointSVG = toSVG system point
-      apply f = f [] variety color size pointSVG
+      view =
+        case shape of
+          Circle   -> viewCircle
+          Triangle -> viewTriangle
+          Square   -> viewSquare
+          Diamond  -> viewDiamond
+          Cross    -> viewCross
+          Plus     -> viewPlus
+          None     -> \_ _ _ _ _ -> Svg.text ""
   in
-  case shape of
-    Circle   -> apply viewCircle
-    Triangle -> apply viewTriangle
-    Square   -> apply viewSquare
-    Diamond  -> apply viewDiamond
-    Cross    -> apply viewCross
-    Plus     -> apply viewPlus
-    None     -> Svg.text ""
+  view [] variety color size pointSVG
+
 
 
 viewCircle : List (Svg.Attribute msg) -> Variety -> Color.Color -> Float -> Coordinate.Point -> Svg msg
@@ -252,7 +253,7 @@ viewCross events variety color area point =
 
 
 
--- PATHS
+-- INTERNAL / PATHS
 
 
 pathTriangle : Float -> Point -> String
@@ -300,7 +301,7 @@ pathPlus area point =
 
 
 
--- STYLE ATTRIBUTES
+-- INTERNAL / STYLE ATTRIBUTES
 
 
 varietyAttributes : Color.Color -> Variety -> List (Svg.Attribute msg)
