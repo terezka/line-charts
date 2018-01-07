@@ -23,6 +23,7 @@ import Svg.Attributes as SvgA
 type alias Model =
     { hovering : Maybe Info
     , point : Maybe Coordinate.Point
+    , hoveringX : List Info
     }
 
 
@@ -30,6 +31,7 @@ initialModel : Model
 initialModel =
     { hovering = Nothing
     , point = Nothing
+    , hoveringX = []
     }
 
 
@@ -38,14 +40,17 @@ initialModel =
 
 
 type Msg
-    = Hover (Maybe Info, List Info, Coordinate.Point)
+    = Hover (List Info, Coordinate.Point)
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Hover (info, infos, point) ->
-            { model | hovering = info, point = Just point }
+        Hover (infos, point) ->
+            { model
+            | point = Just point
+            , hoveringX = infos
+            }
 
 
 
@@ -54,40 +59,33 @@ update msg model =
 
 view : Model -> Svg Msg
 view model =
-    let
-      isLineHovered data =
-        model.hovering
-          |> Maybe.map (flip List.member data)
-          |> Maybe.withDefault False
-
-      isPointHovered data =
-        Just data == model.hovering
-    in
     Lines.viewCustom
       { margin = Coordinate.Margin 40 150 90 150
       , attributes = [ SvgA.style "font-family: monospace;" ]
       , events =
           Events.custom
             [ Events.onMouseMove Hover <|
-                Events.map3 (,,) Events.getNearest Events.getNearestX Events.getSvg
+                Events.map2 (,) Events.getNearestX Events.getSvg
             ]
       , x = Dimension.default 650 "age (years)" .age
       , y = Dimension.default 400 "weight (kg)" .weight
       , intersection = Intersection.default
-      , junk = Maybe.map2 junk model.hovering model.point |> Maybe.withDefault Junk.none
+      , junk =
+          Maybe.map (junk model.hoveringX) model.point
+            |> Maybe.withDefault Junk.none
       , interpolation = Lines.monotone
       , legends = Legends.default
       , line =
           Line.emphasizable
             { normal = Line.style 2 identity
             , emphasized = Line.style 4 identity
-            , isEmphasized = isLineHovered
+            , isEmphasized = \data -> List.any (flip List.member data) model.hoveringX
             }
       , dot =
           Dot.emphasizable
             { normal = Dot.disconnected 10 2
             , emphasized = Dot.aura 7 5 0.25
-            , isEmphasized = isPointHovered
+            , isEmphasized = \data -> List.member data model.hoveringX
             }
       , areaOpacity = 0
       , grid = Grid.default
@@ -110,14 +108,13 @@ viewLegend index { sample, label } =
     ]
 
 
-junk : Info -> Coordinate.Point -> Junk.Junk Msg
-junk hint point =
+junk : List Info ->Coordinate.Point -> Junk.Junk Msg
+junk hintx point =
     Junk.custom <| \system ->
       { below = []
       , above =
-          [ tooltip system hint
-          , Junk.vertical   system [ SvgA.strokeDasharray "1 4" ] hint.age system.y.min system.y.max
-          , Junk.horizontal system [ SvgA.strokeDasharray "1 4" ] hint.weight system.x.min system.x.max
+          [ Svg.g [] (List.indexedMap (tooltip system) hintx)
+          , Svg.g [] (List.concatMap (line system) hintx)
           , Svg.circle
             [ SvgA.cx (toString point.x)
             , SvgA.cy (toString point.y)
@@ -130,10 +127,18 @@ junk hint point =
       }
 
 
-tooltip : Coordinate.System -> Info -> Svg msg
-tooltip system hovered =
+line : Coordinate.System -> Info -> List (Svg msg)
+line system hint =
+  [ Junk.horizontal system [ SvgA.strokeDasharray "1 4" ] hint.weight system.x.min system.x.max
+  , Junk.vertical system [ SvgA.strokeDasharray "1 4" ] hint.age system.y.min system.y.max
+  ]
+
+
+
+tooltip : Coordinate.System -> Int -> Info -> Svg msg
+tooltip system index hovered =
   Svg.g
-    [ Junk.transform [ Junk.offset 520 100 ] ]
+    [ Junk.transform [ Junk.offset 520 (100 + toFloat index * 40) ] ]
     [ Svg.text_ []
         [ dimension "Age" hovered.age
         , dimension "Weight" hovered.weight
