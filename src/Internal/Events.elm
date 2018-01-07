@@ -1,7 +1,7 @@
 module Internal.Events exposing
     ( Events, default, none, hover, click, custom
     , Event, onClick, onMouseMove, onMouseLeave, on
-    , Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
+    , Handler, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
     -- INTERNAL
     , toAttributes
@@ -150,15 +150,15 @@ type Handler data msg =
 
 
 {-| -}
-getSvg : Handler data Point
-getSvg =
+getSVG : Handler data Point
+getSVG =
   Handler <| \points system searched ->
     searched
 
 
 {-| -}
-getCartesian : Handler data Point
-getCartesian =
+getData : Handler data Point
+getData =
   Handler <| \points system searched ->
     toCartesianSafe system searched
 

@@ -49,6 +49,8 @@ import Internal.Axis.Intersection as Intersection
 -- TODO consider tick space tolerance as determinating factor of tick amount
 -- TODO Add range adjust for nice ticks?
 -- TODO stacked areas
+-- TODO Should handlers be decoders?
+-- TODO Should all configs in modules be called Config?
 
 
 

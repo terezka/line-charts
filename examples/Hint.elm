@@ -65,7 +65,7 @@ view model =
       , events =
           Events.custom
             [ Events.onMouseMove Hover <|
-                Events.map2 (,) Events.getNearestX Events.getSvg
+                Events.map2 (,) Events.getNearestX Events.getSVG
             ]
       , x = Dimension.default 650 "age (years)" .age
       , y = Dimension.default 400 "weight (kg)" .weight
@@ -85,7 +85,7 @@ view model =
           Dot.emphasizable
             { normal = Dot.disconnected 10 2
             , emphasized = Dot.aura 7 5 0.25
-            , isEmphasized = \data -> List.member data model.hoveringX
+            , isEmphasized = flip List.member model.hoveringX
             }
       , areaOpacity = 0
       , grid = Grid.default

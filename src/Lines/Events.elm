@@ -1,7 +1,7 @@
 module Lines.Events exposing
   ( Events, default, none, hover, click, custom
   , Event, onClick, onMouseMove, onMouseLeave, on
-  , Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
+  , Handler, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
   )
 
@@ -10,15 +10,24 @@ module Lines.Events exposing
 # Quick start
 @docs default, none
 
-# Events
+# Configurations
 @docs Events, hover, click, custom
 
-## Singles
+## Events
 @docs Event, onClick, onMouseMove, onMouseLeave, on
 
 ## Handlers
-@docs Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
+@docs Handler, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
+
 ### Maps
+
+    events : Events.Events Data Msg
+    events =
+      Events.custom
+        [ Events.onMouseMove Hover <|
+            Events.map2 (,) Events.getNearest Events.getSVG
+        ]
+
 @docs map, map2, map3
 
 -}
@@ -103,61 +112,65 @@ on =
 -- SEARCHERS
 
 
-{-| A searcher passes specific information about your event to your message, when
-used in an `Event`.
+{-| Gets you information about where your event happened on your chart.
+This example gets you the nearest data coordinates to where you are hovering.
 
-    type Msg = Hover (Maybe Info)
-
-    events : List (Event Msg)
+    events : Events.Events Data Msg
     events =
-      [ Events.onMouseMove Events.findNearest Hover ]
+      Events.custom
+        [ Events.onMouseMove Hover Events.getNearest ]
 -}
 type alias Handler data msg =
   Events.Handler data msg
 
 
-{-| Produces the SVG of the event.
+{-| Get the SVG coordinates of the event.
 -}
-getSvg : Handler data Coordinate.Point
-getSvg =
-  Events.getSvg
+getSVG : Handler data Coordinate.Point
+getSVG =
+  Events.getSVG
 
 
-{-| Produces the data point of the event.
+{-| Get the data coordinates of the event.
 -}
-getCartesian : Handler data Coordinate.Point
-getCartesian =
-  Events.getCartesian
+getData : Handler data Coordinate.Point
+getData =
+  Events.getData
 
 
-{-| Finds the data point nearest to the event.
+{-| Get the data coordinates nearest to the event.
+Returns `Nothing` if you have no data showing.
 -}
 getNearest : Handler data (Maybe data)
 getNearest =
   Events.getNearest
 
 
-{-| Finds the data point nearest to the event, within the radius (px) you
-provide in the first argument.
+{-| Get the data coordinates nearest of the event within the radius (in pixels)
+you provide in the first argument. Returns `Nothing` if you have no data showing.
 -}
 getWithin : Float -> Handler data (Maybe data)
 getWithin =
   Events.getWithin
 
 
-{-| Finds the data point nearest horizontally to the event.
+{-| Get the data coordinates horizontally nearest to the event.
 -}
 getNearestX : Handler data (List data)
 getNearestX =
   Events.getNearestX
 
 
-{-| Finds the data point nearest horizontally to the event, within the
-distance (px) you provide in the first argument.
+{-| Finds the data coordinates horizontally nearest to the event, within the
+distance (in pixels) you provide in the first argument.
 -}
 getWithinX : Float -> Handler data (List data)
 getWithinX =
   Events.getWithinX
+
+
+
+-- MAPS
 
 
 {-| -}
