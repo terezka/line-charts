@@ -20,7 +20,7 @@ type alias Intersection =
   Intersection.Intersection
 
 
-{-| Sets the intersection as close to ( 0, 0 ) as your range and domain allows.
+{-| Sets the intersection as close to the origin as your range and domain allows.
 -}
 default : Intersection
 default =
