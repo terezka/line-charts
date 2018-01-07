@@ -7,10 +7,10 @@ module Lines.Axis.Line exposing
 {-|
 
 # Quick start
-@docs Line, none, default
+@docs default, none
 
-# Alternatives
-@docs full, rangeFrame
+# Configurations
+@docs Line, full, rangeFrame
 
 # Customizing
 @docs Config, custom
@@ -29,24 +29,27 @@ type alias Line msg =
 
 
 {-| -}
-none : Line msg
-none =
-  Line.none
-
-
-{-| -}
 default : Line msg
 default =
   Line.default
 
 
-{-| -}
+{-| Removes the axis line entirely.
+-}
+none : Line msg
+none =
+  Line.none
+
+
+{-| Draws the axis line as the full length of your dimension.
+-}
 full : Line msg
 full =
   Line.full
 
 
-{-| -}
+{-| Draws the axis line to fit the range of your data.
+-}
 rangeFrame : Line msg
 rangeFrame =
   Line.rangeFrame
@@ -66,7 +69,9 @@ type alias Config msg =
   }
 
 
-{-| -}
+{-| Given the range of your data and your dimension range, define your own
+axis line configuration.
+-}
 custom : (Coordinate.Range -> Coordinate.Range -> Config msg) -> Line msg
 custom =
   Line.custom
