@@ -32,24 +32,26 @@ default =
 {-| -}
 full : Line msg
 full =
-  Line <| \_ {min, max} ->
+  Line <| \data range ->
+    let largest = (Coordinate.largestRange data range) in
     { color = Color.gray
     , width = 1
     , events = []
-    , start = min
-    , end = max
+    , start = largest.min
+    , end = largest.max
     }
 
 
 {-| -}
 rangeFrame : Line msg
 rangeFrame =
-  Line <| \{min, max} _ ->
+  Line <| \data range ->
+    let smallest = (Coordinate.smallestRange data range) in
     { color = Color.gray
     , width = 1
     , events = []
-    , start = min
-    , end = max
+    , start = smallest.min
+    , end = smallest.max
     }
 
 

@@ -45,7 +45,6 @@ import Internal.Axis.Intersection as Intersection
 
 
 -- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
--- TODO fix weird axis behavior on range.window
 -- TODO broken data
 -- TODO consider tick space tolerance as determinating factor of tick amount
 -- TODO Add range adjust for nice ticks?

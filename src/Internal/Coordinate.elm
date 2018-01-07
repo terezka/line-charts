@@ -135,3 +135,19 @@ lengthX system =
 lengthY : System -> Float
 lengthY system =
   max 1 (system.frame.size.height - system.frame.margin.bottom - system.frame.margin.top)
+
+
+{-| -}
+smallestRange : Range -> Range -> Range
+smallestRange data range =
+  { min = Basics.max data.min range.min
+  , max = Basics.min data.max range.max
+  }
+
+
+{-| -}
+largestRange : Range -> Range -> Range
+largestRange data range =
+  { min = Basics.max data.min range.min
+  , max = Basics.min data.max range.max
+  }

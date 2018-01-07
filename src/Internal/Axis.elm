@@ -9,8 +9,8 @@ module Internal.Axis exposing
 
 import Svg exposing (Svg, Attribute, g, text_, tspan, text)
 import Svg.Attributes as Attributes exposing (class, strokeWidth, stroke)
-import Lines.Coordinate as Coordinate exposing (..)
 import Lines.Axis.Tick as Tick exposing (Direction)
+import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Axis.Tick as Tick
 import Internal.Axis.Line as Line
 import Internal.Axis.Intersection as Intersection
@@ -36,23 +36,19 @@ type Axis data msg
 {-| -}
 int : Int -> Axis data msg
 int amount =
-  custom Line.default <| \data range ->
-    List.map Tick.int <| Values.int (Values.around amount) data
-
+  intCustom amount Line.default Tick.int
 
 
 {-| -}
 float : Int -> Axis data msg
 float amount =
-  custom Line.default <| \data range ->
-    List.map Tick.float <| Values.float (Values.around amount) data
+  floatCustom amount Line.default Tick.float
 
 
 {-| -}
 time : Int -> Axis data msg
 time amount =
-  custom Line.default <| \data range ->
-    List.map Tick.time <| Values.time amount data
+  timeCustom amount Line.default Tick.time
 
 
 
@@ -63,21 +59,21 @@ time amount =
 intCustom : Int -> Line.Line msg -> (Int -> Tick.Tick msg) -> Axis data msg
 intCustom amount line tick =
   custom line <| \data range ->
-    List.map tick <| Values.int (Values.around amount) data
+    List.map tick <| Values.int (Values.around amount) (Coordinate.smallestRange data range)
 
 
 {-| -}
 floatCustom : Int -> Line.Line msg -> (Float -> Tick.Tick msg) -> Axis data msg
 floatCustom amount line tick =
   custom line <| \data range ->
-    List.map tick <| Values.float (Values.around amount) data
+    List.map tick <| Values.float (Values.around amount) (Coordinate.smallestRange data range)
 
 
 {-| -}
 timeCustom : Int -> Line.Line msg -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
 timeCustom amount line tick =
   custom line <| \data range ->
-    List.map tick <| Values.time amount data
+    List.map tick <| Values.time amount (Coordinate.smallestRange data range)
 
 
 
