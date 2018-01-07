@@ -131,27 +131,36 @@ style width color =
 -- VIEW
 
 
+type alias Arguments data =
+  { system : Coordinate.System
+  , dotLook : Dot.Look data
+  , interpolation : Interpolation.Interpolation
+  , lineLook : Look data
+  , areaOpacity : Float
+  , id : String
+  , line : Line data
+  , dataPoints : List (DataPoint data)
+  }
+
+
 {-| -}
-view
-  :  Coordinate.System
-  -> Dot.Look data
-  -> Interpolation.Interpolation
-  -> Look data
-  -> Float
-  -> String
-  -> Line data
-  -> List (DataPoint data)
-  -> Svg.Svg msg
-view system dotLook interpolation lineLook areaOpacity id (Line line) dataPoints =
+view : Arguments data -> Svg.Svg msg
+view arguments =
   let
+    (Line lineConfig) =
+      arguments.line
+
+    isArea =
+      arguments.areaOpacity > 0
+
     viewDot =
-      Dot.view dotLook line.shape line.color system
+      Dot.view arguments.dotLook lineConfig.shape lineConfig.color arguments.system
   in
   Svg.g [ Attributes.class "chart__line" ]
-    [ Utils.viewIf (areaOpacity > 0) <| \() ->
-        viewArea system lineLook interpolation line.color areaOpacity id dataPoints
-    , viewLine system lineLook interpolation line.color line.dashing id dataPoints
-    , Svg.g [ Attributes.class "chart__dots" ] <| List.map viewDot dataPoints
+    [ Utils.viewIf isArea (viewArea arguments lineConfig)
+    , viewLine arguments lineConfig
+    , Svg.g [ Attributes.class "chart__dots" ] <|
+        List.map viewDot arguments.dataPoints
     ]
 
 
@@ -159,16 +168,8 @@ view system dotLook interpolation lineLook areaOpacity id (Line line) dataPoints
 -- VIEW / LINE
 
 
-viewLine
-  :  Coordinate.System
-  -> Look data
-  -> Interpolation.Interpolation
-  -> Color.Color
-  -> List Float
-  -> String
-  -> List (DataPoint data)
-  -> Svg.Svg msg
-viewLine system look interpolation mainColor dashing id dataPoints =
+viewLine : Arguments data -> Config data -> Svg.Svg msg
+viewLine { system, lineLook, interpolation, id, dataPoints } linConfig  =
   let
     interpolationCommands =
       Interpolation.toCommands interpolation (List.map .point dataPoints)
@@ -179,14 +180,14 @@ viewLine system look interpolation mainColor dashing id dataPoints =
         [] -> []
 
     lineAttributes =
-      toLineAttributes look mainColor dashing dataPoints ++
+      toLineAttributes lineLook linConfig dataPoints ++
         [ Attributes.clipPath <| "url(#" ++ Utils.toClipPathId id ++ ")" ]
   in
   Path.view system lineAttributes commands
 
 
-toLineAttributes : Look data -> Color.Color -> List Float -> List (DataPoint data) -> List (Svg.Attribute msg)
-toLineAttributes (Look look) mainColor dashing dataPoints =
+toLineAttributes : Look data -> Config data -> List (DataPoint data) -> List (Svg.Attribute msg)
+toLineAttributes (Look look) { color, dashing } dataPoints =
   let
     isEmphasized =
       look.isEmphasized (List.map .data dataPoints)
@@ -201,7 +202,7 @@ toLineAttributes (Look look) mainColor dashing dataPoints =
   in
       [ Attributes.style "pointer-events: none;"
       , Attributes.class "chart__interpolation__line"
-      , Attributes.stroke (style.color mainColor)
+      , Attributes.stroke (style.color color)
       , Attributes.strokeWidth (toString width)
       , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
       , Attributes.fill "transparent"
@@ -212,16 +213,8 @@ toLineAttributes (Look look) mainColor dashing dataPoints =
 -- VIEW / AREA
 
 
-viewArea
-  :  Coordinate.System
-  -> Look data
-  -> Interpolation.Interpolation
-  -> Color.Color
-  -> Float
-  -> String
-  -> List (DataPoint data)
-  -> Svg.Svg msg
-viewArea system look interpolation mainColor opacity id dataPoints =
+viewArea : Arguments data -> Config data -> () -> Svg.Svg msg
+viewArea { system, lineLook, interpolation, areaOpacity, id, dataPoints } lineConfig () =
   let
     interpolationCommands =
       Interpolation.toCommands interpolation (List.map .point dataPoints)
@@ -242,14 +235,14 @@ viewArea system look interpolation mainColor opacity id dataPoints =
       Maybe.withDefault first (Utils.last rest) |> .point |> .x
 
     attributes =
-      toAreaAttributes look mainColor opacity dataPoints ++
+      toAreaAttributes lineLook lineConfig areaOpacity dataPoints ++
         [ Attributes.clipPath <| "url(#" ++ Utils.toClipPathId id ++ ")" ]
   in
   Path.view system attributes commands
 
 
-toAreaAttributes : Look data -> Color.Color -> Float -> List (DataPoint data) -> List (Svg.Attribute msg)
-toAreaAttributes (Look look) mainColor opacity dataPoints =
+toAreaAttributes : Look data -> Config data -> Float -> List (DataPoint data) -> List (Svg.Attribute msg)
+toAreaAttributes (Look look) { color } opacity dataPoints =
   let
     isEmphasized =
       look.isEmphasized (List.map .data dataPoints)
@@ -258,12 +251,9 @@ toAreaAttributes (Look look) mainColor opacity dataPoints =
       if isEmphasized
         then look.emphasized
         else look.normal
-
-    color =
-      style.color mainColor
   in
   [ Attributes.class "chart__interpolation__area"
-  , Attributes.fill color
+  , Attributes.fill (style.color color)
   , Attributes.fillOpacity (toString opacity)
   ]
 
@@ -273,11 +263,11 @@ toAreaAttributes (Look look) mainColor opacity dataPoints =
 
 
 {-| -}
-viewSample : Look data -> Color.Color -> List Float -> Float -> Float -> Svg.Svg msg
-viewSample look mainColor dashing areaOpacity sampleWidth =
+viewSample : Look data -> Config data ->  Float -> Float -> Svg.Svg msg
+viewSample look lineConfig areaOpacity sampleWidth =
   let
     lineAttributes =
-      toLineAttributes look mainColor dashing []
+      toLineAttributes look lineConfig []
 
     sizeAttributes =
       [ Attributes.x1 "0"
@@ -287,7 +277,7 @@ viewSample look mainColor dashing areaOpacity sampleWidth =
       ]
 
     areaAttributes =
-      toAreaAttributes look mainColor areaOpacity []
+      toAreaAttributes look lineConfig areaOpacity []
 
     rectangleAttributes =
       [ Attributes.x "0"

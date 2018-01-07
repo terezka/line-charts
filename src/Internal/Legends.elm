@@ -165,7 +165,7 @@ viewBucketed arguments sampleWidth container =
 
 
 viewSample : Arguments data msg -> Float -> Line.Config data -> Svg msg
-viewSample { system, lineLook, dotLook, areaOpacity } sampleWidth line =
+viewSample { system, lineLook, dotLook, areaOpacity } sampleWidth lineConfig =
   let
     dotPosition =
       Coordinate.Point (sampleWidth / 2) 0
@@ -173,8 +173,8 @@ viewSample { system, lineLook, dotLook, areaOpacity } sampleWidth line =
   in
   Svg.g
     [ Attributes.class "chart__sample" ]
-    [ Line.viewSample lineLook line.color line.dashing areaOpacity sampleWidth
-    , Dot.viewSample dotLook line.shape line.color system dotPosition
+    [ Line.viewSample lineLook lineConfig areaOpacity sampleWidth
+    , Dot.viewSample dotLook lineConfig.shape lineConfig.color system dotPosition
     ]
 
 
