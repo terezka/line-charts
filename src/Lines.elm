@@ -464,7 +464,7 @@ viewCustom config lines =
     viewLines =
       List.map2 viewLine lines dataPoints
 
-    viewLine line dataPoints =
+    viewLine =
       Line.view
         { system = system
         , dotLook = config.dot
@@ -472,8 +472,6 @@ viewCustom config lines =
         , interpolation = config.interpolation
         , areaOpacity = config.areaOpacity
         , id = config.id
-        , line = line
-        , dataPoints = dataPoints
         }
 
     viewLegends =

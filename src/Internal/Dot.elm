@@ -123,10 +123,21 @@ full size =
 -- VIEW
 
 
+type alias Arguments data =
+  { system : Coordinate.System
+  , dotLook : Look data
+  , shape : Shape
+  , color : Color.Color
+  }
+
+
 {-| -}
-view : Look data -> Shape -> Color.Color -> Coordinate.System -> DataPoint data -> Svg msg
-view (Look config) shape color system dataPoint =
+view : Arguments data -> DataPoint data -> Svg msg
+view { system, dotLook, shape, color } dataPoint =
   let
+    (Look config) =
+      dotLook
+
     (Style style) =
       if config.isEmphasized dataPoint.data
         then config.emphasized

@@ -138,29 +138,29 @@ type alias Arguments data =
   , lineLook : Look data
   , areaOpacity : Float
   , id : String
-  , line : Line data
-  , dataPoints : List (DataPoint data)
   }
 
 
 {-| -}
-view : Arguments data -> Svg.Svg msg
-view arguments =
+view : Arguments data -> Line data -> List (DataPoint data) -> Svg.Svg msg
+view arguments (Line lineConfig) dataPoints =
   let
-    (Line lineConfig) =
-      arguments.line
-
     isArea =
       arguments.areaOpacity > 0
 
     viewDot =
-      Dot.view arguments.dotLook lineConfig.shape lineConfig.color arguments.system
+      Dot.view
+        { system = arguments.system
+        , dotLook = arguments.dotLook
+        , shape = lineConfig.shape
+        , color = lineConfig.color
+        }
   in
   Svg.g [ Attributes.class "chart__line" ]
-    [ Utils.viewIf isArea (viewArea arguments lineConfig)
-    , viewLine arguments lineConfig
+    [ Utils.viewIf isArea (viewArea arguments lineConfig dataPoints)
+    , viewLine arguments lineConfig dataPoints
     , Svg.g [ Attributes.class "chart__dots" ] <|
-        List.map viewDot arguments.dataPoints
+        List.map viewDot dataPoints
     ]
 
 
@@ -168,8 +168,8 @@ view arguments =
 -- VIEW / LINE
 
 
-viewLine : Arguments data -> Config data -> Svg.Svg msg
-viewLine { system, lineLook, interpolation, id, dataPoints } linConfig  =
+viewLine : Arguments data -> Config data -> List (DataPoint data) -> Svg.Svg msg
+viewLine { system, lineLook, interpolation, id } linConfig dataPoints =
   let
     interpolationCommands =
       Interpolation.toCommands interpolation (List.map .point dataPoints)
@@ -213,8 +213,8 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
 -- VIEW / AREA
 
 
-viewArea : Arguments data -> Config data -> () -> Svg.Svg msg
-viewArea { system, lineLook, interpolation, areaOpacity, id, dataPoints } lineConfig () =
+viewArea : Arguments data -> Config data -> List (DataPoint data) -> () -> Svg.Svg msg
+viewArea { system, lineLook, interpolation, areaOpacity, id } lineConfig dataPoints () =
   let
     interpolationCommands =
       Interpolation.toCommands interpolation (List.map .point dataPoints)
