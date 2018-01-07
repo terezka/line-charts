@@ -78,6 +78,6 @@ default pixels title variable =
   { title = Title.default title
   , variable = variable
   , pixels = pixels
-  , range = Range.window 0 80
+  , range = Range.default
   , axis = Axis.float (pixels // 70)
   }
