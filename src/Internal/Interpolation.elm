@@ -11,6 +11,7 @@ import Lines.Coordinate as Coordinate  exposing (..)
 type Interpolation
   = Linear
   | Monotone
+  | Stepped
 
 
 {-| -}
@@ -19,7 +20,7 @@ toCommands interpolation =
   case interpolation of
     Linear   -> linear
     Monotone -> monotone
-
+    Stepped -> stepped
 
 
 -- INTERNAL / LINEAR
@@ -127,3 +128,25 @@ sign x =
   if x < 0
     then -1
     else 1
+
+
+
+-- INTERNAL / STEPPED
+
+
+stepped : List Point -> List Command
+stepped points =
+    points
+        |> List.foldl expandStep ( [], List.drop 1 points )
+        |> Tuple.first
+        |> linear
+
+
+expandStep : Point -> ( List Point, List Point ) -> ( List Point, List Point )
+expandStep p ( result, rest ) =
+    case rest of
+        next :: _ ->
+            ( { x = next.x, y = p.y } :: p :: result, List.drop 1 rest )
+
+        [] ->
+            ( p :: result |> List.reverse, [] )
