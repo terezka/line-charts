@@ -2,6 +2,7 @@ module Internal.Events exposing
     ( Events, default, none, hover, click, custom
     , Event, onClick, onMouseMove, onMouseLeave, on
     , Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
+    , map, map2, map3
     -- INTERNAL
     , toAttributes
     )
@@ -38,7 +39,7 @@ none =
 hover : (Maybe data -> msg) -> Events data msg
 hover msg =
   custom
-    [ onMouseMove (getNearest msg)
+    [ onMouseMove msg getNearest
     , onMouseLeave (msg Nothing)
     ]
 
@@ -47,7 +48,7 @@ hover msg =
 click : (Maybe data -> msg) -> Events data msg
 click msg =
   custom
-    [ onClick (getNearest msg) ]
+    [ onClick msg getNearest ]
 
 
 {-| -}
@@ -66,17 +67,17 @@ type Event data msg =
 
 
 {-| -}
-onClick : Handler data msg -> Event data msg
-onClick handler =
+onClick : (a -> msg) -> Handler data a -> Event data msg
+onClick f handler =
   Event <| \points system ->
-    Svg.Events.on "click" (decoder points system handler)
+    Svg.Events.on "click" (decoder points system (map f handler))
 
 
 {-| -}
-onMouseMove : Handler data msg -> Event data msg
-onMouseMove handler =
+onMouseMove : (a -> msg) -> Handler data a -> Event data msg
+onMouseMove f handler =
   Event <| \points system ->
-    Svg.Events.on "mousemove" (decoder points system handler)
+    Svg.Events.on "mousemove" (decoder points system (map f handler))
 
 
 {-| -}
@@ -87,10 +88,10 @@ onMouseLeave msg =
 
 
 {-| -}
-on : String -> Handler data msg -> Event data msg
-on event handler =
+on : String -> (a -> msg) -> Handler data a -> Event data msg
+on event f handler =
   Event <| \points system ->
-    Svg.Events.on event (decoder points system handler)
+    Svg.Events.on event (decoder points system (map f handler))
 
 
 
@@ -149,22 +150,22 @@ type Handler data msg =
 
 
 {-| -}
-getSvg : (Point -> msg) -> Handler data msg
-getSvg msg =
+getSvg : Handler data Point
+getSvg =
   Handler <| \points system searched ->
-    msg searched
+    searched
 
 
 {-| -}
-getCartesian : (Point -> msg) -> Handler data msg
-getCartesian msg =
+getCartesian : Handler data Point
+getCartesian =
   Handler <| \points system searched ->
-    msg (toCartesianSafe system searched)
+    toCartesianSafe system searched
 
 
 {-| -}
-getNearest : (Maybe data -> msg) -> Handler data msg
-getNearest msg =
+getNearest : Handler data (Maybe data)
+getNearest =
   Handler <| \points system searchedSvg ->
     let
       searched =
@@ -172,12 +173,11 @@ getNearest msg =
     in
     getNearestHelp points system searched
       |> Maybe.map .data
-      |> msg
 
 
 {-| -}
-getWithin : Float -> (Maybe data -> msg) -> Handler data msg
-getWithin radius msg =
+getWithin : Float -> Handler data (Maybe data)
+getWithin radius =
   Handler <| \points system searchedSvg ->
     let
         searched =
@@ -189,13 +189,12 @@ getWithin radius msg =
               else Nothing
     in
     getNearestHelp points system searched
-        |> Maybe.andThen keepIfEligible
-        |> msg
+      |> Maybe.andThen keepIfEligible
 
 
 {-| -}
-getNearestX : (List data -> msg) -> Handler data msg
-getNearestX msg =
+getNearestX : Handler data (List data)
+getNearestX =
   Handler <| \points system searchedSvg ->
     let
       searched =
@@ -203,12 +202,11 @@ getNearestX msg =
     in
     getNearestXHelp points system searched
       |> List.map .data
-      |> msg
 
 
 {-| -}
-getWithinX : Float ->  (List data -> msg) -> Handler data msg
-getWithinX radius msg =
+getWithinX : Float -> Handler data (List data)
+getWithinX radius =
   Handler <| \points system searchedSvg ->
     let
         searched =
@@ -220,13 +218,30 @@ getWithinX radius msg =
     getNearestXHelp points system searched
       |> List.filter keepIfEligible
       |> List.map .data
-      |> msg
 
 
 {-| -}
-handler : (System -> Point -> msg) -> Handler data msg
+handler : (System -> Point -> a) -> Handler data a
 handler toHint =
   Handler (\_ -> toHint)
+
+
+{-| -}
+map : (a -> msg) -> Handler data a -> Handler data msg
+map f (Handler a) =
+  Handler <| \ps s p -> f (a ps s p)
+
+
+{-| -}
+map2 : (a -> b -> msg) -> Handler data a -> Handler data b -> Handler data msg
+map2 f (Handler a) (Handler b) =
+  Handler <| \ps s p -> f (a ps s p) (b ps s p)
+
+
+{-| -}
+map3 : (a -> b -> c -> msg) -> Handler data a -> Handler data b -> Handler data c -> Handler data msg
+map3 f (Handler a) (Handler b) (Handler c) =
+  Handler <| \ps s p -> f (a ps s p) (b ps s p) (c ps s p)
 
 
 

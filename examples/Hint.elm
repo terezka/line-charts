@@ -21,12 +21,16 @@ import Svg.Attributes as SvgA
 
 
 type alias Model =
-    { hovering : Maybe Info }
+    { hovering : Maybe Info
+    , point : Maybe Coordinate.Point
+    }
 
 
 initialModel : Model
 initialModel =
-    { hovering = Nothing }
+    { hovering = Nothing
+    , point = Nothing
+    }
 
 
 
@@ -34,14 +38,14 @@ initialModel =
 
 
 type Msg
-    = Hover (Maybe Info)
+    = Hover (Maybe Info, List Info, Coordinate.Point)
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Hover point ->
-            { model | hovering = point }
+        Hover (info, infos, point) ->
+            { model | hovering = info, point = Just point }
 
 
 
@@ -62,11 +66,15 @@ view model =
     Lines.viewCustom
       { margin = Coordinate.Margin 40 150 90 150
       , attributes = [ SvgA.style "font-family: monospace;" ]
-      , events = Events.click Hover
+      , events =
+          Events.custom
+            [ Events.onMouseMove Hover <|
+                Events.map3 (,,) Events.getNearest Events.getNearestX Events.getSvg
+            ]
       , x = Dimension.default 650 "age (years)" .age
       , y = Dimension.default 400 "weight (kg)" .weight
       , intersection = Intersection.default
-      , junk = Maybe.map junk model.hovering |> Maybe.withDefault Junk.none
+      , junk = Maybe.map2 junk model.hovering model.point |> Maybe.withDefault Junk.none
       , interpolation = Lines.monotone
       , legends = Legends.default
       , line =
@@ -102,14 +110,21 @@ viewLegend index { sample, label } =
     ]
 
 
-junk : Info -> Junk.Junk Msg
-junk hint =
+junk : Info -> Coordinate.Point -> Junk.Junk Msg
+junk hint point =
     Junk.custom <| \system ->
       { below = []
       , above =
           [ tooltip system hint
           , Junk.vertical   system [ SvgA.strokeDasharray "1 4" ] hint.age system.y.min system.y.max
           , Junk.horizontal system [ SvgA.strokeDasharray "1 4" ] hint.weight system.x.min system.x.max
+          , Svg.circle
+            [ SvgA.cx (toString point.x)
+            , SvgA.cy (toString point.y)
+            , SvgA.r "2"
+            , SvgA.fill "red"
+            ]
+            []
           ]
       , html = []
       }
@@ -146,7 +161,7 @@ type alias Info =
 
 alice : List Info
 alice =
-  [ Info 4 24 0.94 0
+  [ Info -14 24 0.94 0
   , Info 25 75 1.73 25000
   , Info 30 56 1.75 44000
   , Info 43 83 1.75 40000
@@ -155,7 +170,7 @@ alice =
 
 bob : List Info
 bob =
-  [ Info 4 22 1.01 0
+  [ Info -4 22 1.01 0
   , Info 25 75 1.87 28000
   , Info 32 79 1.85 45000
   , Info 43 77 1.87 52000

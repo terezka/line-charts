@@ -25,7 +25,7 @@ module Internal.Svg exposing
 # Helpers
 
 ## Anchor
-@docs Anchor(..), anchorStyle
+@docs Anchor, anchorStyle
 
 ## Transfrom
 @docs Transfrom, transform, move, offset
@@ -38,6 +38,7 @@ import Lines.Color as Color
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Path as Path exposing (..)
 import Internal.Utils exposing (..)
+
 
 
 -- DOT

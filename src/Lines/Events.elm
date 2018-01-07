@@ -2,6 +2,7 @@ module Lines.Events exposing
   ( Events, default, none, hover, click, custom
   , Event, onClick, onMouseMove, onMouseLeave, on
   , Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
+  , map, map2, map3
   )
 
 {-|
@@ -17,6 +18,8 @@ module Lines.Events exposing
 
 ## Handlers
 @docs Handler, getSvg, getCartesian, getNearest, getNearestX, getWithin, getWithinX
+### Maps
+@docs map, map2, map3
 
 -}
 
@@ -73,13 +76,13 @@ type alias Event data msg =
 
 
 {-| -}
-onClick : Handler data msg -> Event data msg
+onClick : (a -> msg) -> Handler data a -> Event data msg
 onClick =
   Events.onClick
 
 
 {-| -}
-onMouseMove : Handler data msg -> Event data msg
+onMouseMove : (a -> msg) -> Handler data a -> Event data msg
 onMouseMove =
   Events.onMouseMove
 
@@ -91,7 +94,7 @@ onMouseLeave =
 
 
 {-| -}
-on : String -> Handler data msg -> Event data msg
+on : String -> (a -> msg) -> Handler data a -> Event data msg
 on =
   Events.on
 
@@ -115,21 +118,21 @@ type alias Handler data msg =
 
 {-| Produces the SVG of the event.
 -}
-getSvg : (Coordinate.Point -> msg) -> Handler data msg
+getSvg : Handler data Coordinate.Point
 getSvg =
   Events.getSvg
 
 
 {-| Produces the data point of the event.
 -}
-getCartesian : (Coordinate.Point -> msg) -> Handler data msg
+getCartesian : Handler data Coordinate.Point
 getCartesian =
   Events.getCartesian
 
 
 {-| Finds the data point nearest to the event.
 -}
-getNearest : (Maybe data -> msg) -> Handler data msg
+getNearest : Handler data (Maybe data)
 getNearest =
   Events.getNearest
 
@@ -137,14 +140,14 @@ getNearest =
 {-| Finds the data point nearest to the event, within the radius (px) you
 provide in the first argument.
 -}
-getWithin : Float -> (Maybe data -> msg) -> Handler data msg
+getWithin : Float -> Handler data (Maybe data)
 getWithin =
   Events.getWithin
 
 
 {-| Finds the data point nearest horizontally to the event.
 -}
-getNearestX : (List data -> msg) -> Handler data msg
+getNearestX : Handler data (List data)
 getNearestX =
   Events.getNearestX
 
@@ -152,6 +155,24 @@ getNearestX =
 {-| Finds the data point nearest horizontally to the event, within the
 distance (px) you provide in the first argument.
 -}
-getWithinX : Float -> (List data -> msg) -> Handler data msg
+getWithinX : Float -> Handler data (List data)
 getWithinX =
   Events.getWithinX
+
+
+{-| -}
+map : (a -> msg) -> Handler data a -> Handler data msg
+map =
+  Events.map
+
+
+{-| -}
+map2 : (a -> b -> msg) -> Handler data a -> Handler data b -> Handler data msg
+map2 =
+  Events.map2
+
+
+{-| -}
+map3 : (a -> b -> c -> msg) -> Handler data a -> Handler data b -> Handler data c -> Handler data msg
+map3 =
+  Events.map3
