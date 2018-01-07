@@ -28,9 +28,13 @@ type alias Layers msg =
 
 
 {-| -}
-getLayers : Junk msg -> Coordinate.System -> Layers msg
-getLayers (Junk toLayers) =
-  toLayers
+getLayers : Coordinate.System -> Layers msg -> Junk msg -> Layers msg
+getLayers system internalLayers (Junk toLayers) =
+  let layers = toLayers system in
+  { below = internalLayers.below ++ layers.below
+  , above = internalLayers.above ++ layers.above
+  , html = internalLayers.html ++ layers.html
+  }
 
 
 {-| -}

@@ -446,8 +446,13 @@ viewCustom config lines =
 
     -- View
     junk =
-      Internal.Junk.getLayers config.junk system
-        |> Internal.Junk.addGrid (Grid.view system config.x config.y config.grid)
+      Internal.Junk.getLayers system internalJunk config.junk
+
+    internalJunk =
+      { below = Grid.view system config.x config.y config.grid
+      , above = []
+      , html = []
+      }
 
     container plot =
       Html.div [] (plot :: junk.html)
@@ -489,7 +494,7 @@ viewCustom config lines =
     Svg.svg attributes
       [ Svg.defs [] [ clipPath config system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
-      , Svg.g [ Attributes.class "chart__lines" ] viewLines
+      , Svg.g [ Attributes.class "chart__lines" ]       viewLines
       , Axis.viewHorizontal system config.intersection config.x.title config.x.axis
       , Axis.viewVertical   system config.intersection config.y.title config.y.axis
       , viewLegends
