@@ -20,19 +20,23 @@ type alias Intersection =
   Intersection.Intersection
 
 
-{-| -}
+{-| Sets the intersection as close to ( 0, 0 ) as your range and domain allows.
+-}
 default : Intersection
 default =
   Intersection.default
 
 
-{-| -}
+{-| Sets the intersection to your chosen x and y, respectivily.
+-}
 at : Float -> Float -> Intersection
 at =
   Intersection.at
 
 
-{-| -}
+{-| Sets the intersection to your chosen x and y, given the range and domain,
+respectivily.
+-}
 custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Intersection
 custom =
   Intersection.custom
