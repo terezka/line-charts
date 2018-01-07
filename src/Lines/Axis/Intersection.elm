@@ -27,14 +27,14 @@ default =
   Intersection.default
 
 
-{-| Sets the intersection to your chosen x and y, respectivily.
+{-| Sets the intersection to your chosen x and y respectivily.
 -}
 at : Float -> Float -> Intersection
 at =
   Intersection.at
 
 
-{-| Sets the intersection to your chosen x and y, given the range and domain,
+{-| Sets the intersection to your chosen x and y, given the range and domain 
 respectivily.
 -}
 custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Intersection
