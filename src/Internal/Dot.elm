@@ -173,7 +173,7 @@ viewShape system { radius, variety } shape color point =
           Diamond  -> viewDiamond
           Cross    -> viewCross
           Plus     -> viewPlus
-          None     -> \_ _ _ _ _ -> Svg.text ""
+          None     -> viewNone
   in
   view [] variety color size pointSVG
 
@@ -250,6 +250,42 @@ viewCross events variety color area point =
       ]
   in
   Svg.path (events ++ attributes ++ varietyAttributes color variety) []
+
+
+viewNone : List (Svg.Attribute msg) -> Variety -> Color.Color -> Float -> Coordinate.Point -> Svg msg
+viewNone events variety color area point =
+  let
+    radius = sqrt (area / pi)
+  in
+  case variety of
+    Bordered width ->
+      Svg.circle
+        [ Attributes.cx (toString point.x)
+        , Attributes.cy (toString point.y)
+        , Attributes.r (toString radius)
+        , Attributes.stroke color
+        , Attributes.strokeWidth (toString width)
+        , Attributes.fill "transparent"
+        ]
+        []
+
+    Aura width opacity ->
+      Svg.circle
+        [ Attributes.cx (toString point.x)
+        , Attributes.cy (toString point.y)
+        , Attributes.r (toString radius)
+        , Attributes.stroke color
+        , Attributes.strokeWidth (toString width)
+        , Attributes.strokeOpacity (toString opacity)
+        , Attributes.fill "transparent"
+        ]
+        []
+
+    Disconnected width ->
+      Svg.text ""
+
+    Full ->
+      Svg.text ""
 
 
 
