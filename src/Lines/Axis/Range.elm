@@ -23,7 +23,8 @@ type alias Range =
   Range.Range
 
 
-{-| Set the range to the full range of your data plus 20 pixels on both sides.
+{-| Set the range to the full range of your data plus 20 pixels of space on
+the lower bound and 10 pixels of space on the upper bound.
 -}
 default : Range
 default =
