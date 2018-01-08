@@ -1,7 +1,7 @@
 module Lines.Junk exposing
   ( Junk, Layers, none, custom
   , Transfrom, transform, move, offset
-  , vertical, horizontal, text
+  , vertical, horizontal, rectangle, text
   , withinChartArea
   )
 
@@ -14,7 +14,7 @@ module Lines.Junk exposing
 @docs Junk, custom, Layers
 
 # Common junk
-@docs vertical, horizontal, text, withinChartArea
+@docs vertical, horizontal, rectangle, text, withinChartArea
 
 # Placing helpers
 @docs Transfrom, transform, move, offset
@@ -172,6 +172,18 @@ horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> 
 horizontal system attributes =
   Svg.horizontal system (withinChartArea system :: attributes)
 
+
+{-| A rectangle within the plot area. This can be used for grid bands
+and highlighting a range e.g. for selection.
+
+    xSelectionArea : Coordinate.System -> (Float, Float) -> Svg msg
+    xSelectionArea system (startX, endX) =
+        Junk.rectangle system [ Attributes.fill "rgba(255,0,0,0.1)" ] startX endX system.y.min system.y.max
+
+-}
+rectangle : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Float -> Svg.Svg msg
+rectangle system attributes =
+  Svg.rectangle system (withinChartArea system :: attributes)
 
 
 -- HELPERS
