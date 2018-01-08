@@ -2,6 +2,7 @@ module Lines.Junk exposing
   ( Junk, Layers, none, custom
   , Transfrom, transform, move, offset
   , vertical, horizontal, text
+  , withinChartArea
   )
 
 {-|
@@ -13,7 +14,7 @@ module Lines.Junk exposing
 @docs Junk, custom, Layers
 
 # Common junk
-@docs vertical, horizontal, text
+@docs vertical, horizontal, text, withinChartArea
 
 # Placing helpers
 @docs Transfrom, transform, move, offset
@@ -28,6 +29,7 @@ import Lines.Coordinate as Coordinate
 import Lines.Color as Color
 import Internal.Junk as Junk
 import Internal.Svg as Svg
+import Internal.Utils as Utils
 
 
 
@@ -160,15 +162,15 @@ transform =
       List.map (Junk.vertical system []) (Axis.defaultInterval system.x)
 -}
 vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Svg.Svg msg
-vertical =
-  Svg.vertical
+vertical system attributes =
+  Svg.vertical system (withinChartArea system :: attributes)
 
 
 {-| A grid line that takes up the full length of your horizontal axis.
 -}
 horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float ->  Float -> Svg.Svg msg
-horizontal =
-  Svg.horizontal
+horizontal system attributes =
+  Svg.horizontal system (withinChartArea system :: attributes)
 
 
 
@@ -179,3 +181,10 @@ horizontal =
 text : Color.Color -> String -> Svg.Svg msg
 text color string =
   Svg.text_ [ Attributes.fill color ] [ Svg.tspan [] [ Svg.text string ] ]
+
+
+
+{-| -}
+withinChartArea : Coordinate.System -> Svg.Attribute msg
+withinChartArea { id } =
+  Attributes.clipPath <| "url(#" ++ Utils.toChartAreaId id ++ ")"

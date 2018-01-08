@@ -14,6 +14,7 @@ import Svg
 import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate exposing (..)
+import Lines.Junk as Junk
 import Internal.Coordinate exposing (DataPoint)
 import Internal.Dot as Dot
 import Internal.Interpolation as Interpolation
@@ -191,7 +192,7 @@ viewLine { system, lineLook, interpolation, id } linConfig dataPoints =
 
     lineAttributes =
       toLineAttributes lineLook linConfig dataPoints ++
-        [ Attributes.clipPath <| "url(#" ++ Utils.toChartAreaId id ++ ")" ]
+        [ Junk.withinChartArea system ]
   in
   Path.view system lineAttributes commands
 

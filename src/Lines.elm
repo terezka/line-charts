@@ -543,6 +543,7 @@ toSystem config data =
       , y = adjustDomainRange yRange
       , xData = xRange
       , yData = yRange
+      , id = config.id
       }
 
     adjustDomainRange domain =

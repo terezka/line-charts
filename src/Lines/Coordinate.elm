@@ -102,6 +102,7 @@ type alias System =
   , y : Range
   , xData : Range
   , yData : Range
+  , id : String
   }
 
 
