@@ -10,14 +10,14 @@ module Lines.Dot exposing
 # Quick start
 @docs none
 
-# Customizing dot shape
+# Customizing shape
 @docs Shape, circle, triangle, square, diamond, plus, cross
 
-# Customizing dot style
+# Customizing style
 @docs Look, default, static, emphasizable
 
 ## Styles
-@docs Style, full, disconnected, bordered, aura
+@docs Style, full, bordered, disconnected, aura
 
 -}
 
@@ -32,8 +32,8 @@ import Internal.Dot as Dot
 
     humanChart : Html msg
     humanChart =
-      Lines.view .age .weight
-        [ Lines.line "red" Dot.none "Alice" alice ]
+      Lines.view .age .income
+        [ Lines.line Color.pink Dot.none "Alice" alice ]
 -}
 none : Shape
 none =
@@ -44,24 +44,23 @@ none =
 -- SHAPES
 
 
-{-| Representes a dot shape.
+{-| The shapes in this section is the selection you have available to use as the
+shape of your line's dot.
 
     humanChart : Html msg
     humanChart =
-      Lines.view .age .weight
-        [ Lines.line "red" Dot.diamond "Alice" alice
-        , Lines.line "blue" Dot.plus "Bob" bob
-        , Lines.line "green" Dot.cross "Chuck" chuck
+      Lines.view .age .income
+        [ Lines.line Color.orange Dot.plus "Alice" alice
+        , Lines.line Color.blue Dot.square "Bob" bob
+        , Lines.line Color.pink Dot.diamond "Chuck" chuck
         ]
-
-**Note:** Interested in changing the size and style of the dots? Check out
-the `Look` type!
 -}
 type alias Shape =
   Dot.Shape
 
 
-{-| -}
+{-|
+-}
 circle : Shape
 circle =
   Dot.Circle
@@ -101,52 +100,42 @@ cross =
 -- LOOK
 
 
-{-| These customzation are used in `Lines.Config` when you use `viewCustom`.
-
-    chartConfig : Lines.Config data msg
-    chartConfig =
-      { ...
-      , dot = Dot.default -- Use here!
-      , ...
-      }
--}
+{-| -}
 type alias Look data =
   Dot.Look data
 
 
-{-| The default dot look. -}
+{-| -}
 default : Look data
 default =
   Dot.default
 
 
-{-| Alter the style of the dot.
+{-|
 
     dotLook : Dot.Look data
     dotLook =
-      Dot.static (Dot.full 50)
+      Dot.static (Dot.full 5)
 -}
 static : Style -> Look data
 static =
   Dot.static
 
 
-{-| Alter the style of the dot and pass an alternative style, to be used when
-the predicate in the third argument is fulfilled.
-
+{-|
 
     dotLook : Dot.Look Info
     dotLook =
       Dot.emphasizable
-        (Dot.full 50)
-        (Dot.aura 50 4 0.5)
-        isOverweight
+        { normal = Dot.full 5
+        , emphasized = Dot.aura 7 4 0.5
+        , isEmphasized = isOverweight
+        }
 
     isOverweight : Info -> Bool
     isOverweight info =
       bmi info > 25
 
-TODO link
 -}
 emphasizable :
   { normal : Style
@@ -167,33 +156,33 @@ type alias Style =
   Dot.Style
 
 
-{-| Produces a circle with a white core and a colored border.
-Pass the size of the dot and the width of the border.
+{-| Makes dots plain and solid. Pass the radius.
+-}
+full : Float -> Style
+full =
+  Dot.full
+
+
+{-| Makes dots with a white core and a colored border.
+Pass the radius of the dot and the width of the border.
 -}
 bordered : Float -> Int -> Style
 bordered =
   Dot.bordered
 
 
-{-| Produces a circle with a colored core and a white border (Opposite of `bordered`).
-Pass the size of the dot and the width of the border.
+{-| Makes dots with a colored core and a white border (Inverse of `bordered`).
+Pass the radius of the dot and the width of the border.
 -}
 disconnected : Float -> Int -> Style
 disconnected =
   Dot.disconnected
 
 
-{-| Produces a circle with a colored core and a less colored border.
-Pass the size of the dot, the width of the border, and the opacity of the
+{-| Makes dots with a colored core and a less colored, transparent border.
+Pass the radius of the dot, the width of the border, and the opacity of the
 border (A number between 0 and 1).
 -}
 aura : Float -> Int -> Float -> Style
 aura =
   Dot.aura
-
-
-{-| Produces a solid dot. Pass the size.
--}
-full : Float -> Style
-full =
-  Dot.full

@@ -19,8 +19,6 @@ module Lines exposing
 ## Interpolations
 @docs Interpolation, linear, monotone, stepped
 
-
-
 -}
 
 import Html
@@ -30,6 +28,8 @@ import Lines.Color as Color
 import Lines.Junk as Junk
 import Lines.Dimension as Dimension
 import Internal.Axis as Axis
+import Internal.Axis.Intersection as Intersection
+import Internal.Axis.Range as Range
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
 import Internal.Grid as Grid
@@ -39,8 +39,6 @@ import Internal.Junk
 import Internal.Legends as Legends
 import Internal.Line as Line
 import Internal.Utils as Utils
-import Internal.Axis.Range as Range
-import Internal.Axis.Intersection as Intersection
 
 
 
@@ -51,6 +49,9 @@ import Internal.Axis.Intersection as Intersection
 -- TODO stacked areas
 -- TODO Should handlers be decoders?
 -- TODO Should all configs in modules be called Config?
+-- TODO more default junk
+-- TODO move tick groups to axis
+-- TODO move title to end of data range
 
 
 

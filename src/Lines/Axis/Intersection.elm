@@ -3,10 +3,10 @@ module Lines.Axis.Intersection exposing (Intersection, default, at, custom)
 {-|
 
 # Quick start
-@docs default
+@docs Intersection, default
 
-# Customizing
-@docs Intersection, at, custom
+# Customiztion
+@docs at, custom
 
 -}
 
@@ -34,7 +34,7 @@ at =
   Intersection.at
 
 
-{-| Sets the intersection to your chosen x and y, given the range and domain 
+{-| Sets the intersection to your chosen x and y, given the range and domain
 respectivily.
 -}
 custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Intersection

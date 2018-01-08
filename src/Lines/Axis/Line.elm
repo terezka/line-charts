@@ -7,19 +7,19 @@ module Lines.Axis.Line exposing
 {-|
 
 # Quick start
-@docs default, none
+@docs Line, default, none
 
 # Configurations
-@docs Line, full, rangeFrame
+@docs full, rangeFrame
 
-# Customizing
+# Customiztion
 @docs Config, custom
 
 -}
 
 import Svg exposing (Attribute)
 import Lines.Color as Color
-import Internal.Coordinate as Coordinate
+import Lines.Coordinate as Coordinate
 import Internal.Axis.Line as Line
 
 
@@ -28,7 +28,8 @@ type alias Line msg =
   Line.Line msg
 
 
-{-| -}
+{-| Draws the axis line to fit the range of your data.
+-}
 default : Line msg
 default =
   Line.default

@@ -9,7 +9,7 @@ module Lines.Axis exposing
 # Quick start
 @docs Axis, int, time, float
 
-# Customizing
+# Customiztion
 @docs intCustom, timeCustom, floatCustom, custom
 
 -}

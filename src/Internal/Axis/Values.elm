@@ -1,4 +1,4 @@
-module Internal.Axis.Values exposing (Amount, around, exactly, int, time, float, interval)
+module Internal.Axis.Values exposing (Amount, around, exactly, int, time, float, custom)
 
 
 import Round
@@ -48,8 +48,8 @@ float amount =
 
 
 {-| -}
-interval : Float -> Float -> Coordinate.Range -> List Float
-interval intersection interval range =
+custom : Float -> Float -> Coordinate.Range -> List Float
+custom intersection interval range =
     let
         offset value =
           interval * toFloat (floor (value / interval))
