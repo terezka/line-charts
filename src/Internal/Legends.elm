@@ -196,7 +196,10 @@ defaultLegends toX toY system legends =
   in
   Svg.g
     [ Attributes.class "chart__legends"
-    , Svg.transform [ Svg.move system (toX system.x) (toY system.y) ]
+    , Svg.transform
+        [ Svg.move system (toX system.x) (toY system.y)
+        , Svg.offset 0 10
+        ]
     ]
     (view legends)
 
