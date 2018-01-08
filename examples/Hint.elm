@@ -83,7 +83,7 @@ view model =
             }
       , dot =
           Dot.emphasizable
-            { normal = Dot.bordered 10 2
+            { normal = Dot.disconnected 10 2
             , emphasized = Dot.aura 7 5 0.25
             , isEmphasized = flip List.member model.hoveringX
             }
@@ -91,9 +91,9 @@ view model =
       , grid = Grid.default
       , id = "chart"
       }
-      [ Lines.line "transparent" Dot.circle "bob" bob
-      , Lines.line "transparent" Dot.triangle "alice" alice
-      , Lines.line "transparent" Dot.square "chuck" chuck
+      [ Lines.line Color.blue Dot.circle "bob" bob
+      , Lines.line Color.orange Dot.triangle "alice" alice
+      , Lines.line Color.pink Dot.square "chuck" chuck
       ]
 
 
