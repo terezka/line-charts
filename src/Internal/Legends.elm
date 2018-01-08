@@ -189,11 +189,16 @@ defaultLegends
   -> List (Legend msg)
   -> Svg msg
 defaultLegends toX toY system legends =
+  let
+    view =
+      List.filter (not << String.isEmpty << .label)
+        >> List.indexedMap defaultLegend
+  in
   Svg.g
     [ Attributes.class "chart__legends"
     , Svg.transform [ Svg.move system (toX system.x) (toY system.y) ]
     ]
-    (List.indexedMap defaultLegend legends)
+    (view legends)
 
 
 defaultLegend : Int -> Legend msg -> Svg msg

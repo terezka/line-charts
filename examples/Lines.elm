@@ -12,6 +12,7 @@ import Lines.Axis.Title as Title
 import Lines.Axis.Range as Range
 import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
+import Lines.Events as Events
 import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Legends as Legends
@@ -24,7 +25,7 @@ main =
   Lines.viewCustom
     { margin = Coordinate.Margin 150 150 150 150
     , attributes = [ Attributes.style "font-family: monospace;" ]
-    , events = []
+    , events = Events.none
     , x =
         { title = Title.default "Time"
         , variable = .date
@@ -52,7 +53,7 @@ main =
     [ Lines.line Color.blue Dot.circle "1" data1
     , Lines.line Color.pink Dot.circle "2" data2
     , Lines.line Color.orange Dot.circle "3" data3_a
-    , Lines.line Color.orange Dot.circle "3" data3_b
+    , Lines.line Color.orange Dot.circle "" data3_b
     ]
 
 
