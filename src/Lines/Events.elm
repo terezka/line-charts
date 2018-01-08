@@ -1,6 +1,6 @@
 module Lines.Events exposing
   ( Events, default, none, hover, click, custom
-  , Event, onClick, onMouseMove, onMouseLeave, on
+  , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
   , Handler, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
   )
@@ -14,7 +14,7 @@ module Lines.Events exposing
 @docs Events, hover, click, custom
 
 ## Events
-@docs Event, onClick, onMouseMove, onMouseLeave, on
+@docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
 
 ## Handlers
 @docs Handler, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
@@ -94,6 +94,18 @@ onClick =
 onMouseMove : (a -> msg) -> Handler data a -> Event data msg
 onMouseMove =
   Events.onMouseMove
+
+
+{-| -}
+onMouseDown : (a -> msg) -> Handler data a -> Event data msg
+onMouseDown =
+  Events.onMouseDown
+
+
+{-| -}
+onMouseUp : (a -> msg) -> Handler data a -> Event data msg
+onMouseUp =
+  Events.onMouseUp
 
 
 {-| -}
