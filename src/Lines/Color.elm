@@ -1,9 +1,9 @@
-module Lines.Color exposing (Color, pink, blue, orange, gray, grayLight, grayLighest, black, inherit)
+module Lines.Color exposing (Color, pink, blue, orange, gray, grayLight, grayLightest, black, inherit)
 
 {-|
 
 # Defaults
-@docs Color, pink, blue, orange, gray, grayLight, grayLighest, black, inherit
+@docs Color, pink, blue, orange, gray, grayLight, grayLightest, black, inherit
 
 -}
 
@@ -45,8 +45,8 @@ grayLight =
 
 
 {-| -}
-grayLighest : Color
-grayLighest =
+grayLightest : Color
+grayLightest =
   "#d3d3d3"
 
 
