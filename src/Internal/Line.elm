@@ -73,8 +73,8 @@ type Look data =
 default : Look data
 default =
   Look
-    { normal = style 2 identity
-    , emphasized = style 3 identity
+    { normal = style 1 identity
+    , emphasized = style 2 identity
     , isEmphasized = always False
     }
 
@@ -207,14 +207,11 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
       if isEmphasized
         then look.emphasized
         else look.normal
-
-    width =
-      style.width / 2
   in
       [ Attributes.style "pointer-events: none;"
       , Attributes.class "chart__interpolation__line"
       , Attributes.stroke (style.color color)
-      , Attributes.strokeWidth (toString width)
+      , Attributes.strokeWidth (toString style.width)
       , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
       , Attributes.fill "transparent"
       ]
