@@ -18,7 +18,7 @@ import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Legends as Legends
 import Lines.Grid as Grid
-
+import Lines.Dimension as Dimension
 
 main : Svg msg
 main =
@@ -34,13 +34,7 @@ main =
         , range = Range.padded 30 10
         , axis = Axis.time 10
         }
-    , y =
-        { title = Title.default "Heart attacks"
-        , variable = .heartattacks
-        , pixels = 750
-        , range = Range.padded 30 10
-        , axis = Axis.float 10
-        }
+    , y = Dimension.default 650 "title" .heartattacks
     , intersection = Intersection.default
     , junk = Junk.none
     , interpolation = Lines.monotone
@@ -48,7 +42,7 @@ main =
     , line = Line.default
     , dot = Dot.default
     , grid = Grid.lines 1 Color.grayLight
-    , area = Area.stacked 0.5
+    , area = Area.percentage 0.5
     , id = "chart"
     }
     [ Lines.line "#aef6ff" Dot.none "1" data1

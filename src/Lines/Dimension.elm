@@ -14,6 +14,10 @@ module Lines.Dimension exposing (Dimension, default)
 import Lines.Axis.Title as Title
 import Lines.Axis.Range as Range
 import Lines.Axis as Axis
+import Lines.Axis.Line as AxisLine
+import Lines.Axis.Tick as Tick
+import Lines.Axis.Values as Values
+import Internal.Coordinate as Coordinate
 
 
 {-|
@@ -79,5 +83,13 @@ default pixels title variable =
   , variable = variable
   , pixels = pixels
   , range = Range.default
-  , axis = Axis.float (pixels // 70)
+  , axis =
+      Axis.custom AxisLine.rangeFrame <| \data range ->
+        let smallest = Coordinate.smallestRange data range
+            rangeLong = range.max - range.min
+            rangeSmall = smallest.max - smallest.min
+            diff = 1 - (rangeLong - rangeSmall) / rangeLong 
+            amount = round <| diff * toFloat pixels / 70
+        in
+        List.map Tick.float <| Values.float (Values.around amount) smallest
   }

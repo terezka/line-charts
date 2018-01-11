@@ -41,19 +41,16 @@ import Internal.Legends as Legends
 import Internal.Line as Line
 import Internal.Utils as Utils
 
-
-
--- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
 -- TODO broken data
--- TODO consider tick space tolerance as determinating factor of tick amount
--- TODO Add range adjust for nice ticks?
--- TODO stacked areas
 -- TODO Should handlers be decoders?
--- TODO Should all configs in modules be called Config?
--- TODO more default junk
+-- TODO more default junk (hovers)
 -- TODO move tick groups to axis
 -- TODO move title to end of data range
--- TODO calculate default tick amount based on data range length
+
+-- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
+-- TODO consider tick space tolerance as determinating factor of tick amount
+-- TODO Add range adjust for nice ticks?
+-- TODO Should all configs in modules be called Config?
 
 
 
