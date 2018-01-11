@@ -1,4 +1,4 @@
-module Internal.Area exposing (Area(..), none, full, normal, stacked, hasArea, opacity)
+module Internal.Area exposing (Area(..), none, percentage, normal, stacked, hasArea, opacity)
 
 {-| -}
 
@@ -8,7 +8,7 @@ type Area
   = None
   | Normal Float
   | Stacked
-  | Full
+  | Percentage
 
 
 {-| -}
@@ -30,9 +30,9 @@ stacked =
 
 
 {-| -}
-full : Area
-full =
-  Full
+percentage : Area
+percentage =
+  Percentage
 
 
 
@@ -46,7 +46,7 @@ hasArea area =
     None     -> False
     Normal _ -> True
     Stacked  -> True
-    Full     -> True
+    Percentage     -> True
 
 
 {-| -}
@@ -56,4 +56,4 @@ opacity area =
     None           -> 0
     Normal opacity -> opacity
     Stacked        -> 1
-    Full           -> 1
+    Percentage           -> 1

@@ -51,12 +51,10 @@ main =
     , area = Area.stacked
     , id = "chart"
     }
-    [ Lines.line Color.blue Dot.circle "1" data1
-    , Lines.line Color.pink Dot.circle "2" data2
-    , Lines.line Color.orange Dot.circle "3" data3_a
+    [ Lines.line "#aef6ff" Dot.circle "1" data1
+    , Lines.line "#fdafff" Dot.circle "2" data2
+    , Lines.line "#ffe0a7" Dot.circle "3" data3_a
     ]
-
-
 
 
 timeTick : Tick.Time -> Tick.Tick msg

@@ -1,4 +1,4 @@
-module Lines.Area exposing (Area, none, full, normal, stacked)
+module Lines.Area exposing (Area, none, percentage, normal, stacked)
 
 {-| -}
 
@@ -29,6 +29,6 @@ stacked =
 
 
 {-| -}
-full : Area
-full =
-  Area.full
+percentage : Area
+percentage =
+  Area.percentage

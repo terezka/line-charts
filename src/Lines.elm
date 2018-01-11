@@ -53,6 +53,7 @@ import Internal.Utils as Utils
 -- TODO more default junk
 -- TODO move tick groups to axis
 -- TODO move title to end of data range
+-- TODO calculate default tick amount based on data range length
 
 
 
@@ -531,10 +532,10 @@ toDataPoints config lines =
       Coordinate.DataPoint datum (Coordinate.Point (x datum) (y datum))
   in
   case config.area of
-    Area.None     -> dataPoints
-    Area.Normal _ -> dataPoints
-    Area.Stacked  -> stack dataPoints
-    Area.Full     -> dataPoints -- TODO
+    Area.None       -> dataPoints
+    Area.Normal _   -> dataPoints
+    Area.Stacked    -> stack dataPoints
+    Area.Percentage -> normalize (stack dataPoints) -- TODO
 
 
 -- TODO fix for uneven x values
@@ -551,10 +552,28 @@ stack dataset =
           result
 
     add datum datumBelow =
-      Coordinate.DataPoint datum.data
-        (Coordinate.Point datum.point.x (datum.point.y + datumBelow.point.y))
+      setY datum <| datum.point.y + datumBelow.point.y
   in
   List.reverse (stackBelows dataset [])
+
+
+normalize : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))
+normalize dataset =
+  case dataset of
+    highest :: belows ->
+      let
+        toPercentage highest datum =
+          setY datum (100 * datum.point.y / highest.point.y)
+      in
+      List.map (List.map2 toPercentage highest) (highest :: belows)
+
+    [] ->
+      dataset
+
+
+setY : Coordinate.DataPoint data -> Float -> Coordinate.DataPoint data
+setY datum y =
+  Coordinate.DataPoint datum.data (Coordinate.Point datum.point.x y)
 
 
 toSystem : Config data msg -> List (Coordinate.DataPoint data) -> Coordinate.System
