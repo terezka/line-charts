@@ -537,6 +537,7 @@ toDataPoints config lines =
     Area.Full     -> dataPoints -- TODO
 
 
+-- TODO fix for uneven x values
 stack : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))
 stack dataset =
   let
