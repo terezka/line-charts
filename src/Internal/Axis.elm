@@ -174,7 +174,7 @@ viewHorizontalTitle : Coordinate.System -> (Float -> Point) -> ViewConfig msg ->
 viewHorizontalTitle system at { title } =
   let
     position =
-      at (title.position system.x)
+      at (title.position system.xData system.x)
   in
   g [ class "chart__title"
     , transform
@@ -190,7 +190,7 @@ viewVerticalTitle : Coordinate.System -> (Float -> Point) -> ViewConfig msg -> S
 viewVerticalTitle system at { title } =
   let
     position =
-      at (title.position system.y)
+      at (title.position system.yData system.y)
   in
   g [ class "chart__title"
     , transform

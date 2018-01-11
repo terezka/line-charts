@@ -32,7 +32,7 @@ main =
         , variable = .date
         , pixels = 750
         , range = Range.padded 30 10
-        , axis = Axis.time 10
+        , axis = Axis.time 6
         }
     , y = Dimension.default 650 "title" .heartattacks
     , intersection = Intersection.default

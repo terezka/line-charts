@@ -33,7 +33,7 @@ default =
 {-| Place your string title in a spot along your axis.
 
   Arguments:
-  1. Given the range of your axis, provide a position.
+  1. Given the data range and axis range, provide a position.
   2. The x offset in SVG space.
   3. The y offset in SVG space.
 
@@ -43,7 +43,7 @@ default =
       Title.at .max 10 20 "BMI"
 
 -}
-at : (Coordinate.Range -> Float) -> Float -> Float -> String -> Title msg
+at : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Title msg
 at =
   Title.at
 
@@ -55,6 +55,6 @@ at =
     title =
       Title.custom .max 10 20 (Junk.text Color.pink "BMI")
 -}
-custom : (Coordinate.Range -> Float) -> Float -> Float -> Svg msg -> Title msg
+custom : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> Svg msg -> Title msg
 custom =
   Title.custom
