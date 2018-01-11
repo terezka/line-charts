@@ -579,7 +579,7 @@ setY datum y =
 toSystem : Config data msg -> List (Coordinate.DataPoint data) -> Coordinate.System
 toSystem config data =
   let
-    isArea = Area.hasArea config.area
+    hasArea = Area.hasArea config.area
     size   = Coordinate.Size (toFloat config.x.pixels) (toFloat config.y.pixels)
     frame  = Coordinate.Frame config.margin size
     xRange = Coordinate.range (.point >> .x) data
@@ -595,7 +595,7 @@ toSystem config data =
       }
 
     adjustDomainRange domain =
-      if isArea
+      if hasArea
         then Coordinate.ground domain
         else domain
   in

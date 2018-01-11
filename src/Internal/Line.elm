@@ -157,7 +157,7 @@ view arguments (Line lineConfig) dataPoints =
     dataPointsWithinRange =
       List.filter isWithinRange dataPoints
 
-    isArea =
+    hasArea =
       Area.hasArea arguments.area
 
     viewDot =
@@ -169,7 +169,7 @@ view arguments (Line lineConfig) dataPoints =
         }
   in
   Svg.g [ Attributes.class "chart__line" ]
-    [ Utils.viewIf isArea (viewArea arguments lineConfig dataPoints)
+    [ Utils.viewIf hasArea (viewArea arguments lineConfig dataPoints)
     , viewLine arguments lineConfig dataPoints
     , Svg.g [ Attributes.class "chart__dots" ] <|
         List.map viewDot dataPointsWithinRange
