@@ -27,6 +27,7 @@ import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Junk as Junk
 import Lines.Dimension as Dimension
+import Internal.Area as Area
 import Internal.Axis as Axis
 import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Range as Range
@@ -52,6 +53,7 @@ import Internal.Utils as Utils
 -- TODO more default junk
 -- TODO move tick groups to axis
 -- TODO move title to end of data range
+-- TODO calculate default tick amount based on data range length
 
 
 
@@ -342,7 +344,7 @@ type alias Config data msg =
   , grid : Grid.Grid
   , intersection : Intersection.Intersection
   , interpolation : Interpolation
-  , areaOpacity : Float
+  , area : Area.Area
   , line : Line.Look data
   , dot : Dot.Look data
   , legends : Legends.Legends msg
@@ -435,19 +437,8 @@ viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
 viewCustom config lines =
   let
     -- Data points
-    dataPoints =
-      List.map (List.map dataPoint << .data << Line.lineConfig) lines
-
-    dataPoint datum =
-      Coordinate.DataPoint datum (point datum)
-
-    point datum =
-      Coordinate.Point
-        (config.x.variable datum)
-        (config.y.variable datum)
-
-    allDataPoints =
-      List.concat dataPoints
+    dataPoints = toDataPoints config lines
+    allDataPoints = List.concat dataPoints
 
     -- System
     system =
@@ -484,7 +475,7 @@ viewCustom config lines =
         , dotLook = config.dot
         , lineLook = config.line
         , interpolation = config.interpolation
-        , areaOpacity = config.areaOpacity
+        , area = config.area
         , id = config.id
         }
 
@@ -493,7 +484,7 @@ viewCustom config lines =
         { system = system
         , dotLook = config.dot
         , lineLook = config.line
-        , areaOpacity = config.areaOpacity
+        , area = config.area
         , lines = lines
         , dataPoints = dataPoints
         , legends = config.legends
@@ -528,10 +519,67 @@ chartArea { id } system =
     ]
 
 
+toDataPoints : Config data msg -> List (Line data) -> List (List (Coordinate.DataPoint data))
+toDataPoints config lines =
+  let
+    x = config.x.variable
+    y = config.y.variable
+
+    dataPoints =
+      List.map (Line.lineConfig >> .data >> List.map dataPoint) lines
+
+    dataPoint datum =
+      Coordinate.DataPoint datum (Coordinate.Point (x datum) (y datum))
+  in
+  case config.area of
+    Area.None       -> dataPoints
+    Area.Normal _   -> dataPoints
+    Area.Stacked    -> stack dataPoints
+    Area.Percentage -> normalize (stack dataPoints) -- TODO
+
+
+-- TODO fix for uneven x values
+stack : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))
+stack dataset =
+  let
+    stackBelows dataset result =
+      case dataset of
+        data :: belows ->
+          stackBelows belows <|
+            List.foldl (List.map2 add) data belows :: result
+
+        [] ->
+          result
+
+    add datum datumBelow =
+      setY datum <| datum.point.y + datumBelow.point.y
+  in
+  List.reverse (stackBelows dataset [])
+
+
+normalize : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))
+normalize dataset =
+  case dataset of
+    highest :: belows ->
+      let
+        toPercentage highest datum =
+          setY datum (100 * datum.point.y / highest.point.y)
+      in
+      List.map (List.map2 toPercentage highest) (highest :: belows)
+
+    [] ->
+      dataset
+
+
+setY : Coordinate.DataPoint data -> Float -> Coordinate.DataPoint data
+setY datum y =
+  Coordinate.DataPoint datum.data (Coordinate.Point datum.point.x y)
+
+
 toSystem : Config data msg -> List (Coordinate.DataPoint data) -> Coordinate.System
 toSystem config data =
   let
-    isArea = config.areaOpacity > 0
+    hasArea = Area.hasArea config.area
     size   = Coordinate.Size (toFloat config.x.pixels) (toFloat config.y.pixels)
     frame  = Coordinate.Frame config.margin size
     xRange = Coordinate.range (.point >> .x) data
@@ -547,7 +595,7 @@ toSystem config data =
       }
 
     adjustDomainRange domain =
-      if isArea
+      if hasArea
         then Coordinate.ground domain
         else domain
   in
@@ -568,7 +616,7 @@ defaultConfig toX toY =
   , x = Dimension.default 650 "" toX
   , y = Dimension.default 400 "" toY
   , grid = Grid.default
-  , areaOpacity = 0
+  , area = Area.none
   , intersection = Intersection.default
   , interpolation = linear
   , line = Line.default

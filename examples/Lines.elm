@@ -5,6 +5,7 @@ import Svg.Attributes as Attributes
 import Lines as Lines
 import Lines.Junk as Junk exposing (..)
 import Lines.Color as Color
+import Lines.Area as Area
 import Lines.Dot as Dot
 import Lines.Axis as Axis
 import Lines.Axis.Tick as Tick
@@ -47,16 +48,13 @@ main =
     , line = Line.default
     , dot = Dot.default
     , grid = Grid.lines 1 Color.grayLight
-    , areaOpacity = 0
+    , area = Area.stacked
     , id = "chart"
     }
-    [ Lines.line Color.blue Dot.circle "1" data1
-    , Lines.line Color.pink Dot.circle "2" data2
-    , Lines.line Color.orange Dot.circle "3" data3_a
-    , Lines.line Color.orange Dot.circle "" data3_b
+    [ Lines.line "#aef6ff" Dot.circle "1" data1
+    , Lines.line "#fdafff" Dot.circle "2" data2
+    , Lines.line "#ffe0a7" Dot.circle "3" data3_a
     ]
-
-
 
 
 timeTick : Tick.Time -> Tick.Tick msg
@@ -81,36 +79,36 @@ type alias Data =
 
 data1 : List Data
 data1 =
-  [ Data 1 0.00034 (269810504300 + (1 + 0) * 3600000)
-  , Data 2 0.00036 (269810504300 + (1 + 1) * 3600000)
-  , Data 3 0.000365 (269810504300 + (1 + 2) * 3600000)
-  , Data 9 0.00034 (269810504300 + (1 + 3) * 3600000)
+  [ Data 1 1 (269810504300 + (1 + 0) * 3600000)
+  , Data 2 1 (269810504300 + (1 + 1) * 3600000)
+  , Data 3 1 (269810504300 + (1 + 2) * 3600000)
+  , Data 9 1 (269810504300 + (1 + 3) * 3600000)
   ]
 
 
 data2 : List Data
 data2 =
-  [ Data 2 0.00032 (269810504300 + (1 + 0) * 3600000)
-  , Data 3 0.00034 (269810504300 + (1 + 1) * 3600000)
-  , Data 4 0.00032 (269810504300 + (1 + 2) * 3600000)
-  , Data 5 0.00038 (269810504300 + (1 + 3) * 3600000)
+  [ Data 2 1 (269810504300 + (1 + 0) * 3600000)
+  , Data 3 2 (269810504300 + (1 + 1) * 3600000)
+  , Data 4 3 (269810504300 + (1 + 2) * 3600000)
+  , Data 5 2 (269810504300 + (1 + 3) * 3600000)
   ]
 
 
 data3_a : List Data
 data3_a =
-  [ Data 2 0.00035 (269810504300 + (1 + 0) * 3600000)
-  , Data 3 0.00032 (269810504300 + (1 + 1) * 3600000)
-  , Data 4 0.00038 (269810504300 + (1 + 2) * 3600000)
-  , Data 5 0.00036 (269810504300 + (1 + 3) * 3600000)
+  [ Data 2 1 (269810504300 + (1 + 0) * 3600000)
+  , Data 3 2 (269810504300 + (1 + 1) * 3600000)
+  , Data 4 2 (269810504300 + (1 + 2) * 3600000)
+  , Data 5 1 (269810504300 + (1 + 3) * 3600000)
   ]
 
 
 data3_b : List Data
 data3_b =
-  [ Data 6 0.00036 (269810504300 + (1 + 4) * 3600000)
-  , Data 7 0.00037 (269810504300 + (1 + 5) * 3600000)
-  , Data 9 0.00036 (269810504300 + (1 + 6) * 3600000)
+  [ Data 6 3.6 (269810504300 + (1 + 4) * 3600000)
+  , Data 7 3.7 (269810504300 + (1 + 5) * 3600000)
+  , Data 9 3.6 (269810504300 + (1 + 6) * 3600000)
   ]
 
 

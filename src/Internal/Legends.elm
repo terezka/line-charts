@@ -10,9 +10,10 @@ module Internal.Legends exposing
 
 import Svg exposing (Svg)
 import Svg.Attributes as Attributes
+import Lines.Area as Area
+import Lines.Color as Color
 import Lines.Coordinate as Coordinate
 import Lines.Junk as Junk
-import Lines.Color as Color
 import Internal.Coordinate exposing (DataPoint)
 import Internal.Dot as Dot
 import Internal.Line as Line
@@ -95,7 +96,7 @@ type alias Arguments data msg =
   { system : Coordinate.System
   , dotLook : Dot.Look data
   , lineLook : Line.Look data
-  , areaOpacity : Float
+  , area : Area.Area
   , lines : List (Line.Line data)
   , dataPoints : List (List (DataPoint data))
   , legends : Legends msg
@@ -165,7 +166,7 @@ viewBucketed arguments sampleWidth container =
 
 
 viewSample : Arguments data msg -> Float -> Line.Config data -> Svg msg
-viewSample { system, lineLook, dotLook, areaOpacity } sampleWidth lineConfig =
+viewSample { system, lineLook, dotLook, area } sampleWidth lineConfig =
   let
     dotPosition =
       Coordinate.Point (sampleWidth / 2) 0
@@ -173,7 +174,7 @@ viewSample { system, lineLook, dotLook, areaOpacity } sampleWidth lineConfig =
   in
   Svg.g
     [ Attributes.class "chart__sample" ]
-    [ Line.viewSample lineLook lineConfig areaOpacity sampleWidth
+    [ Line.viewSample lineLook lineConfig area sampleWidth
     , Dot.viewSample dotLook lineConfig.shape lineConfig.color system dotPosition
     ]
 
@@ -196,7 +197,10 @@ defaultLegends toX toY system legends =
   in
   Svg.g
     [ Attributes.class "chart__legends"
-    , Svg.transform [ Svg.move system (toX system.x) (toY system.y) ]
+    , Svg.transform
+        [ Svg.move system (toX system.x) (toY system.y)
+        , Svg.offset 0 10
+        ]
     ]
     (view legends)
 
