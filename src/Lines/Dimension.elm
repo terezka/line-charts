@@ -88,8 +88,8 @@ default pixels title variable =
         let smallest = Coordinate.smallestRange data range
             rangeLong = range.max - range.min
             rangeSmall = smallest.max - smallest.min
-            diff = 1 - (rangeLong - rangeSmall) / rangeLong 
-            amount = round <| diff * toFloat pixels / 70
+            diff = 1 - (rangeLong - rangeSmall) / rangeLong
+            amount = round <| diff * toFloat pixels / 90
         in
         List.map Tick.float <| Values.float (Values.around amount) smallest
   }
