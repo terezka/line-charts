@@ -540,21 +540,20 @@ toDataPoints config lines =
 stack : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))
 stack dataset =
   let
-    partAndStack data ( result, remaining ) =
-      case List.tail remaining of
-        Just belows ->
-          ( List.foldl (List.map2 add) data belows :: result, belows )
+    stackBelows dataset result =
+      case dataset of
+        data :: belows ->
+          stackBelows belows <|
+            List.foldl (List.map2 add) data belows :: result
 
-        Nothing ->
-          ( result, [] )
+        [] ->
+          result
 
     add datum datumBelow =
       Coordinate.DataPoint datum.data
         (Coordinate.Point datum.point.x (datum.point.y + datumBelow.point.y))
   in
-  List.foldl partAndStack ( [], dataset ) dataset
-    |> Tuple.first
-    |> List.reverse
+  List.reverse (stackBelows dataset [])
 
 
 toSystem : Config data msg -> List (Coordinate.DataPoint data) -> Coordinate.System
