@@ -5,6 +5,7 @@ import Svg.Attributes as Attributes
 import Lines as Lines
 import Lines.Junk as Junk exposing (..)
 import Lines.Color as Color
+import Lines.Area as Area
 import Lines.Dot as Dot
 import Lines.Axis as Axis
 import Lines.Axis.Tick as Tick
@@ -47,7 +48,7 @@ main =
     , line = Line.default
     , dot = Dot.default
     , grid = Grid.lines 1 Color.grayLight
-    , areaOpacity = 0
+    , area = Area.stacked
     , id = "chart"
     }
     [ Lines.line Color.blue Dot.circle "1" data1

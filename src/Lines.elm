@@ -27,6 +27,7 @@ import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Junk as Junk
 import Lines.Dimension as Dimension
+import Internal.Area as Area
 import Internal.Axis as Axis
 import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Range as Range
@@ -342,7 +343,7 @@ type alias Config data msg =
   , grid : Grid.Grid
   , intersection : Intersection.Intersection
   , interpolation : Interpolation
-  , areaOpacity : Float
+  , area : Area.Area
   , line : Line.Look data
   , dot : Dot.Look data
   , legends : Legends.Legends msg
@@ -484,7 +485,7 @@ viewCustom config lines =
         , dotLook = config.dot
         , lineLook = config.line
         , interpolation = config.interpolation
-        , areaOpacity = config.areaOpacity
+        , area = config.area
         , id = config.id
         }
 
@@ -493,7 +494,7 @@ viewCustom config lines =
         { system = system
         , dotLook = config.dot
         , lineLook = config.line
-        , areaOpacity = config.areaOpacity
+        , area = config.area
         , lines = lines
         , dataPoints = dataPoints
         , legends = config.legends
@@ -531,7 +532,7 @@ chartArea { id } system =
 toSystem : Config data msg -> List (Coordinate.DataPoint data) -> Coordinate.System
 toSystem config data =
   let
-    isArea = config.areaOpacity > 0
+    isArea = Area.hasArea config.area
     size   = Coordinate.Size (toFloat config.x.pixels) (toFloat config.y.pixels)
     frame  = Coordinate.Frame config.margin size
     xRange = Coordinate.range (.point >> .x) data
@@ -568,7 +569,7 @@ defaultConfig toX toY =
   , x = Dimension.default 650 "" toX
   , y = Dimension.default 400 "" toY
   , grid = Grid.default
-  , areaOpacity = 0
+  , area = Area.none
   , intersection = Intersection.default
   , interpolation = linear
   , line = Line.default
