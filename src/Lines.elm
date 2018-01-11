@@ -436,19 +436,8 @@ viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
 viewCustom config lines =
   let
     -- Data points
-    dataPoints =
-      List.map (List.map dataPoint << .data << Line.lineConfig) lines
-
-    dataPoint datum =
-      Coordinate.DataPoint datum (point datum)
-
-    point datum =
-      Coordinate.Point
-        (config.x.variable datum)
-        (config.y.variable datum)
-
-    allDataPoints =
-      List.concat dataPoints
+    dataPoints = toDataPoints config lines
+    allDataPoints = List.concat dataPoints
 
     -- System
     system =
@@ -527,6 +516,45 @@ chartArea { id } system =
       ]
       []
     ]
+
+
+toDataPoints : Config data msg -> List (Line data) -> List (List (Coordinate.DataPoint data))
+toDataPoints config lines =
+  let
+    x = config.x.variable
+    y = config.y.variable
+
+    dataPoints =
+      List.map (Line.lineConfig >> .data >> List.map dataPoint) lines
+
+    dataPoint datum =
+      Coordinate.DataPoint datum (Coordinate.Point (x datum) (y datum))
+  in
+  case config.area of
+    Area.None     -> dataPoints
+    Area.Normal _ -> dataPoints
+    Area.Stacked  -> stack dataPoints
+    Area.Full     -> dataPoints -- TODO
+
+
+stack : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))
+stack dataset =
+  let
+    partAndStack data ( result, remaining ) =
+      case List.tail remaining of
+        Just belows ->
+          ( List.foldl (List.map2 add) data belows :: result, belows )
+
+        Nothing ->
+          ( result, [] )
+
+    add datum datumBelow =
+      Coordinate.DataPoint datum.data
+        (Coordinate.Point datum.point.x (datum.point.y + datumBelow.point.y))
+  in
+  List.foldl partAndStack ( [], dataset ) dataset
+    |> Tuple.first
+    |> List.reverse
 
 
 toSystem : Config data msg -> List (Coordinate.DataPoint data) -> Coordinate.System
