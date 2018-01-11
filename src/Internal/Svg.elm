@@ -1,6 +1,7 @@
 module Internal.Svg exposing
   ( gridDot
   , horizontal, vertical
+  , rectangle
   , horizontalGrid, verticalGrid
   , xTick, yTick
   , Anchor(..), anchorStyle
@@ -11,6 +12,9 @@ module Internal.Svg exposing
 
 # Lines
 @docs horizontal, vertical
+
+# Rectangles
+@docs rectangle
 
 # Grids
 
@@ -85,6 +89,21 @@ vertical system userAttributes x y1 y2 =
       [ Move { x = x, y = y1 }
       , Line { x = x, y = y1 }
       , Line { x = x, y = y2 }
+      ]
+
+
+{-| -}
+rectangle : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Float -> Float -> Svg msg
+rectangle system userAttributes x1 x2 y1 y2 =
+  let
+    attributes =
+      concat [ Attributes.fill Color.gray ] userAttributes []
+  in
+    Path.view system attributes
+      [ Move { x = x1, y = y1 }
+      , Line { x = x1, y = y2 }
+      , Line { x = x2, y = y2 }
+      , Line { x = x2, y = y1 }
       ]
 
 

@@ -1,6 +1,6 @@
 module Internal.Events exposing
     ( Events, default, none, hover, click, custom
-    , Event, onClick, onMouseMove, onMouseLeave, on
+    , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
     , Handler, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
     -- INTERNAL
@@ -68,16 +68,26 @@ type Event data msg =
 
 {-| -}
 onClick : (a -> msg) -> Handler data a -> Event data msg
-onClick f handler =
-  Event <| \points system ->
-    Svg.Events.on "click" (decoder points system (map f handler))
+onClick =
+  on "click"
 
 
 {-| -}
 onMouseMove : (a -> msg) -> Handler data a -> Event data msg
-onMouseMove f handler =
-  Event <| \points system ->
-    Svg.Events.on "mousemove" (decoder points system (map f handler))
+onMouseMove =
+  on "mousemove"
+
+
+{-| -}
+onMouseDown : (a -> msg) -> Handler data a -> Event data msg
+onMouseDown =
+  on "mousedown"
+
+
+{-| -}
+onMouseUp : (a -> msg) -> Handler data a -> Event data msg
+onMouseUp =
+  on "mouseup"
 
 
 {-| -}
