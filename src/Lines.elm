@@ -532,10 +532,10 @@ toDataPoints config lines =
       Coordinate.DataPoint datum (Coordinate.Point (x datum) (y datum))
   in
   case config.area of
-    Area.None       -> dataPoints
-    Area.Normal _   -> dataPoints
-    Area.Stacked    -> stack dataPoints
-    Area.Percentage -> normalize (stack dataPoints)
+    Area.None         -> dataPoints
+    Area.Normal _     -> dataPoints
+    Area.Stacked _    -> stack dataPoints
+    Area.Percentage _ -> normalize (stack dataPoints)
 
 
 stack : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))

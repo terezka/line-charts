@@ -25,23 +25,24 @@ normal =
   Area.normal
 
 
-{-| Stacks your values and colors the area in the line color.
+{-| Stacks your values and colors the area in the line color. The color is
+always the color of your line, but you can pass the opacity.
 
 **Important: Right now, this only works if all your lines have the
 same set of x values!**
 -}
-stacked : Area
+stacked : Float -> Area
 stacked =
   Area.stacked
 
 
 {-| Same as stacked, but the areas takes up the whole graph and your values
-are made into percentages.
+are made into percentages. The color is always the color of your line, but
+you can pass the opacity.
 
 **Important: Right now, this only works if all your lines have the
 same set of x values!**
-
 -}
-percentage : Area
+percentage : Float -> Area
 percentage =
   Area.percentage

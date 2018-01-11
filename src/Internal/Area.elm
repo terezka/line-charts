@@ -7,8 +7,8 @@ module Internal.Area exposing (Area(..), none, percentage, normal, stacked, hasA
 type Area
   = None
   | Normal Float
-  | Stacked
-  | Percentage
+  | Stacked Float
+  | Percentage Float
 
 
 {-| -}
@@ -24,13 +24,13 @@ normal =
 
 
 {-| -}
-stacked : Area
+stacked : Float -> Area
 stacked =
   Stacked
 
 
 {-| -}
-percentage : Area
+percentage : Float -> Area
 percentage =
   Percentage
 
@@ -43,17 +43,17 @@ percentage =
 hasArea : Area -> Bool
 hasArea area =
   case area of
-    None     -> False
-    Normal _ -> True
-    Stacked  -> True
-    Percentage     -> True
+    None         -> False
+    Normal _     -> True
+    Stacked _    -> True
+    Percentage _ -> True
 
 
 {-| -}
 opacity : Area -> Float
 opacity area =
   case area of
-    None           -> 0
-    Normal opacity -> opacity
-    Stacked        -> 1
-    Percentage           -> 1
+    None               -> 0
+    Normal opacity     -> opacity
+    Stacked opacity    -> opacity
+    Percentage opacity -> opacity

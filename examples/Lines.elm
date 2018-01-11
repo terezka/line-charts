@@ -48,12 +48,12 @@ main =
     , line = Line.default
     , dot = Dot.default
     , grid = Grid.lines 1 Color.grayLight
-    , area = Area.stacked
+    , area = Area.stacked 0.5
     , id = "chart"
     }
-    [ Lines.line "#aef6ff" Dot.circle "1" data1
-    , Lines.line "#fdafff" Dot.circle "2" data2
-    , Lines.line "#ffe0a7" Dot.circle "3" data3_a
+    [ Lines.line "#aef6ff" Dot.none "1" data1
+    , Lines.line "#fdafff" Dot.none "2" data2
+    , Lines.line "#ffe0a7" Dot.none "3" data3_a
     ]
 
 
