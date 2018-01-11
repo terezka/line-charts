@@ -535,10 +535,9 @@ toDataPoints config lines =
     Area.None       -> dataPoints
     Area.Normal _   -> dataPoints
     Area.Stacked    -> stack dataPoints
-    Area.Percentage -> normalize (stack dataPoints) -- TODO
+    Area.Percentage -> normalize (stack dataPoints)
 
 
--- TODO fix for uneven x values
 stack : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))
 stack dataset =
   let
