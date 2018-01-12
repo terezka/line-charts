@@ -16,7 +16,7 @@ import Lines.Color as Color
 import Lines.Coordinate as Coordinate exposing (..)
 import Lines.Junk as Junk
 import Internal.Area as Area
-import Internal.Coordinate exposing (DataPoint)
+import Internal.Coordinate exposing (DataPoint, Data)
 import Internal.Dot as Dot
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
@@ -144,18 +144,19 @@ type alias Arguments data =
 
 
 {-| -}
-view : Arguments data -> Line data -> List (DataPoint data) -> Svg.Svg msg
+view : Arguments data -> Line data -> Data data -> Svg.Svg msg
 view arguments (Line lineConfig) dataPoints =
   let
     system =
       arguments.system
 
-    isWithinRange { point } =
-      clamp system.x.min system.x.max point.x == point.x &&
-      clamp system.y.min system.y.max point.y == point.y
+    isWithinRange ({ point } as dataPoint) =
+      if clamp system.x.min system.x.max point.x == point.x &&
+         clamp system.y.min system.y.max point.y == point.y
+      then Just dataPoint else Nothing
 
     dataPointsWithinRange =
-      List.filter isWithinRange dataPoints
+      List.filterMap (Maybe.andThen isWithinRange) dataPoints
 
     hasArea =
       Area.hasArea arguments.area
@@ -170,7 +171,8 @@ view arguments (Line lineConfig) dataPoints =
   in
   Svg.g [ Attributes.class "chart__line" ]
     [ Utils.viewIf hasArea (viewArea arguments lineConfig dataPoints)
-    , viewLine arguments lineConfig dataPoints
+    , Svg.g [ Attributes.class "chart__parts" ] <|
+        viewLine arguments lineConfig dataPoints
     , Svg.g [ Attributes.class "chart__dots" ] <|
         List.map viewDot dataPointsWithinRange
     ]
@@ -180,29 +182,41 @@ view arguments (Line lineConfig) dataPoints =
 -- VIEW / LINE
 
 
-viewLine : Arguments data -> Config data -> List (DataPoint data) -> Svg.Svg msg
+viewLine : Arguments data -> Config data -> Data data -> List (Svg.Svg msg)
 viewLine { system, lineLook, interpolation, id } linConfig dataPoints =
   let
-    interpolationCommands =
-      Interpolation.toCommands interpolation (List.map .point dataPoints)
+    toParts point ( current, parts ) =
+      case point of
+        Just point -> ( point :: current, parts )
+        Nothing -> ( [], current :: parts )
 
-    commands =
-      case dataPoints of
-        first :: rest -> Path.Move first.point :: interpolationCommands
-        [] -> []
+    parts =
+      List.foldr toParts ( [], [] ) dataPoints
+        |> \(c, p) -> c :: p
+
+    interpolate data =
+      case data of
+        first :: rest ->
+          Path.Move first.point :: Interpolation.toCommands interpolation (List.map .point data)
+
+        [] ->
+          []
 
     lineAttributes =
       toLineAttributes lineLook linConfig dataPoints ++
         [ Junk.withinChartArea system ]
+
+    view data =
+      Path.view system lineAttributes (interpolate data)
   in
-  Path.view system lineAttributes commands
+  List.map view parts
 
 
-toLineAttributes : Look data -> Config data -> List (DataPoint data) -> List (Svg.Attribute msg)
+toLineAttributes : Look data -> Config data -> Data data -> List (Svg.Attribute msg)
 toLineAttributes (Look look) { color, dashing } dataPoints =
   let
     isEmphasized =
-      look.isEmphasized (List.map .data dataPoints)
+      look.isEmphasized (List.map .data <| List.filterMap identity dataPoints)
 
     (Style style) =
       if isEmphasized
@@ -222,23 +236,31 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
 -- VIEW / AREA
 
 
-viewArea : Arguments data -> Config data -> List (DataPoint data) -> () -> Svg.Svg msg
+viewArea : Arguments data -> Config data -> Data data -> () -> Svg.Svg msg
 viewArea { system, lineLook, interpolation, area, id } lineConfig dataPoints () =
   let
-    interpolationCommands =
-      Interpolation.toCommands interpolation (List.map .point dataPoints)
+    toParts point ( current, parts ) =
+      case point of
+        Just point -> ( point :: current, parts )
+        Nothing -> ( [], current :: parts )
 
-    commands =
-      case dataPoints of
+    parts =
+      List.foldr toParts ( [], [] ) dataPoints |> \(c, p) -> c :: p
+
+    interpolate data =
+      case data of
         first :: rest ->
           [ Path.Move (Point first.point.x (Utils.towardsZero system.y))
           , Path.Line first.point
           ]
-          ++ interpolationCommands ++
+          ++ Interpolation.toCommands interpolation (List.map .point data) ++
           [ Path.Line (Point (getLastX first rest) (Utils.towardsZero system.y)) ]
 
-        [] ->
+        _ ->
           []
+
+    commands =
+      List.concatMap interpolate parts
 
     getLastX first rest =
       Maybe.withDefault first (Utils.last rest) |> .point |> .x
@@ -250,11 +272,11 @@ viewArea { system, lineLook, interpolation, area, id } lineConfig dataPoints () 
   Path.view system attributes commands
 
 
-toAreaAttributes : Look data -> Config data -> Area.Area -> List (DataPoint data) -> List (Svg.Attribute msg)
+toAreaAttributes : Look data -> Config data -> Area.Area -> Data data -> List (Svg.Attribute msg)
 toAreaAttributes (Look look) { color } area dataPoints =
   let
     isEmphasized =
-      look.isEmphasized (List.map .data dataPoints)
+      look.isEmphasized (List.map .data <| List.filterMap identity dataPoints)
 
     (Style style) =
       if isEmphasized

@@ -59,6 +59,10 @@ type alias Point =
   }
 
 
+{-| -}
+type alias Data data =
+  List (Maybe (DataPoint data))
+
 
 -- HELPERS
 

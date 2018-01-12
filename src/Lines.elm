@@ -435,11 +435,11 @@ viewCustom config lines =
   let
     -- Data points
     dataPoints = toDataPoints config lines
-    allDataPoints = List.concat dataPoints
+    safeDataPoints = List.filterMap identity <| List.concat dataPoints
 
     -- System
     system =
-      toSystem config allDataPoints
+      toSystem config safeDataPoints
 
     -- View
     junk =
@@ -457,7 +457,7 @@ viewCustom config lines =
     attributes =
       List.concat
         [ config.attributes
-        , Events.toAttributes allDataPoints system config.events
+        , Events.toAttributes safeDataPoints system config.events
         , [ Attributes.width <| toString system.frame.size.width
           , Attributes.height <| toString system.frame.size.height
           ]
@@ -516,17 +516,20 @@ chartArea { id } system =
     ]
 
 
-toDataPoints : Config data msg -> List (Line data) -> List (List (Coordinate.DataPoint data))
+toDataPoints : Config data msg -> List (Line data) -> List (Coordinate.Data data)
 toDataPoints config lines =
   let
     x = config.x.variable
     y = config.y.variable
 
     dataPoints =
-      List.map (Line.lineConfig >> .data >> List.map dataPoint) lines
+      List.map (Line.lineConfig >> .data >> List.map maybeDataPoint) lines
 
-    dataPoint datum =
-      Coordinate.DataPoint datum (Coordinate.Point (x datum) (y datum))
+    maybeDataPoint datum =
+      Maybe.map2 (dataPoint datum) (x datum) (y datum)
+
+    dataPoint datum x y =
+      Coordinate.DataPoint datum (Coordinate.Point x y)
   in
   case config.area of
     Area.None         -> dataPoints
@@ -535,17 +538,20 @@ toDataPoints config lines =
     Area.Percentage _ -> normalize (stack dataPoints)
 
 
-stack : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))
+stack : List (Coordinate.Data data) -> List (Coordinate.Data data)
 stack dataset =
   let
     stackBelows dataset result =
       case dataset of
         data :: belows ->
           stackBelows belows <|
-            List.foldl (List.map2 add) data belows :: result
+            List.foldl (List.map2 addSafe) data belows :: result
 
         [] ->
           result
+
+    addSafe datum datumBelow =
+      Maybe.map2 add datum datumBelow
 
     add datum datumBelow =
       setY datum <| datum.point.y + datumBelow.point.y
@@ -553,15 +559,18 @@ stack dataset =
   List.reverse (stackBelows dataset [])
 
 
-normalize : List (List (Coordinate.DataPoint data)) -> List (List (Coordinate.DataPoint data))
+normalize : List (Coordinate.Data data) -> List (Coordinate.Data data)
 normalize dataset =
   case dataset of
     highest :: belows ->
       let
+        toPercentageSafe datum datumBelow =
+          Maybe.map2 toPercentage datum datumBelow
+
         toPercentage highest datum =
           setY datum (100 * datum.point.y / highest.point.y)
       in
-      List.map (List.map2 toPercentage highest) (highest :: belows)
+      List.map (List.map2 toPercentageSafe highest) (highest :: belows)
 
     [] ->
       dataset
