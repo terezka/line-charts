@@ -183,8 +183,11 @@ view arguments (Line lineConfig) dataPoints =
 
 
 viewLine : Arguments data -> Config data -> Data data -> List (Svg.Svg msg)
-viewLine { system, lineLook, interpolation, id } linConfig dataPoints =
+viewLine { system, lineLook, interpolation, id } lineConfig dataPoints =
   let
+    commands =
+      Interpolation.toCommands interpolation (List.map .point <| List.filterMap identity dataPoints)
+
     toParts point ( current, parts ) =
       case point of
         Just point -> ( point :: current, parts )
@@ -194,22 +197,25 @@ viewLine { system, lineLook, interpolation, id } linConfig dataPoints =
       List.foldr toParts ( [], [] ) dataPoints
         |> \(c, p) -> c :: p
 
-    interpolate data =
+    interpolate data number length =
       case data of
         first :: rest ->
-          Path.Move first.point :: Interpolation.toCommands interpolation (List.map .point data)
+          Path.Move first.point :: (List.drop number commands |> List.take (length - 1))
 
         [] ->
           []
 
     lineAttributes =
-      toLineAttributes lineLook linConfig dataPoints ++
+      toLineAttributes lineLook lineConfig dataPoints ++
         [ Junk.withinChartArea system ]
 
-    view data =
-      Path.view system lineAttributes (interpolate data)
+    view data ( svgs, number ) =
+      ( Path.view system lineAttributes (interpolate data number (List.length data)) :: svgs
+      , number + List.length data
+      )
   in
-  List.map view parts
+  List.foldl view ( [], 0 ) parts
+    |> Tuple.first
 
 
 toLineAttributes : Look data -> Config data -> Data data -> List (Svg.Attribute msg)
