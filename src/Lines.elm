@@ -45,7 +45,7 @@ import Internal.Utils as Utils
 -- TODO Should handlers be decoders?
 -- TODO more default junk (hovers)
 -- TODO move tick groups to axis
--- TODO move title to end of data range
+-- TODO more default dimensions
 
 -- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
 -- TODO consider tick space tolerance as determinating factor of tick amount
