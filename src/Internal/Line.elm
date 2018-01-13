@@ -143,21 +143,24 @@ type alias Arguments data =
 
 
 {-| -}
-view : Arguments data -> Line data -> Data data -> Svg.Svg msg
-view ({ system } as arguments) (Line lineConfig) dataPoints =
+view : Arguments data -> List (Line data) -> List (Data data) -> Svg.Svg msg
+view arguments lines datas =
+  Svg.g
+    [ Attributes.class "chart__lines" ]
+    [ viewInterpolations arguments lines datas
+    , viewDots arguments lines datas
+    ]
+
+
+viewDots : Arguments data -> List (Line data) -> List (Data data) -> Svg.Svg msg
+viewDots ({ system } as arguments) lines datas =
   let
     -- Dots
-    dataPointsWithinRange =
-      dataPoints
-        |> List.filterMap identity
-        |> List.filter (Coordinate.isWithinRange system << .point)
+    withinRange =
+      List.filterMap identity
+        >> List.filter (Coordinate.isWithinRange system << .point)
 
-    viewDots =
-      Svg.g
-        [ Attributes.class "chart__dots" ] <|
-        List.map viewDot dataPointsWithinRange
-
-    viewDot =
+    viewDot lineConfig =
       Dot.view
         { system = arguments.system
         , dotLook = arguments.dotLook
@@ -165,29 +168,52 @@ view ({ system } as arguments) (Line lineConfig) dataPoints =
         , color = lineConfig.color
         }
 
-    -- Interpolations
-    parts =
-      Utils.part dataPoints [] []
-
-    commands =
-      Interpolation.toCommands arguments.interpolation <|
-        List.map (List.map .point) parts
-
-    viewAreas () =
+    view (Line lineConfig) dataPoints =
       Svg.g
-        [ Attributes.class "chart__area-parts" ] <|
-        List.map2 (viewArea arguments lineConfig) commands parts
+        [ Attributes.class "chart__dots" ] <|
+        List.map (viewDot lineConfig) (withinRange dataPoints)
+  in
+  Svg.g [ Attributes.class "chart__all-dots" ] <|
+    List.map2 view lines datas
 
-    viewLines =
-      Svg.g
-        [ Attributes.class "chart__line-parts" ] <|
-        List.map2 (viewLine arguments lineConfig) commands parts
+
+viewInterpolations : Arguments data -> List (Line data) -> List (Data data) -> Svg.Svg msg
+viewInterpolations ({ system } as arguments) lines datas =
+  let
+    view (Line lineConfig) dataPoints =
+      let
+        parts =
+          Utils.part dataPoints [] []
+
+        commands =
+          Interpolation.toCommands arguments.interpolation <|
+            List.map (List.map .point) parts
+
+        viewAreas () =
+          Svg.g
+            [ Attributes.class "chart__area-parts" ] <|
+            List.map2 (viewArea arguments lineConfig) commands parts
+
+        viewLines =
+          Svg.g
+            [ Attributes.class "chart__line-parts" ] <|
+            List.map2 (viewLine arguments lineConfig) commands parts
+      in
+        ( viewLines
+        , Utils.viewIf (Area.hasArea arguments.area) viewAreas
+        )
+
+    ( lineInterpolations, areaInterpolations ) =
+      List.unzip <| List.map2 view lines datas
   in
   Svg.g
-    [ Attributes.class "chart__line" ]
-    [ Utils.viewIf (Area.hasArea arguments.area) viewAreas
-    , viewLines
-    , viewDots
+    [ Attributes.class "chart__interpolation" ]
+    [ Svg.g
+        [ Attributes.class "chart__interpolation__areas"
+        , Attributes.style <|"opacity: " ++ toString (Area.opacity arguments.area) ++ ";"
+        ]
+        areaInterpolations
+    , Svg.g [ Attributes.class "chart__interpolation__lines" ] lineInterpolations
     ]
 
 
@@ -259,7 +285,6 @@ toAreaAttributes (Look look) { color } area dataPoints =
   in
   [ Attributes.class "chart__interpolation__area"
   , Attributes.fill (style.color color)
-  , Attributes.fillOpacity (toString <| Area.opacity area)
   ]
 
 
