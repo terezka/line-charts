@@ -42,7 +42,7 @@ main =
     , line = Line.default
     , dot = Dot.default
     , grid = Grid.lines 1 Color.grayLight
-    , area = Area.percentage 0.5
+    , area = Area.none
     , id = "chart"
     }
     [ Lines.line Color.pink Dot.circle "1" data1

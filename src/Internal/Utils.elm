@@ -30,6 +30,16 @@ concat first second third =
 
 
 {-| -}
+unzip3 : List (a,b,c) -> (List a, List b, List c)
+unzip3 pairs =
+  let
+    step (a,b,c) (aas,bs,cs) =
+      (a :: aas, b :: bs, c :: cs)
+  in
+  List.foldr step ([], [], []) pairs
+
+
+{-| -}
 viewIf : Bool -> (() -> Svg.Svg msg) -> Svg.Svg msg
 viewIf condition view =
   if condition then
