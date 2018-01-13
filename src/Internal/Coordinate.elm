@@ -154,8 +154,8 @@ smallestRange data range =
 {-| -}
 largestRange : Range -> Range -> Range
 largestRange data range =
-  { min = Basics.max data.min range.min
-  , max = Basics.min data.max range.max
+  { min = Basics.min data.min range.min
+  , max = Basics.max data.max range.max
   }
 
 

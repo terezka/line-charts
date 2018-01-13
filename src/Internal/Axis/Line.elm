@@ -33,7 +33,7 @@ default =
 full : Line msg
 full =
   Line <| \data range ->
-    let largest = (Coordinate.largestRange data range) in
+    let largest = Coordinate.largestRange data range in
     { color = Color.gray
     , width = 1
     , events = []

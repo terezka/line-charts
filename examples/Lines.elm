@@ -8,8 +8,10 @@ import Lines.Color as Color
 import Lines.Area as Area
 import Lines.Dot as Dot
 import Lines.Axis as Axis
+import Lines.Axis.Line as AxisLine
 import Lines.Axis.Tick as Tick
 import Lines.Axis.Title as Title
+import Lines.Axis.Values as Values
 import Lines.Axis.Range as Range
 import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
@@ -18,7 +20,6 @@ import Lines.Legends as Legends
 import Lines.Line as Line
 import Lines.Legends as Legends
 import Lines.Grid as Grid
-import Lines.Dimension as Dimension
 
 main : Svg msg
 main =
@@ -34,7 +35,14 @@ main =
         , range = Range.padded 30 10
         , axis = Axis.time 6
         }
-    , y = Dimension.default 650 "title" .heartattacks
+    , y =
+        { title = Title.default "Heart attacks"
+        , variable = Just << (+) 10 << .heartattacks
+        , pixels = 650
+        , range = Range.padded 0 0
+        , axis = Axis.custom AxisLine.full <| \data range ->
+                  List.map Tick.float (Values.float (Values.around 6) range)
+        }
     , intersection = Intersection.default
     , junk = Junk.none
     , interpolation = Lines.monotone
@@ -42,7 +50,7 @@ main =
     , line = Line.default
     , dot = Dot.default
     , grid = Grid.lines 1 Color.grayLight
-    , area = Area.none
+    , area = Area.stacked 0.5
     , id = "chart"
     }
     [ Lines.line Color.pink Dot.circle "1" data1
