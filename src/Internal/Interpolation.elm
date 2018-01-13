@@ -38,38 +38,34 @@ linear =
 
 monotone : List Point -> List Command
 monotone points =
-  case points of
-    p0 :: p1 :: p2 :: rest ->
-      let
-        nextTangent =
-          slope3 p0 p1 p2
+  monotoneNext points First
 
-        previousTangent =
-          slope2 p0 p1 nextTangent
+
+type Tangent
+  = First
+  | Previous Float
+
+
+monotoneNext : List Point -> Tangent -> List Command
+monotoneNext points previousTangent =
+  case ( previousTangent, points ) of
+    ( First, p0 :: p1 :: p2 :: rest ) ->
+      let t1 = slope3 p0 p1 p2
+          t0 = slope2 p0 p1 t1
       in
-        monotoneCurve p0 p1 previousTangent nextTangent ++
-        monotoneNext (p1 :: p2 :: rest) nextTangent
+        monotoneCurve p0 p1 t0 t1 ++
+        monotoneNext (p1 :: p2 :: rest) (Previous t1)
 
-    [ p0, p1 ] ->
+    ( Previous t0, p0 :: p1 :: p2 :: rest ) ->
+      let t1 = slope3 p0 p1 p2 in
+        monotoneCurve p0 p1 t0 t1 ++
+        monotoneNext (p1 :: p2 :: rest) (Previous t1)
+
+    ( First, [ p0, p1 ] ) ->
       linear [ p0, p1 ]
 
-    _ ->
-      []
-
-
-monotoneNext : List Point -> Float -> List Command
-monotoneNext points previousTangent =
-  case points of
-    p0 :: p1 :: p2 :: rest ->
-      let
-        nextTangent =
-          slope3 p0 p1 p2
-      in
-        monotoneCurve p0 p1 previousTangent nextTangent ++
-        monotoneNext (p1 :: p2 :: rest) nextTangent
-
-    [ p0, p1 ] ->
-      monotoneCurve p0 p1 previousTangent (slope3 p0 p1 p1)
+    ( Previous t0, [ p0, p1 ] ) ->
+      monotoneCurve p0 p1 t0 (slope3 p0 p1 p1)
 
     _ ->
         []
