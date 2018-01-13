@@ -1,9 +1,9 @@
-module Lines.Dimension exposing (Dimension, default)
+module Lines.Dimension exposing (Dimension, default, full, time)
 
 {-|
 
 # Quick start
-@docs default
+@docs default, full, time
 
 # Customizing
 @docs Dimension
@@ -11,12 +11,12 @@ module Lines.Dimension exposing (Dimension, default)
 -}
 
 
-import Lines.Axis.Title as Title
 import Lines.Axis.Range as Range
 import Lines.Axis as Axis
 import Lines.Axis.Line as AxisLine
 import Lines.Axis.Tick as Tick
 import Lines.Axis.Values as Values
+import Internal.Axis.Title as Title
 import Internal.Coordinate as Coordinate
 
 
@@ -79,10 +79,10 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 -}
 default : Int -> String -> (data -> Float) -> Dimension data msg
 default pixels title variable =
-  { title = Title.default title
+  { title = Title.byDataMax title
   , variable = Just << variable
   , pixels = pixels
-  , range = Range.default
+  , range = Range.padded 20 20
   , axis =
       Axis.custom AxisLine.rangeFrame <| \data range ->
         let smallest = Coordinate.smallestRange data range
@@ -92,4 +92,39 @@ default pixels title variable =
             amount = round <| diff * toFloat pixels / 90
         in
         List.map Tick.float <| Values.float (Values.around amount) smallest
+  }
+
+
+{-| -}
+full : Int -> String -> (data -> Float) -> Dimension data msg
+full pixels title variable =
+  { title = Title.default title
+  , variable = Just << variable
+  , pixels = pixels
+  , range = Range.padded 0 20
+  , axis =
+      Axis.custom AxisLine.full <| \data range ->
+        let largest = Coordinate.largestRange data range
+            amount = pixels // 90
+        in
+        List.map Tick.float <| Values.float (Values.around amount) largest
+  }
+
+
+{-| -}
+time : Int -> String -> (data -> Float) -> Dimension data msg
+time pixels title variable =
+  { title = Title.byDataMax title
+  , variable = Just << variable
+  , pixels = pixels
+  , range = Range.padded 20 20
+  , axis =
+      Axis.custom AxisLine.rangeFrame <| \data range ->
+        let smallest = Coordinate.smallestRange data range
+            rangeLong = range.max - range.min
+            rangeSmall = smallest.max - smallest.min
+            diff = 1 - (rangeLong - rangeSmall) / rangeLong
+            amount = round <| diff * toFloat pixels / 90
+        in
+        List.map Tick.time <| Values.time amount smallest
   }

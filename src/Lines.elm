@@ -46,6 +46,7 @@ import Internal.Utils as Utils
 -- TODO more default junk (hovers)
 -- TODO move tick groups to axis
 -- TODO more default dimensions
+-- TODO find broken data in events
 
 -- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
 -- TODO consider tick space tolerance as determinating factor of tick amount

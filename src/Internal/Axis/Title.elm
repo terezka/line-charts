@@ -1,4 +1,4 @@
-module Internal.Axis.Title exposing (Title, Config, default, at, custom, config)
+module Internal.Axis.Title exposing (Title, Config, default, byDataMax, at, custom, config)
 
 import Svg exposing (Svg)
 import Internal.Coordinate as Coordinate
@@ -21,6 +21,17 @@ type alias Config msg =
 {-| -}
 default : String -> Title msg
 default title =
+  Title
+    { view = viewText title
+    , position = \data range -> range.max
+    , xOffset = 0
+    , yOffset = 0
+    }
+
+
+{-| -}
+byDataMax : String -> Title msg
+byDataMax title =
   Title
     { view = viewText title
     , position = \data range -> Coordinate.smallestRange data range |> .max

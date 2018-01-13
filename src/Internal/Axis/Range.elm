@@ -13,7 +13,7 @@ type Range
 {-| -}
 default : Range
 default =
-  padded 20 20
+  padded 0 0
 
 
 {-| -}
