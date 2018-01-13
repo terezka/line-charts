@@ -146,20 +146,33 @@ type alias Arguments data =
 view : Arguments data -> List (Line data) -> List (Data data) -> Svg.Svg msg
 view arguments lines datas =
   let
-    ( bottoms, tops ) =
+    layers =
       List.unzip <| List.map2 (viewSingle arguments) lines datas
   in
   Svg.g
-    [ Attributes.class "chart__lines" ]
-    [ Svg.g
-        [ Attributes.class "chart__bottoms"
-        , Attributes.style <| "opacity: " ++ toString (Area.opacity arguments.area) ++ ";"
-        ]
-        bottoms
-    , Svg.g
-        [ Attributes.class "chart__tops" ] <|
-        List.concat tops
-    ]
+    [ Attributes.class "chart__lines" ] <|
+    if Area.containerOpacity arguments.area < 1
+      then viewStacked arguments.area layers
+      else viewNormal layers
+
+
+viewNormal : ( List (Svg.Svg msg), List (List (Svg.Svg msg)) ) -> List (Svg.Svg msg)
+viewNormal ( bottoms, top ) =
+  let container = Svg.g [ Attributes.class "chart__line" ] in
+  List.map2 (::) bottoms top |> List.map container
+
+
+viewStacked : Area.Area -> ( List (Svg.Svg msg), List (List (Svg.Svg msg)) ) -> List (Svg.Svg msg)
+viewStacked area ( bottoms, tops ) =
+  [ Svg.g
+      [ Attributes.class "chart__bottoms"
+      , Attributes.style <| "opacity: " ++ toString (Area.containerOpacity area) ++ ";"
+      ]
+      bottoms
+  , Svg.g
+      [ Attributes.class "chart__tops" ] <|
+      List.concat tops
+  ]
 
 
 viewSingle : Arguments data -> Line data -> Data data -> ( Svg.Svg msg, List (Svg.Svg msg) )
@@ -275,6 +288,7 @@ toAreaAttributes (Look look) { color } area dataPoints =
   in
   [ Attributes.class "chart__interpolation__area__fragment"
   , Attributes.fill (style.color color)
+  , Attributes.fillOpacity (toString <| Area.singleOpacity area)
   ]
 
 
@@ -298,7 +312,6 @@ viewSample look lineConfig area sampleWidth =
 
     areaAttributes =
       toAreaAttributes look lineConfig area []
-       ++ [ Attributes.fillOpacity (toString <| Area.opacity area) ]
 
     rectangleAttributes =
       [ Attributes.x "0"

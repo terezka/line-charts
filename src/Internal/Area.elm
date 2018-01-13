@@ -1,4 +1,8 @@
-module Internal.Area exposing (Area(..), none, percentage, normal, stacked, hasArea, opacity)
+module Internal.Area
+  exposing
+    ( Area(..), none, percentage, normal, stacked
+    , hasArea, singleOpacity, containerOpacity
+    )
 
 {-| -}
 
@@ -50,10 +54,20 @@ hasArea area =
 
 
 {-| -}
-opacity : Area -> Float
-opacity area =
+singleOpacity : Area -> Float
+singleOpacity area =
   case area of
     None               -> 0
     Normal opacity     -> opacity
+    Stacked opacity    -> 1
+    Percentage opacity -> 1
+
+
+{-| -}
+containerOpacity : Area -> Float
+containerOpacity area =
+  case area of
+    None               -> 1
+    Normal opacity     -> 1
     Stacked opacity    -> opacity
     Percentage opacity -> opacity
