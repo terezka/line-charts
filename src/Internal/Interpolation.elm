@@ -15,30 +15,40 @@ type Interpolation
 
 
 {-| -}
-toCommands : Interpolation -> List Point -> List Command
+toCommands : Interpolation -> List (List Point) -> List (List Command)
 toCommands interpolation =
   case interpolation of
     Linear   -> linear
     Monotone -> monotone
-    Stepped -> stepped
+    Stepped  -> \_ -> [] -- TODO
 
 
 
 -- INTERNAL / LINEAR
 
 
-linear : List Point -> List Command
+linear : List (List Point) -> List (List Command)
 linear =
-  List.map Line
+  List.map (List.map Line)
 
 
 
 -- INTERNAL / MONOTONE
 
 
-monotone : List Point -> List Command
-monotone points =
-  monotoneNext points First
+monotone : List (List Point) -> List (List Command)
+monotone parts =
+  List.foldr monotoneParts ( First, [] ) parts
+    |> Tuple.second
+
+
+monotoneParts : List Point -> ( Tangent, List (List Command) ) -> ( Tangent, List (List Command) )
+monotoneParts points ( tangent, acc ) =
+  let
+    ( t0, commands ) =
+      monotonePart points ( tangent, [] )
+  in
+  ( t0, commands :: acc )
 
 
 type Tangent
@@ -46,42 +56,53 @@ type Tangent
   | Previous Float
 
 
-monotoneNext : List Point -> Tangent -> List Command
-monotoneNext points previousTangent =
-  case ( previousTangent, points ) of
+monotonePart : List Point -> ( Tangent, List Command ) -> ( Tangent, List Command )
+monotonePart points ( tangent, commands ) =
+  case ( tangent, points ) of
     ( First, p0 :: p1 :: p2 :: rest ) ->
       let t1 = slope3 p0 p1 p2
           t0 = slope2 p0 p1 t1
       in
-        monotoneCurve p0 p1 t0 t1 ++
-        monotoneNext (p1 :: p2 :: rest) (Previous t1)
+      monotonePart (p1 :: p2 :: rest)
+        ( Previous t1
+        , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
+        )
 
     ( Previous t0, p0 :: p1 :: p2 :: rest ) ->
       let t1 = slope3 p0 p1 p2 in
-        monotoneCurve p0 p1 t0 t1 ++
-        monotoneNext (p1 :: p2 :: rest) (Previous t1)
+      monotonePart (p1 :: p2 :: rest)
+        ( Previous t1
+        , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
+        )
 
     ( First, [ p0, p1 ] ) ->
-      linear [ p0, p1 ]
+      let t1 = slope3 p0 p1 p1 in
+      ( Previous t1
+      , commands ++ [ monotoneCurve p0 p1 t1 t1 ]
+      )
 
     ( Previous t0, [ p0, p1 ] ) ->
-      monotoneCurve p0 p1 t0 (slope3 p0 p1 p1)
+      let t1 = slope3 p0 p1 p1 in
+      ( Previous t1
+      , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
+      )
 
     _ ->
-        []
+      ( tangent
+      , commands
+      )
 
 
-monotoneCurve : Point -> Point -> Float -> Float -> List Command
+monotoneCurve : Point -> Point -> Float -> Float -> Command
 monotoneCurve point0 point1 tangent0 tangent1 =
   let
     dx =
       (point1.x - point0.x) / 3
   in
-    [ CubicBeziers
-        { x = point0.x + dx, y = point0.y + dx * tangent0 }
-        { x = point1.x - dx, y = point1.y - dx * tangent1 }
-        point1
-    ]
+  CubicBeziers
+      { x = point0.x + dx, y = point0.y + dx * tangent0 }
+      { x = point1.x - dx, y = point1.y - dx * tangent1 }
+      point1
 
 
 {-| Calculate the slopes of the tangents (Hermite-type interpolation) based on
@@ -136,7 +157,7 @@ stepped points =
     points
         |> List.foldl expandStep ( [], List.drop 1 points )
         |> Tuple.first
-        |> linear
+        |> List.map Line
 
 
 expandStep : Point -> ( List Point, List Point ) -> ( List Point, List Point )
