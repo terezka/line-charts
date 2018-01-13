@@ -37,7 +37,7 @@ main =
     , y = Dimension.default 650 "title" .heartattacks
     , intersection = Intersection.default
     , junk = Junk.none
-    , interpolation = Lines.monotone
+    , interpolation = Lines.steppedBefore
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
@@ -73,11 +73,11 @@ data1 : List Data
 data1 =
   [ Data 1 1 (Just <| 269810504300 + (1 + 0) * 3600000)
   , Data 2 2 (Just <| 269810504300 + (1 + 1) * 3600000)
-  , Data 3 4 (Nothing)
+  , Data 3 4 (Just <| 269810504300 + (1 + 2) * 3600000)
   , Data 9 2 (Just <| 269810504300 + (1 + 3) * 3600000)
   , Data 8 5 (Just <| 269810504300 + (1 + 4) * 3600000)
   , Data 8 1 (Just <| 269810504300 + (1 + 5) * 3600000)
-  , Data 2 3 (Nothing)
+  , Data 2 3 (Just <| 269810504300 + (1 + 6) * 3600000)
   , Data 3 3 (Just <| 269810504300 + (1 + 7) * 3600000)
   , Data 9 8 (Just <| 269810504300 + (1 + 8) * 3600000)
   ]

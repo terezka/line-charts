@@ -2,7 +2,7 @@ module Lines exposing
   ( view1, view2, view3
   , view, Line, line, dash
   , viewCustom, Config
-  , Interpolation, linear, monotone, stepped
+  , Interpolation, linear, monotone, steppedBefore, steppedAfter
   )
 
 {-|
@@ -17,7 +17,7 @@ module Lines exposing
 @docs viewCustom, Config
 
 ## Interpolations
-@docs Interpolation, linear, monotone, stepped
+@docs Interpolation, linear, monotone, steppedBefore, steppedAfter
 
 -}
 
@@ -373,11 +373,18 @@ monotone : Interpolation
 monotone =
   Interpolation.Monotone
 
-{-| A stepped interpolation.
+{-| A stepped interpolation where the step comes before the point.
 -}
-stepped : Interpolation
-stepped =
-  Interpolation.Stepped
+steppedBefore : Interpolation
+steppedBefore =
+  Interpolation.SteppedBefore
+
+
+{-| A stepped interpolation where the step comes after the point.
+-}
+steppedAfter : Interpolation
+steppedAfter =
+  Interpolation.SteppedAfter
 
 
 {-|

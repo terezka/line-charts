@@ -11,7 +11,8 @@ import Lines.Coordinate as Coordinate  exposing (..)
 type Interpolation
   = Linear
   | Monotone
-  | Stepped
+  | SteppedBefore
+  | SteppedAfter
 
 
 {-| -}
@@ -20,7 +21,8 @@ toCommands interpolation =
   case interpolation of
     Linear   -> linear
     Monotone -> monotone
-    Stepped  -> \_ -> [] -- TODO
+    SteppedBefore  -> stepped before
+    SteppedAfter  -> stepped after
 
 
 
@@ -37,13 +39,13 @@ linear =
 
 
 monotone : List (List Point) -> List (List Command)
-monotone parts =
-  List.foldr monotoneParts ( First, [] ) parts
+monotone sections =
+  List.foldr monotoneSection ( First, [] ) sections
     |> Tuple.second
 
 
-monotoneParts : List Point -> ( Tangent, List (List Command) ) -> ( Tangent, List (List Command) )
-monotoneParts points ( tangent, acc ) =
+monotoneSection : List Point -> ( Tangent, List (List Command) ) -> ( Tangent, List (List Command) )
+monotoneSection points ( tangent, acc ) =
   let
     ( t0, commands ) =
       monotonePart points ( tangent, [] )
@@ -152,19 +154,23 @@ sign x =
 -- INTERNAL / STEPPED
 
 
-stepped : List Point -> List Command
-stepped points =
-    points
-        |> List.foldl expandStep ( [], List.drop 1 points )
-        |> Tuple.first
-        |> List.map Line
+stepped : (Point -> Point -> List Point) -> List (List Point) -> List (List Command)
+stepped step sections =
+  let
+    expand result section =
+      case section of
+        a :: b :: rest -> expand (step a b ++ result) (b :: rest)
+        last :: []     -> result
+        []             -> result
+  in
+  List.map (expand [] >> List.reverse >> List.map Line) sections
 
 
-expandStep : Point -> ( List Point, List Point ) -> ( List Point, List Point )
-expandStep p ( result, rest ) =
-    case rest of
-        next :: _ ->
-            ( { x = next.x, y = p.y } :: p :: result, List.drop 1 rest )
+before : Point -> Point -> List Point
+before a b =
+  [ b, Point b.x a.y, a ]
 
-        [] ->
-            ( p :: result |> List.reverse, [] )
+
+after : Point -> Point -> List Point
+after a b =
+  [ b, Point a.x b.y, a ]
