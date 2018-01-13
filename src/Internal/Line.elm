@@ -145,22 +145,38 @@ type alias Arguments data =
 {-| -}
 view : Arguments data -> List (Line data) -> List (Data data) -> Svg.Svg msg
 view arguments lines datas =
+  let
+    ( bottoms, tops ) =
+      List.unzip <| List.map2 (viewSingle arguments) lines datas
+  in
   Svg.g
     [ Attributes.class "chart__lines" ]
-    [ viewInterpolations arguments lines datas
-    , viewDots arguments lines datas
+    [ Svg.g
+        [ Attributes.class "chart__bottoms"
+        , Attributes.style <| "opacity: " ++ toString (Area.opacity arguments.area) ++ ";"
+        ]
+        bottoms
+    , Svg.g
+        [ Attributes.class "chart__tops" ] <|
+        List.concat tops
     ]
 
 
-viewDots : Arguments data -> List (Line data) -> List (Data data) -> Svg.Svg msg
-viewDots ({ system } as arguments) lines datas =
+viewSingle : Arguments data -> Line data -> Data data -> ( Svg.Svg msg, List (Svg.Svg msg) )
+viewSingle ({ system } as arguments) (Line lineConfig) dataPoints =
   let
     -- Dots
-    withinRange =
-      List.filterMap identity
-        >> List.filter (Coordinate.isWithinRange system << .point)
+    dataPointsWithinRange =
+      dataPoints
+        |> List.filterMap identity
+        |> List.filter (Coordinate.isWithinRange system << .point)
 
-    viewDot lineConfig =
+    viewDots =
+      Svg.g
+        [ Attributes.class "chart__dots" ] <|
+        List.map viewDot dataPointsWithinRange
+
+    viewDot =
       Dot.view
         { system = arguments.system
         , dotLook = arguments.dotLook
@@ -168,53 +184,27 @@ viewDots ({ system } as arguments) lines datas =
         , color = lineConfig.color
         }
 
-    view (Line lineConfig) dataPoints =
+    -- Interpolations
+    parts =
+      Utils.part dataPoints [] []
+
+    commands =
+      Interpolation.toCommands arguments.interpolation <|
+        List.map (List.map .point) parts
+
+    viewAreas () =
       Svg.g
-        [ Attributes.class "chart__dots" ] <|
-        List.map (viewDot lineConfig) (withinRange dataPoints)
+        [ Attributes.class "chart__interpolation__area" ] <|
+        List.map2 (viewArea arguments lineConfig) commands parts
+
+    viewLines =
+      Svg.g
+        [ Attributes.class "chart__interpolation__line" ] <|
+        List.map2 (viewLine arguments lineConfig) commands parts
   in
-  Svg.g [ Attributes.class "chart__all-dots" ] <|
-    List.map2 view lines datas
-
-
-viewInterpolations : Arguments data -> List (Line data) -> List (Data data) -> Svg.Svg msg
-viewInterpolations ({ system } as arguments) lines datas =
-  let
-    view (Line lineConfig) dataPoints =
-      let
-        parts =
-          Utils.part dataPoints [] []
-
-        commands =
-          Interpolation.toCommands arguments.interpolation <|
-            List.map (List.map .point) parts
-
-        viewAreas () =
-          Svg.g
-            [ Attributes.class "chart__area-parts" ] <|
-            List.map2 (viewArea arguments lineConfig) commands parts
-
-        viewLines =
-          Svg.g
-            [ Attributes.class "chart__line-parts" ] <|
-            List.map2 (viewLine arguments lineConfig) commands parts
-      in
-        ( viewLines
-        , Utils.viewIf (Area.hasArea arguments.area) viewAreas
-        )
-
-    ( lineInterpolations, areaInterpolations ) =
-      List.unzip <| List.map2 view lines datas
-  in
-  Svg.g
-    [ Attributes.class "chart__interpolation" ]
-    [ Svg.g
-        [ Attributes.class "chart__interpolation__areas"
-        , Attributes.style <|"opacity: " ++ toString (Area.opacity arguments.area) ++ ";"
-        ]
-        areaInterpolations
-    , Svg.g [ Attributes.class "chart__interpolation__lines" ] lineInterpolations
-    ]
+  ( Utils.viewIf (Area.hasArea arguments.area) viewAreas
+  , [ viewLines, viewDots ]
+  )
 
 
 
@@ -244,7 +234,7 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
         else look.normal
   in
   [ Attributes.style "pointer-events: none;"
-  , Attributes.class "chart__interpolation__line"
+  , Attributes.class "chart__interpolation__line__fragment"
   , Attributes.stroke (style.color color)
   , Attributes.strokeWidth (toString style.width)
   , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
@@ -283,7 +273,7 @@ toAreaAttributes (Look look) { color } area dataPoints =
         then look.emphasized
         else look.normal
   in
-  [ Attributes.class "chart__interpolation__area"
+  [ Attributes.class "chart__interpolation__area__fragment"
   , Attributes.fill (style.color color)
   ]
 
@@ -308,6 +298,7 @@ viewSample look lineConfig area sampleWidth =
 
     areaAttributes =
       toAreaAttributes look lineConfig area []
+       ++ [ Attributes.fillOpacity (toString <| Area.opacity area) ]
 
     rectangleAttributes =
       [ Attributes.x "0"
