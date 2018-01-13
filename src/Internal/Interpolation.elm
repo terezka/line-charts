@@ -63,17 +63,17 @@ monotonePart points ( tangent, commands ) =
       let t1 = slope3 p0 p1 p2
           t0 = slope2 p0 p1 t1
       in
-      monotonePart (p1 :: p2 :: rest)
-        ( Previous t1
-        , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
-        )
+      ( Previous t1
+      , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
+      )
+      |> monotonePart (p1 :: p2 :: rest)
 
     ( Previous t0, p0 :: p1 :: p2 :: rest ) ->
       let t1 = slope3 p0 p1 p2 in
-      monotonePart (p1 :: p2 :: rest)
-        ( Previous t1
-        , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
-        )
+      ( Previous t1
+      , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
+      )
+      |> monotonePart (p1 :: p2 :: rest)
 
     ( First, [ p0, p1 ] ) ->
       let t1 = slope3 p0 p1 p1 in
