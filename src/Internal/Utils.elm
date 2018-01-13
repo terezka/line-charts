@@ -24,22 +24,19 @@ apply2 stuff1 stuff2 toNewStuff =
 
 
 {-| -}
-indexedMap2 : (Int -> a -> b -> c) -> List a -> List b -> List c
-indexedMap2 f a b =
-  let
-    collect a b i c =
-      case ( a, b ) of
-        ( a0 :: a, b0 :: b ) -> collect a b (i + 1) <| c ++ [ f i a0 b0 ]
-        ( [], _ ) -> c
-        ( _, [] ) -> c
-  in
-  collect a b 0 []
-
-
-{-| -}
 concat : List a -> List a -> List a -> List a
 concat first second third =
   first ++ second ++ third
+
+
+{-| -}
+unzip3 : List (a,b,c) -> (List a, List b, List c)
+unzip3 pairs =
+  let
+    step (a,b,c) (aas,bs,cs) =
+      (a :: aas, b :: bs, c :: cs)
+  in
+  List.foldr step ([], [], []) pairs
 
 
 {-| -}

@@ -37,15 +37,17 @@ main =
     , y = Dimension.default 650 "title" .heartattacks
     , intersection = Intersection.default
     , junk = Junk.none
-    , interpolation = Lines.steppedBefore
+    , interpolation = Lines.monotone
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
     , grid = Grid.lines 1 Color.grayLight
-    , area = Area.normal 0.5
+    , area = Area.none
     , id = "chart"
     }
     [ Lines.line Color.pink Dot.circle "1" data1
+    , Lines.line Color.orange Dot.circle "2" data2
+    , Lines.line Color.blue Dot.circle "3" data3_a
     ]
 
 
@@ -74,10 +76,10 @@ data1 =
   [ Data 1 1 (Just <| 269810504300 + (1 + 0) * 3600000)
   , Data 2 2 (Just <| 269810504300 + (1 + 1) * 3600000)
   , Data 3 4 (Just <| 269810504300 + (1 + 2) * 3600000)
-  , Data 9 2 (Just <| 269810504300 + (1 + 3) * 3600000)
+  , Data 9 2 (Nothing)
   , Data 8 5 (Just <| 269810504300 + (1 + 4) * 3600000)
   , Data 8 1 (Just <| 269810504300 + (1 + 5) * 3600000)
-  , Data 2 3 (Just <| 269810504300 + (1 + 6) * 3600000)
+  , Data 2 3 (Nothing)
   , Data 3 3 (Just <| 269810504300 + (1 + 7) * 3600000)
   , Data 9 8 (Just <| 269810504300 + (1 + 8) * 3600000)
   ]
@@ -88,7 +90,12 @@ data2 =
   [ Data 2 1 (Just <| 269810504300 + (1 + 0) * 3600000)
   , Data 3 2 (Just <| 269810504300 + (1 + 1) * 3600000)
   , Data 4 3 (Just <| 269810504300 + (1 + 2) * 3600000)
-  , Data 5 2 (Just <| 269810504300 + (1 + 3) * 3600000)
+  , Data 5 2 (Nothing)
+  , Data 4 5 (Just <| 269810504300 + (1 + 4) * 3600000)
+  , Data 6 3 (Just <| 269810504300 + (1 + 5) * 3600000)
+  , Data 4 5 (Nothing)
+  , Data 9 8 (Just <| 269810504300 + (1 + 7) * 3600000)
+  , Data 4 3 (Just <| 269810504300 + (1 + 8) * 3600000)
   ]
 
 
@@ -97,7 +104,12 @@ data3_a =
   [ Data 2 1 (Just <| 269810504300 + (1 + 0) * 3600000)
   , Data 3 2 (Just <| 269810504300 + (1 + 1) * 3600000)
   , Data 4 2 (Just <| 269810504300 + (1 + 2) * 3600000)
-  , Data 5 1 (Just <| 269810504300 + (1 + 3) * 3600000)
+  , Data 5 1 (Nothing)
+  , Data 8 4 (Just <| 269810504300 + (1 + 4) * 3600000)
+  , Data 8 6 (Just <| 269810504300 + (1 + 5) * 3600000)
+  , Data 2 9 (Nothing)
+  , Data 3 7 (Just <| 269810504300 + (1 + 7) * 3600000)
+  , Data 9 3 (Just <| 269810504300 + (1 + 8) * 3600000)
   ]
 
 

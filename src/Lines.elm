@@ -471,9 +471,6 @@ viewCustom config lines =
         ]
 
     viewLines =
-      List.map2 viewLine lines dataPoints
-
-    viewLine =
       Line.view
         { system = system
         , dotLook = config.dot
@@ -498,7 +495,7 @@ viewCustom config lines =
     Svg.svg attributes
       [ Svg.defs [] [ chartArea config system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
-      , Svg.g [ Attributes.class "chart__lines" ]       viewLines
+      , viewLines lines dataPoints
       , Axis.viewHorizontal system config.intersection config.x.title config.x.axis
       , Axis.viewVertical   system config.intersection config.y.title config.y.axis
       , viewLegends
