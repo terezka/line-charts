@@ -14,7 +14,7 @@ import Lines.Area as Area
 import Lines.Color as Color
 import Lines.Coordinate as Coordinate
 import Lines.Junk as Junk
-import Internal.Coordinate exposing (DataPoint)
+import Internal.Coordinate exposing (Data, DataPoint)
 import Internal.Dot as Dot
 import Internal.Line as Line
 import Internal.Utils as Utils
@@ -98,7 +98,7 @@ type alias Arguments data msg =
   , lineLook : Line.Look data
   , area : Area.Area
   , lines : List (Line.Line data)
-  , dataPoints : List (List (DataPoint data))
+  , dataPoints : List (Data data)
   , legends : Legends msg
   }
 
@@ -127,7 +127,7 @@ viewFrees { system, lines, dataPoints } placement view =
     List.map2 (viewFree system placement view) lines dataPoints
 
 
-viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> List (DataPoint data) -> Svg.Svg msg
+viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> Data data -> Svg.Svg msg
 viewFree system placement viewLabel line dataPoints =
   let
     lineConfig =
@@ -135,8 +135,8 @@ viewFree system placement viewLabel line dataPoints =
 
     ( orderedPoints, anchor, xOffset ) =
       case placement of
-        Beginning -> ( dataPoints, Svg.End, -10 )
-        Ending    -> ( List.reverse dataPoints, Svg.Start, 10 )
+        Beginning -> ( List.filterMap identity <| dataPoints, Svg.End, -10 )
+        Ending    -> ( List.filterMap identity <| List.reverse dataPoints, Svg.Start, 10 )
 
     transform { x, y } =
       Svg.transform [ Svg.move system x y, Svg.offset xOffset 3 ]

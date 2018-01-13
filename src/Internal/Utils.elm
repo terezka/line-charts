@@ -66,17 +66,42 @@ viewMaybeHtml a view =
 {-| -}
 nonEmptyList : List a -> Maybe (List a)
 nonEmptyList list =
-    if List.isEmpty list
-      then Nothing
-      else Just list
+  if List.isEmpty list
+    then Nothing
+    else Just list
 
 
 {-| -}
 withFirst : List a -> (a -> List a -> b) -> Maybe b
 withFirst stuff process =
-    case stuff of
-        first :: rest -> Just (process first rest)
-        _             -> Nothing
+  case stuff of
+    first :: rest ->
+      Just (process first rest)
+
+    _ ->
+      Nothing
+
+
+{-| -}
+viewWithFirst : List a -> (a -> List a -> Svg.Svg msg) -> Svg.Svg msg
+viewWithFirst stuff view =
+  case stuff of
+    first :: rest ->
+      view first rest
+
+    _ ->
+      Svg.text ""
+
+
+{-| -}
+viewWithEdges : List a -> (a -> List a -> a -> Svg.Svg msg) -> Svg.Svg msg
+viewWithEdges stuff view =
+  case stuff of
+    first :: rest ->
+      view first rest (lastSafe first rest)
+
+    _ ->
+      Svg.text ""
 
 
 {-| -}
@@ -92,6 +117,12 @@ last list =
 
 
 {-| -}
+lastSafe : a -> List a -> a
+lastSafe first rest =
+  Maybe.withDefault first (last rest)
+
+
+{-| -}
 toChartAreaId : String -> String
 toChartAreaId id =
   "chart__chart-area--" ++ id
@@ -101,3 +132,12 @@ toChartAreaId id =
 magnitude : Float -> Float
 magnitude num =
   toFloat <| 10 ^ (floor (logBase e num / logBase e 10))
+
+
+{-| -}
+part : List (Maybe a) -> List a -> List (List a) -> List (List a)
+part points current parts =
+  case points of
+    Just point :: rest -> part rest (point :: current) parts
+    Nothing :: rest    -> part rest [] (current :: parts)
+    []                 -> current :: parts

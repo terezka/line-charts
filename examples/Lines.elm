@@ -37,17 +37,15 @@ main =
     , y = Dimension.default 650 "title" .heartattacks
     , intersection = Intersection.default
     , junk = Junk.none
-    , interpolation = Lines.monotone
+    , interpolation = Lines.steppedBefore
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
     , grid = Grid.lines 1 Color.grayLight
-    , area = Area.percentage 0.5
+    , area = Area.normal 0.5
     , id = "chart"
     }
-    [ Lines.line "#aef6ff" Dot.none "1" data1
-    , Lines.line "#fdafff" Dot.none "2" data2
-    , Lines.line "#ffe0a7" Dot.none "3" data3_a
+    [ Lines.line Color.pink Dot.circle "1" data1
     ]
 
 
@@ -67,54 +65,59 @@ timeTick time =
 type alias Data =
   { magnesium : Float
   , heartattacks : Float
-  , date : Float
+  , date : Maybe Float
   }
 
 
 data1 : List Data
 data1 =
-  [ Data 1 1 (269810504300 + (1 + 0) * 3600000)
-  , Data 2 1 (269810504300 + (1 + 1) * 3600000)
-  , Data 3 1 (269810504300 + (1 + 2) * 3600000)
-  , Data 9 1 (269810504300 + (1 + 3) * 3600000)
+  [ Data 1 1 (Just <| 269810504300 + (1 + 0) * 3600000)
+  , Data 2 2 (Just <| 269810504300 + (1 + 1) * 3600000)
+  , Data 3 4 (Just <| 269810504300 + (1 + 2) * 3600000)
+  , Data 9 2 (Just <| 269810504300 + (1 + 3) * 3600000)
+  , Data 8 5 (Just <| 269810504300 + (1 + 4) * 3600000)
+  , Data 8 1 (Just <| 269810504300 + (1 + 5) * 3600000)
+  , Data 2 3 (Just <| 269810504300 + (1 + 6) * 3600000)
+  , Data 3 3 (Just <| 269810504300 + (1 + 7) * 3600000)
+  , Data 9 8 (Just <| 269810504300 + (1 + 8) * 3600000)
   ]
 
 
 data2 : List Data
 data2 =
-  [ Data 2 1 (269810504300 + (1 + 0) * 3600000)
-  , Data 3 2 (269810504300 + (1 + 1) * 3600000)
-  , Data 4 3 (269810504300 + (1 + 2) * 3600000)
-  , Data 5 2 (269810504300 + (1 + 3) * 3600000)
+  [ Data 2 1 (Just <| 269810504300 + (1 + 0) * 3600000)
+  , Data 3 2 (Just <| 269810504300 + (1 + 1) * 3600000)
+  , Data 4 3 (Just <| 269810504300 + (1 + 2) * 3600000)
+  , Data 5 2 (Just <| 269810504300 + (1 + 3) * 3600000)
   ]
 
 
 data3_a : List Data
 data3_a =
-  [ Data 2 1 (269810504300 + (1 + 0) * 3600000)
-  , Data 3 2 (269810504300 + (1 + 1) * 3600000)
-  , Data 4 2 (269810504300 + (1 + 2) * 3600000)
-  , Data 5 1 (269810504300 + (1 + 3) * 3600000)
+  [ Data 2 1 (Just <| 269810504300 + (1 + 0) * 3600000)
+  , Data 3 2 (Just <| 269810504300 + (1 + 1) * 3600000)
+  , Data 4 2 (Just <| 269810504300 + (1 + 2) * 3600000)
+  , Data 5 1 (Just <| 269810504300 + (1 + 3) * 3600000)
   ]
 
 
 data3_b : List Data
 data3_b =
-  [ Data 6 3.6 (269810504300 + (1 + 4) * 3600000)
-  , Data 7 3.7 (269810504300 + (1 + 5) * 3600000)
-  , Data 9 3.6 (269810504300 + (1 + 6) * 3600000)
+  [ Data 6 3.6 (Just <| 269810504300 + (1 + 4) * 3600000)
+  , Data 7 3.7 (Just <| 269810504300 + (1 + 5) * 3600000)
+  , Data 9 3.6 (Just <| 269810504300 + (1 + 6) * 3600000)
   ]
 
 
 data4 : List Data
 data4 =
-  [ Data 5 6 (1512495283 + 2 * 28 * 24 * 3633400)
-  , Data 6 9 (1512495283 + 3 * 28 * 24 * 3633400)
+  [ Data 5 6 (Just <| 1512495283 + 2 * 28 * 24 * 3633400)
+  , Data 6 9 (Just <| 1512495283 + 3 * 28 * 24 * 3633400)
   ]
 
 
 data5 : List Data
 data5 =
-  [ Data 6 9 (1512495283 + 2 * 2 * 3600000)
-  , Data 7 3 (1512495283 + 3 * 2 * 3600000)
+  [ Data 6 9 (Just <| 1512495283 + 2 * 2 * 3600000)
+  , Data 7 3 (Just <| 1512495283 + 3 * 2 * 3600000)
   ]

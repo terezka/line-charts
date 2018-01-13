@@ -11,80 +11,100 @@ import Lines.Coordinate as Coordinate  exposing (..)
 type Interpolation
   = Linear
   | Monotone
-  | Stepped
+  | SteppedBefore
+  | SteppedAfter
 
 
 {-| -}
-toCommands : Interpolation -> List Point -> List Command
+toCommands : Interpolation -> List (List Point) -> List (List Command)
 toCommands interpolation =
   case interpolation of
     Linear   -> linear
     Monotone -> monotone
-    Stepped -> stepped
+    SteppedBefore  -> stepped before
+    SteppedAfter  -> stepped after
+
 
 
 -- INTERNAL / LINEAR
 
 
-linear : List Point -> List Command
+linear : List (List Point) -> List (List Command)
 linear =
-  List.map Line
+  List.map (List.map Line)
 
 
 
 -- INTERNAL / MONOTONE
 
 
-monotone : List Point -> List Command
-monotone points =
-  case points of
-    p0 :: p1 :: p2 :: rest ->
-      let
-        nextTangent =
-          slope3 p0 p1 p2
+monotone : List (List Point) -> List (List Command)
+monotone sections =
+  List.foldr monotoneSection ( First, [] ) sections
+    |> Tuple.second
 
-        previousTangent =
-          slope2 p0 p1 nextTangent
+
+monotoneSection : List Point -> ( Tangent, List (List Command) ) -> ( Tangent, List (List Command) )
+monotoneSection points ( tangent, acc ) =
+  let
+    ( t0, commands ) =
+      monotonePart points ( tangent, [] )
+  in
+  ( t0, commands :: acc )
+
+
+type Tangent
+  = First
+  | Previous Float
+
+
+monotonePart : List Point -> ( Tangent, List Command ) -> ( Tangent, List Command )
+monotonePart points ( tangent, commands ) =
+  case ( tangent, points ) of
+    ( First, p0 :: p1 :: p2 :: rest ) ->
+      let t1 = slope3 p0 p1 p2
+          t0 = slope2 p0 p1 t1
       in
-        monotoneCurve p0 p1 previousTangent nextTangent ++
-        monotoneNext (p1 :: p2 :: rest) nextTangent
+      ( Previous t1
+      , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
+      )
+      |> monotonePart (p1 :: p2 :: rest)
 
-    [ p0, p1 ] ->
-      linear [ p0, p1 ]
+    ( Previous t0, p0 :: p1 :: p2 :: rest ) ->
+      let t1 = slope3 p0 p1 p2 in
+      ( Previous t1
+      , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
+      )
+      |> monotonePart (p1 :: p2 :: rest)
+
+    ( First, [ p0, p1 ] ) ->
+      let t1 = slope3 p0 p1 p1 in
+      ( Previous t1
+      , commands ++ [ monotoneCurve p0 p1 t1 t1 ]
+      )
+
+    ( Previous t0, [ p0, p1 ] ) ->
+      let t1 = slope3 p0 p1 p1 in
+      ( Previous t1
+      , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
+      )
 
     _ ->
-      []
+      ( tangent
+      , commands
+      )
 
 
-monotoneNext : List Point -> Float -> List Command
-monotoneNext points previousTangent =
-  case points of
-    p0 :: p1 :: p2 :: rest ->
-      let
-        nextTangent =
-          slope3 p0 p1 p2
-      in
-        monotoneCurve p0 p1 previousTangent nextTangent ++
-        monotoneNext (p1 :: p2 :: rest) nextTangent
-
-    [ p0, p1 ] ->
-      monotoneCurve p0 p1 previousTangent (slope3 p0 p1 p1)
-
-    _ ->
-        []
-
-
-monotoneCurve : Point -> Point -> Float -> Float -> List Command
+monotoneCurve : Point -> Point -> Float -> Float -> Command
 monotoneCurve point0 point1 tangent0 tangent1 =
   let
     dx =
       (point1.x - point0.x) / 3
   in
-    [ CubicBeziers
-        { x = point0.x + dx, y = point0.y + dx * tangent0 }
-        { x = point1.x - dx, y = point1.y - dx * tangent1 }
-        point1
-    ]
+  CubicBeziers
+      { x = point0.x + dx, y = point0.y + dx * tangent0 }
+      { x = point1.x - dx, y = point1.y - dx * tangent1 }
+      point1
 
 
 {-| Calculate the slopes of the tangents (Hermite-type interpolation) based on
@@ -134,19 +154,23 @@ sign x =
 -- INTERNAL / STEPPED
 
 
-stepped : List Point -> List Command
-stepped points =
-    points
-        |> List.foldl expandStep ( [], List.drop 1 points )
-        |> Tuple.first
-        |> linear
+stepped : (Point -> Point -> List Point) -> List (List Point) -> List (List Command)
+stepped step sections =
+  let
+    expand result section =
+      case section of
+        a :: b :: rest -> expand (step a b ++ result) (b :: rest)
+        last :: []     -> result
+        []             -> result
+  in
+  List.map (expand [] >> List.reverse >> List.map Line) sections
 
 
-expandStep : Point -> ( List Point, List Point ) -> ( List Point, List Point )
-expandStep p ( result, rest ) =
-    case rest of
-        next :: _ ->
-            ( { x = next.x, y = p.y } :: p :: result, List.drop 1 rest )
+before : Point -> Point -> List Point
+before a b =
+  [ b, Point b.x a.y, a ]
 
-        [] ->
-            ( p :: result |> List.reverse, [] )
+
+after : Point -> Point -> List Point
+after a b =
+  [ b, Point a.x b.y, a ]

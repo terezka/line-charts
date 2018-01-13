@@ -13,10 +13,9 @@ module Internal.Line exposing
 import Svg
 import Svg.Attributes as Attributes
 import Lines.Color as Color
-import Lines.Coordinate as Coordinate exposing (..)
 import Lines.Junk as Junk
 import Internal.Area as Area
-import Internal.Coordinate exposing (DataPoint)
+import Internal.Coordinate as Coordinate exposing (DataPoint, Data, Point)
 import Internal.Dot as Dot
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
@@ -144,21 +143,19 @@ type alias Arguments data =
 
 
 {-| -}
-view : Arguments data -> Line data -> List (DataPoint data) -> Svg.Svg msg
-view arguments (Line lineConfig) dataPoints =
+view : Arguments data -> Line data -> Data data -> Svg.Svg msg
+view ({ system } as arguments) (Line lineConfig) dataPoints =
   let
-    system =
-      arguments.system
-
-    isWithinRange { point } =
-      clamp system.x.min system.x.max point.x == point.x &&
-      clamp system.y.min system.y.max point.y == point.y
-
+    -- Dots
     dataPointsWithinRange =
-      List.filter isWithinRange dataPoints
+      dataPoints
+        |> List.filterMap identity
+        |> List.filter (Coordinate.isWithinRange system << .point)
 
-    hasArea =
-      Area.hasArea arguments.area
+    viewDots =
+      Svg.g
+        [ Attributes.class "chart__dots" ] <|
+        List.map viewDot dataPointsWithinRange
 
     viewDot =
       Dot.view
@@ -167,12 +164,30 @@ view arguments (Line lineConfig) dataPoints =
         , shape = lineConfig.shape
         , color = lineConfig.color
         }
+
+    -- Interpolations
+    parts =
+      Utils.part dataPoints [] []
+
+    commands =
+      Interpolation.toCommands arguments.interpolation <|
+        List.map (List.map .point) parts
+
+    viewAreas () =
+      Svg.g
+        [ Attributes.class "chart__area-parts" ] <|
+        List.map2 (viewArea arguments lineConfig) commands parts
+
+    viewLines =
+      Svg.g
+        [ Attributes.class "chart__line-parts" ] <|
+        List.map2 (viewLine arguments lineConfig) commands parts
   in
-  Svg.g [ Attributes.class "chart__line" ]
-    [ Utils.viewIf hasArea (viewArea arguments lineConfig dataPoints)
-    , viewLine arguments lineConfig dataPoints
-    , Svg.g [ Attributes.class "chart__dots" ] <|
-        List.map viewDot dataPointsWithinRange
+  Svg.g
+    [ Attributes.class "chart__line" ]
+    [ Utils.viewIf (Area.hasArea arguments.area) viewAreas
+    , viewLines
+    , viewDots
     ]
 
 
@@ -180,22 +195,15 @@ view arguments (Line lineConfig) dataPoints =
 -- VIEW / LINE
 
 
-viewLine : Arguments data -> Config data -> List (DataPoint data) -> Svg.Svg msg
-viewLine { system, lineLook, interpolation, id } linConfig dataPoints =
+viewLine : Arguments data -> Config data -> List Path.Command -> List (DataPoint data) -> Svg.Svg msg
+viewLine { system, lineLook, id } lineConfig interpolation dataPoints =
   let
-    interpolationCommands =
-      Interpolation.toCommands interpolation (List.map .point dataPoints)
-
-    commands =
-      case dataPoints of
-        first :: rest -> Path.Move first.point :: interpolationCommands
-        [] -> []
-
     lineAttributes =
-      toLineAttributes lineLook linConfig dataPoints ++
-        [ Junk.withinChartArea system ]
+      Junk.withinChartArea system :: toLineAttributes lineLook lineConfig dataPoints
   in
-  Path.view system lineAttributes commands
+  Utils.viewWithFirst dataPoints <| \first rest ->
+    Path.view system lineAttributes <|
+      Path.Move first.point :: interpolation
 
 
 toLineAttributes : Look data -> Config data -> List (DataPoint data) -> List (Svg.Attribute msg)
@@ -209,45 +217,33 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
         then look.emphasized
         else look.normal
   in
-      [ Attributes.style "pointer-events: none;"
-      , Attributes.class "chart__interpolation__line"
-      , Attributes.stroke (style.color color)
-      , Attributes.strokeWidth (toString style.width)
-      , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
-      , Attributes.fill "transparent"
-      ]
+  [ Attributes.style "pointer-events: none;"
+  , Attributes.class "chart__interpolation__line"
+  , Attributes.stroke (style.color color)
+  , Attributes.strokeWidth (toString style.width)
+  , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
+  , Attributes.fill "transparent"
+  ]
 
 
 
 -- VIEW / AREA
 
 
-viewArea : Arguments data -> Config data -> List (DataPoint data) -> () -> Svg.Svg msg
-viewArea { system, lineLook, interpolation, area, id } lineConfig dataPoints () =
+viewArea : Arguments data -> Config data -> List Path.Command -> List (DataPoint data) -> Svg.Svg msg
+viewArea { system, lineLook, area, id } lineConfig interpolation dataPoints =
   let
-    interpolationCommands =
-      Interpolation.toCommands interpolation (List.map .point dataPoints)
-
-    commands =
-      case dataPoints of
-        first :: rest ->
-          [ Path.Move (Point first.point.x (Utils.towardsZero system.y))
-          , Path.Line first.point
-          ]
-          ++ interpolationCommands ++
-          [ Path.Line (Point (getLastX first rest) (Utils.towardsZero system.y)) ]
-
-        [] ->
-          []
-
-    getLastX first rest =
-      Maybe.withDefault first (Utils.last rest) |> .point |> .x
+    ground dataPoint =
+      Point dataPoint.point.x (Utils.towardsZero system.y)
 
     attributes =
-      toAreaAttributes lineLook lineConfig area dataPoints ++
-        [ Attributes.clipPath <| "url(#" ++ Utils.toChartAreaId id ++ ")" ]
+      Junk.withinChartArea system :: toAreaAttributes lineLook lineConfig area dataPoints
   in
-  Path.view system attributes commands
+  Utils.viewWithEdges dataPoints <| \first rest last ->
+    Path.view system attributes <|
+      [ Path.Move (ground first), Path.Line first.point ]
+      ++ interpolation ++
+      [ Path.Line (ground last) ]
 
 
 toAreaAttributes : Look data -> Config data -> Area.Area -> List (DataPoint data) -> List (Svg.Attribute msg)

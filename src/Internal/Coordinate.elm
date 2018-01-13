@@ -59,6 +59,11 @@ type alias Point =
   }
 
 
+{-| -}
+type alias Data data =
+  List (Maybe (DataPoint data))
+
+
 
 -- HELPERS
 
@@ -152,3 +157,10 @@ largestRange data range =
   { min = Basics.max data.min range.min
   , max = Basics.min data.max range.max
   }
+
+
+{-| -}
+isWithinRange : System -> Point -> Bool
+isWithinRange system point =
+  clamp system.x.min system.x.max point.x == point.x &&
+  clamp system.y.min system.y.max point.y == point.y

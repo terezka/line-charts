@@ -49,7 +49,7 @@ import Internal.Coordinate as Coordinate
 -}
 type alias Dimension data msg =
   { title : Title.Title msg
-  , variable : data -> Float
+  , variable : data -> Maybe Float
   , pixels : Int
   , range : Range.Range
   , axis : Axis.Axis data msg
@@ -80,7 +80,7 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 default : Int -> String -> (data -> Float) -> Dimension data msg
 default pixels title variable =
   { title = Title.default title
-  , variable = variable
+  , variable = Just << variable
   , pixels = pixels
   , range = Range.default
   , axis =
