@@ -168,11 +168,28 @@ view arguments (Line lineConfig) dataPoints =
         , shape = lineConfig.shape
         , color = lineConfig.color
         }
+
+    toParts points current parts =
+      case points of
+        Just point :: rest -> toParts rest (point :: current) parts
+        Nothing :: rest    -> toParts rest [] (current :: parts)
+        []                 -> current :: parts
+
+    parts =
+      toParts dataPoints [] []
+
+    commands =
+      Interpolation.toCommands arguments.interpolation <|
+        List.map (List.map .point) parts
+
+    viewAreaParts () =
+      Svg.g [ Attributes.class "chart__area-parts" ] <|
+        List.map2 (viewArea arguments lineConfig dataPoints) commands parts
   in
   Svg.g [ Attributes.class "chart__line" ]
-    [ Utils.viewIf hasArea (viewArea arguments lineConfig dataPoints)
-    , Svg.g [ Attributes.class "chart__parts" ] <|
-        viewLine arguments lineConfig dataPoints
+    [ Utils.viewIf hasArea viewAreaParts
+    , Svg.g [ Attributes.class "chart__line-parts" ] <|
+        List.map2 (viewLine arguments lineConfig dataPoints) commands parts
     , Svg.g [ Attributes.class "chart__dots" ] <|
         List.map viewDot dataPointsWithinRange
     ]
@@ -182,40 +199,19 @@ view arguments (Line lineConfig) dataPoints =
 -- VIEW / LINE
 
 
-viewLine : Arguments data -> Config data -> Data data -> List (Svg.Svg msg)
-viewLine { system, lineLook, interpolation, id } lineConfig dataPoints =
+viewLine : Arguments data -> Config data -> Data data -> List Path.Command -> List (DataPoint data) -> Svg.Svg msg
+viewLine { system, lineLook, interpolation, id } lineConfig data commands dataPoints =
   let
-    commands =
-      Interpolation.toCommands interpolation (List.map .point <| List.filterMap identity dataPoints)
-
-    toParts point ( current, parts ) =
-      case point of
-        Just point -> ( point :: current, parts )
-        Nothing -> ( [], current :: parts )
-
-    parts =
-      List.foldr toParts ( [], [] ) dataPoints
-        |> \(c, p) -> c :: p
-
-    interpolate data number length =
-      case data of
-        first :: rest ->
-          Path.Move first.point :: (List.drop number commands |> List.take (length - 1))
-
-        [] ->
-          []
-
     lineAttributes =
-      toLineAttributes lineLook lineConfig dataPoints ++
+      toLineAttributes lineLook lineConfig data ++
         [ Junk.withinChartArea system ]
-
-    view data ( svgs, number ) =
-      ( Path.view system lineAttributes (interpolate data number (List.length data)) :: svgs
-      , number + List.length data
-      )
   in
-  List.foldl view ( [], 0 ) parts
-    |> Tuple.first
+  case dataPoints of
+    first :: rest ->
+      Path.view system lineAttributes (Path.Move first.point :: commands)
+
+    [] ->
+      Path.view system lineAttributes []
 
 
 toLineAttributes : Look data -> Config data -> Data data -> List (Svg.Attribute msg)
@@ -242,40 +238,27 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
 -- VIEW / AREA
 
 
-viewArea : Arguments data -> Config data -> Data data -> () -> Svg.Svg msg
-viewArea { system, lineLook, interpolation, area, id } lineConfig dataPoints () =
+viewArea : Arguments data -> Config data -> Data data -> List Path.Command -> List (DataPoint data) -> Svg.Svg msg
+viewArea { system, lineLook, interpolation, area, id } lineConfig data commands dataPoints =
   let
-    toParts point ( current, parts ) =
-      case point of
-        Just point -> ( point :: current, parts )
-        Nothing -> ( [], current :: parts )
-
-    parts =
-      List.foldr toParts ( [], [] ) dataPoints |> \(c, p) -> c :: p
-
-    interpolate data =
-      case data of
-        first :: rest ->
-          [ Path.Move (Point first.point.x (Utils.towardsZero system.y))
-          , Path.Line first.point
-          ]
-          ++ Interpolation.toCommands interpolation (List.map .point data) ++
-          [ Path.Line (Point (getLastX first rest) (Utils.towardsZero system.y)) ]
-
-        _ ->
-          []
-
-    commands =
-      List.concatMap interpolate parts
-
     getLastX first rest =
       Maybe.withDefault first (Utils.last rest) |> .point |> .x
 
     attributes =
-      toAreaAttributes lineLook lineConfig area dataPoints ++
+      toAreaAttributes lineLook lineConfig area data ++
         [ Attributes.clipPath <| "url(#" ++ Utils.toChartAreaId id ++ ")" ]
   in
-  Path.view system attributes commands
+  case dataPoints of
+    first :: rest ->
+      Path.view system attributes <|
+        [ Path.Move (Point first.point.x (Utils.towardsZero system.y))
+        , Path.Line first.point
+        ]
+        ++ commands ++
+        [ Path.Line (Point (getLastX first rest) (Utils.towardsZero system.y)) ]
+
+    [] ->
+      Path.view system attributes []
 
 
 toAreaAttributes : Look data -> Config data -> Area.Area -> Data data -> List (Svg.Attribute msg)

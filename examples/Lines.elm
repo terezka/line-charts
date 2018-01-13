@@ -37,12 +37,12 @@ main =
     , y = Dimension.default 650 "title" .heartattacks
     , intersection = Intersection.default
     , junk = Junk.none
-    , interpolation = Lines.monotone
+    , interpolation = Lines.linear
     , legends = Legends.default
     , line = Line.default
     , dot = Dot.default
     , grid = Grid.lines 1 Color.grayLight
-    , area = Area.none
+    , area = Area.normal 0.5
     , id = "chart"
     }
     [ Lines.line Color.pink Dot.circle "1" data1
