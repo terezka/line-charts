@@ -15,7 +15,8 @@ import Svg.Attributes as Attributes
 import Lines.Color as Color
 import Lines.Junk as Junk
 import Internal.Area as Area
-import Internal.Coordinate as Coordinate exposing (DataPoint, Data, Point)
+import Internal.Coordinate as Coordinate
+import Internal.Data as Data
 import Internal.Dot as Dot
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
@@ -143,7 +144,7 @@ type alias Arguments data =
 
 
 {-| -}
-view : Arguments data -> List (Line data) -> List (Data data) -> Svg.Svg msg
+view : Arguments data -> List (Line data) -> List (List (Data.Data data)) -> Svg.Svg msg
 view arguments lines datas =
   let
     container =
@@ -180,17 +181,17 @@ viewStacked area ( areas, lines, dots ) =
   ]
 
 
-viewSingle : Arguments data -> Line data -> Data data -> ( Svg.Svg msg, Svg.Svg msg, Svg.Svg msg )
+viewSingle : Arguments data -> Line data -> List (Data.Data data) -> ( Svg.Svg msg, Svg.Svg msg, Svg.Svg msg )
 viewSingle ({ system } as arguments) (Line lineConfig) dataPoints =
   let
     parts =
-      Utils.part dataPoints [] []
+      Utils.part .isReal dataPoints [] []
 
     -- Dots
     viewDots =
       parts
         |> List.concat
-        |> List.filter (Coordinate.isWithinRange system << .point)
+        |> List.filter (Data.isWithinRange system << .point)
         |> List.map viewDot
         |> Svg.g [ Attributes.class "chart__dots" ]
 
@@ -227,7 +228,7 @@ viewSingle ({ system } as arguments) (Line lineConfig) dataPoints =
 -- VIEW / LINE
 
 
-viewLine : Arguments data -> Config data -> List Path.Command -> List (DataPoint data) -> Svg.Svg msg
+viewLine : Arguments data -> Config data -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
 viewLine { system, lineLook, id } lineConfig interpolation dataPoints =
   let
     lineAttributes =
@@ -238,7 +239,7 @@ viewLine { system, lineLook, id } lineConfig interpolation dataPoints =
       Path.Move first.point :: interpolation
 
 
-toLineAttributes : Look data -> Config data -> List (DataPoint data) -> List (Svg.Attribute msg)
+toLineAttributes : Look data -> Config data -> List (Data.Data data) -> List (Svg.Attribute msg)
 toLineAttributes (Look look) { color, dashing } dataPoints =
   let
     isEmphasized =
@@ -262,11 +263,11 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
 -- VIEW / AREA
 
 
-viewArea : Arguments data -> Config data -> List Path.Command -> List (DataPoint data) -> Svg.Svg msg
+viewArea : Arguments data -> Config data -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
 viewArea { system, lineLook, area, id } lineConfig interpolation dataPoints =
   let
     ground dataPoint =
-      Point dataPoint.point.x (Utils.towardsZero system.y)
+      Data.Point dataPoint.point.x (Utils.towardsZero system.y)
 
     attributes =
       Junk.withinChartArea system
@@ -280,7 +281,7 @@ viewArea { system, lineLook, area, id } lineConfig interpolation dataPoints =
       [ Path.Line (ground last) ]
 
 
-toAreaAttributes : Look data -> Config data -> Area.Area -> List (DataPoint data) -> List (Svg.Attribute msg)
+toAreaAttributes : Look data -> Config data -> Area.Area -> List (Data.Data data) -> List (Svg.Attribute msg)
 toAreaAttributes (Look look) { color } area dataPoints =
   let
     isEmphasized =

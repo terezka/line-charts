@@ -13,7 +13,7 @@ import DOM
 import Svg
 import Svg.Events
 import Lines.Coordinate as Coordinate exposing (..)
-import Internal.Coordinate exposing (DataPoint)
+import Internal.Data as Data
 import Internal.Utils exposing (withFirst)
 import Json.Decode as Json
 
@@ -63,7 +63,7 @@ custom =
 
 {-| -}
 type Event data msg =
-  Event (List (DataPoint data) -> System -> Svg.Attribute msg)
+  Event (List (Data.Data data) -> System -> Svg.Attribute msg)
 
 
 {-| -}
@@ -109,7 +109,7 @@ on event f handler =
 
 
 {-| -}
-toAttributes : List (DataPoint data) -> System -> Events data msg -> List (Svg.Attribute msg)
+toAttributes : List (Data.Data data) -> System -> Events data msg -> List (Svg.Attribute msg)
 toAttributes dataPoints system (Events events) =
     List.map (\(Event event) -> event dataPoints system) events
 
@@ -119,7 +119,7 @@ toAttributes dataPoints system (Events events) =
 
 
 {-| -}
-decoder : List (DataPoint data) -> System -> Handler data msg -> Json.Decoder msg
+decoder : List (Data.Data data) -> System -> Handler data msg -> Json.Decoder msg
 decoder points system handler =
   Json.map6
     toCoordinate
@@ -139,13 +139,13 @@ position =
     ]
 
 
-toCoordinate : List (DataPoint data) -> System -> Handler data msg -> Float -> Float -> DOM.Rectangle -> msg
+toCoordinate : List (Data.Data data) -> System -> Handler data msg -> Float -> Float -> DOM.Rectangle -> msg
 toCoordinate points system handler mouseX mouseY { left, top } =
   Point (mouseX - left) (mouseY - top)
     |> applyHandler handler points system
 
 
-applyHandler : Handler data msg -> List (DataPoint data) -> System -> Point -> msg
+applyHandler : Handler data msg -> List (Data.Data data) -> System -> Point -> msg
 applyHandler (Handler handler) dataPoints system coordinate =
   handler dataPoints system coordinate
 
@@ -156,7 +156,7 @@ applyHandler (Handler handler) dataPoints system coordinate =
 
 {-| -}
 type Handler data msg =
-  Handler (List (DataPoint data) -> System -> Point -> msg)
+  Handler (List (Data.Data data) -> System -> Point -> msg)
 
 
 {-| -}
@@ -258,7 +258,7 @@ map3 f (Handler a) (Handler b) (Handler c) =
 -- HELPERS
 
 
-getNearestHelp : List (DataPoint data) -> System -> Point -> Maybe (DataPoint data)
+getNearestHelp : List (Data.Data data) -> System -> Point -> Maybe (Data.Data data)
 getNearestHelp points system searched =
   let
       distance_ =
@@ -269,10 +269,10 @@ getNearestHelp points system searched =
             then closest
             else point
   in
-  withFirst points (List.foldl getClosest)
+  withFirst (List.filter .isReal points) (List.foldl getClosest)
 
 
-getNearestXHelp : List (DataPoint data) -> System -> Point -> List (DataPoint data)
+getNearestXHelp : List (Data.Data data) -> System -> Point -> List (Data.Data data)
 getNearestXHelp points system searched =
   let
       distanceX_ =

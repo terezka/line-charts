@@ -6,11 +6,12 @@ module Internal.Axis.Intersection exposing
   )
 
 import Internal.Coordinate as Coordinate
+import Internal.Data as Data
 
 
 {-| -}
 type Intersection =
-  Intersection (Coordinate.System -> Coordinate.Point)
+  Intersection (Coordinate.System -> Data.Point)
 
 
 {-| -}
@@ -29,7 +30,7 @@ at x y =
 custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Intersection
 custom toX toY =
   Intersection <| \{ x, y } ->
-    Coordinate.Point (toX x) (toY y)
+    Data.Point (toX x) (toY y)
 
 
 

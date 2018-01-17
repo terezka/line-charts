@@ -33,6 +33,7 @@ import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Range as Range
 import Internal.Coordinate as Coordinate
 import Internal.Dot as Dot
+import Internal.Data as Data
 import Internal.Grid as Grid
 import Internal.Events as Events
 import Internal.Interpolation as Interpolation
@@ -443,7 +444,8 @@ viewCustom config lines =
   let
     -- Data points
     dataPoints = toDataPoints config lines
-    safeDataPoints = List.filterMap identity <| List.concat dataPoints
+    dataPointsAll = List.concat dataPoints
+    safeDataPoints = List.filter .isReal dataPointsAll
 
     -- System
     system =
@@ -465,7 +467,7 @@ viewCustom config lines =
     attributes =
       List.concat
         [ config.attributes
-        , Events.toAttributes safeDataPoints system config.events
+        , Events.toAttributes dataPointsAll system config.events
         , [ Attributes.width <| toString system.frame.size.width
           , Attributes.height <| toString system.frame.size.height
           ]
@@ -521,20 +523,21 @@ chartArea { id } system =
     ]
 
 
-toDataPoints : Config data msg -> List (Line data) -> List (Coordinate.Data data)
+toDataPoints : Config data msg -> List (Line data) -> List (List (Data.Data data))
 toDataPoints config lines =
   let
     x = config.x.variable
     y = config.y.variable
 
     dataPoints =
-      List.map (Line.lineConfig >> .data >> List.map maybeDataPoint) lines
+      List.map (Line.lineConfig >> .data >> List.filterMap dataPoint) lines
 
-    maybeDataPoint datum =
-      Maybe.map2 (dataPoint datum) (x datum) (y datum)
-
-    dataPoint datum x y =
-      Coordinate.DataPoint datum (Coordinate.Point x y)
+    dataPoint datum =
+      case ( x datum, y datum ) of
+        ( Just x, Just y )   -> Just <| Data.Data datum (Data.Point x y) True
+        ( Just x, Nothing )  -> Just <| Data.Data datum (Data.Point x 0) False
+        ( Nothing, Just y )  -> Nothing -- TODO not allowed
+        ( Nothing, Nothing ) -> Nothing
   in
   case config.area of
     Area.None         -> dataPoints
@@ -543,50 +546,44 @@ toDataPoints config lines =
     Area.Percentage _ -> normalize (stack dataPoints)
 
 
-stack : List (Coordinate.Data data) -> List (Coordinate.Data data)
+stack : List (List (Data.Data data)) -> List (List (Data.Data data))
 stack dataset =
   let
     stackBelows dataset result =
       case dataset of
         data :: belows ->
           stackBelows belows <|
-            List.foldl (List.map2 addSafe) data belows :: result
+            List.foldl (List.map2 add) data belows :: result
 
         [] ->
           result
 
-    addSafe datum datumBelow =
-      Maybe.map2 add datum datumBelow
-
     add datum datumBelow =
-      setY datum <| datum.point.y + datumBelow.point.y
+      setY datum (datum.point.y + datumBelow.point.y)
   in
   List.reverse (stackBelows dataset [])
 
 
-normalize : List (Coordinate.Data data) -> List (Coordinate.Data data)
+normalize : List (List (Data.Data data)) -> List (List (Data.Data data))
 normalize dataset =
   case dataset of
     highest :: belows ->
       let
-        toPercentageSafe datum datumBelow =
-          Maybe.map2 toPercentage datum datumBelow
-
         toPercentage highest datum =
           setY datum (100 * datum.point.y / highest.point.y)
       in
-      List.map (List.map2 toPercentageSafe highest) (highest :: belows)
+      List.map (List.map2 toPercentage highest) (highest :: belows)
 
     [] ->
       dataset
 
 
-setY : Coordinate.DataPoint data -> Float -> Coordinate.DataPoint data
+setY : Data.Data data -> Float -> Data.Data data
 setY datum y =
-  Coordinate.DataPoint datum.data (Coordinate.Point datum.point.x y)
+  Data.Data datum.data (Data.Point datum.point.x y) datum.isReal
 
 
-toSystem : Config data msg -> List (Coordinate.DataPoint data) -> Coordinate.System
+toSystem : Config data msg -> List (Data.Data data) -> Coordinate.System
 toSystem config data =
   let
     hasArea = Area.hasArea config.area

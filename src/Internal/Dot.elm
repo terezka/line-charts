@@ -12,8 +12,7 @@ import Svg exposing (Svg)
 import Lines.Color as Color
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate exposing (..)
-import Internal.Coordinate exposing (DataPoint)
-
+import Internal.Data as Data
 
 
 {-| -}
@@ -136,7 +135,7 @@ type alias Arguments data =
 
 
 {-| -}
-view : Arguments data -> DataPoint data -> Svg msg
+view : Arguments data -> Data.Data data -> Svg msg
 view { system, dotLook, shape, color } dataPoint =
   let
     (Look config) =
@@ -147,7 +146,7 @@ view { system, dotLook, shape, color } dataPoint =
         then config.emphasized
         else config.normal
   in
-  viewShape system style shape color dataPoint.point
+  viewShape system style shape color dataPoint.point -- TODO filter for isFake
 
 
 {-| -}

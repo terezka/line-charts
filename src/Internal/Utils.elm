@@ -132,9 +132,14 @@ magnitude num =
 
 
 {-| -}
-part : List (Maybe a) -> List a -> List (List a) -> List (List a)
-part points current parts =
+part : (a -> Bool) -> List a -> List a -> List (List a) -> List (List a)
+part isReal points current parts =
   case points of
-    Just point :: rest -> part rest (point :: current) parts
-    Nothing :: rest    -> part rest [] (current :: parts)
-    []                 -> current :: parts
+    first :: rest ->
+      if isReal first then
+        part isReal rest (first :: current) parts
+      else
+        part isReal rest [] (current :: parts)
+
+    [] ->
+      current :: parts
