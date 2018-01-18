@@ -2,7 +2,7 @@ module Lines.Legends exposing
   ( none, default
   , Legends, Legend
   , byEnding, byBeginning
-  , bucketed, bucketedCustom
+  , grouped, groupedCustom
   )
 
 {-|
@@ -13,13 +13,13 @@ module Lines.Legends exposing
 # Customizations
 @docs Legends
 
+## Grouped legends
+The ones gathered in one spot.
+@docs grouped, groupedCustom, Legend
+
 ## Free legends
 The ones hanging by the line.
 @docs byEnding, byBeginning
-
-## Bucketed legends
-The ones gathered in one spot.
-@docs bucketed, bucketedCustom, Legend
 
 -}
 
@@ -99,14 +99,14 @@ the respective axes.
     chartConfig : Lines.Config data msg
     chartConfig =
       { ...
-      , legends = Legends.bucketed .max .min -- Bottom right corner
+      , legends = Legends.grouped .max .min -- Bottom right corner
       , ...
       }
 
 -}
-bucketed : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends msg
-bucketed =
-  Legends.bucketed
+grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends msg
+grouped =
+  Legends.grouped
 
 
 {-| Everything you need to view a legend. A sample of your line as well your
@@ -118,7 +118,7 @@ type alias Legend msg =
   }
 
 
-{-| Customize your own bucketed legends. The first argument is the width of the
+{-| Customize your own grouped legends. The first argument is the width of the
 samples you'd like from your lines (the little snippet of your line) and the
 second is a fuction which gives you the `Coordinate.System` as well as a list
 of your lines samples and labels (`List (Legend msg)`), so that you can put it
@@ -126,7 +126,7 @@ in a SVG container of your liking.
 
     legends : Legends msg
     legends =
-      Legends.bucketedCustom 10 <| \system legends ->
+      Legends.groupedCustom 10 <| \system legends ->
         Svg.g
           [ Junk.transform [ Junk.move system 100 120 ] ]
           (List.indexedMap viewLegend legends)
@@ -142,6 +142,6 @@ in a SVG container of your liking.
         ]
 
 -}
-bucketedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Legends msg
-bucketedCustom =
-  Legends.bucketedCustom
+groupedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Legends msg
+groupedCustom =
+  Legends.groupedCustom

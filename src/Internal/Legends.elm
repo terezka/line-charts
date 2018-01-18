@@ -1,7 +1,7 @@
 module Internal.Legends exposing
   ( Legends, default, none
   , byEnding, byBeginning
-  , bucketed, bucketedCustom
+  , grouped, groupedCustom
   -- INTERNAL
   , view
   )
@@ -30,7 +30,7 @@ import Lines.Junk as Junk
 type Legends msg
   = None
   | Free Placement (String -> Svg msg)
-  | Bucketed Float (Coordinate.System -> List (Legend msg) -> Svg msg)
+  | Grouped Float (Coordinate.System -> List (Legend msg) -> Svg msg)
 
 
 {-| -}
@@ -54,7 +54,7 @@ type alias Legend msg =
 {-| -}
 default : Legends msg
 default =
-  bucketed .max .max
+  grouped .max .max
 
 
 {-| -}
@@ -76,15 +76,15 @@ byBeginning =
 
 
 {-| -}
-bucketed : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends msg
-bucketed toX toY =
-  Bucketed 30 (defaultLegends toX toY)
+grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends msg
+grouped toX toY =
+  Grouped 30 (defaultLegends toX toY)
 
 
 {-| -}
-bucketedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Legends msg
-bucketedCustom =
-  Bucketed
+groupedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Legends msg
+groupedCustom =
+  Grouped
 
 
 
@@ -110,8 +110,8 @@ view arguments =
     Free placement view ->
       viewFrees arguments placement view
 
-    Bucketed sampleWidth container ->
-      viewBucketed arguments sampleWidth container
+    Grouped sampleWidth container ->
+      viewGrouped arguments sampleWidth container
 
     None ->
       Svg.text ""
@@ -153,8 +153,8 @@ viewFree system placement viewLabel line dataPoints =
 -- VIEW / BUCKETED
 
 
-viewBucketed : Arguments data msg -> Float -> Container msg -> Svg.Svg msg
-viewBucketed arguments sampleWidth container =
+viewGrouped : Arguments data msg -> Float -> Container msg -> Svg.Svg msg
+viewGrouped arguments sampleWidth container =
   let
     toLegend lineConfig =
       { sample = viewSample arguments sampleWidth lineConfig
