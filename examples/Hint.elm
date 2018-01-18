@@ -45,6 +45,7 @@ initialModel =
 
 type Msg
     = Hover (List Info, Coordinate.Point)
+    | HoverSingle (Maybe Info)
 
 
 update : Msg -> Model -> Model
@@ -56,6 +57,9 @@ update msg model =
             , hoveringX = infos
             }
 
+        HoverSingle hovering ->
+          { model | hovering = hovering }
+
 
 
 -- VIEW
@@ -66,11 +70,7 @@ view model =
     Lines.viewCustom
       { margin = Coordinate.Margin 150 50 150 150
       , attributes = []
-      , events =
-          Events.custom
-            [ Events.onMouseMove Hover <|
-                Events.map2 (,) Events.getNearestX Events.getSVG
-            ]
+      , events = Events.hover HoverSingle
       , x = Dimension.time 750 "income" .income
       , y =
           { title = Title.default "age"
@@ -81,7 +81,8 @@ view model =
           }
       , intersection = Intersection.default
       , junk =
-          Maybe.map (junk model.hoveringX) model.point
+          Maybe.map junkSingle model.hovering
+          --Maybe.map2 (junk model.hoveringX) model.point model.hovering
             |> Maybe.withDefault Junk.none
       , interpolation = Lines.linear
       , legends = Legends.default
@@ -108,12 +109,22 @@ viewLegend index { sample, label } =
     ]
 
 
-junk : List Info -> Coordinate.Point -> Junk.Junk Msg
-junk hintx point =
+junkSingle : Info -> Junk.Junk Msg
+junkSingle hovering =
+    Junk.custom <| \system ->
+      { below = []
+      , above = [ tooltip system 0 hovering   ]
+      , html = []
+      }
+
+
+junk : List Info -> Coordinate.Point -> Info -> Junk.Junk Msg
+junk hintx point hovering =
     Junk.custom <| \system ->
       { below = []
       , above =
           [ Svg.g [] (List.indexedMap (tooltip system) hintx)
+          , tooltip system 0 hovering
           , Svg.circle
             [ SvgA.cx (toString point.x)
             , SvgA.cy (toString point.y)

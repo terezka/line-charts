@@ -39,7 +39,7 @@ none =
 hover : (Maybe data -> msg) -> Events data msg
 hover msg =
   custom
-    [ onMouseMove msg getNearest
+    [ onMouseMove msg (getWithin 30)
     , onMouseLeave (msg Nothing)
     ]
 
@@ -48,7 +48,7 @@ hover msg =
 click : (Maybe data -> msg) -> Events data msg
 click msg =
   custom
-    [ onClick msg getNearest ]
+    [ onClick msg (getWithin 30) ]
 
 
 {-| -}
