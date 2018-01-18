@@ -589,6 +589,7 @@ addBelows data belows =
     iterate first rest belows []
 
 
+-- TODO 
 normalize : List (List (Data.Data data)) -> List (List (Data.Data data))
 normalize dataset =
   case dataset of

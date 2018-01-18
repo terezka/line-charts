@@ -88,7 +88,7 @@ view model =
       , line = Line.default
       , dot = Dot.static (Dot.bordered 10 2)
       , grid = Grid.lines 1 Color.grayLight
-      , area = Area.stacked 0.5
+      , area = Area.percentage 0.5
       , id = "chart"
       }
       [ Lines.line Color.pink Dot.square "chuck" chuck
