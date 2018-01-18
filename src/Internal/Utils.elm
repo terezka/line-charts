@@ -39,32 +39,6 @@ unzip3 pairs =
   List.foldr step ([], [], []) pairs
 
 
-{-| -}
-stackBy : (a -> Float) -> (a -> a -> a) -> List a -> List a -> List a
-stackBy toNumber f data belows =
-  let
-    iterate xp data belows result =
-      case ( data, belows ) of
-        ( datum :: data, below :: belows ) ->
-          if toNumber datum > toNumber below
-            then iterate xp (datum :: data) belows (f below xp :: result)
-            else iterate datum data (below :: belows) result
-
-        ( [], below :: belows ) ->
-          if toNumber xp <= toNumber below
-            then iterate xp [] belows (f below xp :: result)
-            else iterate xp [] belows (below :: result)
-
-        ( datum :: data, [] ) ->
-          result
-
-        ( [], [] ) ->
-          result
-  in
-  List.reverse <| Maybe.withDefault [] <| withFirst data <| \x0 data ->
-    iterate x0 data belows []
-
-
 
 {-| -}
 viewIf : Bool -> (() -> Svg.Svg msg) -> Svg.Svg msg

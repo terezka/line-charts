@@ -553,18 +553,40 @@ stack dataset =
       case dataset of
         data :: belows ->
           stackBelows belows <|
-            List.foldl stackBy data belows :: result
+            List.foldl addBelows data belows :: result
 
         [] ->
           result
-
-    stackBy =
-      Utils.stackBy (.point >> .x) add
-
-    add datum datumBelow =
-      setY datum (datum.point.y + datumBelow.point.y)
   in
   List.reverse (stackBelows dataset [])
+
+
+addBelows : List (Data.Data data) -> List (Data.Data data) -> List (Data.Data data)
+addBelows data belows =
+  let
+    iterate prevD data belows result =
+      case ( data, belows ) of
+        ( datum :: data, below :: belows ) ->
+          if datum.point.x > below.point.x
+            then iterate prevD (datum :: data) belows (add below prevD :: result)
+            else iterate datum data (below :: belows) result
+
+        ( [], below :: belows ) ->
+          if prevD.point.x <= below.point.x
+            then iterate prevD [] belows (add below prevD :: result)
+            else iterate prevD [] belows (below :: result)
+
+        ( datum :: data, [] ) ->
+          result
+
+        ( [], [] ) ->
+          result
+
+    add below datum =
+      setY below (below.point.y + datum.point.y)
+  in
+  List.reverse <| Maybe.withDefault [] <| Utils.withFirst data <| \first rest ->
+    iterate first rest belows []
 
 
 normalize : List (List (Data.Data data)) -> List (List (Data.Data data))

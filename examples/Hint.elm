@@ -64,7 +64,7 @@ update msg model =
 view : Model -> Svg Msg
 view model =
     Lines.viewCustom
-      { margin = Coordinate.Margin 150 150 150 150
+      { margin = Coordinate.Margin 150 50 150 150
       , attributes = []
       , events =
           Events.custom
@@ -91,9 +91,9 @@ view model =
       , area = Area.stacked 0.5
       , id = "chart"
       }
-      [ Lines.line Color.blue Dot.circle "bob" bob
+      [ Lines.line Color.pink Dot.square "chuck" chuck
+      , Lines.line Color.blue Dot.circle "bob" bob
       , Lines.line Color.orange Dot.triangle "alice" alice
-      , Lines.line Color.pink Dot.square "chuck" chuck
       ]
 
 
@@ -157,19 +157,19 @@ alice : List Info
 alice =
   [ Info (Just 1) 1
   , Info (Just 2) 2
-  , Info (Nothing) 3
+  , Info (Just 3) 3
   , Info (Just 4) 4
-  , Info (Just 1) 5
+  , Info (Just 5) 5
   ]
 
 
 bob : List Info
 bob =
   [ Info (Just 1) 1
-  , Info (Just 3) 2
-  , Info (Just 4) 3
-  , Info (Just 3) 4
-  , Info (Just 2) 5
+  , Info (Just 1) 2.5
+  , Info (Just 1) 3
+  , Info (Just 1) 4
+  , Info (Just 1) 5
   ]
 
 
