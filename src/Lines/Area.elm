@@ -28,8 +28,8 @@ normal =
 {-| Stacks your values and colors the area in the line color. The color is
 always the color of your line, but you can pass the opacity.
 
-**Important: Right now, this only works if all your lines have the
-same set of x values!**
+**Warning: Right now, this only works if all your lines have the
+same set of x values! If not, the area will not add properly.**
 -}
 stacked : Float -> Area
 stacked =
@@ -40,8 +40,8 @@ stacked =
 are made into percentages. The color is always the color of your line, but
 you can pass the opacity.
 
-**Important: Right now, this only works if all your lines have the
-same set of x values!**
+**Warning: Right now, this only works if all your lines have the
+same set of x values! If not, the area will not add properly.**
 -}
 percentage : Float -> Area
 percentage =
