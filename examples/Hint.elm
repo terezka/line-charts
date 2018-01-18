@@ -88,7 +88,7 @@ view model =
       , line = Line.default
       , dot = Dot.static (Dot.bordered 10 2)
       , grid = Grid.lines 1 Color.grayLight
-      , area = Area.normal 0.5
+      , area = Area.stacked 0.5
       , id = "chart"
       }
       [ Lines.line Color.blue Dot.circle "bob" bob
@@ -133,7 +133,6 @@ tooltip system index hovered =
     [ Junk.transform [ Junk.offset 520 (100 + toFloat index * 40) ] ]
     [ Svg.text_ []
         [ dimension "age" hovered.age
-        , dimension "income" (Just hovered.income)
         ]
     ]
 
@@ -150,37 +149,39 @@ dimension label value =
 
 type alias Info =
   { age : Maybe Float
-  , weight : Float
-  , height : Float
   , income : Float
   }
 
 
 alice : List Info
 alice =
-  [ Info (Just -14) 24 0.94 0
-  , Info (Nothing)  75 1.73 25000
-  , Info (Just 30)  56 1.75 44000
-  , Info (Just 43)  83 1.75 48000
+  [ Info (Just 1) 1
+  , Info (Just 2) 2
+  , Info (Nothing) 3
+  , Info (Just 4) 4
+  , Info (Just 1) 5
   ]
 
 
 bob : List Info
 bob =
-  [ Info (Just -4) 22 1.01 0
-  , Info (Just 25) 75 1.87 25000
-  , Info (Just 32) 79 1.85 44000
-  , Info (Just 43) 77 1.87 48000
+  [ Info (Just 1) 1
+  , Info (Just 3) 2
+  , Info (Just 4) 3
+  , Info (Just 3) 4
+  , Info (Just 2) 5
   ]
 
 
 chuck : List Info
 chuck =
-  [ Info (Just 4 ) 21 0.98 0
-  , Info (Just 25) 89 1.83 25000
-  , Info (Just 33) 90 1.85 44000
-  , Info (Just 43) 95 1.84 48000
+  [ Info (Just 2) 1
+  , Info (Just 3) 2
+  , Info (Just 5) 3
+  , Info (Just 2) 4
+  , Info (Just 4) 5
   ]
+
 
 
 -- Boring stuff

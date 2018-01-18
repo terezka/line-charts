@@ -553,10 +553,13 @@ stack dataset =
       case dataset of
         data :: belows ->
           stackBelows belows <|
-            List.foldl (List.map2 add) data belows :: result
+            List.foldl stackBy data belows :: result
 
         [] ->
           result
+
+    stackBy =
+      Utils.stackBy (.point >> .x) add
 
     add datum datumBelow =
       setY datum (datum.point.y + datumBelow.point.y)
