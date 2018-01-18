@@ -514,7 +514,7 @@ chartArea : Config data msg -> Coordinate.System -> Svg.Svg msg
 chartArea { id } system =
   Svg.clipPath [ Attributes.id (Utils.toChartAreaId id) ]
     [ Svg.rect
-      [ Attributes.x <| toString system.frame.margin.right
+      [ Attributes.x <| toString system.frame.margin.left
       , Attributes.y <| toString system.frame.margin.top
       , Attributes.width <| toString (Coordinate.lengthX system)
       , Attributes.height <| toString (Coordinate.lengthY system)
