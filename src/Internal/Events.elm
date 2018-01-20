@@ -305,29 +305,29 @@ toCartesianSafe system point =
 
 {-| -}
 distanceX : System -> Point -> Point -> Float
-distanceX system position dot =
-    abs <| toSVGX system dot.x - toSVGX system position.x
+distanceX system searched dot =
+    abs <| toSVGX system dot.x - toSVGX system searched.x
 
 
 {-| -}
 distanceY : System -> Point -> Point -> Float
-distanceY system position dot =
-    abs <| toSVGY system dot.y - toSVGY system position.y
+distanceY system searched dot =
+    abs <| toSVGY system dot.y - toSVGY system searched.y
 
 
 {-| -}
 distance : System -> Point -> Point -> Float
-distance system position dot =
-    sqrt <| distanceX system position dot ^ 2 + distanceY system position dot ^ 2
+distance system searched dot =
+    Debug.log "here" <| sqrt <| distanceX system searched dot ^ 2 + distanceY system searched dot ^ 2
 
 
 {-| -}
 withinRadius : System -> Float -> Point -> Point -> Bool
-withinRadius system radius position dot =
-    distance system position dot <= radius
+withinRadius system radius searched dot =
+    distance system searched dot <= radius
 
 
 {-| -}
 withinRadiusX : System -> Float -> Point -> Point -> Bool
-withinRadiusX system radius position dot =
-    distanceX system position dot <= radius
+withinRadiusX system radius searched dot =
+    distanceX system searched dot <= radius
