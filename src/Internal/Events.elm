@@ -169,8 +169,8 @@ getSVG =
 {-| -}
 getData : Handler data Point
 getData =
-  Handler <| \points system searched ->
-    toCartesianSafe system searched
+  Handler <| \points system searchedSvg ->
+    Coordinate.toData system searchedSvg
 
 
 {-| -}
@@ -179,7 +179,7 @@ getNearest =
   Handler <| \points system searchedSvg ->
     let
       searched =
-        toCartesianSafe system searchedSvg
+        Coordinate.toData system searchedSvg
     in
     getNearestHelp points system searched
       |> Maybe.map .data
@@ -191,7 +191,7 @@ getWithin radius =
   Handler <| \points system searchedSvg ->
     let
         searched =
-          toCartesianSafe system searchedSvg
+          Coordinate.toData system searchedSvg
 
         keepIfEligible closest =
             if withinRadius system radius searched closest.point
@@ -208,7 +208,7 @@ getNearestX =
   Handler <| \points system searchedSvg ->
     let
       searched =
-        toCartesianSafe system searchedSvg
+        Coordinate.toData system searchedSvg
     in
     getNearestXHelp points system searched
       |> List.map .data
@@ -220,7 +220,7 @@ getWithinX radius =
   Handler <| \points system searchedSvg ->
     let
         searched =
-          toCartesianSafe system searchedSvg
+          Coordinate.toData system searchedSvg
 
         keepIfEligible =
             withinRadiusX system radius searched << .point
@@ -295,39 +295,26 @@ getNearestXHelp points system searched =
 -- COORDINATE HELPERS
 
 
-{-| -}
-toCartesianSafe : System -> Point -> Point
-toCartesianSafe system point =
-  { x = clamp system.x.min system.x.max <| Coordinate.toDataX system point.x
-  , y = clamp system.y.min system.y.max <| Coordinate.toDataY system point.y
-  }
-
-
-{-| -}
 distanceX : System -> Point -> Point -> Float
 distanceX system searched dot =
     abs <| toSVGX system dot.x - toSVGX system searched.x
 
 
-{-| -}
 distanceY : System -> Point -> Point -> Float
 distanceY system searched dot =
     abs <| toSVGY system dot.y - toSVGY system searched.y
 
 
-{-| -}
 distance : System -> Point -> Point -> Float
 distance system searched dot =
-    Debug.log "here" <| sqrt <| distanceX system searched dot ^ 2 + distanceY system searched dot ^ 2
+    sqrt <| distanceX system searched dot ^ 2 + distanceY system searched dot ^ 2
 
 
-{-| -}
 withinRadius : System -> Float -> Point -> Point -> Bool
 withinRadius system radius searched dot =
     distance system searched dot <= radius
 
 
-{-| -}
 withinRadiusX : System -> Float -> Point -> Point -> Bool
 withinRadiusX system radius searched dot =
     distanceX system searched dot <= radius

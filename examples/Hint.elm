@@ -76,7 +76,7 @@ view model =
           { title = Title.default "age"
           , variable = .age
           , pixels = 650
-          , range = Range.padded 0 20
+          , range = Range.padded 20 20
           , axis = Axis.float 5
           }
       , intersection = Intersection.default
@@ -89,7 +89,7 @@ view model =
       , line = Line.default
       , dot = Dot.static (Dot.bordered 10 2)
       , grid = Grid.lines 1 Color.grayLight
-      , area = Area.percentage 0.5
+      , area = Area.none
       , id = "chart"
       }
       [ Lines.line Color.pink Dot.square "chuck" chuck
@@ -166,9 +166,9 @@ type alias Info =
 
 alice : List Info
 alice =
-  [ Info (Just 1) 1
-  , Info (Just 2) 2
-  , Info (Just 3) 3
+  [ Info (Just -1) -1
+  , Info (Just -2) -2
+  , Info (Just -3) -3
   , Info (Just 4) 4
   , Info (Just 5) 5
   ]
@@ -176,9 +176,9 @@ alice =
 
 bob : List Info
 bob =
-  [ Info (Just 1) 1
-  , Info (Just 1) 2.5
-  , Info (Just 1) 3
+  [ Info (Just -1) -1
+  , Info (Just -1) -2.5
+  , Info (Just -1) -3
   , Info (Just 1) 4
   , Info (Just 1) 5
   ]
