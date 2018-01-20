@@ -1,7 +1,7 @@
 module Internal.Events exposing
     ( Events, default, none, hover, click, custom
     , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
-    , Handler, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
+    , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
     -- INTERNAL
     , toAttributes
@@ -66,26 +66,25 @@ type Event data msg =
   Event (List (Data.Data data) -> System -> Svg.Attribute msg)
 
 
-{-| -}
-onClick : (a -> msg) -> Handler data a -> Event data msg
+onClick : (a -> msg) -> Decoder data a -> Event data msg
 onClick =
   on "click"
 
 
 {-| -}
-onMouseMove : (a -> msg) -> Handler data a -> Event data msg
+onMouseMove : (a -> msg) -> Decoder data a -> Event data msg
 onMouseMove =
   on "mousemove"
 
 
 {-| -}
-onMouseDown : (a -> msg) -> Handler data a -> Event data msg
+onMouseDown : (a -> msg) -> Decoder data a -> Event data msg
 onMouseDown =
   on "mousedown"
 
 
 {-| -}
-onMouseUp : (a -> msg) -> Handler data a -> Event data msg
+onMouseUp : (a -> msg) -> Decoder data a -> Event data msg
 onMouseUp =
   on "mouseup"
 
@@ -98,10 +97,10 @@ onMouseLeave msg =
 
 
 {-| -}
-on : String -> (a -> msg) -> Handler data a -> Event data msg
-on event f handler =
-  Event <| \points system ->
-    Svg.Events.on event (decoder points system (map f handler))
+on : String -> (a -> msg) -> Decoder data a -> Event data msg
+on event toMsg decoder =
+  Event <| \data system ->
+    Svg.Events.on event (toJsonDecoder data system (map toMsg decoder))
 
 
 
@@ -110,44 +109,9 @@ on event f handler =
 
 {-| -}
 toAttributes : List (Data.Data data) -> System -> Events data msg -> List (Svg.Attribute msg)
-toAttributes dataPoints system (Events events) =
-    List.map (\(Event event) -> event dataPoints system) events
+toAttributes data system (Events events) =
+    List.map (\(Event event) -> event data system) events
 
-
-
--- DECODER
-
-
-{-| -}
-decoder : List (Data.Data data) -> System -> Handler data msg -> Json.Decoder msg
-decoder points system handler =
-  Json.map6
-    toCoordinate
-    (Json.succeed points)
-    (Json.succeed system)
-    (Json.succeed handler)
-    (Json.field "clientX" Json.float)
-    (Json.field "clientY" Json.float)
-    (DOM.target position)
-
-
-position : Json.Decoder DOM.Rectangle
-position =
-  Json.oneOf
-    [ DOM.boundingClientRect
-    , Json.lazy (\_ -> DOM.parentElement position)
-    ]
-
-
-toCoordinate : List (Data.Data data) -> System -> Handler data msg -> Float -> Float -> DOM.Rectangle -> msg
-toCoordinate points system handler mouseX mouseY { left, top } =
-  Point (mouseX - left) (mouseY - top)
-    |> applyHandler handler points system
-
-
-applyHandler : Handler data msg -> List (Data.Data data) -> System -> Point -> msg
-applyHandler (Handler handler) dataPoints system coordinate =
-  handler dataPoints system coordinate
 
 
 
@@ -155,28 +119,28 @@ applyHandler (Handler handler) dataPoints system coordinate =
 
 
 {-| -}
-type Handler data msg =
-  Handler (List (Data.Data data) -> System -> Point -> msg)
+type Decoder data msg =
+  Decoder (List (Data.Data data) -> System  -> Point -> msg)
 
 
 {-| -}
-getSVG : Handler data Point
+getSVG : Decoder data Point
 getSVG =
-  Handler <| \points system searched ->
+  Decoder <| \points system searched ->
     searched
 
 
 {-| -}
-getData : Handler data Point
+getData : Decoder data Point
 getData =
-  Handler <| \points system searchedSvg ->
+  Decoder <| \points system searchedSvg ->
     Coordinate.toData system searchedSvg
 
 
 {-| -}
-getNearest : Handler data (Maybe data)
+getNearest : Decoder data (Maybe data)
 getNearest =
-  Handler <| \points system searchedSvg ->
+  Decoder <| \points system searchedSvg ->
     let
       searched =
         Coordinate.toData system searchedSvg
@@ -185,27 +149,27 @@ getNearest =
       |> Maybe.map .data
 
 
-{-| -}
-getWithin : Float -> Handler data (Maybe data)
+{-| TODO get _nearest_ within? -}
+getWithin : Float -> Decoder data (Maybe data)
 getWithin radius =
-  Handler <| \points system searchedSvg ->
+  Decoder <| \points system searchedSvg ->
     let
-        searched =
-          Coordinate.toData system searchedSvg
+      searched =
+        Coordinate.toData system searchedSvg
 
-        keepIfEligible closest =
-            if withinRadius system radius searched closest.point
-              then Just closest.data
-              else Nothing
+      keepIfEligible closest =
+          if withinRadius system radius searched closest.point
+            then Just closest.data
+            else Nothing
     in
     getNearestHelp points system searched
       |> Maybe.andThen keepIfEligible
 
 
 {-| -}
-getNearestX : Handler data (List data)
+getNearestX : Decoder data (List data)
 getNearestX =
-  Handler <| \points system searchedSvg ->
+  Decoder <| \points system searchedSvg ->
     let
       searched =
         Coordinate.toData system searchedSvg
@@ -215,43 +179,41 @@ getNearestX =
 
 
 {-| -}
-getWithinX : Float -> Handler data (List data)
+getWithinX : Float -> Decoder data (List data)
 getWithinX radius =
-  Handler <| \points system searchedSvg ->
+  Decoder <| \points system searchedSvg ->
     let
-        searched =
-          Coordinate.toData system searchedSvg
+      searched =
+        Coordinate.toData system searchedSvg
 
-        keepIfEligible =
-            withinRadiusX system radius searched << .point
+      keepIfEligible =
+          withinRadiusX system radius searched << .point
     in
     getNearestXHelp points system searched
       |> List.filter keepIfEligible
       |> List.map .data
 
 
-{-| -}
-handler : (System -> Point -> a) -> Handler data a
-handler toHint =
-  Handler (\_ -> toHint)
+
+-- MAPS
 
 
 {-| -}
-map : (a -> msg) -> Handler data a -> Handler data msg
-map f (Handler a) =
-  Handler <| \ps s p -> f (a ps s p)
+map : (a -> msg) -> Decoder data a -> Decoder data msg
+map f (Decoder a) =
+  Decoder <| \ps s p -> f (a ps s p)
 
 
 {-| -}
-map2 : (a -> b -> msg) -> Handler data a -> Handler data b -> Handler data msg
-map2 f (Handler a) (Handler b) =
-  Handler <| \ps s p -> f (a ps s p) (b ps s p)
+map2 : (a -> b -> msg) -> Decoder data a -> Decoder data b -> Decoder data msg
+map2 f (Decoder a) (Decoder b) =
+  Decoder <| \ps s p -> f (a ps s p) (b ps s p)
 
 
 {-| -}
-map3 : (a -> b -> c -> msg) -> Handler data a -> Handler data b -> Handler data c -> Handler data msg
-map3 f (Handler a) (Handler b) (Handler c) =
-  Handler <| \ps s p -> f (a ps s p) (b ps s p) (c ps s p)
+map3 : (a -> b -> c -> msg) -> Decoder data a -> Decoder data b -> Decoder data c -> Decoder data msg
+map3 f (Decoder a) (Decoder b) (Decoder c) =
+  Decoder <| \ps s p -> f (a ps s p) (b ps s p) (c ps s p)
 
 
 
@@ -318,3 +280,28 @@ withinRadius system radius searched dot =
 withinRadiusX : System -> Float -> Point -> Point -> Bool
 withinRadiusX system radius searched dot =
     distanceX system searched dot <= radius
+
+
+
+-- DECODER
+
+
+{-| -}
+toJsonDecoder : List (Data.Data data) -> System -> Decoder data msg -> Json.Decoder msg
+toJsonDecoder data system (Decoder decoder) =
+  let
+    handle mouseX mouseY { left, top } =
+      decoder data system <| Point (mouseX - left) (mouseY - top)
+  in
+  Json.map3 handle
+    (Json.field "clientX" Json.float)
+    (Json.field "clientY" Json.float)
+    (DOM.target position)
+
+
+position : Json.Decoder DOM.Rectangle
+position =
+  Json.oneOf
+    [ DOM.boundingClientRect
+    , Json.lazy (\_ -> DOM.parentElement position)
+    ]

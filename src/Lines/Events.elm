@@ -1,7 +1,7 @@
 module Lines.Events exposing
   ( Events, default, none, hover, click, custom
   , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
-  , Handler, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
+  , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
   )
 
@@ -16,8 +16,8 @@ module Lines.Events exposing
 ## Events
 @docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
 
-## Handlers
-@docs Handler, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
+## Decoders
+@docs Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
 
 ### Maps
 
@@ -85,25 +85,25 @@ type alias Event data msg =
 
 
 {-| -}
-onClick : (a -> msg) -> Handler data a -> Event data msg
+onClick : (a -> msg) -> Decoder data a -> Event data msg
 onClick =
   Events.onClick
 
 
 {-| -}
-onMouseMove : (a -> msg) -> Handler data a -> Event data msg
+onMouseMove : (a -> msg) -> Decoder data a -> Event data msg
 onMouseMove =
   Events.onMouseMove
 
 
 {-| -}
-onMouseDown : (a -> msg) -> Handler data a -> Event data msg
+onMouseDown : (a -> msg) -> Decoder data a -> Event data msg
 onMouseDown =
   Events.onMouseDown
 
 
 {-| -}
-onMouseUp : (a -> msg) -> Handler data a -> Event data msg
+onMouseUp : (a -> msg) -> Decoder data a -> Event data msg
 onMouseUp =
   Events.onMouseUp
 
@@ -115,7 +115,7 @@ onMouseLeave =
 
 
 {-| -}
-on : String -> (a -> msg) -> Handler data a -> Event data msg
+on : String -> (a -> msg) -> Decoder data a -> Event data msg
 on =
   Events.on
 
@@ -132,20 +132,20 @@ This example gets you the nearest data coordinates to where you are hovering.
       Events.custom
         [ Events.onMouseMove Hover Events.getNearest ]
 -}
-type alias Handler data msg =
-  Events.Handler data msg
+type alias Decoder data msg =
+  Events.Decoder data msg
 
 
 {-| Get the SVG coordinates of the event.
 -}
-getSVG : Handler data Coordinate.Point
+getSVG : Decoder data Coordinate.Point
 getSVG =
   Events.getSVG
 
 
 {-| Get the data coordinates of the event.
 -}
-getData : Handler data Coordinate.Point
+getData : Decoder data Coordinate.Point
 getData =
   Events.getData
 
@@ -153,7 +153,7 @@ getData =
 {-| Get the data coordinates nearest to the event.
 Returns `Nothing` if you have no data showing.
 -}
-getNearest : Handler data (Maybe data)
+getNearest : Decoder data (Maybe data)
 getNearest =
   Events.getNearest
 
@@ -161,14 +161,14 @@ getNearest =
 {-| Get the data coordinates nearest of the event within the radius (in pixels)
 you provide in the first argument. Returns `Nothing` if you have no data showing.
 -}
-getWithin : Float -> Handler data (Maybe data)
+getWithin : Float -> Decoder data (Maybe data)
 getWithin =
   Events.getWithin
 
 
 {-| Get the data coordinates horizontally nearest to the event.
 -}
-getNearestX : Handler data (List data)
+getNearestX : Decoder data (List data)
 getNearestX =
   Events.getNearestX
 
@@ -176,7 +176,7 @@ getNearestX =
 {-| Finds the data coordinates horizontally nearest to the event, within the
 distance (in pixels) you provide in the first argument.
 -}
-getWithinX : Float -> Handler data (List data)
+getWithinX : Float -> Decoder data (List data)
 getWithinX =
   Events.getWithinX
 
@@ -186,18 +186,18 @@ getWithinX =
 
 
 {-| -}
-map : (a -> msg) -> Handler data a -> Handler data msg
+map : (a -> msg) -> Decoder data a -> Decoder data msg
 map =
   Events.map
 
 
 {-| -}
-map2 : (a -> b -> msg) -> Handler data a -> Handler data b -> Handler data msg
+map2 : (a -> b -> msg) -> Decoder data a -> Decoder data b -> Decoder data msg
 map2 =
   Events.map2
 
 
 {-| -}
-map3 : (a -> b -> c -> msg) -> Handler data a -> Handler data b -> Handler data c -> Handler data msg
+map3 : (a -> b -> c -> msg) -> Decoder data a -> Decoder data b -> Decoder data c -> Decoder data msg
 map3 =
   Events.map3
