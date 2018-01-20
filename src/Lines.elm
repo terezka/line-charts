@@ -38,8 +38,8 @@ import Internal.Grid as Grid
 import Internal.Events as Events
 import Internal.Interpolation as Interpolation
 import Internal.Junk
-import Internal.Legends as Legends
 import Internal.Line as Line
+import Internal.Legends as Legends
 import Internal.Utils as Utils
 
 -- TODO more default junk (hovers)
@@ -208,7 +208,7 @@ For now though, I'd recommend you stick to `view` and get your lines and
 data right first, and then stepping up the complexity.
 
  -}
-line : Color.Color -> Dot.Shape -> String -> List data -> Line data
+line : Float -> Color.Color -> Dot.Shape -> String -> List data -> Line data
 line =
   Line.line
 
@@ -242,7 +242,7 @@ Dashed lines are especially good for visualizing processed data like
 averages or predicted values.
 
 -}
-dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
+dash : Float -> Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
 dash =
   Line.dash
 
@@ -341,7 +341,6 @@ type alias Config data msg =
   , intersection : Intersection.Intersection
   , interpolation : Interpolation
   , area : Area.Area
-  , line : Line.Look data
   , dot : Dot.Look data
   , legends : Legends.Legends msg
   , attributes : List (Svg.Attribute msg)
@@ -474,7 +473,6 @@ viewCustom config lines =
       Line.view
         { system = system
         , dotLook = config.dot
-        , lineLook = config.line
         , interpolation = config.interpolation
         , area = config.area
         , id = config.id
@@ -484,7 +482,6 @@ viewCustom config lines =
       Legends.view
         { system = system
         , dotLook = config.dot
-        , lineLook = config.line
         , area = config.area
         , lines = lines
         , dataPoints = dataPoints
@@ -666,7 +663,6 @@ defaultConfig toX toY =
   , area = Area.none
   , intersection = Intersection.default
   , interpolation = linear
-  , line = Line.default
   , dot = Dot.default
   , legends = Legends.default
   , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
@@ -677,7 +673,7 @@ defaultConfig toX toY =
 
 defaultLines : List (List data) -> List (Line data)
 defaultLines =
-  List.map4 Line.line defaultColors defaultShapes defaultLabel
+  List.map4 (Line.line 1) defaultColors defaultShapes defaultLabel
 
 
 defaultColors : List Color.Color

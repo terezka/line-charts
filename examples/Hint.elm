@@ -8,7 +8,6 @@ import Lines.Dot as Dot
 import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
 import Lines.Legends as Legends
-import Lines.Line as Line
 import Lines.Events as Events
 import Lines.Grid as Grid
 import Lines.Dimension as Dimension
@@ -75,7 +74,7 @@ view model =
       { margin = Coordinate.Margin 150 50 150 150
       , attributes = []
       , events = Events.hoverX HoverX
-      , x = Dimension.time 750 "income" .income
+      , x = Dimension.default 750 "income" .income
       , y =
           { title = Title.default "age"
           , variable = .age
@@ -90,16 +89,31 @@ view model =
             --|> Maybe.withDefault Junk.none
       , interpolation = Lines.linear
       , legends = Legends.default
-      , line = Line.default
       , dot = Dot.static (Dot.bordered 10 2)
       , grid = Grid.lines 1 Color.grayLight
       , area = Area.none
       , id = "chart"
       }
-      [ Lines.line Color.pink Dot.square "chuck" chuck
-      , Lines.line Color.blue Dot.circle "bob" bob
-      , Lines.line Color.orange Dot.triangle "alice" alice
+      [ Lines.line (chuckWidth chuck model.hoveringX) (chuckColor chuck model.hoveringX) Dot.square "chuck" chuck
+      , Lines.line 1 Color.blue Dot.circle "bob" bob
+      , Lines.line 1 Color.orange Dot.triangle "alice" alice
       ]
+
+
+chuckColor : List Info -> List Info -> Color.Color
+chuckColor chuck hoveringX =
+  if List.any (\h -> List.member h chuck) hoveringX then
+    "purple"
+  else
+    Color.pink
+
+
+chuckWidth : List Info -> List Info -> Float
+chuckWidth chuck hoveringX =
+  if List.any (\h -> List.member h chuck) hoveringX then
+    3
+  else
+    1
 
 
 viewLegend : Int -> Legends.Legend msg -> Svg.Svg msg
@@ -116,8 +130,8 @@ viewLegend index { sample, label } =
 junkX : List Info -> Junk.Junk Msg
 junkX hovering =
   Junk.custom <| \system ->
-    { below = []
-    , above = List.map (\info -> Junk.vertical system [] info.income system.y.min system.y.max) hovering
+    { below = [] -- TODO add pointer-events
+    , above = List.map (\info -> Junk.vertical system [ SvgA.style "pointer-events: none" ] info.income system.y.min system.y.max) hovering
     , html = []
     }
 

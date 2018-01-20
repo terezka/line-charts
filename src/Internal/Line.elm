@@ -1,7 +1,5 @@
 module Internal.Line exposing
   ( Line(..), Config, lineConfig, line, dash
-  , Look, default, wider, static, emphasizable
-  , Style, style
   , view, viewSample
   )
 
@@ -31,7 +29,8 @@ type Line data =
 
 {-| -}
 type alias Config data =
-  { color : Color.Color
+  { width : Float
+  , color : Color.Color
   , shape : Dot.Shape
   , dashing : List Float
   , label : String
@@ -46,87 +45,15 @@ lineConfig (Line line) =
 
 
 {-| -}
-line : Color.Color -> Dot.Shape -> String -> List data -> Line data
-line color shape label data =
-  Line <| Config color shape [] label data
+line : Float -> Color.Color -> Dot.Shape -> String -> List data -> Line data
+line width color shape label data =
+  Line <| Config width color shape [] label data
 
 
 {-| -}
-dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
-dash color shape label dashing data =
-  Line <| Config color shape dashing label data
-
-
-
--- LOOK
-
-
-{-| -}
-type Look data =
-  Look
-    { normal : Style
-    , emphasized : Style
-    , isEmphasized : List data -> Bool
-    }
-
-
-{-| -}
-default : Look data
-default =
-  Look
-    { normal = style 1 identity
-    , emphasized = style 2 identity
-    , isEmphasized = always False
-    }
-
-
-{-| -}
-wider : Float -> Look data
-wider width =
-  Look
-    { normal = style width identity
-    , emphasized = style width identity
-    , isEmphasized = always False
-    }
-
-
-{-| -}
-static : Style -> Look data
-static normal =
-  Look
-    { normal = normal
-    , emphasized = normal
-    , isEmphasized = always False
-    }
-
-
-{-| -}
-emphasizable :
-  { normal : Style
-  , emphasized : Style
-  , isEmphasized : List data -> Bool
-  }
-  -> Look data
-emphasizable =
-  Look
-
-
-
--- STYLE
-
-
-{-| -}
-type Style =
-  Style
-    { width : Float
-    , color : Color.Color -> Color.Color
-    }
-
-
-{-| -}
-style : Float -> (Color.Color -> Color.Color) -> Style
-style width color =
-  Style { width = width, color = color }
+dash : Float -> Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
+dash width color shape label dashing data =
+  Line <| Config width color shape dashing label data
 
 
 
@@ -137,7 +64,6 @@ type alias Arguments data =
   { system : Coordinate.System
   , dotLook : Dot.Look data
   , interpolation : Interpolation.Interpolation
-  , lineLook : Look data
   , area : Area.Area
   , id : String
   }
@@ -229,31 +155,22 @@ viewSingle ({ system } as arguments) (Line lineConfig) dataPoints =
 
 
 viewLine : Arguments data -> Config data -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
-viewLine { system, lineLook, id } lineConfig interpolation dataPoints =
+viewLine { system, id } lineConfig interpolation dataPoints =
   let
     lineAttributes =
-      Junk.withinChartArea system :: toLineAttributes lineLook lineConfig dataPoints
+      Junk.withinChartArea system :: toLineAttributes lineConfig dataPoints
   in
   Utils.viewWithFirst dataPoints <| \first rest ->
     Path.view system lineAttributes <|
       Path.Move first.point :: interpolation
 
 
-toLineAttributes : Look data -> Config data -> List (Data.Data data) -> List (Svg.Attribute msg)
-toLineAttributes (Look look) { color, dashing } dataPoints =
-  let
-    isEmphasized =
-      look.isEmphasized (List.map .data dataPoints)
-
-    (Style style) =
-      if isEmphasized
-        then look.emphasized
-        else look.normal
-  in
+toLineAttributes : Config data -> List (Data.Data data) -> List (Svg.Attribute msg)
+toLineAttributes { color, width, dashing } dataPoints =
   [ Attributes.style "pointer-events: none;"
   , Attributes.class "chart__interpolation__line__fragment"
-  , Attributes.stroke (style.color color)
-  , Attributes.strokeWidth (toString style.width)
+  , Attributes.stroke color
+  , Attributes.strokeWidth (toString width)
   , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
   , Attributes.fill "transparent"
   ]
@@ -264,7 +181,7 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
 
 
 viewArea : Arguments data -> Config data -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
-viewArea { system, lineLook, area, id } lineConfig interpolation dataPoints =
+viewArea { system, area, id } lineConfig interpolation dataPoints =
   let
     ground dataPoint =
       Data.Point dataPoint.point.x (Utils.towardsZero system.y)
@@ -272,7 +189,7 @@ viewArea { system, lineLook, area, id } lineConfig interpolation dataPoints =
     attributes =
       Junk.withinChartArea system
         :: Attributes.fillOpacity (toString (Area.opacitySingle area))
-        :: toAreaAttributes lineLook lineConfig area dataPoints
+        :: toAreaAttributes lineConfig area dataPoints
   in
   Utils.viewWithEdges dataPoints <| \first rest last ->
     Path.view system attributes <|
@@ -281,19 +198,10 @@ viewArea { system, lineLook, area, id } lineConfig interpolation dataPoints =
       [ Path.Line (ground last) ]
 
 
-toAreaAttributes : Look data -> Config data -> Area.Area -> List (Data.Data data) -> List (Svg.Attribute msg)
-toAreaAttributes (Look look) { color } area dataPoints =
-  let
-    isEmphasized =
-      look.isEmphasized (List.map .data dataPoints)
-
-    (Style style) =
-      if isEmphasized
-        then look.emphasized
-        else look.normal
-  in
+toAreaAttributes : Config data -> Area.Area -> List (Data.Data data) -> List (Svg.Attribute msg)
+toAreaAttributes { color } area dataPoints =
   [ Attributes.class "chart__interpolation__area__fragment"
-  , Attributes.fill (style.color color)
+  , Attributes.fill color
   ]
 
 
@@ -302,11 +210,11 @@ toAreaAttributes (Look look) { color } area dataPoints =
 
 
 {-| -}
-viewSample : Look data -> Config data -> Area.Area -> Float -> Svg.Svg msg
-viewSample look lineConfig area sampleWidth =
+viewSample : Config data -> Area.Area -> Float -> Svg.Svg msg
+viewSample lineConfig area sampleWidth =
   let
     lineAttributes =
-      toLineAttributes look lineConfig []
+      toLineAttributes lineConfig []
 
     sizeAttributes =
       [ Attributes.x1 "0"
@@ -317,7 +225,7 @@ viewSample look lineConfig area sampleWidth =
 
     areaAttributes =
       Attributes.fillOpacity (toString (Area.opacity area))
-       :: toAreaAttributes look lineConfig area []
+       :: toAreaAttributes lineConfig area []
 
     rectangleAttributes =
       [ Attributes.x "0"
