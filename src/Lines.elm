@@ -498,9 +498,9 @@ viewCustom config lines =
   container <|
     Svg.svg attributes
       [ Svg.defs [] [ clipPath config system ]
-      , chartAreaPlatform config dataPointsAll system
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
       , viewLines lines dataPoints
+      , chartAreaPlatform config dataPointsAll system
       , Axis.viewHorizontal system config.intersection config.x.title config.x.axis
       , Axis.viewVertical   system config.intersection config.y.title config.y.axis
       , viewLegends
