@@ -42,12 +42,9 @@ import Internal.Legends as Legends
 import Internal.Line as Line
 import Internal.Utils as Utils
 
--- TODO broken data
--- TODO Should handlers be decoders?
 -- TODO more default junk (hovers)
 -- TODO move tick groups to axis
 -- TODO more default dimensions
--- TODO find broken data in events
 
 -- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
 -- TODO consider tick space tolerance as determinating factor of tick amount
@@ -481,7 +478,6 @@ viewCustom config lines =
         , interpolation = config.interpolation
         , area = config.area
         , id = config.id
-        -- , events = Events.toChartAttributes dataPointsAll system config.events
         }
 
     viewLegends =
