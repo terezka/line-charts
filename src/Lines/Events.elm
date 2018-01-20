@@ -1,6 +1,6 @@
 module Lines.Events exposing
   ( Events, default, none, hover, hoverX, click, custom
-  , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
+  , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
   , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
   )
@@ -14,7 +14,7 @@ module Lines.Events exposing
 @docs Events, hover, hoverX, click, custom
 
 ## Events
-@docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
+@docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
 
 ## Decoders
 @docs Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
@@ -32,6 +32,7 @@ module Lines.Events exposing
 
 -}
 
+import Html.Events
 import Internal.Events as Events
 import Lines.Coordinate as Coordinate
 
@@ -124,6 +125,12 @@ onMouseLeave =
 on : Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
 on =
   Events.on
+
+
+{-| -}
+onWithOptions : Html.Events.Options -> Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
+onWithOptions =
+  Events.onWithOptions
 
 
 

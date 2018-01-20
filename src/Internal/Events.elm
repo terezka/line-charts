@@ -1,6 +1,6 @@
 module Internal.Events exposing
     ( Events, default, none, hover, hoverX, click, custom
-    , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
+    , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
     , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
     -- INTERNAL
@@ -13,6 +13,7 @@ module Internal.Events exposing
 import DOM
 import Svg
 import Svg.Events
+import Html.Events
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
 import Internal.Utils exposing (withFirst)
@@ -111,6 +112,13 @@ on : Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
 on catchOutsideChart event toMsg decoder =
   Event catchOutsideChart <| \data system ->
     Svg.Events.on event (toJsonDecoder data system (map toMsg decoder))
+
+
+{-| -}
+onWithOptions : Html.Events.Options -> Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
+onWithOptions options catchOutsideChart event toMsg decoder =
+  Event catchOutsideChart <| \data system ->
+    Html.Events.onWithOptions event options (toJsonDecoder data system (map toMsg decoder))
 
 
 
