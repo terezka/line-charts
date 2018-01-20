@@ -467,7 +467,7 @@ viewCustom config lines =
     attributes =
       List.concat
         [ config.attributes
-        , Events.toAttributes dataPointsAll system config.events
+        , Events.toContainerAttributes dataPointsAll system config.events
         , [ Attributes.width <| toString system.frame.size.width
           , Attributes.height <| toString system.frame.size.height
           ]
@@ -481,6 +481,7 @@ viewCustom config lines =
         , interpolation = config.interpolation
         , area = config.area
         , id = config.id
+        -- , events = Events.toChartAttributes dataPointsAll system config.events
         }
 
     viewLegends =
@@ -496,7 +497,8 @@ viewCustom config lines =
   in
   container <|
     Svg.svg attributes
-      [ Svg.defs [] [ chartArea config system ]
+      [ Svg.defs [] [ clipPath config system ]
+      , chartAreaPlatform config dataPointsAll system
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
       , viewLines lines dataPoints
       , Axis.viewHorizontal system config.intersection config.x.title config.x.axis
@@ -510,17 +512,33 @@ viewCustom config lines =
 -- INTERNAL
 
 
-chartArea : Config data msg -> Coordinate.System -> Svg.Svg msg
-chartArea { id } system =
-  Svg.clipPath [ Attributes.id (Utils.toChartAreaId id) ]
-    [ Svg.rect
-      [ Attributes.x <| toString system.frame.margin.left
-      , Attributes.y <| toString system.frame.margin.top
-      , Attributes.width <| toString (Coordinate.lengthX system)
-      , Attributes.height <| toString (Coordinate.lengthY system)
-      ]
-      []
-    ]
+chartAreaAttributes : Coordinate.System -> List (Svg.Attribute msg)
+chartAreaAttributes system =
+  [ Attributes.x <| toString system.frame.margin.left
+  , Attributes.y <| toString system.frame.margin.top
+  , Attributes.width <| toString (Coordinate.lengthX system)
+  , Attributes.height <| toString (Coordinate.lengthY system)
+  ]
+
+
+chartAreaPlatform : Config data msg -> List (Data.Data data) -> Coordinate.System -> Svg.Svg msg
+chartAreaPlatform config data system =
+  let
+    attributes =
+      List.concat
+        [ [ Attributes.fill "transparent" ]
+        , chartAreaAttributes system
+        , Events.toChartAttributes data system config.events
+        ]
+  in
+  Svg.rect attributes []
+
+
+clipPath : Config data msg -> Coordinate.System ->  Svg.Svg msg
+clipPath { id } system =
+  Svg.clipPath
+    [ Attributes.id (Utils.toChartAreaId id) ]
+    [ Svg.rect (chartAreaAttributes system) [] ]
 
 
 toDataPoints : Config data msg -> List (Line data) -> List (List (Data.Data data))
@@ -589,7 +607,7 @@ addBelows data belows =
     iterate first rest belows []
 
 
--- TODO 
+-- TODO
 normalize : List (List (Data.Data data)) -> List (List (Data.Data data))
 normalize dataset =
   case dataset of

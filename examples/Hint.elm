@@ -45,6 +45,7 @@ initialModel =
 
 type Msg
     = Hover (List Info, Coordinate.Point)
+    | HoverX (List Info)
     | HoverSingle (Maybe Info)
 
 
@@ -56,6 +57,9 @@ update msg model =
             | point = Just point
             , hoveringX = infos
             }
+
+        HoverX infos ->
+          { model | hoveringX = infos }
 
         HoverSingle hovering ->
           { model | hovering = hovering }
@@ -70,7 +74,7 @@ view model =
     Lines.viewCustom
       { margin = Coordinate.Margin 150 50 150 150
       , attributes = []
-      , events = Events.hover HoverSingle
+      , events = Events.hoverX HoverX
       , x = Dimension.time 750 "income" .income
       , y =
           { title = Title.default "age"
@@ -80,10 +84,10 @@ view model =
           , axis = Axis.float 5
           }
       , intersection = Intersection.default
-      , junk =
-          Maybe.map junkSingle model.hovering
+      , junk = junkX model.hoveringX
+          --Maybe.map junkSingle model.hovering
           --Maybe.map2 (junk model.hoveringX) model.point model.hovering
-            |> Maybe.withDefault Junk.none
+            --|> Maybe.withDefault Junk.none
       , interpolation = Lines.linear
       , legends = Legends.default
       , line = Line.default
@@ -107,6 +111,15 @@ viewLegend index { sample, label } =
         [ Junk.transform [ Junk.offset 40 4 ] ]
         [ Junk.text Color.black label ]
     ]
+
+
+junkX : List Info -> Junk.Junk Msg
+junkX hovering =
+  Junk.custom <| \system ->
+    { below = []
+    , above = List.map (\info -> Junk.vertical system [] info.income system.y.min system.y.max) hovering
+    , html = []
+    }
 
 
 junkSingle : Info -> Junk.Junk Msg

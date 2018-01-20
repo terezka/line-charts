@@ -147,27 +147,13 @@ transform =
 -- COMMON
 
 
-{-| A grid line that takes up the full length of your vertical axis.
-
-    theJunk : Info -> Junk.Junk msg
-    theJunk info =
-      Junk.custom <| \system ->
-        { below = gridLines
-        , above = []
-        , html = []
-        }
-
-    gridLines : Coordinate.System -> List (Svg msg)
-    gridLines system =
-      List.map (Junk.vertical system []) (Axis.defaultInterval system.x)
--}
+{-| -}
 vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Svg.Svg msg
 vertical system attributes =
   Svg.vertical system (withinChartArea system :: attributes)
 
 
-{-| A grid line that takes up the full length of your horizontal axis.
--}
+{-| -}
 horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float ->  Float -> Svg.Svg msg
 horizontal system attributes =
   Svg.horizontal system (withinChartArea system :: attributes)

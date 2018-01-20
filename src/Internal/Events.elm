@@ -1,10 +1,11 @@
 module Internal.Events exposing
-    ( Events, default, none, hover, click, custom
+    ( Events, default, none, hover, hoverX, click, custom
     , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
     , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
     -- INTERNAL
-    , toAttributes
+    , toChartAttributes
+    , toContainerAttributes
     )
 
 {-| -}
@@ -45,6 +46,15 @@ hover msg =
 
 
 {-| -}
+hoverX : (List data -> msg) -> Events data msg
+hoverX msg =
+  custom
+    [ onMouseMove msg getNearestX
+    , onMouseLeave (msg [])
+    ]
+
+
+{-| -}
 click : (Maybe data -> msg) -> Events data msg
 click msg =
   custom
@@ -62,44 +72,44 @@ custom =
 
 
 {-| -}
-type Event data msg =
-  Event (List (Data.Data data) -> System -> Svg.Attribute msg)
+type Event data msg
+  = Event Bool (List (Data.Data data) -> System -> Svg.Attribute msg)
 
 
 onClick : (a -> msg) -> Decoder data a -> Event data msg
 onClick =
-  on "click"
+  on False "click"
 
 
 {-| -}
 onMouseMove : (a -> msg) -> Decoder data a -> Event data msg
 onMouseMove =
-  on "mousemove"
+  on False "mousemove"
 
 
 {-| -}
 onMouseDown : (a -> msg) -> Decoder data a -> Event data msg
 onMouseDown =
-  on "mousedown"
+  on False "mousedown"
 
 
 {-| -}
 onMouseUp : (a -> msg) -> Decoder data a -> Event data msg
 onMouseUp =
-  on "mouseup"
+  on False "mouseup"
 
 
 {-| -}
 onMouseLeave : msg -> Event data msg
 onMouseLeave msg =
-  Event <| \_ _ ->
+  Event False <| \_ _ ->
     Svg.Events.on "mouseleave" (Json.succeed msg)
 
 
 {-| -}
-on : String -> (a -> msg) -> Decoder data a -> Event data msg
-on event toMsg decoder =
-  Event <| \data system ->
+on : Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
+on catchOutsideChart event toMsg decoder =
+  Event catchOutsideChart <| \data system ->
     Svg.Events.on event (toJsonDecoder data system (map toMsg decoder))
 
 
@@ -108,10 +118,23 @@ on event toMsg decoder =
 
 
 {-| -}
-toAttributes : List (Data.Data data) -> System -> Events data msg -> List (Svg.Attribute msg)
-toAttributes data system (Events events) =
-    List.map (\(Event event) -> event data system) events
+toChartAttributes : List (Data.Data data) -> System -> Events data msg -> List (Svg.Attribute msg)
+toChartAttributes data system (Events events) =
+  let
+    order (Event outside event) =
+      if outside then Nothing else Just (event data system)
+  in
+  List.filterMap order events
 
+
+{-| -}
+toContainerAttributes : List (Data.Data data) -> System -> Events data msg -> List (Svg.Attribute msg)
+toContainerAttributes data system (Events events) =
+  let
+    order (Event outside event) =
+      if outside then Just (event data system) else Nothing
+  in
+  List.filterMap order events
 
 
 

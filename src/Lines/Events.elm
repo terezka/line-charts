@@ -1,5 +1,5 @@
 module Lines.Events exposing
-  ( Events, default, none, hover, click, custom
+  ( Events, default, none, hover, hoverX, click, custom
   , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
   , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
@@ -11,7 +11,7 @@ module Lines.Events exposing
 @docs default, none
 
 # Configurations
-@docs Events, hover, click, custom
+@docs Events, hover, hoverX, click, custom
 
 ## Events
 @docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on
@@ -61,6 +61,12 @@ none =
 hover : (Maybe data -> msg) -> Events.Events data msg
 hover =
   Events.hover
+
+
+{-| -}
+hoverX : (List data -> msg) -> Events.Events data msg
+hoverX =
+  Events.hoverX
 
 
 {-| -}
@@ -115,7 +121,7 @@ onMouseLeave =
 
 
 {-| -}
-on : String -> (a -> msg) -> Decoder data a -> Event data msg
+on : Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
 on =
   Events.on
 
