@@ -344,7 +344,7 @@ type alias Config data msg =
   , area : Area.Config
   , line : Line.Look data
   , dot : Dot.Look data
-  , legends : Legends.Legends data msg
+  , legends : Legends.Config data msg
   , attributes : List (Svg.Attribute msg)
   , events : Events.Events data msg
   , junk : Junk.Junk msg

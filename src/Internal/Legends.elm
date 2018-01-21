@@ -1,5 +1,5 @@
 module Internal.Legends exposing
-  ( Legends, default, none
+  ( Config, default, none
   , byEnding, byBeginning
   , grouped, groupedCustom
   , hover, hoverOne
@@ -25,7 +25,7 @@ import Internal.Svg as Svg
 
 
 {-| -}
-type Legends data msg
+type Config data msg
   = None
   | Free Placement (String -> Svg msg)
   | Grouped Float (Arguments data msg -> Container msg)
@@ -50,19 +50,19 @@ type alias Legend msg =
 
 
 {-| -}
-default : Legends data msg
+default : Config data msg
 default =
   hover []
 
 
 {-| -}
-hover : List data -> Legends data msg
+hover : List data -> Config data msg
 hover data =
   Grouped 30 (defaultLegends .max .max data)
 
 
 {-| -}
-hoverOne : Maybe data -> Legends data msg
+hoverOne : Maybe data -> Config data msg
 hoverOne maybeOne =
   case maybeOne of
     Just data -> hover [ data ]
@@ -70,31 +70,31 @@ hoverOne maybeOne =
 
 
 {-| -}
-none : Legends data msg
+none : Config data msg
 none =
   None
 
 
 {-| -}
-byEnding : (String -> Svg.Svg msg) -> Legends data msg
+byEnding : (String -> Svg.Svg msg) -> Config data msg
 byEnding =
   Free Ending
 
 
 {-| -}
-byBeginning : (String -> Svg.Svg msg) -> Legends data msg
+byBeginning : (String -> Svg.Svg msg) -> Config data msg
 byBeginning =
   Free Beginning
 
 
 {-| -}
-grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends data msg
+grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Config data msg
 grouped toX toY =
   Grouped 30 (defaultLegends toX toY [])
 
 
 {-| -}
-groupedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Legends data msg
+groupedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Config data msg
 groupedCustom sampleWidth container =
   Grouped sampleWidth (\_ -> container)
 
@@ -111,9 +111,9 @@ type alias Arguments data msg =
   , area : Area.Config
   , lines : List (Line.Line data)
   , data : List (List (Data.Data data))
-  , legends : Legends data msg
   , x : data -> Maybe Float
   , y : data -> Maybe Float
+  , legends : Config data msg
   }
 
 

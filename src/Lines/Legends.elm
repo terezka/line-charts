@@ -1,6 +1,6 @@
 module Lines.Legends exposing
   ( none, default
-  , Legends, Legend
+  , Config, Legend
   , byEnding, byBeginning
   , grouped, groupedCustom
   )
@@ -11,7 +11,7 @@ module Lines.Legends exposing
 @docs default, none
 
 # Customizations
-@docs Legends
+@docs Config
 
 ## Grouped legends
 The ones gathered in one spot.
@@ -42,26 +42,26 @@ import Internal.Legends as Legends
       }
 
 -}
-none : Legends data msg
+none : Config data msg
 none =
   Legends.none
 
 
 {-| Produces your lines legends in the top right corner. Use like `none`.
 -}
-default : Legends data msg
+default : Config data msg
 default =
   Legends.default
 
 
 {-| -}
-hover : List data -> Legends data msg
+hover : List data -> Config data msg
 hover =
   Legends.hover
 
 
 {-| -}
-hoverOne : Maybe data -> Legends data msg
+hoverOne : Maybe data -> Config data msg
 hoverOne =
   Legends.hoverOne
 
@@ -71,8 +71,8 @@ hoverOne =
 
 
 {-| -}
-type alias Legends data msg
-  = Legends.Legends data msg
+type alias Config data msg
+  = Legends.Config data msg
 
 
 
@@ -89,14 +89,14 @@ type alias Legends data msg
       }
 
 -}
-byEnding : (String -> Svg.Svg msg) -> Legends data msg
+byEnding : (String -> Svg.Svg msg) -> Config data msg
 byEnding =
   Legends.byEnding
 
 
 {-| Same as `byEnding`, except by the beginning!
 -}
-byBeginning : (String -> Svg.Svg msg) -> Legends data msg
+byBeginning : (String -> Svg.Svg msg) -> Config data msg
 byBeginning =
   Legends.byBeginning
 
@@ -116,7 +116,7 @@ the respective axes.
       }
 
 -}
-grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends data msg
+grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Config data msg
 grouped =
   Legends.grouped
 
@@ -154,6 +154,6 @@ in a SVG container of your liking.
         ]
 
 -}
-groupedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Legends data msg
+groupedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Config data msg
 groupedCustom =
   Legends.groupedCustom
