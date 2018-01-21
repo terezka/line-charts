@@ -90,8 +90,13 @@ view model =
             --|> Maybe.withDefault Junk.none
       , interpolation = Lines.linear
       , legends = Legends.default
-      , line = Line.default
-      , dot = Dot.static (Dot.bordered 10 2)
+      , line =
+          Line.custom <| \index data color ->
+            if index == 0 then
+              Line.style 2 "purple"
+            else
+              Line.style 1 Color.pink
+      , dot =  Dot.static (Dot.bordered 10 2)
       , grid = Grid.lines 1 Color.grayLight
       , area = Area.none
       , id = "chart"
