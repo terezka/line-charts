@@ -90,7 +90,12 @@ view model =
             --|> Maybe.withDefault Junk.none
       , interpolation = Lines.linear
       , legends = Legends.default
-      , line = Line.default
+      , line =
+          Line.emphasizable
+            { normal = Line.style 1 identity
+            , emphasized = Line.style 3 (\_ -> "purple")
+            , isEmphasized = List.any (flip List.member model.hoveringX)
+            }
       , dot = Dot.static (Dot.bordered 10 2)
       , grid = Grid.lines 1 Color.grayLight
       , area = Area.none

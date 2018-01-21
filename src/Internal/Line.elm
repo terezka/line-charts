@@ -195,12 +195,23 @@ viewSingle ({ system } as arguments) (Line lineConfig) dataPoints =
         |> List.map viewDot
         |> Svg.g [ Attributes.class "chart__dots" ]
 
+    (Look lineLook) =
+      arguments.lineLook
+
+    isEmphasized =
+      lineLook.isEmphasized (List.map .data dataPoints)
+
+    (Style style) =
+      if isEmphasized
+        then lineLook.emphasized
+        else lineLook.normal
+
     viewDot =
       Dot.view
         { system = arguments.system
         , dotLook = arguments.dotLook
         , shape = lineConfig.shape
-        , color = lineConfig.color
+        , color = style.color lineConfig.color
         }
 
     -- Interpolations
