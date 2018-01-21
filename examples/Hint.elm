@@ -16,9 +16,6 @@ import Lines.Legends as Legends
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import Svg.Attributes as SvgA
 import Lines.Area as Area
-import Lines.Axis as Axis
-import Lines.Axis.Title as Title
-import Lines.Axis.Range as Range
 import Color.Manipulate
 import Color
 
@@ -78,13 +75,7 @@ view model =
       , attributes = [ SvgA.style "font: caption;" ]
       , events = Events.hoverX HoverX
       , x = Dimension.default 750 "income" .income
-      , y =
-          { title = Title.default "age"
-          , variable = .age
-          , pixels = 650
-          , range = Range.padded 20 20
-          , axis = Axis.float 5
-          }
+      , y = Dimension.default 650 "age" .age
       , intersection = Intersection.default
       , junk = junkX model.hoveringX
           --Maybe.map junkSingle model.hovering
@@ -97,10 +88,15 @@ view model =
             if List.isEmpty model.hoveringX then
               Line.style 1 identity
             else if List.any (flip List.member model.hoveringX) data then
-              Line.style 1.5 (Color.Manipulate.darken 0.15)
+              Line.style 2 identity
             else
-              Line.style 1 (Color.Manipulate.lighten 0.15)
-      , dot = Dot.default
+              Line.style 1 (Color.Manipulate.lighten 0.2)
+      , dot =
+          Dot.emphasizable
+            { normal = Dot.disconnected 10 2
+            , emphasized = Dot.aura 5 5 0.2
+            , isEmphasized = flip List.member model.hoveringX
+            }
       , grid = Grid.lines 1 Colors.grayLightest
       , area = Area.none
       , id = "chart"
@@ -169,11 +165,11 @@ tooltip system index hovered =
         ]
     ]
 
-dimension : String -> Maybe Float -> Svg msg
+dimension : String -> Float -> Svg msg
 dimension label value =
   Svg.tspan
     [ SvgA.x "0", SvgA.dy "1em" ]
-    [ Svg.text <| label ++ ": " ++ (Maybe.map toString value |> Maybe.withDefault "unknown") ]
+    [ Svg.text <| label ++ ": " ++ toString value ]
 
 
 
@@ -181,38 +177,38 @@ dimension label value =
 
 
 type alias Info =
-  { age : Maybe Float
+  { age : Float
   , income : Float
   }
 
 
 alice : List Info
 alice =
-  [ Info (Just -1) -3
-  , Info (Just -2) -2
-  , Info (Just -3) -1
-  , Info (Just 4) 4
-  , Info (Just 5) 5
+  [ Info ( -1) -3.2
+  , Info ( -2) -2.4
+  , Info ( -3) -1.1
+  , Info ( 4) 4
+  , Info ( 5) 5.2
   ]
 
 
 bob : List Info
 bob =
-  [ Info (Just -1) -3
-  , Info (Just -1) -2.5
-  , Info (Just -1) -1
-  , Info (Just 1) 4
-  , Info (Just 1) 5
+  [ Info ( -1) -3
+  , Info ( -1) -2.5
+  , Info ( -1) -1
+  , Info ( 1) 4
+  , Info ( 1) 5.1
   ]
 
 
 chuck : List Info
 chuck =
-  [ Info (Just 2) 1
-  , Info (Just 3) 2
-  , Info (Just 5) 3
-  , Info (Just 2) 4
-  , Info (Just 4) 5
+  [ Info ( 2) 1
+  , Info ( 3) 2
+  , Info ( 5) 3
+  , Info ( 2) 4
+  , Info ( 4) 5.5
   ]
 
 
