@@ -194,7 +194,11 @@ yTick system width userAttributes x y =
 {-| -}
 label : String -> String -> Svg.Svg msg
 label color string =
-  Svg.text_ [ Attributes.fill color ] [ Svg.tspan [] [ Svg.text string ] ]
+  Svg.text_ 
+    [ Attributes.fill color
+    , Attributes.style "pointer-events: none;"
+    ]
+    [ Svg.tspan [] [ Svg.text string ] ]
 
 
 -- ANCHOR
