@@ -82,7 +82,7 @@ view model =
           --Maybe.map2 (junk model.hoveringX) model.point model.hovering
             --|> Maybe.withDefault Junk.none
       , interpolation = Lines.linear
-      , legends = Legends.default
+      , legends = Legends.hover model.hoveringX
       , line =
           Line.custom <| \data ->
             if List.isEmpty model.hoveringX then

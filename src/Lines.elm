@@ -344,7 +344,7 @@ type alias Config data msg =
   , area : Area.Area
   , line : Line.Look data
   , dot : Dot.Look data
-  , legends : Legends.Legends msg
+  , legends : Legends.Legends data msg
   , attributes : List (Svg.Attribute msg)
   , events : Events.Events data msg
   , junk : Junk.Junk msg
@@ -490,6 +490,8 @@ viewCustom config lines =
         , lines = lines
         , dataPoints = dataPoints
         , legends = config.legends
+        , x = config.x.variable
+        , y = config.y.variable
         }
   in
   container <|
