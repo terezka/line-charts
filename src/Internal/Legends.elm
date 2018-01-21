@@ -14,7 +14,7 @@ import Svg.Attributes as Attributes
 import LineChart.Area as Area
 import LineChart.Coordinate as Coordinate
 import Internal.Data as Data
-import Internal.Dot as Dot
+import Internal.Dots as Dot
 import Internal.Line as Line
 import Internal.Utils as Utils
 import Internal.Svg as Svg

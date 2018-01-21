@@ -30,7 +30,7 @@ import Internal.Axis as Axis
 import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Range as Range
 import Internal.Coordinate as Coordinate
-import Internal.Dot as Dot
+import Internal.Dots as Dot
 import Internal.Data as Data
 import Internal.Grid as Grid
 import Internal.Events as Events
@@ -286,7 +286,7 @@ Use with `viewCustom`.
     See `LineChart.Line` for more information and examples.
 
   - **dot**: Customizes your dots' size and style.
-    See `LineChart.Dot` for more information and examples.
+    See `LineChart.Dots` for more information and examples.
 
   - **legends**: Customizes your chart's legends.
     See `LineChart.Legends` for more information and examples.
@@ -335,14 +335,14 @@ type alias Config data msg =
   { x : Dimension.Config data msg
   , y : Dimension.Config data msg
   , container : Container.Config msg
-  , grid : Grid.Config
   , intersection : Intersection.Config
   , interpolation : Interpolation.Config
-  , area : Area.Config
-  , line : Line.Config data
-  , dot : Dot.Config data
   , legends : Legends.Config data msg
   , events : Events.Config data msg
+  , area : Area.Config
+  , grid : Grid.Config
+  , line : Line.Config data
+  , dots : Dot.Config data
   , junk : Junk.Config msg
   }
 
@@ -436,7 +436,7 @@ viewCustom config lines =
     viewLines =
       Line.view
         { system = system
-        , dotLook = config.dot
+        , dotLook = config.dots
         , lineLook = config.line
         , interpolation = config.interpolation
         , area = config.area
@@ -445,7 +445,7 @@ viewCustom config lines =
     viewLegends =
       Legends.view
         { system = system
-        , dotLook = config.dot
+        , dotLook = config.dots
         , lineLook = config.line
         , area = config.area
         , lines = lines
@@ -633,7 +633,7 @@ defaultConfig toX toY =
   , grid = Grid.default
   , area = Area.none
   , junk = Junk.none
-  , dot = Dot.default
+  , dots = Dot.default
   }
 
 

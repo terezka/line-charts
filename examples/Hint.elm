@@ -5,7 +5,7 @@ import Svg exposing (Attribute, Svg, g, text_, tspan)
 import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Color as Colors
-import LineChart.Dot as Dot
+import LineChart.Dots as Dots
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
@@ -84,11 +84,11 @@ view model =
       , grid = Grid.default
       , area = Area.default
       , line = Line.default
-      , dot = Dot.default
+      , dots = Dots.default
       }
-      [ LineChart.line Colors.gold Dot.diamond "alice" alice
-      , LineChart.line Colors.blue Dot.circle  "bobby" bob
-      , LineChart.line Colors.pink Dot.square  "chuck" chuck
+      [ LineChart.line Colors.gold Dots.diamond "alice" alice
+      , LineChart.line Colors.blue Dots.circle  "bobby" bob
+      , LineChart.line Colors.pink Dots.square  "chuck" chuck
       ]
 
 

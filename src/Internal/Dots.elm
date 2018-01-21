@@ -1,4 +1,4 @@
-module Internal.Dot exposing
+module Internal.Dots exposing
   ( Config, default, static, hoverable
   , Shape(..)
   , Style, style, bordered, disconnected, aura, full

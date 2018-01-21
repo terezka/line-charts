@@ -18,7 +18,7 @@ import LineChart.Junk as Junk
 import Internal.Area as Area
 import Internal.Coordinate as Coordinate
 import Internal.Data as Data
-import Internal.Dot as Dot
+import Internal.Dots as Dot
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
 import Internal.Utils as Utils

@@ -1,4 +1,4 @@
-module LineChart.Dot exposing
+module LineChart.Dots exposing
   ( Shape, none
   , circle, triangle, square, diamond, plus, cross
   , Config, default, static, hoverable
@@ -21,7 +21,7 @@ module LineChart.Dot exposing
 
 -}
 
-import Internal.Dot as Dot
+import Internal.Dots as Dot
 
 
 
