@@ -115,7 +115,7 @@ type alias ViewConfig msg =
 
 
 {-| -}
-viewHorizontal : Coordinate.System -> Intersection.Intersection -> Title.Title msg -> Axis data msg -> Svg msg
+viewHorizontal : Coordinate.System -> Intersection.Config -> Title.Title msg -> Axis data msg -> Svg msg
 viewHorizontal system intersection title axis =
     let
         config =
@@ -142,7 +142,7 @@ viewHorizontal system intersection title axis =
 
 
 {-| -}
-viewVertical : Coordinate.System -> Intersection.Intersection -> Title.Title msg -> Axis data msg -> Svg msg
+viewVertical : Coordinate.System -> Intersection.Config -> Title.Title msg -> Axis data msg -> Svg msg
 viewVertical system intersection title axis =
     let
         config =

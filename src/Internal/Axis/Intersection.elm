@@ -1,5 +1,5 @@
 module Internal.Axis.Intersection exposing
-  ( Intersection
+  ( Config
   , default, at, custom
   -- INTERNAL
   , getX, getY
@@ -10,26 +10,26 @@ import Internal.Data as Data
 
 
 {-| -}
-type Intersection =
-  Intersection (Coordinate.System -> Data.Point)
+type Config =
+  Config (Coordinate.System -> Data.Point)
 
 
 {-| -}
-default : Intersection
+default : Config
 default =
   custom towardsZero towardsZero
 
 
 {-| -}
-at : Float -> Float -> Intersection
+at : Float -> Float -> Config
 at x y =
   custom (always x) (always y)
 
 
 {-| -}
-custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Intersection
+custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Config
 custom toX toY =
-  Intersection <| \{ x, y } ->
+  Config <| \{ x, y } ->
     Data.Point (toX x) (toY y)
 
 
@@ -47,12 +47,12 @@ towardsZero { max, min } =
 
 
 {-| -}
-getX : Intersection -> Coordinate.System -> Float
-getX (Intersection func) =
+getX : Config -> Coordinate.System -> Float
+getX (Config func) =
   .x << func
 
 
 {-| -}
-getY : Intersection -> Coordinate.System -> Float
-getY (Intersection func) =
+getY : Config -> Coordinate.System -> Float
+getY (Config func) =
   .y << func

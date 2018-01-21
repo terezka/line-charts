@@ -339,7 +339,7 @@ type alias Config data msg =
   , x : Dimension.Config data msg
   , y : Dimension.Config data msg
   , grid : Grid.Config
-  , intersection : Intersection.Intersection
+  , intersection : Intersection.Config
   , interpolation : Interpolation
   , area : Area.Config
   , line : Line.Look data
