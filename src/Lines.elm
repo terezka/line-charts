@@ -48,7 +48,6 @@ import Color
 -- TODO more default dimensions
 -- TODO more default title options
 
--- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
 -- TODO consider tick space tolerance as determinating factor of tick amount
 -- TODO Add range adjust for nice ticks?
 -- TODO Should all configs in modules be called Config?
