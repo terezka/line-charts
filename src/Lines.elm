@@ -548,7 +548,7 @@ toDataPoints config lines =
     y = config.y.variable
 
     dataPoints =
-      List.map (Line.lineConfig >> .data >> List.filterMap dataPoint) lines
+      List.map (Line.data >> List.filterMap dataPoint) lines
 
     dataPoint datum =
       case ( x datum, y datum ) of

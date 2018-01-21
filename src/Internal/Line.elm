@@ -1,9 +1,9 @@
 module Internal.Line exposing
-  ( Line(..), lineConfig, line, dash
+  ( Line(..), line, dash
   , Look, default, wider, custom
   , Style, style
   -- INTERNAL
-  , shape, label, color
+  , shape, label, color, data
   , view, viewSample
   )
 
@@ -42,12 +42,6 @@ type alias Config data =
 
 
 {-| -}
-lineConfig : Line data -> Config data
-lineConfig (Line line) =
-  line
-
-
-{-| -}
 label : Line data -> String
 label (Line config) =
   config.label
@@ -57,6 +51,12 @@ label (Line config) =
 shape : Line data -> Dot.Shape
 shape (Line config) =
   config.shape
+
+
+{-| -}
+data : Line data -> List data
+data (Line config) =
+  config.data
 
 
 {-| -}
