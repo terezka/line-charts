@@ -177,7 +177,7 @@ getNearest =
         Coordinate.toData system searchedSvg
     in
     getNearestHelp points system searched
-      |> Maybe.map .data
+      |> Maybe.map .user
 
 
 {-| TODO get _nearest_ within? -}
@@ -190,7 +190,7 @@ getWithin radius =
 
       keepIfEligible closest =
           if withinRadius system radius searched closest.point
-            then Just closest.data
+            then Just closest.user
             else Nothing
     in
     getNearestHelp points system searched
@@ -206,7 +206,7 @@ getNearestX =
         Coordinate.toData system searchedSvg
     in
     getNearestXHelp points system searched
-      |> List.map .data
+      |> List.map .user
 
 
 {-| -}
@@ -222,7 +222,7 @@ getWithinX radius =
     in
     getNearestXHelp points system searched
       |> List.filter keepIfEligible
-      |> List.map .data
+      |> List.map .user
 
 
 

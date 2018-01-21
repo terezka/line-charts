@@ -36,17 +36,17 @@ account, scaling doesn't.
       , y = Range 0 10
       }
 
-    dataPoint : Point
-    dataPoint =
+    data : Point
+    data =
       Point 2 3
 
     dataXinSVG : Float
     dataXinSVG =
-      toSVGX system dataPoint.x    -- 30 (margin.left + 2 * 100 / 10)
+      toSVGX system data.x    -- 30 (margin.left + 2 * 100 / 10)
 
     dataXinSVG : Float
     dataXinSVG =
-      scaleSVGX system dataPoint.x -- 20 (2 * 100 / 10)
+      scaleSVGX system data.x -- 20 (2 * 100 / 10)
 
 @docs scaleSVGX, scaleSVGY, scaleDataX, scaleDataY
 

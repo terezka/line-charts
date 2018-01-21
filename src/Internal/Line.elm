@@ -64,7 +64,7 @@ color : Look data -> List (Data.Data data) -> Line data -> Color.Color
 color (Look look) data (Line config) =
   let
     (Style style) =
-      look (List.map .data data)
+      look (List.map .user data)
   in
   style.color config.color
 
@@ -183,10 +183,10 @@ viewStacked area ( areas, lines, dots ) =
 
 
 viewSingle : Arguments data -> Line data -> List (Data.Data data) -> ( Svg.Svg msg, Svg.Svg msg, Svg.Svg msg )
-viewSingle ({ system } as arguments) (Line lineConfig) dataPoints =
+viewSingle ({ system } as arguments) (Line lineConfig) data =
   let
     parts =
-      Utils.part .isReal dataPoints [] []
+      Utils.part .isReal data [] []
 
     -- Dots
     viewDots =
@@ -200,7 +200,7 @@ viewSingle ({ system } as arguments) (Line lineConfig) dataPoints =
       arguments.lineLook
 
     (Style style) =
-      lineLook (List.map .data dataPoints)
+      lineLook (List.map .user data)
 
     viewDot =
       Dot.view
@@ -236,21 +236,21 @@ viewSingle ({ system } as arguments) (Line lineConfig) dataPoints =
 
 
 viewLine : Arguments data -> Config data -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
-viewLine { system, lineLook, id } lineConfig interpolation dataPoints =
+viewLine { system, lineLook, id } lineConfig interpolation data =
   let
     lineAttributes =
-      Junk.withinChartArea system :: toLineAttributes lineLook lineConfig dataPoints
+      Junk.withinChartArea system :: toLineAttributes lineLook lineConfig data
   in
-  Utils.viewWithFirst dataPoints <| \first rest ->
+  Utils.viewWithFirst data <| \first rest ->
     Path.view system lineAttributes <|
       Path.Move first.point :: interpolation
 
 
 toLineAttributes : Look data -> Config data -> List (Data.Data data) -> List (Svg.Attribute msg)
-toLineAttributes (Look look) { color, dashing } dataPoints =
+toLineAttributes (Look look) { color, dashing } data =
   let
     (Style style) =
-      look (List.map .data dataPoints)
+      look (List.map .user data)
   in
   [ Attributes.style "pointer-events: none;"
   , Attributes.class "chart__interpolation__line__fragment"
@@ -266,17 +266,17 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
 
 
 viewArea : Arguments data -> Config data -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
-viewArea { system, lineLook, area, id } lineConfig interpolation dataPoints =
+viewArea { system, lineLook, area, id } lineConfig interpolation data =
   let
-    ground dataPoint =
-      Data.Point dataPoint.point.x (Utils.towardsZero system.y)
+    ground data =
+      Data.Point data.point.x (Utils.towardsZero system.y)
 
     attributes =
       Junk.withinChartArea system
         :: Attributes.fillOpacity (toString (Area.opacitySingle area))
-        :: toAreaAttributes lineLook lineConfig area dataPoints
+        :: toAreaAttributes lineLook lineConfig area data
   in
-  Utils.viewWithEdges dataPoints <| \first rest last ->
+  Utils.viewWithEdges data <| \first rest last ->
     Path.view system attributes <|
       [ Path.Move (ground first), Path.Line first.point ]
       ++ interpolation ++
@@ -284,10 +284,10 @@ viewArea { system, lineLook, area, id } lineConfig interpolation dataPoints =
 
 
 toAreaAttributes : Look data -> Config data -> Area.Area -> List (Data.Data data) -> List (Svg.Attribute msg)
-toAreaAttributes (Look look) { color } area dataPoints =
+toAreaAttributes (Look look) { color } area data =
   let
     (Style style) =
-      look (List.map .data dataPoints)
+      look (List.map .user data)
   in
   [ Attributes.class "chart__interpolation__area__fragment"
   , Attributes.fill (Color.Convert.colorToHex (style.color color))
@@ -300,10 +300,10 @@ toAreaAttributes (Look look) { color } area dataPoints =
 
 {-| -}
 viewSample : Look data -> Line data -> Area.Area -> List (Data.Data data) -> Float -> Svg.Svg msg
-viewSample look (Line config) area dataPoints sampleWidth =
+viewSample look (Line config) area data sampleWidth =
   let
     lineAttributes =
-      toLineAttributes look config dataPoints
+      toLineAttributes look config data
 
     sizeAttributes =
       [ Attributes.x1 "0"

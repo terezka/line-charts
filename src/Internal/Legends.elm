@@ -228,7 +228,7 @@ defaultLegend : Arguments data msg -> List data -> Int -> Legend msg -> List (Da
 defaultLegend arguments hovered index { sample, label } data =
   let
     hoveredData =
-      List.map .data data
+      List.map .user data
         |> List.filter (flip List.member hovered)
         |> List.head
 

@@ -137,17 +137,17 @@ type alias Arguments data =
 
 {-| -}
 view : Arguments data -> Data.Data data -> Svg msg
-view { system, dotLook, shape, color } dataPoint =
+view { system, dotLook, shape, color } data =
   let
     (Look config) =
       dotLook
 
     (Style style) =
-      if config.isEmphasized dataPoint.data
+      if config.isEmphasized data.user
         then config.emphasized
         else config.normal
   in
-  viewShape system style shape color dataPoint.point -- TODO filter for isFake
+  viewShape system style shape color data.point
 
 
 {-| -}
@@ -155,7 +155,7 @@ viewSample : Look data -> Shape -> Color.Color -> Coordinate.System -> List (Dat
 viewSample (Look config) shape color system data =
   let
     (Style style) =
-      if List.any config.isEmphasized (List.map .data data)
+      if List.any config.isEmphasized (List.map .user data)
         then config.emphasized
         else config.normal
   in

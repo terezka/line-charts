@@ -441,14 +441,14 @@ viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
 viewCustom config lines =
   let
     -- Data points
-    dataPoints = toDataPoints config lines
-    dataPointsSafe = List.map (List.filter .isReal) dataPoints
-    dataPointsAll = List.concat dataPoints
-    dataPointsAllSafe = List.concat dataPointsSafe
+    data = toDataPoints config lines
+    dataSafe = List.map (List.filter .isReal) data
+    dataAll = List.concat data
+    dataAllSafe = List.concat dataSafe
 
     -- System
     system =
-      toSystem config dataPointsAllSafe
+      toSystem config dataAllSafe
 
     -- View
     junk =
@@ -466,7 +466,7 @@ viewCustom config lines =
     attributes =
       List.concat
         [ config.attributes
-        , Events.toContainerAttributes dataPointsAll system config.events
+        , Events.toContainerAttributes dataAll system config.events
         , [ Attributes.width <| toString system.frame.size.width
           , Attributes.height <| toString system.frame.size.height
           ]
@@ -489,7 +489,7 @@ viewCustom config lines =
         , lineLook = config.line
         , area = config.area
         , lines = lines
-        , data = dataPointsSafe
+        , data = dataSafe
         , legends = config.legends
         , x = config.x.variable
         , y = config.y.variable
@@ -499,8 +499,8 @@ viewCustom config lines =
     Svg.svg attributes
       [ Svg.defs [] [ clipPath config system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
-      , viewLines lines dataPoints
-      , chartAreaPlatform config dataPointsAll system
+      , viewLines lines data
+      , chartAreaPlatform config dataAll system
       , Axis.viewHorizontal system config.intersection config.x.title config.x.axis
       , Axis.viewVertical   system config.intersection config.y.title config.y.axis
       , viewLegends
@@ -547,10 +547,10 @@ toDataPoints config lines =
     x = config.x.variable
     y = config.y.variable
 
-    dataPoints =
-      List.map (Line.data >> List.filterMap dataPoint) lines
+    data =
+      List.map (Line.data >> List.filterMap addPoint) lines
 
-    dataPoint datum =
+    addPoint datum =
       case ( x datum, y datum ) of
         ( Just x, Just y )   -> Just <| Data.Data datum (Data.Point x y) True
         ( Just x, Nothing )  -> Just <| Data.Data datum (Data.Point x 0) False
@@ -558,10 +558,10 @@ toDataPoints config lines =
         ( Nothing, Nothing ) -> Nothing
   in
   case config.area of
-    Area.None         -> dataPoints
-    Area.Normal _     -> dataPoints
-    Area.Stacked _    -> stack dataPoints
-    Area.Percentage _ -> normalize (stack dataPoints)
+    Area.None         -> data
+    Area.Normal _     -> data
+    Area.Stacked _    -> stack data
+    Area.Percentage _ -> normalize (stack data)
 
 
 stack : List (List (Data.Data data)) -> List (List (Data.Data data))
@@ -624,7 +624,7 @@ normalize dataset =
 
 setY : Data.Data data -> Float -> Data.Data data
 setY datum y =
-  Data.Data datum.data (Data.Point datum.point.x y) datum.isReal
+  Data.Data datum.user (Data.Point datum.point.x y) datum.isReal
 
 
 toSystem : Config data msg -> List (Data.Data data) -> Coordinate.System
