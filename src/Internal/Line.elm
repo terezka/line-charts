@@ -1,7 +1,7 @@
 module Internal.Line exposing
   ( Line(..), Config, lineConfig, line, dash
   , Look, default, wider, static, emphasizable
-  , Style, style
+  , Style, style, getColor
   , view, viewSample
   )
 
@@ -127,6 +127,21 @@ type Style =
 style : Float -> (Color.Color -> Color.Color) -> Style
 style width color =
   Style { width = width, color = color }
+
+
+{-| -}
+getColor : Look data -> List (Data.Data data) -> Color.Color -> Color.Color
+getColor (Look look) data =
+  let
+    isEmphasized =
+      look.isEmphasized (List.map .data data)
+
+    (Style style) =
+      if isEmphasized
+        then look.emphasized
+        else look.normal
+  in
+  style.color
 
 
 
@@ -313,11 +328,11 @@ toAreaAttributes (Look look) { color } area dataPoints =
 
 
 {-| -}
-viewSample : Look data -> Config data -> Area.Area -> Float -> Svg.Svg msg
-viewSample look lineConfig area sampleWidth =
+viewSample : Look data -> Config data -> Area.Area -> List (Data.Data data) -> Float -> Svg.Svg msg
+viewSample look lineConfig area dataPoints sampleWidth =
   let
     lineAttributes =
-      toLineAttributes look lineConfig []
+      toLineAttributes look lineConfig dataPoints
 
     sizeAttributes =
       [ Attributes.x1 "0"

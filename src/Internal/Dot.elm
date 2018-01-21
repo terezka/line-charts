@@ -150,10 +150,15 @@ view { system, dotLook, shape, color } dataPoint =
 
 
 {-| -}
-viewSample : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewSample (Look config) shape color system =
-  let (Style normal) = config.normal in
-  viewShape system normal shape color
+viewSample : Look data -> Shape -> Color.Color -> Coordinate.System -> List (Data.Data data) -> Coordinate.Point -> Svg msg
+viewSample (Look config) shape color system data =
+  let
+    (Style style) =
+      if List.any config.isEmphasized (List.map .data data)
+        then config.emphasized
+        else config.normal
+  in
+  viewShape system style shape color
 
 
 

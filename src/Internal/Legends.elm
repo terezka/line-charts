@@ -156,26 +156,30 @@ viewFree system placement viewLabel line dataPoints =
 viewGrouped : Arguments data msg -> Float -> Container msg -> Svg.Svg msg
 viewGrouped arguments sampleWidth container =
   let
-    toLegend lineConfig =
-      { sample = viewSample arguments sampleWidth lineConfig
+    toLegend line data =
+      let lineConfig = Line.lineConfig line in
+      { sample = viewSample arguments sampleWidth lineConfig data
       , label = lineConfig.label
       }
   in
   container arguments.system <|
-    List.map (Line.lineConfig >> toLegend) arguments.lines
+    List.map2 toLegend arguments.lines arguments.dataPoints
 
 
-viewSample : Arguments data msg -> Float -> Line.Config data -> Svg msg
-viewSample { system, lineLook, dotLook, area } sampleWidth lineConfig =
+viewSample : Arguments data msg -> Float -> Line.Config data -> List (Data.Data data) -> Svg msg
+viewSample { system, lineLook, dotLook, area, dataPoints } sampleWidth lineConfig data =
   let
     dotPosition =
       Coordinate.Point (sampleWidth / 2) 0
         |> Coordinate.toData system
+
+    color =
+      Line.getColor lineLook data lineConfig.color
   in
   Svg.g
     [ Attributes.class "chart__sample" ]
-    [ Line.viewSample lineLook lineConfig area sampleWidth
-    , Dot.viewSample dotLook lineConfig.shape lineConfig.color system dotPosition
+    [ Line.viewSample lineLook lineConfig area data sampleWidth
+    , Dot.viewSample dotLook lineConfig.shape color system data dotPosition
     ]
 
 
