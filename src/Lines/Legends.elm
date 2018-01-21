@@ -1,6 +1,6 @@
 module Lines.Legends exposing
   ( none, default
-  , Legends, Legend
+  , Config, Legend
   , byEnding, byBeginning
   , grouped, groupedCustom
   )
@@ -11,7 +11,7 @@ module Lines.Legends exposing
 @docs default, none
 
 # Customizations
-@docs Legends
+@docs Config
 
 ## Grouped legends
 The ones gathered in one spot.
@@ -42,16 +42,28 @@ import Internal.Legends as Legends
       }
 
 -}
-none : Legends msg
+none : Config data msg
 none =
   Legends.none
 
 
 {-| Produces your lines legends in the top right corner. Use like `none`.
 -}
-default : Legends msg
+default : Config data msg
 default =
   Legends.default
+
+
+{-| -}
+hover : List data -> Config data msg
+hover =
+  Legends.hover
+
+
+{-| -}
+hoverOne : Maybe data -> Config data msg
+hoverOne =
+  Legends.hoverOne
 
 
 
@@ -59,8 +71,8 @@ default =
 
 
 {-| -}
-type alias Legends msg
-  = Legends.Legends msg
+type alias Config data msg
+  = Legends.Config data msg
 
 
 
@@ -77,14 +89,14 @@ type alias Legends msg
       }
 
 -}
-byEnding : (String -> Svg.Svg msg) -> Legends msg
+byEnding : (String -> Svg.Svg msg) -> Config data msg
 byEnding =
   Legends.byEnding
 
 
 {-| Same as `byEnding`, except by the beginning!
 -}
-byBeginning : (String -> Svg.Svg msg) -> Legends msg
+byBeginning : (String -> Svg.Svg msg) -> Config data msg
 byBeginning =
   Legends.byBeginning
 
@@ -104,7 +116,7 @@ the respective axes.
       }
 
 -}
-grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Legends msg
+grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Config data msg
 grouped =
   Legends.grouped
 
@@ -124,7 +136,7 @@ second is a fuction which gives you the `Coordinate.System` as well as a list
 of your lines samples and labels (`List (Legend msg)`), so that you can put it
 in a SVG container of your liking.
 
-    legends : Legends msg
+    legends : Legends data msg
     legends =
       Legends.groupedCustom 10 <| \system legends ->
         Svg.g
@@ -142,6 +154,6 @@ in a SVG container of your liking.
         ]
 
 -}
-groupedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Legends msg
+groupedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Config data msg
 groupedCustom =
   Legends.groupedCustom

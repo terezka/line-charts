@@ -1,9 +1,9 @@
-module Lines.Axis.Intersection exposing (Intersection, default, at, custom)
+module Lines.Axis.Intersection exposing (Config, default, at, custom)
 
 {-|
 
 # Quick start
-@docs Intersection, default
+@docs Config, default
 
 # Customiztion
 @docs at, custom
@@ -16,20 +16,20 @@ import Lines.Coordinate as Coordinate
 
 
 {-| -}
-type alias Intersection =
-  Intersection.Intersection
+type alias Config =
+  Intersection.Config
 
 
 {-| Sets the intersection as close to the origin as your range and domain allows.
 -}
-default : Intersection
+default : Config
 default =
   Intersection.default
 
 
 {-| Sets the intersection to your chosen x and y respectivily.
 -}
-at : Float -> Float -> Intersection
+at : Float -> Float -> Config
 at =
   Intersection.at
 
@@ -37,6 +37,6 @@ at =
 {-| Sets the intersection to your chosen x and y, given the range and domain
 respectivily.
 -}
-custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Intersection
+custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Config
 custom =
   Intersection.custom

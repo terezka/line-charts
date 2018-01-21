@@ -1,4 +1,4 @@
-module Internal.Grid exposing (Grid, default, dotted, lines, view)
+module Internal.Grid exposing (Config, default, dots, lines, view)
 
 
 {-| -}
@@ -6,32 +6,34 @@ module Internal.Grid exposing (Grid, default, dotted, lines, view)
 import Svg
 import Svg.Attributes as Attributes
 import Internal.Svg as Svg
-import Lines.Color as Color
+import Lines.Color as Colors
 import Lines.Coordinate as Coordinate
 import Lines.Dimension as Dimension
 import Internal.Axis as Axis
+import Color
+import Color.Convert
 
 
 {-| -}
-type Grid
+type Config
   = Dots Color.Color
   | Lines Float Color.Color
 
 
 {-| -}
-default : Grid
+default : Config
 default =
-  lines 1 Color.grayLight
+  lines 1 Colors.grayLight
 
 
 {-| -}
-dotted : Color.Color -> Grid
-dotted =
+dots : Color.Color -> Config
+dots =
   Dots
 
 
 {-| -}
-lines : Float -> Color.Color -> Grid
+lines : Float -> Color.Color -> Config
 lines =
   Lines
 
@@ -41,7 +43,7 @@ lines =
 
 
 {-| -}
-view : Coordinate.System -> Dimension.Dimension data msg -> Dimension.Dimension data msg -> Grid -> List (Svg.Svg msg)
+view : Coordinate.System -> Dimension.Config data msg -> Dimension.Config data msg -> Config -> List (Svg.Svg msg)
 view system xDimension yDimension grid =
   let
     verticals =
@@ -79,7 +81,7 @@ viewLines : Coordinate.System -> List Float -> List Float -> Float -> Color.Colo
 viewLines system verticals horizontals width color =
   let
     attributes =
-      [ Attributes.strokeWidth (toString width), Attributes.stroke color ]
+      [ Attributes.strokeWidth (toString width), Attributes.stroke (Color.Convert.colorToHex color) ]
   in
   List.map (Svg.horizontalGrid system attributes) horizontals ++
   List.map (Svg.verticalGrid system attributes) verticals

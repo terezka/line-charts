@@ -7,7 +7,7 @@ import Internal.Coordinate exposing (..)
 
 {-| -}
 type alias Data data =
-  { data : data
+  { user : data
   , point : Point
   , isReal : Bool
   }

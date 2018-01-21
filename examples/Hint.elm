@@ -3,7 +3,7 @@ module HintExample exposing (main)
 import Html exposing (Html, div, h1, node, p, text)
 import Lines as Lines
 import Lines.Junk as Junk exposing (..)
-import Lines.Color as Color
+import Lines.Color as Colors
 import Lines.Dot as Dot
 import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
@@ -16,9 +16,7 @@ import Lines.Legends as Legends
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import Svg.Attributes as SvgA
 import Lines.Area as Area
-import Lines.Axis as Axis
-import Lines.Axis.Title as Title
-import Lines.Axis.Range as Range
+import Color
 
 
 -- MODEL
@@ -72,38 +70,32 @@ update msg model =
 view : Model -> Svg Msg
 view model =
     Lines.viewCustom
-      { margin = Coordinate.Margin 150 50 150 150
-      , attributes = []
-      , events = Events.hoverX HoverX
-      , x = Dimension.time 750 "income" .income
-      , y =
-          { title = Title.default "age"
-          , variable = .age
-          , pixels = 650
-          , range = Range.padded 20 20
-          , axis = Axis.float 5
-          }
+      { margin = Coordinate.Margin 150 150 150 150
+      , attributes = [ SvgA.style "font: caption;" ]
+      , events = Events.hoverOne HoverSingle
+      , x = Dimension.default 750 "income" .income
+      , y = Dimension.default 670 "age" .age
       , intersection = Intersection.default
       , junk = junkX model.hoveringX
           --Maybe.map junkSingle model.hovering
           --Maybe.map2 (junk model.hoveringX) model.point model.hovering
             --|> Maybe.withDefault Junk.none
-      , interpolation = Lines.linear
+      , interpolation = Lines.monotone
       , legends = Legends.default
-      , line =
-          Line.emphasizable
-            { normal = Line.style 1 identity
-            , emphasized = Line.style 3 (\_ -> "purple")
-            , isEmphasized = List.any (flip List.member model.hoveringX)
+      , line = Line.default
+      , dot =
+          Dot.hoverable
+            { normal = Dot.disconnected 10 2
+            , hovered = Dot.aura 6 5 0.3
+            , isHovered = Just >> (==) model.hovering
             }
-      , dot = Dot.static (Dot.bordered 10 2)
-      , grid = Grid.lines 1 Color.grayLight
+      , grid = Grid.dots Colors.grayLight
       , area = Area.none
       , id = "chart"
       }
-      [ Lines.line Color.pink Dot.square "chuck" chuck
-      , Lines.line Color.blue Dot.circle "bob" bob
-      , Lines.line Color.orange Dot.triangle "alice" alice
+      [ Lines.line Colors.pink Dot.square "chuck" chuck
+      , Lines.line Colors.blue Dot.circle "bob" bob
+      , Lines.line Colors.orange Dot.triangle "alice" alice
       ]
 
 
@@ -114,11 +106,11 @@ viewLegend index { sample, label } =
     [ sample
     , Svg.g
         [ Junk.transform [ Junk.offset 40 4 ] ]
-        [ Junk.text Color.black label ]
+        [ Junk.label Color.black label ]
     ]
 
 
-junkX : List Info -> Junk.Junk Msg
+junkX : List Info -> Junk.Config Msg
 junkX hovering =
   Junk.custom <| \system ->
     { below = []
@@ -127,7 +119,7 @@ junkX hovering =
     }
 
 
-junkSingle : Info -> Junk.Junk Msg
+junkSingle : Info -> Junk.Config Msg
 junkSingle hovering =
     Junk.custom <| \system ->
       { below = []
@@ -136,7 +128,7 @@ junkSingle hovering =
       }
 
 
-junk : List Info -> Coordinate.Point -> Info -> Junk.Junk Msg
+junk : List Info -> Coordinate.Point -> Info -> Junk.Config Msg
 junk hintx point hovering =
     Junk.custom <| \system ->
       { below = []
@@ -165,11 +157,11 @@ tooltip system index hovered =
         ]
     ]
 
-dimension : String -> Maybe Float -> Svg msg
+dimension : String -> Float -> Svg msg
 dimension label value =
   Svg.tspan
     [ SvgA.x "0", SvgA.dy "1em" ]
-    [ Svg.text <| label ++ ": " ++ (Maybe.map toString value |> Maybe.withDefault "unknown") ]
+    [ Svg.text <| label ++ ": " ++ toString value ]
 
 
 
@@ -177,38 +169,38 @@ dimension label value =
 
 
 type alias Info =
-  { age : Maybe Float
+  { age : Float
   , income : Float
   }
 
 
 alice : List Info
 alice =
-  [ Info (Just -1) -1
-  , Info (Just -2) -2
-  , Info (Just -3) -3
-  , Info (Just 4) 4
-  , Info (Just 5) 5
+  [ Info ( -1) -3.2
+  , Info ( -2) -2.4
+  , Info ( -3) -1.1
+  , Info ( 4) 4
+  , Info ( 5) 5.2
   ]
 
 
 bob : List Info
 bob =
-  [ Info (Just -1) -1
-  , Info (Just -1) -2.5
-  , Info (Just -1) -3
-  , Info (Just 1) 4
-  , Info (Just 1) 5
+  [ Info ( -1) -3
+  , Info ( -1) -2.5
+  , Info ( -1) -1
+  , Info ( 1) 4
+  , Info ( 1) 5.1
   ]
 
 
 chuck : List Info
 chuck =
-  [ Info (Just 2) 1
-  , Info (Just 3) 2
-  , Info (Just 5) 3
-  , Info (Just 2) 4
-  , Info (Just 4) 5
+  [ Info ( 2) 1
+  , Info ( 3) 2
+  , Info ( 5) 3
+  , Info ( 2) 4
+  , Info ( 4) 5.5
   ]
 
 

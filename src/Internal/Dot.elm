@@ -1,5 +1,5 @@
 module Internal.Dot exposing
-  ( Look, default, static, emphasizable
+  ( Config, default, static, hoverable
   , Shape(..)
   , Style, style, bordered, disconnected, aura, full
   , Variety
@@ -9,49 +9,50 @@ module Internal.Dot exposing
 {-| -}
 
 import Svg exposing (Svg)
-import Lines.Color as Color
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
+import Color
+import Color.Convert
 
 
 {-| -}
-type Look data =
-  Look (LookConfig data)
+type Config data =
+  Config (Info data)
 
 
 {-| -}
-type alias LookConfig data =
+type alias Info data =
   { normal : Style
-  , emphasized : Style
-  , isEmphasized : data -> Bool
+  , hovered : Style
+  , isHovered : data -> Bool
   }
 
 
 {-| -}
-default : Look data
+default : Config data
 default =
-  Look
+  Config
     { normal = disconnected 10 2
-    , emphasized = aura 7 4 0.5
-    , isEmphasized = always False
+    , hovered = aura 7 4 0.5
+    , isHovered = always False
     }
 
 
 {-| -}
-static : Style -> Look data
+static : Style -> Config data
 static style =
-  Look
+  Config
     { normal = style
-    , emphasized = aura 5 4 0.5
-    , isEmphasized = always False
+    , hovered = aura 5 4 0.5
+    , isHovered = always False
     }
 
 
 {-| -}
-emphasizable : LookConfig data -> Look data
-emphasizable =
-  Look
+hoverable : Info data -> Config data
+hoverable =
+  Config
 
 
 
@@ -128,7 +129,7 @@ full radius =
 {-| -}
 type alias Arguments data =
   { system : Coordinate.System
-  , dotLook : Look data
+  , dotLook : Config data
   , shape : Shape
   , color : Color.Color
   }
@@ -136,24 +137,29 @@ type alias Arguments data =
 
 {-| -}
 view : Arguments data -> Data.Data data -> Svg msg
-view { system, dotLook, shape, color } dataPoint =
+view { system, dotLook, shape, color } data =
   let
-    (Look config) =
+    (Config config) =
       dotLook
 
     (Style style) =
-      if config.isEmphasized dataPoint.data
-        then config.emphasized
+      if config.isHovered data.user
+        then config.hovered
         else config.normal
   in
-  viewShape system style shape color dataPoint.point -- TODO filter for isFake
+  viewShape system style shape color data.point
 
 
 {-| -}
-viewSample : Look data -> Shape -> Color.Color -> Coordinate.System -> Coordinate.Point -> Svg msg
-viewSample (Look config) shape color system =
-  let (Style normal) = config.normal in
-  viewShape system normal shape color
+viewSample : Config data -> Shape -> Color.Color -> Coordinate.System -> List (Data.Data data) -> Coordinate.Point -> Svg msg
+viewSample (Config config) shape color system data =
+  let
+    (Style style) =
+      if List.any config.isHovered (List.map .user data)
+        then config.hovered
+        else config.normal
+  in
+  viewShape system style shape color
 
 
 
@@ -307,23 +313,23 @@ varietyAttributes : Color.Color -> Variety -> List (Svg.Attribute msg)
 varietyAttributes color variety =
   case variety of
     Bordered width ->
-      [ Attributes.stroke color
+      [ Attributes.stroke (Color.Convert.colorToHex color)
       , Attributes.strokeWidth (toString width)
       , Attributes.fill "white"
       ]
 
     Aura width opacity ->
-      [ Attributes.stroke color
+      [ Attributes.stroke (Color.Convert.colorToHex color)
       , Attributes.strokeWidth (toString width)
       , Attributes.strokeOpacity (toString opacity)
-      , Attributes.fill color
+      , Attributes.fill (Color.Convert.colorToHex color)
       ]
 
     Disconnected width ->
       [ Attributes.stroke "white"
       , Attributes.strokeWidth (toString width)
-      , Attributes.fill color
+      , Attributes.fill (Color.Convert.colorToHex color)
       ]
 
     Full ->
-      [ Attributes.fill color ]
+      [ Attributes.fill (Color.Convert.colorToHex color) ]

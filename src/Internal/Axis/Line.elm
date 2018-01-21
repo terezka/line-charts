@@ -2,8 +2,9 @@ module Internal.Axis.Line exposing (Line, none, default, full, rangeFrame, Confi
 
 
 import Svg exposing (Attribute)
-import Lines.Color as Color
+import Lines.Color as Colors
 import Internal.Coordinate as Coordinate
+import Color
 
 
 {-| -}
@@ -15,7 +16,7 @@ type Line msg =
 none : Line msg
 none =
   Line <| \_ {min, max} ->
-    { color = "transparent"
+    { color = Colors.transparent
     , width = 0
     , events = []
     , start = min
@@ -34,7 +35,7 @@ full : Line msg
 full =
   Line <| \data range ->
     let largest = Coordinate.largestRange data range in
-    { color = Color.gray
+    { color = Colors.gray
     , width = 1
     , events = []
     , start = largest.min
@@ -47,7 +48,7 @@ rangeFrame : Line msg
 rangeFrame =
   Line <| \data range ->
     let smallest = (Coordinate.smallestRange data range) in
-    { color = Color.gray
+    { color = Colors.gray
     , width = 1
     , events = []
     , start = smallest.min

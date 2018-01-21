@@ -1,5 +1,5 @@
 module Internal.Events exposing
-    ( Events, default, none, hover, hoverX, click, custom
+    ( Config, default, none, hover, hoverOne, click, custom
     , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
     , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
@@ -21,34 +21,25 @@ import Json.Decode as Json
 
 
 {-| -}
-type Events data msg
-  = Events (List (Event data msg))
+type Config data msg
+  = Config (List (Event data msg))
 
 
 {-| -}
-default : Events data msg
+default : Config data msg
 default =
   none
 
 
 {-| -}
-none : Events data msg
+none : Config data msg
 none =
   custom []
 
 
 {-| -}
-hover : (Maybe data -> msg) -> Events data msg
+hover : (List data -> msg) -> Config data msg
 hover msg =
-  custom
-    [ onMouseMove msg (getWithin 30)
-    , onMouseLeave (msg Nothing)
-    ]
-
-
-{-| -}
-hoverX : (List data -> msg) -> Events data msg
-hoverX msg =
   custom
     [ onMouseMove msg getNearestX
     , onMouseLeave (msg [])
@@ -56,16 +47,25 @@ hoverX msg =
 
 
 {-| -}
-click : (Maybe data -> msg) -> Events data msg
+hoverOne : (Maybe data -> msg) -> Config data msg
+hoverOne msg =
+  custom
+    [ onMouseMove msg (getWithin 30)
+    , onMouseLeave (msg Nothing)
+    ]
+
+
+{-| -}
+click : (Maybe data -> msg) -> Config data msg
 click msg =
   custom
     [ onClick msg (getWithin 30) ]
 
 
 {-| -}
-custom : List (Event data msg) -> Events data msg
+custom : List (Event data msg) -> Config data msg
 custom =
-  Events
+  Config
 
 
 
@@ -126,8 +126,8 @@ onWithOptions options catchOutsideChart event toMsg decoder =
 
 
 {-| -}
-toChartAttributes : List (Data.Data data) -> System -> Events data msg -> List (Svg.Attribute msg)
-toChartAttributes data system (Events events) =
+toChartAttributes : List (Data.Data data) -> System -> Config data msg -> List (Svg.Attribute msg)
+toChartAttributes data system (Config events) =
   let
     order (Event outside event) =
       if outside then Nothing else Just (event data system)
@@ -136,8 +136,8 @@ toChartAttributes data system (Events events) =
 
 
 {-| -}
-toContainerAttributes : List (Data.Data data) -> System -> Events data msg -> List (Svg.Attribute msg)
-toContainerAttributes data system (Events events) =
+toContainerAttributes : List (Data.Data data) -> System -> Config data msg -> List (Svg.Attribute msg)
+toContainerAttributes data system (Config events) =
   let
     order (Event outside event) =
       if outside then Just (event data system) else Nothing
@@ -177,7 +177,7 @@ getNearest =
         Coordinate.toData system searchedSvg
     in
     getNearestHelp points system searched
-      |> Maybe.map .data
+      |> Maybe.map .user
 
 
 {-| TODO get _nearest_ within? -}
@@ -190,7 +190,7 @@ getWithin radius =
 
       keepIfEligible closest =
           if withinRadius system radius searched closest.point
-            then Just closest.data
+            then Just closest.user
             else Nothing
     in
     getNearestHelp points system searched
@@ -206,7 +206,7 @@ getNearestX =
         Coordinate.toData system searchedSvg
     in
     getNearestXHelp points system searched
-      |> List.map .data
+      |> List.map .user
 
 
 {-| -}
@@ -222,7 +222,7 @@ getWithinX radius =
     in
     getNearestXHelp points system searched
       |> List.filter keepIfEligible
-      |> List.map .data
+      |> List.map .user
 
 
 

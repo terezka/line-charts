@@ -1,4 +1,4 @@
-module Lines.Grid exposing (Grid, default, dotted, lines)
+module Lines.Grid exposing (Config, default, dots, lines)
 
 {-|
 
@@ -6,7 +6,7 @@ module Lines.Grid exposing (Grid, default, dotted, lines)
 @docs default
 
 # Customizing
-@docs Grid, dotted, lines
+@docs Config, dots, lines
 
 # How do I change the grid?
 By default there is a grid by every tick. If you want to change
@@ -21,30 +21,30 @@ See `Lines.Dimension` -> `Lines.Axis` -> `Lines.Axis.Tick`.
 
 -}
 
-import Lines.Color as Color
 import Internal.Grid as Grid
+import Color
 
 
 {-| -}
-type alias Grid =
-  Grid.Grid
+type alias Config =
+  Grid.Config
 
 
 {-| -}
-default : Grid
+default : Config
 default =
   Grid.default
 
 
-{-| Gets you a dotted grid of a given color.
+{-| Gets you a dots grid of a given color.
 -}
-dotted : Color.Color -> Grid
-dotted =
-  Grid.dotted
+dots : Color.Color -> Config
+dots =
+  Grid.dots
 
 
 {-| Gets you grid lines of a given width and color.
 -}
-lines : Float -> Color.Color -> Grid
+lines : Float -> Color.Color -> Config
 lines =
   Grid.lines

@@ -1,6 +1,6 @@
 module Internal.Area
   exposing
-    ( Area(..), none, percentage, normal, stacked
+    ( Config(..), none, percentage, normal, stacked
     , hasArea, opacity, opacitySingle, opacityContainer
     )
 
@@ -8,7 +8,7 @@ module Internal.Area
 
 
 {-| TODO Use maybe instead of none -}
-type Area
+type Config
   = None
   | Normal Float
   | Stacked Float
@@ -16,25 +16,25 @@ type Area
 
 
 {-| -}
-none : Area
+none : Config
 none =
   None
 
 
 {-| -}
-normal : Float -> Area
+normal : Float -> Config
 normal =
   Normal
 
 
 {-| -}
-stacked : Float -> Area
+stacked : Float -> Config
 stacked =
   Stacked
 
 
 {-| -}
-percentage : Float -> Area
+percentage : Float -> Config
 percentage =
   Percentage
 
@@ -44,9 +44,9 @@ percentage =
 
 
 {-| -}
-hasArea : Area -> Bool
-hasArea area =
-  case area of
+hasArea : Config -> Bool
+hasArea config =
+  case config of
     None         -> False
     Normal _     -> True
     Stacked _    -> True
@@ -54,9 +54,9 @@ hasArea area =
 
 
 {-| -}
-opacity : Area -> Float
-opacity area =
-  case area of
+opacity : Config -> Float
+opacity config =
+  case config of
     None               -> 0
     Normal opacity     -> opacity
     Stacked opacity    -> opacity
@@ -64,9 +64,9 @@ opacity area =
 
 
 {-| -}
-opacitySingle : Area -> Float
-opacitySingle area =
-  case area of
+opacitySingle : Config -> Float
+opacitySingle config =
+  case config of
     None               -> 0
     Normal opacity     -> opacity
     Stacked opacity    -> 1
@@ -74,9 +74,9 @@ opacitySingle area =
 
 
 {-| -}
-opacityContainer : Area -> Float
-opacityContainer area =
-  case area of
+opacityContainer : Config -> Float
+opacityContainer config =
+  case config of
     None               -> 1
     Normal opacity     -> 1
     Stacked opacity    -> opacity

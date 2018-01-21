@@ -24,7 +24,7 @@ module Lines exposing
 import Html
 import Svg
 import Svg.Attributes as Attributes
-import Lines.Color as Color
+import Lines.Color as Colors
 import Lines.Junk as Junk
 import Lines.Dimension as Dimension
 import Internal.Area as Area
@@ -41,12 +41,13 @@ import Internal.Junk
 import Internal.Legends as Legends
 import Internal.Line as Line
 import Internal.Utils as Utils
+import Color
 
 -- TODO more default junk (hovers)
 -- TODO move tick groups to axis
 -- TODO more default dimensions
+-- TODO more default title options
 
--- TODO http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/Color-Convert
 -- TODO consider tick space tolerance as determinating factor of tick amount
 -- TODO Add range adjust for nice ticks?
 -- TODO Should all configs in modules be called Config?
@@ -335,18 +336,18 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 type alias Config data msg =
   { id : String
   , margin : Coordinate.Margin
-  , x : Dimension.Dimension data msg
-  , y : Dimension.Dimension data msg
-  , grid : Grid.Grid
-  , intersection : Intersection.Intersection
+  , x : Dimension.Config data msg
+  , y : Dimension.Config data msg
+  , grid : Grid.Config
+  , intersection : Intersection.Config
   , interpolation : Interpolation
-  , area : Area.Area
-  , line : Line.Look data
-  , dot : Dot.Look data
-  , legends : Legends.Legends msg
+  , area : Area.Config
+  , line : Line.Config data
+  , dot : Dot.Config data
+  , legends : Legends.Config data msg
   , attributes : List (Svg.Attribute msg)
-  , events : Events.Events data msg
-  , junk : Junk.Junk msg
+  , events : Events.Config data msg
+  , junk : Junk.Config msg
   }
 
 
@@ -440,13 +441,14 @@ viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
 viewCustom config lines =
   let
     -- Data points
-    dataPoints = toDataPoints config lines
-    dataPointsAll = List.concat dataPoints
-    safeDataPoints = List.filter .isReal dataPointsAll
+    data = toDataPoints config lines
+    dataSafe = List.map (List.filter .isReal) data
+    dataAll = List.concat data
+    dataAllSafe = List.concat dataSafe
 
     -- System
     system =
-      toSystem config safeDataPoints
+      toSystem config dataAllSafe
 
     -- View
     junk =
@@ -464,7 +466,7 @@ viewCustom config lines =
     attributes =
       List.concat
         [ config.attributes
-        , Events.toContainerAttributes dataPointsAll system config.events
+        , Events.toContainerAttributes dataAll system config.events
         , [ Attributes.width <| toString system.frame.size.width
           , Attributes.height <| toString system.frame.size.height
           ]
@@ -487,16 +489,18 @@ viewCustom config lines =
         , lineLook = config.line
         , area = config.area
         , lines = lines
-        , dataPoints = dataPoints
+        , data = dataSafe
         , legends = config.legends
+        , x = config.x.variable
+        , y = config.y.variable
         }
   in
   container <|
     Svg.svg attributes
       [ Svg.defs [] [ clipPath config system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
-      , viewLines lines dataPoints
-      , chartAreaPlatform config dataPointsAll system
+      , viewLines lines data
+      , chartAreaPlatform config dataAll system
       , Axis.viewHorizontal system config.intersection config.x.title config.x.axis
       , Axis.viewVertical   system config.intersection config.y.title config.y.axis
       , viewLegends
@@ -543,10 +547,10 @@ toDataPoints config lines =
     x = config.x.variable
     y = config.y.variable
 
-    dataPoints =
-      List.map (Line.lineConfig >> .data >> List.filterMap dataPoint) lines
+    data =
+      List.map (Line.data >> List.filterMap addPoint) lines
 
-    dataPoint datum =
+    addPoint datum =
       case ( x datum, y datum ) of
         ( Just x, Just y )   -> Just <| Data.Data datum (Data.Point x y) True
         ( Just x, Nothing )  -> Just <| Data.Data datum (Data.Point x 0) False
@@ -554,10 +558,10 @@ toDataPoints config lines =
         ( Nothing, Nothing ) -> Nothing
   in
   case config.area of
-    Area.None         -> dataPoints
-    Area.Normal _     -> dataPoints
-    Area.Stacked _    -> stack dataPoints
-    Area.Percentage _ -> normalize (stack dataPoints)
+    Area.None         -> data
+    Area.Normal _     -> data
+    Area.Stacked _    -> stack data
+    Area.Percentage _ -> normalize (stack data)
 
 
 stack : List (List (Data.Data data)) -> List (List (Data.Data data))
@@ -620,7 +624,7 @@ normalize dataset =
 
 setY : Data.Data data -> Float -> Data.Data data
 setY datum y =
-  Data.Data datum.data (Data.Point datum.point.x y) datum.isReal
+  Data.Data datum.user (Data.Point datum.point.x y) datum.isReal
 
 
 toSystem : Config data msg -> List (Data.Data data) -> Coordinate.System
@@ -682,9 +686,9 @@ defaultLines =
 
 defaultColors : List Color.Color
 defaultColors =
-  [ Color.pink
-  , Color.blue
-  , Color.orange
+  [ Colors.pink
+  , Colors.blue
+  , Colors.orange
   ]
 
 

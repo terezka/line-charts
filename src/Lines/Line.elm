@@ -1,6 +1,6 @@
 module Lines.Line exposing
-  ( Look, default
-  , wider, static, emphasizable
+  ( Config, default
+  , wider, custom
   , Style, style
   )
 
@@ -10,21 +10,39 @@ module Lines.Line exposing
 @docs default
 
 # Customizations
-@docs Look, wider, static, emphasizable
+@docs Config, wider, custom
 
 # Styles
 @docs Style, style
 
 -}
 
-import Lines.Color as Color
 import Internal.Line as Line
+import Color
 
 
 
 {-| -}
-type alias Look data =
-  Line.Look data
+type alias Config data =
+  Line.Config data
+
+
+{-| -}
+default : Config data
+default =
+  Line.default
+
+
+{-| -}
+wider : Float -> Config data
+wider =
+  Line.wider
+
+
+{-| -}
+custom : (List data -> Style) -> Config data
+custom =
+  Line.custom
 
 
 {-| -}
@@ -33,35 +51,6 @@ type alias Style =
 
 
 {-| -}
-default : Look data
-default =
-  Line.default
-
-
-{-| -}
-wider : Float -> Look data
-wider =
-  Line.wider
-
-
-{-| -}
-static : Style -> Look data
-static =
-  Line.static
-
-
-{-| -}
 style : Float -> (Color.Color -> Color.Color) -> Style
 style =
   Line.style
-
-
-{-| -}
-emphasizable :
-  { normal : Style
-  , emphasized : Style
-  , isEmphasized : List data -> Bool
-  }
-  -> Look data
-emphasizable =
-  Line.emphasizable

@@ -1,7 +1,7 @@
 module Lines.Junk exposing
-  ( Junk, Layers, none, custom
+  ( Config, Layers, none, custom
   , Transfrom, transform, move, offset
-  , vertical, horizontal, rectangle, text
+  , vertical, horizontal, rectangle, label
   , withinChartArea
   )
 
@@ -11,10 +11,10 @@ module Lines.Junk exposing
 @docs none
 
 # Custom
-@docs Junk, custom, Layers
+@docs Config, custom, Layers
 
 # Common junk
-@docs vertical, horizontal, rectangle, text, withinChartArea
+@docs vertical, horizontal, rectangle, label, withinChartArea
 
 # Placing helpers
 @docs Transfrom, transform, move, offset
@@ -26,11 +26,11 @@ import Html
 import Svg
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
-import Lines.Color as Color
 import Internal.Junk as Junk
 import Internal.Svg as Svg
 import Internal.Utils as Utils
-
+import Color
+import Color.Convert
 
 
 -- QUICK START
@@ -38,7 +38,7 @@ import Internal.Utils as Utils
 
 {-| No junk!
 -}
-none : Junk msg
+none : Config msg
 none =
   Junk.none
 
@@ -61,8 +61,8 @@ you can use junk to add that. To be used in the `Lines.Config` passed to
 
 
 -}
-type alias Junk msg =
-  Junk.Junk msg
+type alias Config msg =
+  Junk.Config msg
 
 
 {-| The layers where you can put your junk. Junk in the `below` property will
@@ -96,9 +96,9 @@ you want in the resulting `Layers` type. Here's an example of adding grid lines.
       List.map (Junk.horizontal system []) (Axis.defaultInterval system.y)
 
 -}
-custom : (Coordinate.System -> Layers msg) -> Junk msg
+custom : (Coordinate.System -> Layers msg) -> Config msg
 custom =
-  Junk.Junk
+  Junk.Config
 
 
 
@@ -176,9 +176,9 @@ rectangle system attributes =
 
 
 {-| -}
-text : Color.Color -> String -> Svg.Svg msg
-text color string =
-  Svg.text_ [ Attributes.fill color ] [ Svg.tspan [] [ Svg.text string ] ]
+label : Color.Color -> String -> Svg.Svg msg
+label color =
+  Svg.label (Color.Convert.colorToHex color)
 
 
 

@@ -19,6 +19,7 @@ import Internal.Axis.Title as Title
 import Internal.Axis.Values as Values
 import Internal.Svg as Svg exposing (..)
 import Internal.Utils exposing (..)
+import Color.Convert
 
 
 
@@ -114,7 +115,7 @@ type alias ViewConfig msg =
 
 
 {-| -}
-viewHorizontal : Coordinate.System -> Intersection.Intersection -> Title.Title msg -> Axis data msg -> Svg msg
+viewHorizontal : Coordinate.System -> Intersection.Config -> Title.Title msg -> Axis data msg -> Svg msg
 viewHorizontal system intersection title axis =
     let
         config =
@@ -141,7 +142,7 @@ viewHorizontal system intersection title axis =
 
 
 {-| -}
-viewVertical : Coordinate.System -> Intersection.Intersection -> Title.Title msg -> Axis data msg -> Svg msg
+viewVertical : Coordinate.System -> Intersection.Config -> Title.Title msg -> Axis data msg -> Svg msg
 viewVertical system intersection title axis =
     let
         config =
@@ -219,7 +220,7 @@ viewVerticalAxisLine system axisPosition config =
 
 attributesLine : Line.Config msg -> List (Svg.Attribute msg)
 attributesLine { events, width, color } =
-  events ++ [ strokeWidth (toString width), stroke color ]
+  events ++ [ strokeWidth (toString width), stroke (Color.Convert.colorToHex color) ]
 
 
 
@@ -249,7 +250,7 @@ lengthOfTick { length, direction } =
 
 attributesTick : Tick.Tick msg -> List (Svg.Attribute msg)
 attributesTick { width, color } =
-  [ strokeWidth (toString width), stroke color ]
+  [ strokeWidth (toString width), stroke (Color.Convert.colorToHex color) ]
 
 
 viewHorizontalLabel : Coordinate.System -> Tick.Tick msg -> Data.Point -> Svg msg -> Svg msg

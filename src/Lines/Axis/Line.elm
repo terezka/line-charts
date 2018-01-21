@@ -18,9 +18,9 @@ module Lines.Axis.Line exposing
 -}
 
 import Svg exposing (Attribute)
-import Lines.Color as Color
 import Lines.Coordinate as Coordinate
 import Internal.Axis.Line as Line
+import Color
 
 
 {-| -}

@@ -2,6 +2,7 @@ module Internal.Axis.Title exposing (Title, Config, default, byDataMax, at, cust
 
 import Svg exposing (Svg)
 import Internal.Coordinate as Coordinate
+import Internal.Svg as Svg
 
 
 {-| -}
@@ -22,7 +23,7 @@ type alias Config msg =
 default : String -> Title msg
 default title =
   Title
-    { view = viewText title
+    { view = Svg.label "inherit" title
     , position = \data range -> range.max
     , xOffset = 0
     , yOffset = 0
@@ -33,7 +34,7 @@ default title =
 byDataMax : String -> Title msg
 byDataMax title =
   Title
-    { view = viewText title
+    { view = Svg.label "inherit" title
     , position = \data range -> Coordinate.smallestRange data range |> .max
     , xOffset = 0
     , yOffset = 0
@@ -44,7 +45,7 @@ byDataMax title =
 at : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Title msg
 at position xOffset yOffset title =
   Title
-    { view = viewText title
+    { view = Svg.label "inherit" title
     , position = position
     , xOffset = xOffset
     , yOffset = yOffset
@@ -60,15 +61,6 @@ custom position xOffset yOffset view =
     , xOffset = xOffset
     , yOffset = yOffset
     }
-
-
-
--- HELPERS
-
-
-viewText : String -> Svg msg
-viewText string =
-  Svg.text_ [] [ Svg.tspan [] [ Svg.text string ] ]
 
 
 

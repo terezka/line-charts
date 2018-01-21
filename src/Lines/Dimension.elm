@@ -1,4 +1,4 @@
-module Lines.Dimension exposing (Dimension, default, full, time)
+module Lines.Dimension exposing (Config, default, full, time)
 
 {-|
 
@@ -6,7 +6,7 @@ module Lines.Dimension exposing (Dimension, default, full, time)
 @docs default, full, time
 
 # Customizing
-@docs Dimension
+@docs Config
 
 -}
 
@@ -47,7 +47,7 @@ import Internal.Coordinate as Coordinate
       , axis = Axis.float 10
       }
 -}
-type alias Dimension data msg =
+type alias Config data msg =
   { title : Title.Title msg
   , variable : data -> Maybe Float
   , pixels : Int
@@ -77,7 +77,7 @@ Takes the length of your dimension, the title and it's variable.
 _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 
 -}
-default : Int -> String -> (data -> Float) -> Dimension data msg
+default : Int -> String -> (data -> Float) -> Config data msg
 default pixels title variable =
   { title = Title.byDataMax title
   , variable = Just << variable
@@ -96,7 +96,7 @@ default pixels title variable =
 
 
 {-| -}
-full : Int -> String -> (data -> Float) -> Dimension data msg
+full : Int -> String -> (data -> Float) -> Config data msg
 full pixels title variable =
   { title = Title.default title
   , variable = Just << variable
@@ -112,7 +112,7 @@ full pixels title variable =
 
 
 {-| -}
-time : Int -> String -> (data -> Float) -> Dimension data msg
+time : Int -> String -> (data -> Float) -> Config data msg
 time pixels title variable =
   { title = Title.byDataMax title
   , variable = Just << variable
