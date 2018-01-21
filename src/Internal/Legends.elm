@@ -108,7 +108,7 @@ type alias Arguments data msg =
   { system : Coordinate.System
   , dotLook : Dot.Look data
   , lineLook : Line.Look data
-  , area : Area.Area
+  , area : Area.Config
   , lines : List (Line.Line data)
   , data : List (List (Data.Data data))
   , legends : Legends data msg

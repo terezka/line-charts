@@ -341,7 +341,7 @@ type alias Config data msg =
   , grid : Grid.Grid
   , intersection : Intersection.Intersection
   , interpolation : Interpolation
-  , area : Area.Area
+  , area : Area.Config
   , line : Line.Look data
   , dot : Dot.Look data
   , legends : Legends.Legends data msg

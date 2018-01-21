@@ -143,7 +143,7 @@ type alias Arguments data =
   , dotLook : Dot.Look data
   , interpolation : Interpolation.Interpolation
   , lineLook : Look data
-  , area : Area.Area
+  , area : Area.Config
   , id : String
   }
 
@@ -175,7 +175,7 @@ viewNormal ( areas, lines, dots ) =
   List.map3 view areas lines dots
 
 
-viewStacked : Area.Area ->  ( List (Svg.Svg msg), List (Svg.Svg msg), List (Svg.Svg msg) ) -> List (Svg.Svg msg)
+viewStacked : Area.Config ->  ( List (Svg.Svg msg), List (Svg.Svg msg), List (Svg.Svg msg) ) -> List (Svg.Svg msg)
 viewStacked area ( areas, lines, dots ) =
   let opacity = "opacity: " ++ toString (Area.opacityContainer area)
       toList l d = [ l, d ]
@@ -289,7 +289,7 @@ viewArea { system, lineLook, area, id } line style interpolation data =
      Path.view system attributes (commands first rest last)
 
 
-toAreaAttributes : Line data -> Style -> Area.Area -> List (Svg.Attribute msg)
+toAreaAttributes : Line data -> Style -> Area.Config -> List (Svg.Attribute msg)
 toAreaAttributes (Line { color }) (Style style) area =
   [ Attributes.class "chart__interpolation__area__fragment"
   , Attributes.fill (Color.Convert.colorToHex (style.color color))
@@ -301,7 +301,7 @@ toAreaAttributes (Line { color }) (Style style) area =
 
 
 {-| -}
-viewSample : Look data -> Line data -> Area.Area -> List (Data.Data data) -> Float -> Svg.Svg msg
+viewSample : Look data -> Line data -> Area.Config -> List (Data.Data data) -> Float -> Svg.Svg msg
 viewSample (Look look) line area data sampleWidth =
   let
     style =
