@@ -7,7 +7,7 @@ module Internal.Area
 {-| -}
 
 
-{-| TODO Use maybe instead of none -}
+{-| -}
 type Config
   = None
   | Normal Float

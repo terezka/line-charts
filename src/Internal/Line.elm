@@ -1,5 +1,5 @@
 module Internal.Line exposing
-  ( Line(..), line, dash
+  ( Series, line, dash
   , Config, default, wider, custom
   , Style, style
   -- INTERNAL
@@ -31,12 +31,12 @@ import Color.Convert
 
 
 {-| -}
-type Line data =
-  Line (LineConfig data)
+type Series data =
+  Series (SeriesConfig data)
 
 
 {-| -}
-type alias LineConfig data =
+type alias SeriesConfig data =
   { color : Color.Color
   , shape : Dot.Shape
   , dashing : List Float
@@ -46,26 +46,26 @@ type alias LineConfig data =
 
 
 {-| -}
-label : Line data -> String
-label (Line config) =
+label : Series data -> String
+label (Series config) =
   config.label
 
 
 {-| -}
-shape : Line data -> Dot.Shape
-shape (Line config) =
+shape : Series data -> Dot.Shape
+shape (Series config) =
   config.shape
 
 
 {-| -}
-data : Line data -> List data
-data (Line config) =
+data : Series data -> List data
+data (Series config) =
   config.data
 
 
 {-| -}
-color : Config data -> Line data -> List (Data.Data data) -> Color.Color
-color (Config config) (Line line) data =
+color : Config data -> Series data -> List (Data.Data data) -> Color.Color
+color (Config config) (Series line) data =
   let
     (Style style) =
       config (List.map .user data)
@@ -78,15 +78,15 @@ color (Config config) (Line line) data =
 
 
 {-| -}
-line : Color.Color -> Dot.Shape -> String -> List data -> Line data
+line : Color.Color -> Dot.Shape -> String -> List data -> Series data
 line color shape label data =
-  Line <| LineConfig color shape [] label data
+  Series <| SeriesConfig color shape [] label data
 
 
 {-| -}
-dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
+dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Series data
 dash color shape label dashing data =
-  Line <| LineConfig color shape dashing label data
+  Series <| SeriesConfig color shape dashing label data
 
 
 
@@ -149,20 +149,20 @@ type alias Arguments data =
 
 
 {-| -}
-view : Arguments data -> List (Line data) -> List (List (Data.Data data)) -> Svg.Svg msg
+view : Arguments data -> List (Series data) -> List (List (Data.Data data)) -> Svg.Svg msg
 view arguments lines datas =
   let
     container =
       Svg.g [ Attributes.class "chart__lines" ]
 
-    buildLineViews =
+    buildSeriesViews =
       if Area.opacityContainer arguments.area < 1
         then viewStacked arguments.area
         else viewNormal
   in
   List.map2 (viewSingle arguments) lines datas
     |> Utils.unzip3
-    |> buildLineViews
+    |> buildSeriesViews
     |> container
 
 
@@ -186,7 +186,7 @@ viewStacked area ( areas, lines, dots ) =
   ]
 
 
-viewSingle : Arguments data -> Line data -> List (Data.Data data) -> ( Svg.Svg msg, Svg.Svg msg, Svg.Svg msg )
+viewSingle : Arguments data -> Series data -> List (Data.Data data) -> ( Svg.Svg msg, Svg.Svg msg, Svg.Svg msg )
 viewSingle arguments line data =
   let
     -- Parting
@@ -215,13 +215,13 @@ viewSingle arguments line data =
         [ Attributes.class "chart__interpolation__area" ] <|
         List.map2 (viewArea arguments line style) commands parts
 
-    viewLines =
+    viewSeriess =
       Svg.g
         [ Attributes.class "chart__interpolation__line" ] <|
-        List.map2 (viewLine arguments line style) commands parts
+        List.map2 (viewSeries arguments line style) commands parts
   in
   ( Utils.viewIf (Area.hasArea arguments.area) viewAreas
-  , viewLines
+  , viewSeriess
   , viewDots
   )
 
@@ -230,8 +230,8 @@ viewSingle arguments line data =
 -- VIEW / DOT
 
 
-viewDot : Arguments data -> Line data -> Style -> Data.Data data -> Svg.Svg msg
-viewDot arguments (Line lineConfig) (Style style) =
+viewDot : Arguments data -> Series data -> Style -> Data.Data data -> Svg.Svg msg
+viewDot arguments (Series lineConfig) (Style style) =
   Dot.view
     { system = arguments.system
     , dotLook = arguments.dotLook
@@ -244,18 +244,18 @@ viewDot arguments (Line lineConfig) (Style style) =
 -- VIEW / LINE
 
 
-viewLine : Arguments data -> Line data -> Style -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
-viewLine { system, lineLook, id } line style interpolation data =
+viewSeries : Arguments data -> Series data -> Style -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
+viewSeries { system, lineLook, id } line style interpolation data =
   let
     attributes =
-      Junk.withinChartArea system :: toLineAttributes line style
+      Junk.withinChartArea system :: toSeriesAttributes line style
   in
   Utils.viewWithFirst data <| \first _ ->
     Path.view system attributes (Path.Move first.point :: interpolation)
 
 
-toLineAttributes : Line data -> Style -> List (Svg.Attribute msg)
-toLineAttributes (Line { color, dashing }) (Style style) =
+toSeriesAttributes : Series data -> Style -> List (Svg.Attribute msg)
+toSeriesAttributes (Series { color, dashing }) (Style style) =
   [ Attributes.style "pointer-events: none;"
   , Attributes.class "chart__interpolation__line__fragment"
   , Attributes.stroke (Color.Convert.colorToHex (style.color color))
@@ -269,7 +269,7 @@ toLineAttributes (Line { color, dashing }) (Style style) =
 -- VIEW / AREA
 
 
-viewArea : Arguments data -> Line data -> Style -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
+viewArea : Arguments data -> Series data -> Style -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
 viewArea { system, lineLook, area, id } line style interpolation data =
   let
     ground data =
@@ -289,8 +289,8 @@ viewArea { system, lineLook, area, id } line style interpolation data =
      Path.view system attributes (commands first rest last)
 
 
-toAreaAttributes : Line data -> Style -> Area.Config -> List (Svg.Attribute msg)
-toAreaAttributes (Line { color }) (Style style) area =
+toAreaAttributes : Series data -> Style -> Area.Config -> List (Svg.Attribute msg)
+toAreaAttributes (Series { color }) (Style style) area =
   [ Attributes.class "chart__interpolation__area__fragment"
   , Attributes.fill (Color.Convert.colorToHex (style.color color))
   ]
@@ -301,14 +301,14 @@ toAreaAttributes (Line { color }) (Style style) area =
 
 
 {-| -}
-viewSample : Config data -> Line data -> Area.Config -> List (Data.Data data) -> Float -> Svg.Svg msg
+viewSample : Config data -> Series data -> Area.Config -> List (Data.Data data) -> Float -> Svg.Svg msg
 viewSample (Config look) line area data sampleWidth =
   let
     style =
       look (List.map .user data)
 
     lineAttributes =
-      toLineAttributes line style
+      toSeriesAttributes line style
 
     sizeAttributes =
       [ Attributes.x1 "0"

@@ -109,7 +109,7 @@ type alias Arguments data msg =
   , dotLook : Dot.Config data
   , lineLook : Line.Config data
   , area : Area.Config
-  , lines : List (Line.Line data)
+  , lines : List (Line.Series data)
   , data : List (List (Data.Data data))
   , x : data -> Maybe Float
   , y : data -> Maybe Float
@@ -141,7 +141,7 @@ viewFrees { system, lines, data } placement view =
     List.map2 (viewFree system placement view) lines data
 
 
-viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> List (Data.Data data) -> Svg.Svg msg
+viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Series data -> List (Data.Data data) -> Svg.Svg msg
 viewFree system placement viewLabel line data =
   let
     ( orderedPoints, anchor, xOffset ) =
@@ -185,7 +185,7 @@ viewGrouped arguments sampleWidth container =
 
 
 
-viewSample : Arguments data msg -> Float -> Line.Line data -> List (Data.Data data) -> Svg msg
+viewSample : Arguments data msg -> Float -> Line.Series data -> List (Data.Data data) -> Svg msg
 viewSample { system, lineLook, dotLook, area } sampleWidth line data =
   let
     dotPosition =

@@ -1,6 +1,6 @@
 module Lines exposing
   ( view1, view2, view3
-  , view, Line, line, dash
+  , view, Series, line, dash
   , viewCustom, Config
   , Interpolation, linear, monotone, steppedBefore, steppedAfter
   )
@@ -11,7 +11,7 @@ module Lines exposing
 @docs view1, view2, view3
 
 # Customizing lines
-@docs view, Line, line, dash
+@docs view, Series, line, dash
 
 # Customizing everything
 @docs viewCustom, Config
@@ -50,7 +50,6 @@ import Color
 
 -- TODO consider tick space tolerance as determinating factor of tick amount
 -- TODO Add range adjust for nice ticks?
--- TODO Should all configs in modules be called Config?
 
 
 
@@ -164,9 +163,9 @@ the `line` function for more information.
     humanChart : Html msg
     humanChart =
       Lines.view .age .weight
-        [ Lines.line "red" Dot.cross "Alice" alice
-        , Lines.line "blue" Dot.square "Bob" bob
-        , Lines.line "green" Dot.circle "Chuck" chuck
+        [ Lines.Line "red" Dot.cross "Alice" alice
+        , Lines.Line "blue" Dot.square "Bob" bob
+        , Lines.Line "green" Dot.circle "Chuck" chuck
         ]
 
 _See the full example [here](https://ellie-app.com/sgL9mdF7ra1/1)._
@@ -174,14 +173,14 @@ _See the full example [here](https://ellie-app.com/sgL9mdF7ra1/1)._
 See `viewCustom` for all other customizations.
 
 -}
-view : (data -> Float) -> (data -> Float) -> List (Line data) -> Svg.Svg msg
+view : (data -> Float) -> (data -> Float) -> List (Series data) -> Svg.Svg msg
 view toX toY =
   viewCustom (defaultConfig toX toY)
 
 
 {-| -}
-type alias Line data =
-  Line.Line data
+type alias Series data =
+  Line.Series data
 
 
 {-|
@@ -193,9 +192,9 @@ Try changing the color or explore all the available dot shapes from `Lines.Dot`!
     humanChart : Html msg
     humanChart =
       Lines.view .age .weight
-        [ Lines.line "darkslateblue" Dot.cross "Alice" alice
-        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
-        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
+        [ Lines.Line "darkslateblue" Dot.cross "Alice" alice
+        , Lines.Line "darkturquoise" Dot.diamond "Bob" bob
+        , Lines.Line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
 _See the full example [here](https://ellie-app.com/stWdWjqGZa1/0)._
@@ -209,7 +208,7 @@ For now though, I'd recommend you stick to `view` and get your lines and
 data right first, and then stepping up the complexity.
 
  -}
-line : Color.Color -> Dot.Shape -> String -> List data -> Line data
+line : Color.Color -> Dot.Shape -> String -> List data -> Series data
 line =
   Line.line
 
@@ -228,9 +227,9 @@ for examples of patterns.
     humanChart =
       Lines.view .age .weight
         [ Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
-        , Lines.line "darkslateblue" Dot.cross "Alice" alice
-        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
-        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
+        , Lines.Line "darkslateblue" Dot.cross "Alice" alice
+        , Lines.Line "darkturquoise" Dot.diamond "Bob" bob
+        , Lines.Line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
     -- Try passing different numbers!
@@ -243,7 +242,7 @@ Dashed lines are especially good for visualizing processed data like
 averages or predicted values.
 
 -}
-dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
+dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Series data
 dash =
   Line.dash
 
@@ -321,7 +320,7 @@ available for each property.
       , grid = Grid.default
       , areaOpacity = 0
       , intersection = Intersection.default
-      , interpolation = Lines.linear
+      , interpolation = Lines.Linear
       , line = Line.default
       , dot = Dot.default
       , legends = Legends.default
@@ -401,9 +400,9 @@ The example below adds color to the area below the lines.
     chart : Html msg
     chart =
       Lines.viewCustom chartConfig
-        [ Lines.line "darkslateblue" Dot.cross "Alice" alice
-        , Lines.line "darkturquoise" Dot.diamond "Bob" bob
-        , Lines.line "darkgoldenrod" Dot.triangle "Chuck" chuck
+        [ Lines.Line "darkslateblue" Dot.cross "Alice" alice
+        , Lines.Line "darkturquoise" Dot.diamond "Bob" bob
+        , Lines.Line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
     chartConfig : Config Info msg
@@ -415,7 +414,7 @@ The example below adds color to the area below the lines.
       , grid = Grid.default
       , areaOpacity = 0.25 -- Changed from the default!
       , intersection = Intersection.default
-      , interpolation = Lines.linear
+      , interpolation = Lines.Linear
       , line = Line.default
       , dot = Dot.default
       , legends = Legends.default
@@ -437,7 +436,7 @@ the curve shows how much the quantity changed. However if that amount is not
 significant, it's best to leave it out.
 
 -}
-viewCustom : Config data msg -> List (Line data) -> Svg.Svg msg
+viewCustom : Config data msg -> List (Series data) -> Svg.Svg msg
 viewCustom config lines =
   let
     -- Data points
@@ -541,7 +540,7 @@ clipPath { id } system =
     [ Svg.rect (chartAreaAttributes system) [] ]
 
 
-toDataPoints : Config data msg -> List (Line data) -> List (List (Data.Data data))
+toDataPoints : Config data msg -> List (Series data) -> List (List (Data.Data data))
 toDataPoints config lines =
   let
     x = config.x.variable
@@ -679,7 +678,7 @@ defaultConfig toX toY =
   }
 
 
-defaultLines : List (List data) -> List (Line data)
+defaultLines : List (List data) -> List (Series data)
 defaultLines =
   List.map4 Line.line defaultColors defaultShapes defaultLabel
 

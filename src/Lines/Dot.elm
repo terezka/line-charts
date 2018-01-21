@@ -33,7 +33,7 @@ import Internal.Dot as Dot
     humanChart : Html msg
     humanChart =
       Lines.view .age .income
-        [ Lines.line Color.pink Dot.none "Alice" alice ]
+        [ Lines.Line Color.pink Dot.none "Alice" alice ]
 -}
 none : Shape
 none =
@@ -50,9 +50,9 @@ shape of your line's dot.
     humanChart : Html msg
     humanChart =
       Lines.view .age .income
-        [ Lines.line Color.orange Dot.plus "Alice" alice
-        , Lines.line Color.blue Dot.square "Bob" bob
-        , Lines.line Color.pink Dot.diamond "Chuck" chuck
+        [ Lines.Line Color.orange Dot.plus "Alice" alice
+        , Lines.Line Color.blue Dot.square "Bob" bob
+        , Lines.Line Color.pink Dot.diamond "Chuck" chuck
         ]
 -}
 type alias Shape =
