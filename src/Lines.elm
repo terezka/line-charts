@@ -342,7 +342,7 @@ type alias Config data msg =
   , intersection : Intersection.Config
   , interpolation : Interpolation
   , area : Area.Config
-  , line : Line.Look data
+  , line : Line.Config data
   , dot : Dot.Config data
   , legends : Legends.Config data msg
   , attributes : List (Svg.Attribute msg)

@@ -1,6 +1,6 @@
 module Internal.Line exposing
   ( Line(..), line, dash
-  , Look, default, wider, custom
+  , Config, default, wider, custom
   , Style, style
   -- INTERNAL
   , shape, label, color, data
@@ -32,11 +32,11 @@ import Color.Convert
 
 {-| -}
 type Line data =
-  Line (Config data)
+  Line (LineConfig data)
 
 
 {-| -}
-type alias Config data =
+type alias LineConfig data =
   { color : Color.Color
   , shape : Dot.Shape
   , dashing : List Float
@@ -64,13 +64,13 @@ data (Line config) =
 
 
 {-| -}
-color : Look data -> Line data -> List (Data.Data data) -> Color.Color
-color (Look look) (Line config) data =
+color : Config data -> Line data -> List (Data.Data data) -> Color.Color
+color (Config config) (Line line) data =
   let
     (Style style) =
-      look (List.map .user data)
+      config (List.map .user data)
   in
-  style.color config.color
+  style.color line.color
 
 
 
@@ -80,13 +80,13 @@ color (Look look) (Line config) data =
 {-| -}
 line : Color.Color -> Dot.Shape -> String -> List data -> Line data
 line color shape label data =
-  Line <| Config color shape [] label data
+  Line <| LineConfig color shape [] label data
 
 
 {-| -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Line data
 dash color shape label dashing data =
-  Line <| Config color shape dashing label data
+  Line <| LineConfig color shape dashing label data
 
 
 
@@ -94,26 +94,26 @@ dash color shape label dashing data =
 
 
 {-| -}
-type Look data =
-  Look (List data -> Style)
+type Config data =
+  Config (List data -> Style)
 
 
 {-| -}
-default : Look data
+default : Config data
 default =
-  Look <| \_ -> style 1 identity
+  Config <| \_ -> style 1 identity
 
 
 {-| -}
-wider : Float -> Look data
+wider : Float -> Config data
 wider width =
-  Look <| \_ -> style width identity
+  Config <| \_ -> style width identity
 
 
 {-| -}
-custom : (List data -> Style) -> Look data
+custom : (List data -> Style) -> Config data
 custom =
-  Look
+  Config
 
 
 
@@ -142,7 +142,7 @@ type alias Arguments data =
   { system : Coordinate.System
   , dotLook : Dot.Config data
   , interpolation : Interpolation.Interpolation
-  , lineLook : Look data
+  , lineLook : Config data
   , area : Area.Config
   , id : String
   }
@@ -195,7 +195,7 @@ viewSingle arguments line data =
 
     -- Style
     style =
-      arguments.lineLook |> \(Look look) -> look (List.map .user data)
+      arguments.lineLook |> \(Config look) -> look (List.map .user data)
 
     -- Dots
     viewDots =
@@ -301,8 +301,8 @@ toAreaAttributes (Line { color }) (Style style) area =
 
 
 {-| -}
-viewSample : Look data -> Line data -> Area.Config -> List (Data.Data data) -> Float -> Svg.Svg msg
-viewSample (Look look) line area data sampleWidth =
+viewSample : Config data -> Line data -> Area.Config -> List (Data.Data data) -> Float -> Svg.Svg msg
+viewSample (Config look) line area data sampleWidth =
   let
     style =
       look (List.map .user data)

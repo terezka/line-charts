@@ -1,5 +1,5 @@
 module Lines.Line exposing
-  ( Look, default
+  ( Config, default
   , wider, custom
   , Style, style
   )
@@ -10,7 +10,7 @@ module Lines.Line exposing
 @docs default
 
 # Customizations
-@docs Look, wider, custom
+@docs Config, wider, custom
 
 # Styles
 @docs Style, style
@@ -23,24 +23,24 @@ import Color
 
 
 {-| -}
-type alias Look data =
-  Line.Look data
+type alias Config data =
+  Line.Config data
 
 
 {-| -}
-default : Look data
+default : Config data
 default =
   Line.default
 
 
 {-| -}
-wider : Float -> Look data
+wider : Float -> Config data
 wider =
   Line.wider
 
 
 {-| -}
-custom : (List data -> Style) -> Look data
+custom : (List data -> Style) -> Config data
 custom =
   Line.custom
 
