@@ -338,7 +338,7 @@ type alias Config data msg =
   , margin : Coordinate.Margin
   , x : Dimension.Config data msg
   , y : Dimension.Config data msg
-  , grid : Grid.Grid
+  , grid : Grid.Config
   , intersection : Intersection.Intersection
   , interpolation : Interpolation
   , area : Area.Config

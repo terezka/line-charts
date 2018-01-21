@@ -1,4 +1,4 @@
-module Internal.Grid exposing (Grid, default, dotted, lines, view)
+module Internal.Grid exposing (Config, default, dots, lines, view)
 
 
 {-| -}
@@ -15,25 +15,25 @@ import Color.Convert
 
 
 {-| -}
-type Grid
+type Config
   = Dots Color.Color
   | Lines Float Color.Color
 
 
 {-| -}
-default : Grid
+default : Config
 default =
   lines 1 Colors.grayLight
 
 
 {-| -}
-dotted : Color.Color -> Grid
-dotted =
+dots : Color.Color -> Config
+dots =
   Dots
 
 
 {-| -}
-lines : Float -> Color.Color -> Grid
+lines : Float -> Color.Color -> Config
 lines =
   Lines
 
@@ -43,7 +43,7 @@ lines =
 
 
 {-| -}
-view : Coordinate.System -> Dimension.Config data msg -> Dimension.Config data msg -> Grid -> List (Svg.Svg msg)
+view : Coordinate.System -> Dimension.Config data msg -> Dimension.Config data msg -> Config -> List (Svg.Svg msg)
 view system xDimension yDimension grid =
   let
     verticals =

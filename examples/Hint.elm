@@ -89,7 +89,7 @@ view model =
             , hovered = Dot.aura 6 5 0.3
             , isHovered = Just >> (==) model.hovering
             }
-      , grid = Grid.dotted Colors.grayLight
+      , grid = Grid.dots Colors.grayLight
       , area = Area.none
       , id = "chart"
       }
