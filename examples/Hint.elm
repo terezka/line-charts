@@ -72,7 +72,7 @@ view model =
     Lines.viewCustom
       { margin = Coordinate.Margin 150 150 150 150
       , attributes = [ SvgA.style "font: caption;" ]
-      , events = Events.hover HoverX
+      , events = Events.hoverOne HoverSingle
       , x = Dimension.default 750 "income" .income
       , y = Dimension.default 670 "age" .age
       , intersection = Intersection.default
@@ -82,13 +82,13 @@ view model =
             --|> Maybe.withDefault Junk.none
       , interpolation = Lines.monotone
       , legends = Legends.default
-      , line =
-          Line.custom <| \data ->
-            if List.any (flip List.member model.hoveringX) data then
-              Line.style 2 identity
-            else
-              Line.style 1 identity
-      , dot = Dot.static (Dot.disconnected 10 2)
+      , line = Line.default
+      , dot =
+          Dot.hoverable
+            { normal = Dot.disconnected 10 2
+            , hovered = Dot.aura 6 5 0.3
+            , isHovered = Just >> (==) model.hovering
+            }
       , grid = Grid.dotted Colors.grayLight
       , area = Area.none
       , id = "chart"

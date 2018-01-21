@@ -1,5 +1,5 @@
 module Internal.Dot exposing
-  ( Look, default, static, emphasizable
+  ( Look, default, static, hoverable
   , Shape(..)
   , Style, style, bordered, disconnected, aura, full
   , Variety
@@ -24,8 +24,8 @@ type Look data =
 {-| -}
 type alias LookConfig data =
   { normal : Style
-  , emphasized : Style
-  , isEmphasized : data -> Bool
+  , hovered : Style
+  , isHovered : data -> Bool
   }
 
 
@@ -34,8 +34,8 @@ default : Look data
 default =
   Look
     { normal = disconnected 10 2
-    , emphasized = aura 7 4 0.5
-    , isEmphasized = always False
+    , hovered = aura 7 4 0.5
+    , isHovered = always False
     }
 
 
@@ -44,14 +44,14 @@ static : Style -> Look data
 static style =
   Look
     { normal = style
-    , emphasized = aura 5 4 0.5
-    , isEmphasized = always False
+    , hovered = aura 5 4 0.5
+    , isHovered = always False
     }
 
 
 {-| -}
-emphasizable : LookConfig data -> Look data
-emphasizable =
+hoverable : LookConfig data -> Look data
+hoverable =
   Look
 
 
@@ -143,8 +143,8 @@ view { system, dotLook, shape, color } data =
       dotLook
 
     (Style style) =
-      if config.isEmphasized data.user
-        then config.emphasized
+      if config.isHovered data.user
+        then config.hovered
         else config.normal
   in
   viewShape system style shape color data.point
@@ -155,8 +155,8 @@ viewSample : Look data -> Shape -> Color.Color -> Coordinate.System -> List (Dat
 viewSample (Look config) shape color system data =
   let
     (Style style) =
-      if List.any config.isEmphasized (List.map .user data)
-        then config.emphasized
+      if List.any config.isHovered (List.map .user data)
+        then config.hovered
         else config.normal
   in
   viewShape system style shape color

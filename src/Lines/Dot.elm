@@ -1,7 +1,7 @@
 module Lines.Dot exposing
   ( Shape, none
   , circle, triangle, square, diamond, plus, cross
-  , Look, default, static, emphasizable
+  , Look, default, static, hoverable
   , Style, bordered, disconnected, aura, full
   )
 
@@ -14,7 +14,7 @@ module Lines.Dot exposing
 @docs Shape, circle, triangle, square, diamond, plus, cross
 
 # Customizing style
-@docs Look, default, static, emphasizable
+@docs Look, default, static, hoverable
 
 ## Styles
 @docs Style, full, bordered, disconnected, aura
@@ -126,7 +126,7 @@ static =
 
     dotLook : Dot.Look Info
     dotLook =
-      Dot.emphasizable
+      Dot.hoverable
         { normal = Dot.full 5
         , emphasized = Dot.aura 7 4 0.5
         , isEmphasized = isOverweight
@@ -137,14 +137,14 @@ static =
       bmi info > 25
 
 -}
-emphasizable :
+hoverable :
   { normal : Style
-  , emphasized : Style
-  , isEmphasized : data -> Bool
+  , hovered : Style
+  , isHovered : data -> Bool
   }
   -> Look data
-emphasizable =
-  Dot.emphasizable
+hoverable =
+  Dot.hoverable
 
 
 
