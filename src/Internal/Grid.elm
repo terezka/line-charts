@@ -43,7 +43,7 @@ lines =
 
 
 {-| -}
-view : Coordinate.System -> Dimension.Dimension data msg -> Dimension.Dimension data msg -> Grid -> List (Svg.Svg msg)
+view : Coordinate.System -> Dimension.Config data msg -> Dimension.Config data msg -> Grid -> List (Svg.Svg msg)
 view system xDimension yDimension grid =
   let
     verticals =

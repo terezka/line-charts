@@ -336,8 +336,8 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 type alias Config data msg =
   { id : String
   , margin : Coordinate.Margin
-  , x : Dimension.Dimension data msg
-  , y : Dimension.Dimension data msg
+  , x : Dimension.Config data msg
+  , y : Dimension.Config data msg
   , grid : Grid.Grid
   , intersection : Intersection.Intersection
   , interpolation : Interpolation
