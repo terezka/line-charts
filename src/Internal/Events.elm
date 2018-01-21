@@ -1,5 +1,5 @@
 module Internal.Events exposing
-    ( Events, default, none, hover, hoverOne, click, custom
+    ( Config, default, none, hover, hoverOne, click, custom
     , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
     , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
@@ -21,24 +21,24 @@ import Json.Decode as Json
 
 
 {-| -}
-type Events data msg
-  = Events (List (Event data msg))
+type Config data msg
+  = Config (List (Event data msg))
 
 
 {-| -}
-default : Events data msg
+default : Config data msg
 default =
   none
 
 
 {-| -}
-none : Events data msg
+none : Config data msg
 none =
   custom []
 
 
 {-| -}
-hover : (List data -> msg) -> Events data msg
+hover : (List data -> msg) -> Config data msg
 hover msg =
   custom
     [ onMouseMove msg getNearestX
@@ -47,7 +47,7 @@ hover msg =
 
 
 {-| -}
-hoverOne : (Maybe data -> msg) -> Events data msg
+hoverOne : (Maybe data -> msg) -> Config data msg
 hoverOne msg =
   custom
     [ onMouseMove msg (getWithin 30)
@@ -56,16 +56,16 @@ hoverOne msg =
 
 
 {-| -}
-click : (Maybe data -> msg) -> Events data msg
+click : (Maybe data -> msg) -> Config data msg
 click msg =
   custom
     [ onClick msg (getWithin 30) ]
 
 
 {-| -}
-custom : List (Event data msg) -> Events data msg
+custom : List (Event data msg) -> Config data msg
 custom =
-  Events
+  Config
 
 
 
@@ -126,8 +126,8 @@ onWithOptions options catchOutsideChart event toMsg decoder =
 
 
 {-| -}
-toChartAttributes : List (Data.Data data) -> System -> Events data msg -> List (Svg.Attribute msg)
-toChartAttributes data system (Events events) =
+toChartAttributes : List (Data.Data data) -> System -> Config data msg -> List (Svg.Attribute msg)
+toChartAttributes data system (Config events) =
   let
     order (Event outside event) =
       if outside then Nothing else Just (event data system)
@@ -136,8 +136,8 @@ toChartAttributes data system (Events events) =
 
 
 {-| -}
-toContainerAttributes : List (Data.Data data) -> System -> Events data msg -> List (Svg.Attribute msg)
-toContainerAttributes data system (Events events) =
+toContainerAttributes : List (Data.Data data) -> System -> Config data msg -> List (Svg.Attribute msg)
+toContainerAttributes data system (Config events) =
   let
     order (Event outside event) =
       if outside then Just (event data system) else Nothing

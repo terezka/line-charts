@@ -346,7 +346,7 @@ type alias Config data msg =
   , dot : Dot.Look data
   , legends : Legends.Config data msg
   , attributes : List (Svg.Attribute msg)
-  , events : Events.Events data msg
+  , events : Events.Config data msg
   , junk : Junk.Junk msg
   }
 

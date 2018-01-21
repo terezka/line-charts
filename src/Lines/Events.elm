@@ -1,5 +1,5 @@
 module Lines.Events exposing
-  ( Events, default, none, hover, hoverOne, click, custom
+  ( Config, default, none, hover, hoverOne, click, custom
   , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
   , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
@@ -11,7 +11,7 @@ module Lines.Events exposing
 @docs default, none
 
 # Configurations
-@docs Events, hover, hoverOne, click, custom
+@docs Config, hover, hoverOne, click, custom
 
 ## Events
 @docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
@@ -21,7 +21,7 @@ module Lines.Events exposing
 
 ### Maps
 
-    events : Events.Events Data Msg
+    events : Config Data Msg
     events =
       Events.custom
         [ Events.onMouseMove Hover <|
@@ -42,42 +42,42 @@ import Lines.Coordinate as Coordinate
 
 
 {-| -}
-type alias Events data msg =
-  Events.Events data msg
+type alias Config data msg =
+  Events.Config data msg
 
 
 {-| -}
-default : Events.Events data msg
+default : Config data msg
 default =
   Events.default
 
 
 {-| -}
-none : Events.Events data msg
+none : Config data msg
 none =
   Events.none
 
 
 {-| -}
-hoverOne : (Maybe data -> msg) -> Events.Events data msg
+hoverOne : (Maybe data -> msg) -> Config data msg
 hoverOne =
   Events.hoverOne
 
 
 {-| -}
-hover : (List data -> msg) -> Events.Events data msg
+hover : (List data -> msg) -> Config data msg
 hover =
   Events.hover
 
 
 {-| -}
-click : (Maybe data -> msg) -> Events.Events data msg
+click : (Maybe data -> msg) -> Config data msg
 click =
   Events.click
 
 
 {-| -}
-custom : List (Event data msg) -> Events data msg
+custom : List (Event data msg) -> Config data msg
 custom =
   Events.custom
 
@@ -140,7 +140,7 @@ onWithOptions =
 {-| Gets you information about where your event happened on your chart.
 This example gets you the nearest data coordinates to where you are hovering.
 
-    events : Events.Events Data Msg
+    events : Config Data Msg
     events =
       Events.custom
         [ Events.onMouseMove Hover Events.getNearest ]
