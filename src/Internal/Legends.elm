@@ -106,7 +106,7 @@ groupedCustom sampleWidth container =
 {-| -}
 type alias Arguments data msg =
   { system : Coordinate.System
-  , dotLook : Dot.Look data
+  , dotLook : Dot.Config data
   , lineLook : Line.Look data
   , area : Area.Config
   , lines : List (Line.Line data)

@@ -140,7 +140,7 @@ style width color =
 
 type alias Arguments data =
   { system : Coordinate.System
-  , dotLook : Dot.Look data
+  , dotLook : Dot.Config data
   , interpolation : Interpolation.Interpolation
   , lineLook : Look data
   , area : Area.Config

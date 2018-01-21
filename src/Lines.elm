@@ -343,7 +343,7 @@ type alias Config data msg =
   , interpolation : Interpolation
   , area : Area.Config
   , line : Line.Look data
-  , dot : Dot.Look data
+  , dot : Dot.Config data
   , legends : Legends.Config data msg
   , attributes : List (Svg.Attribute msg)
   , events : Events.Config data msg

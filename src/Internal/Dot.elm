@@ -1,5 +1,5 @@
 module Internal.Dot exposing
-  ( Look, default, static, hoverable
+  ( Config, default, static, hoverable
   , Shape(..)
   , Style, style, bordered, disconnected, aura, full
   , Variety
@@ -17,12 +17,12 @@ import Color.Convert
 
 
 {-| -}
-type Look data =
-  Look (LookConfig data)
+type Config data =
+  Config (Info data)
 
 
 {-| -}
-type alias LookConfig data =
+type alias Info data =
   { normal : Style
   , hovered : Style
   , isHovered : data -> Bool
@@ -30,9 +30,9 @@ type alias LookConfig data =
 
 
 {-| -}
-default : Look data
+default : Config data
 default =
-  Look
+  Config
     { normal = disconnected 10 2
     , hovered = aura 7 4 0.5
     , isHovered = always False
@@ -40,9 +40,9 @@ default =
 
 
 {-| -}
-static : Style -> Look data
+static : Style -> Config data
 static style =
-  Look
+  Config
     { normal = style
     , hovered = aura 5 4 0.5
     , isHovered = always False
@@ -50,9 +50,9 @@ static style =
 
 
 {-| -}
-hoverable : LookConfig data -> Look data
+hoverable : Info data -> Config data
 hoverable =
-  Look
+  Config
 
 
 
@@ -129,7 +129,7 @@ full radius =
 {-| -}
 type alias Arguments data =
   { system : Coordinate.System
-  , dotLook : Look data
+  , dotLook : Config data
   , shape : Shape
   , color : Color.Color
   }
@@ -139,7 +139,7 @@ type alias Arguments data =
 view : Arguments data -> Data.Data data -> Svg msg
 view { system, dotLook, shape, color } data =
   let
-    (Look config) =
+    (Config config) =
       dotLook
 
     (Style style) =
@@ -151,8 +151,8 @@ view { system, dotLook, shape, color } data =
 
 
 {-| -}
-viewSample : Look data -> Shape -> Color.Color -> Coordinate.System -> List (Data.Data data) -> Coordinate.Point -> Svg msg
-viewSample (Look config) shape color system data =
+viewSample : Config data -> Shape -> Color.Color -> Coordinate.System -> List (Data.Data data) -> Coordinate.Point -> Svg msg
+viewSample (Config config) shape color system data =
   let
     (Style style) =
       if List.any config.isHovered (List.map .user data)
