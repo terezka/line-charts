@@ -75,13 +75,13 @@ view model =
       , attributes = [ SvgA.style "font: caption;" ]
       , events = Events.hoverX HoverX
       , x = Dimension.default 750 "income" .income
-      , y = Dimension.default 650 "age" .age
+      , y = Dimension.default 670 "age" .age
       , intersection = Intersection.default
       , junk = junkX model.hoveringX
           --Maybe.map junkSingle model.hovering
           --Maybe.map2 (junk model.hoveringX) model.point model.hovering
             --|> Maybe.withDefault Junk.none
-      , interpolation = Lines.linear
+      , interpolation = Lines.monotone
       , legends = Legends.hover model.hoveringX
       , line =
           Line.custom <| \data ->
@@ -97,7 +97,7 @@ view model =
             , emphasized = Dot.aura 5 5 0.2
             , isEmphasized = flip List.member model.hoveringX
             }
-      , grid = Grid.lines 1 Colors.grayLightest
+      , grid = Grid.dotted Colors.grayLight
       , area = Area.none
       , id = "chart"
       }

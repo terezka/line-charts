@@ -102,7 +102,7 @@ type alias Arguments data msg =
   , lineLook : Line.Look data
   , area : Area.Area
   , lines : List (Line.Line data)
-  , dataPoints : List (List (Data.Data data))
+  , data : List (List (Data.Data data))
   , legends : Legends data msg
   , x : data -> Maybe Float
   , y : data -> Maybe Float
@@ -128,31 +128,34 @@ view arguments =
 
 
 viewFrees : Arguments data msg -> Placement -> (String -> Svg msg) -> Svg.Svg msg
-viewFrees { system, lines, dataPoints } placement view =
+viewFrees { system, lines, data } placement view =
   Svg.g [ Attributes.class "chart__legends" ] <|
-    List.map2 (viewFree system placement view) lines dataPoints
+    List.map2 (viewFree system placement view) lines data
 
 
 viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Line data -> List (Data.Data data) -> Svg.Svg msg
-viewFree system placement viewLabel line dataPoints =
+viewFree system placement viewLabel line data =
   let
-    lineConfig =
-      Line.lineConfig line
-
     ( orderedPoints, anchor, xOffset ) =
       case placement of
-        Beginning -> ( dataPoints, Svg.End, -10 )
-        Ending    -> ( List.reverse dataPoints, Svg.Start, 10 )
+        Beginning ->
+          ( data, Svg.End, -10 )
+
+        Ending ->
+          ( List.reverse data, Svg.Start, 10 )
 
     transform { x, y } =
-      Svg.transform [ Svg.move system x y, Svg.offset xOffset 3 ]
+      Svg.transform
+        [ Svg.move system x y
+        , Svg.offset xOffset 3
+        ]
 
     viewLegend { point } =
       Svg.g
         [ transform point, Svg.anchorStyle anchor ]
-        [ viewLabel lineConfig.label ]
+        [ viewLabel (Line.label line) ]
   in
-  Utils.viewMaybe (List.head <| List.filter .isReal orderedPoints) viewLegend
+  Utils.viewMaybe (List.head orderedPoints) viewLegend
 
 
 
@@ -163,29 +166,34 @@ viewGrouped : Arguments data msg -> Float -> Container msg -> Svg.Svg msg
 viewGrouped arguments sampleWidth container =
   let
     toLegend line data =
-      let lineConfig = Line.lineConfig line in
-      { sample = viewSample arguments sampleWidth lineConfig data
-      , label = lineConfig.label
+      { sample = viewSample arguments sampleWidth line data
+      , label = Line.label line
       }
+
+    legends =
+      List.map2 toLegend arguments.lines arguments.data
   in
-  container arguments.system <|
-    List.map2 toLegend arguments.lines arguments.dataPoints
+  container arguments.system legends
 
 
-viewSample : Arguments data msg -> Float -> Line.Config data -> List (Data.Data data) -> Svg msg
-viewSample { system, lineLook, dotLook, area, dataPoints } sampleWidth lineConfig data =
+
+viewSample : Arguments data msg -> Float -> Line.Line data -> List (Data.Data data) -> Svg msg
+viewSample { system, lineLook, dotLook, area } sampleWidth line data =
   let
     dotPosition =
-      Coordinate.Point (sampleWidth / 2) 0
+      Data.Point (sampleWidth / 2) 0
         |> Coordinate.toData system
 
     color =
-      Line.getColor lineLook data lineConfig.color
+      Line.color lineLook data line
+
+    shape =
+      Line.shape line
   in
   Svg.g
     [ Attributes.class "chart__sample" ]
-    [ Line.viewSample lineLook lineConfig area data sampleWidth
-    , Dot.viewSample dotLook lineConfig.shape color system data dotPosition
+    [ Line.viewSample lineLook line area data sampleWidth
+    , Dot.viewSample dotLook shape color system data dotPosition
     ]
 
 
@@ -202,6 +210,10 @@ defaultLegends
   -> List (Legend msg)
   -> Svg msg
 defaultLegends toX toY hovered arguments system legends =
+  let
+    viewLegends =
+      Utils.indexedMap2 (defaultLegend arguments hovered)
+  in
   Svg.g
     [ Attributes.class "chart__legends"
     , Svg.transform
@@ -209,23 +221,26 @@ defaultLegends toX toY hovered arguments system legends =
         , Svg.offset 0 10
         ]
     ]
-    (Utils.indexedMap2 (defaultLegend arguments hovered) legends arguments.dataPoints)
+    (viewLegends legends arguments.data)
 
 
 defaultLegend : Arguments data msg -> List data -> Int -> Legend msg -> List (Data.Data data) -> Svg msg
 defaultLegend arguments hovered index { sample, label } data =
   let
-    value =
-      List.filter (flip List.member hovered) (List.map .data data)
+    hoveredData =
+      List.map .data data
+        |> List.filter (flip List.member hovered)
         |> List.head
 
-    valueText =
-      case value of
-        Nothing -> ""
-        Just value ->
-          ": " ++
-            (Maybe.map toString (arguments.y value)
-              |> Maybe.withDefault "Unknown")
+    hoveredText =
+      case hoveredData of
+        Nothing    -> ""
+        Just value -> printYValue value
+
+    printYValue value =
+      case arguments.y value of
+        Nothing    -> ": Unknown"
+        Just value -> ": " ++ toString value
   in
    Svg.g
     [ Attributes.class "chart__legend"
@@ -234,5 +249,5 @@ defaultLegend arguments hovered index { sample, label } data =
     [ sample
     , Svg.g
         [ Svg.transform [ Svg.offset 40 4 ] ]
-        [ Svg.label "inherit" (label ++ valueText) ]
+        [ Svg.label "inherit" (label ++ hoveredText) ]
     ]

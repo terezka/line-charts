@@ -1,7 +1,9 @@
 module Internal.Line exposing
-  ( Line(..), Config, lineConfig, line, dash
+  ( Line(..), lineConfig, line, dash
   , Look, default, wider, custom
-  , Style, style, getColor
+  , Style, style
+  -- INTERNAL
+  , shape, label, color
   , view, viewSample
   )
 
@@ -43,6 +45,32 @@ type alias Config data =
 lineConfig : Line data -> Config data
 lineConfig (Line line) =
   line
+
+
+{-| -}
+label : Line data -> String
+label (Line config) =
+  config.label
+
+
+{-| -}
+shape : Line data -> Dot.Shape
+shape (Line config) =
+  config.shape
+
+
+{-| -}
+color : Look data -> List (Data.Data data) -> Line data -> Color.Color
+color (Look look) data (Line config) =
+  let
+    (Style style) =
+      look (List.map .data data)
+  in
+  style.color config.color
+
+
+
+-- LINES
 
 
 {-| -}
@@ -100,16 +128,6 @@ type Style =
 style : Float -> (Color.Color -> Color.Color) -> Style
 style width color =
   Style { width = width, color = color }
-
-
-{-| -}
-getColor : Look data -> List (Data.Data data) -> Color.Color -> Color.Color
-getColor (Look look) data =
-  let
-    (Style style) =
-      look (List.map .data data)
-  in
-  style.color
 
 
 
@@ -281,11 +299,11 @@ toAreaAttributes (Look look) { color } area dataPoints =
 
 
 {-| -}
-viewSample : Look data -> Config data -> Area.Area -> List (Data.Data data) -> Float -> Svg.Svg msg
-viewSample look lineConfig area dataPoints sampleWidth =
+viewSample : Look data -> Line data -> Area.Area -> List (Data.Data data) -> Float -> Svg.Svg msg
+viewSample look (Line config) area dataPoints sampleWidth =
   let
     lineAttributes =
-      toLineAttributes look lineConfig dataPoints
+      toLineAttributes look config dataPoints
 
     sizeAttributes =
       [ Attributes.x1 "0"
@@ -296,7 +314,7 @@ viewSample look lineConfig area dataPoints sampleWidth =
 
     areaAttributes =
       Attributes.fillOpacity (toString (Area.opacity area))
-       :: toAreaAttributes look lineConfig area []
+       :: toAreaAttributes look config area []
 
     rectangleAttributes =
       [ Attributes.x "0"

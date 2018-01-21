@@ -442,12 +442,13 @@ viewCustom config lines =
   let
     -- Data points
     dataPoints = toDataPoints config lines
+    dataPointsSafe = List.map (List.filter .isReal) dataPoints
     dataPointsAll = List.concat dataPoints
-    safeDataPoints = List.filter .isReal dataPointsAll
+    dataPointsAllSafe = List.concat dataPointsSafe
 
     -- System
     system =
-      toSystem config safeDataPoints
+      toSystem config dataPointsAllSafe
 
     -- View
     junk =
@@ -488,7 +489,7 @@ viewCustom config lines =
         , lineLook = config.line
         , area = config.area
         , lines = lines
-        , dataPoints = dataPoints
+        , data = dataPointsSafe
         , legends = config.legends
         , x = config.x.variable
         , y = config.y.variable
