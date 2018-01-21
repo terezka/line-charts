@@ -18,15 +18,11 @@ import Color.Convert
 
 {-| -}
 type Config data =
-  Config (Info data)
-
-
-{-| -}
-type alias Info data =
-  { normal : Style
-  , hovered : Style
-  , isHovered : data -> Bool
-  }
+  Config
+    { normal : Style
+    , hovered : Style
+    , isHovered : data -> Bool
+    }
 
 
 {-| -}
@@ -50,7 +46,12 @@ static style =
 
 
 {-| -}
-hoverable : Info data -> Config data
+hoverable :
+  { normal : Style
+  , hovered : Style
+  , isHovered : data -> Bool
+  }
+  -> Config data
 hoverable =
   Config
 
