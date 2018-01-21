@@ -20,6 +20,7 @@ module Internal.Svg exposing
 
 ## Dots
 @docs gridDot
+
 ## Lines
 @docs horizontalGrid, verticalGrid
 
@@ -69,7 +70,10 @@ horizontal : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Floa
 horizontal system userAttributes y x1 x2 =
   let
     attributes =
-      concat [ Attributes.stroke Color.gray ] userAttributes []
+      concat
+        [ Attributes.stroke Color.gray
+        , Attributes.style "pointer-events: none;"
+        ] userAttributes []
   in
     Path.view system attributes
       [ Move { x = x1, y = y }
@@ -83,7 +87,10 @@ vertical : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Float 
 vertical system userAttributes x y1 y2 =
   let
     attributes =
-      concat [ Attributes.stroke Color.gray ] userAttributes []
+      concat
+        [ Attributes.stroke Color.gray
+        , Attributes.style "pointer-events: none;"
+        ] userAttributes []
   in
     Path.view system attributes
       [ Move { x = x, y = y1 }
@@ -110,13 +117,27 @@ rectangle system userAttributes x1 x2 y1 y2 =
 {-| -}
 horizontalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Svg msg
 horizontalGrid system userAttributes y =
-  horizontal system userAttributes y system.x.min system.x.max
+  let
+    attributes =
+      concat
+        [ Attributes.stroke Color.gray
+        , Attributes.style "pointer-events: none;"
+        ] userAttributes []
+  in
+  horizontal system attributes y system.x.min system.x.max
 
 
 {-| -}
 verticalGrid : Coordinate.System -> List (Attribute msg) -> Float -> Svg msg
 verticalGrid system userAttributes x =
-  vertical system userAttributes x system.y.min system.y.max
+  let
+    attributes =
+      concat
+        [ Attributes.stroke Color.gray
+        , Attributes.style "pointer-events: none;"
+        ] userAttributes []
+  in
+  vertical system attributes x system.y.min system.y.max
 
 
 
