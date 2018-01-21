@@ -113,8 +113,8 @@ default =
 
 {-|
 
-    dotConfig : Dot.Config data
-    dotConfig =
+    dotsConfig : Dot.Config data
+    dotsConfig =
       Dot.static (Dot.full 5)
 -}
 static : Style -> Config data
@@ -124,8 +124,8 @@ static =
 
 {-|
 
-    dotConfig : Dot.Config Info
-    dotConfig =
+    dotsConfig : Dot.Config Info
+    dotsConfig =
       Dot.hoverable
         { normal = Dot.full 5
         , emphasized = Dot.aura 7 4 0.5

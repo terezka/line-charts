@@ -106,8 +106,8 @@ groupedCustom sampleWidth container =
 {-| -}
 type alias Arguments data msg =
   { system : Coordinate.System
-  , dotLook : Dot.Config data
-  , lineLook : Line.Config data
+  , dotsConfig : Dot.Config data
+  , lineConfig : Line.Config data
   , area : Area.Config
   , lines : List (Line.Series data)
   , data : List (List (Data.Data data))
@@ -186,22 +186,22 @@ viewGrouped arguments sampleWidth container =
 
 
 viewSample : Arguments data msg -> Float -> Line.Series data -> List (Data.Data data) -> Svg msg
-viewSample { system, lineLook, dotLook, area } sampleWidth line data =
+viewSample { system, lineConfig, dotsConfig, area } sampleWidth line data =
   let
     dotPosition =
       Data.Point (sampleWidth / 2) 0
         |> Coordinate.toData system
 
     color =
-      Line.color lineLook line data
+      Line.color lineConfig line data
 
     shape =
       Line.shape line
   in
   Svg.g
     [ Attributes.class "chart__sample" ]
-    [ Line.viewSample lineLook line area data sampleWidth
-    , Dot.viewSample dotLook shape color system data dotPosition
+    [ Line.viewSample lineConfig line area data sampleWidth
+    , Dot.viewSample dotsConfig shape color system data dotPosition
     ]
 
 

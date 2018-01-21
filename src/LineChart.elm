@@ -436,23 +436,23 @@ viewCustom config lines =
     viewLines =
       Line.view
         { system = system
-        , dotLook = config.dots
-        , lineLook = config.line
         , interpolation = config.interpolation
+        , dotsConfig = config.dots
+        , lineConfig = config.line
         , area = config.area
         }
 
     viewLegends =
       Legends.view
         { system = system
-        , dotLook = config.dots
-        , lineLook = config.line
-        , area = config.area
-        , lines = lines
-        , data = dataSafe
         , legends = config.legends
         , x = config.x.variable
         , y = config.y.variable
+        , dotsConfig = config.dots
+        , lineConfig = config.line
+        , area = config.area
+        , data = dataSafe
+        , lines = lines
         }
   in
   container <|

@@ -130,7 +130,7 @@ full radius =
 {-| -}
 type alias Arguments data =
   { system : Coordinate.System
-  , dotLook : Config data
+  , dotsConfig : Config data
   , shape : Shape
   , color : Color.Color
   }
@@ -138,10 +138,10 @@ type alias Arguments data =
 
 {-| -}
 view : Arguments data -> Data.Data data -> Svg msg
-view { system, dotLook, shape, color } data =
+view { system, dotsConfig, shape, color } data =
   let
     (Config config) =
-      dotLook
+      dotsConfig
 
     (Style style) =
       if config.isHovered data.user
