@@ -1,5 +1,5 @@
 module LineChart.Coordinate exposing
-  ( Frame, Size, Margin
+  ( Frame, Size
   , System, Range
   , Point, toSVG, toData
   , toSVGX, toSVGY
@@ -11,7 +11,7 @@ module LineChart.Coordinate exposing
 {-|
 
 # Frame
-@docs Frame, Size, Margin
+@docs Frame, Size
 
 # System
 @docs System, Range
@@ -53,12 +53,13 @@ account, scaling doesn't.
 -}
 
 import Internal.Coordinate exposing (..)
+import LineChart.Container as Container
 
 
 {-| Specifies the size and margins of your chart.
 -}
 type alias Frame =
-  { margin : Margin
+  { margin : Container.Margin
   , size : Size
   }
 
@@ -68,18 +69,6 @@ type alias Frame =
 type alias Size =
   { width : Float
   , height : Float
-  }
-
-
-{-| The margins (px) of your chart. Margins are useful when you have stuff like
-axes, legends or titles around outside the actual lines and you want more or
-less space for them.
--}
-type alias Margin =
-  { top : Float
-  , right : Float
-  , bottom : Float
-  , left : Float
   }
 
 

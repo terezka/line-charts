@@ -6,6 +6,8 @@ import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Color as Colors
 import LineChart.Dot as Dot
+import LineChart.Container as Container
+import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
 import LineChart.Coordinate as Coordinate
 import LineChart.Legends as Legends
@@ -66,34 +68,36 @@ update msg model =
 
 -- VIEW
 
+-- TODO rename color module
 
 view : Model -> Svg Msg
 view model =
     LineChart.viewCustom
-      { margin = Coordinate.Margin 150 150 150 150
-      , attributes = [ SvgA.style "font: caption;" ]
-      , events = Events.hoverOne HoverSingle
+      { y = Dimension.default 670 "age" .age
       , x = Dimension.default 750 "income" .income
-      , y = Dimension.default 670 "age" .age
+      , container = Container.default "line-chart-1"
+      , interpolation = Interpolation.default
       , intersection = Intersection.default
-      , junk = junkX model.hoveringX
-      , interpolation = LineChart.monotone
       , legends = Legends.default
+      , events = Events.default
+      , junk = Junk.default
+      , grid = Grid.default
+      , area = Area.default
       , line = Line.default
-      , dot =
-          Dot.hoverable
-            { normal = Dot.disconnected 10 2
-            , hovered = Dot.aura 6 5 0.3
-            , isHovered = Just >> (==) model.hovering
-            }
-      , grid = Grid.dots Colors.grayLight
-      , area = Area.none
-      , id = "chart"
+      , dot = Dot.default
       }
-      [ LineChart.line Colors.pink Dot.square "chuck" chuck
-      , LineChart.line Colors.blue Dot.circle "bob" bob
-      , LineChart.line Colors.orange Dot.triangle "alice" alice
+      [ LineChart.line Colors.gold Dot.diamond "alice" alice
+      , LineChart.line Colors.blue Dot.circle  "bobby" bob
+      , LineChart.line Colors.pink Dot.square  "chuck" chuck
       ]
+
+
+
+
+
+
+
+
 
 
 viewLegend : Int -> Legends.Legend msg -> Svg.Svg msg

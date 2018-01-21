@@ -2,7 +2,6 @@ module LineChart exposing
   ( view1, view2, view3
   , view, Series, line, dash
   , viewCustom, Config
-  , Interpolation, linear, monotone, steppedBefore, steppedAfter
   )
 
 {-|
@@ -16,17 +15,16 @@ module LineChart exposing
 # Customizing everything
 @docs viewCustom, Config
 
-## Interpolations
-@docs Interpolation, linear, monotone, steppedBefore, steppedAfter
-
 -}
 
 import Html
 import Svg
 import Svg.Attributes as Attributes
 import LineChart.Color as Colors
+import LineChart.Container as Container
 import LineChart.Junk as Junk
 import LineChart.Dimension as Dimension
+import LineChart.Interpolation as Interpolation
 import Internal.Area as Area
 import Internal.Axis as Axis
 import Internal.Axis.Intersection as Intersection
@@ -36,20 +34,21 @@ import Internal.Dot as Dot
 import Internal.Data as Data
 import Internal.Grid as Grid
 import Internal.Events as Events
-import Internal.Interpolation as Interpolation
 import Internal.Junk
 import Internal.Legends as Legends
 import Internal.Line as Line
 import Internal.Utils as Utils
 import Color
 
--- TODO more default junk (hovers)
--- TODO move tick groups to axis
--- TODO more default dimensions
--- TODO more default title options
+-- TODO
+-- more default junk (hovers)
+-- move tick groups to axis
+-- more default dimensions
+-- more default title options
+-- viewport instead of height / width
 
--- TODO consider tick space tolerance as determinating factor of tick amount
--- TODO Add range adjust for nice ticks?
+-- consider tick space tolerance as determinating factor of tick amount
+-- Add range adjust for nice ticks?
 
 
 
@@ -333,57 +332,20 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 
 -}
 type alias Config data msg =
-  { id : String
-  , margin : Coordinate.Margin
-  , x : Dimension.Config data msg
+  { x : Dimension.Config data msg
   , y : Dimension.Config data msg
+  , container : Container.Config msg
   , grid : Grid.Config
   , intersection : Intersection.Config
-  , interpolation : Interpolation
+  , interpolation : Interpolation.Config
   , area : Area.Config
   , line : Line.Config data
   , dot : Dot.Config data
   , legends : Legends.Config data msg
-  , attributes : List (Svg.Attribute msg)
   , events : Events.Config data msg
   , junk : Junk.Config msg
   }
 
-
-
--- INTERPOLATIONS
-
-
-{-| -}
-type alias Interpolation =
-  Interpolation.Interpolation
-
-
-{-| A linear interpolation.
--}
-linear : Interpolation
-linear =
-  Interpolation.Linear
-
-
-{-| A monotone-x interpolation.
--}
-monotone : Interpolation
-monotone =
-  Interpolation.Monotone
-
-{-| A stepped interpolation where the step comes before the point.
--}
-steppedBefore : Interpolation
-steppedBefore =
-  Interpolation.SteppedBefore
-
-
-{-| A stepped interpolation where the step comes after the point.
--}
-steppedAfter : Interpolation
-steppedAfter =
-  Interpolation.SteppedAfter
 
 
 {-|
@@ -460,11 +422,11 @@ viewCustom config lines =
       }
 
     container plot =
-      Html.div [] (plot :: junk.html)
+      Html.div config.container.attributes (plot :: junk.html)
 
     attributes =
       List.concat
-        [ config.attributes
+        [ config.container.attributesSVG
         , Events.toContainerAttributes dataAll system config.events
         , [ Attributes.width <| toString system.frame.size.width
           , Attributes.height <| toString system.frame.size.height
@@ -478,7 +440,6 @@ viewCustom config lines =
         , lineLook = config.line
         , interpolation = config.interpolation
         , area = config.area
-        , id = config.id
         }
 
     viewLegends =
@@ -534,9 +495,9 @@ chartAreaPlatform config data system =
 
 
 clipPath : Config data msg -> Coordinate.System ->  Svg.Svg msg
-clipPath { id } system =
+clipPath config system =
   Svg.clipPath
-    [ Attributes.id (Utils.toChartAreaId id) ]
+    [ Attributes.id (Utils.toChartAreaId config.container.id) ]
     [ Svg.rect (chartAreaAttributes system) [] ]
 
 
@@ -631,7 +592,7 @@ toSystem config data =
   let
     hasArea = Area.hasArea config.area
     size   = Coordinate.Size (toFloat config.x.pixels) (toFloat config.y.pixels)
-    frame  = Coordinate.Frame config.margin size
+    frame  = Coordinate.Frame config.container.margin size
     xRange = Coordinate.range (.point >> .x) data
     yRange = Coordinate.range (.point >> .y) data
 
@@ -641,7 +602,7 @@ toSystem config data =
       , y = adjustDomainRange yRange
       , xData = xRange
       , yData = yRange
-      , id = config.id
+      , id = config.container.id
       }
 
     adjustDomainRange domain =
@@ -661,20 +622,18 @@ toSystem config data =
 
 defaultConfig : (data -> Float) -> (data -> Float) -> Config data msg
 defaultConfig toX toY =
-  { id = "chart"
-  , margin = Coordinate.Margin 30 120 90 120
-  , x = Dimension.default 650 "" toX
+  { x = Dimension.default 650 "" toX
   , y = Dimension.default 400 "" toY
+  , container = Container.default "line-chart-0"
+  , interpolation = Interpolation.linear
+  , intersection = Intersection.default
+  , legends = Legends.default
+  , events = Events.default
+  , line = Line.default
   , grid = Grid.default
   , area = Area.none
-  , intersection = Intersection.default
-  , interpolation = linear
-  , line = Line.default
-  , dot = Dot.default
-  , legends = Legends.default
-  , attributes = [ Attributes.style "font-family: monospace;" ] -- TODO: Maybe remove
-  , events = Events.default
   , junk = Junk.none
+  , dot = Dot.default
   }
 
 
@@ -687,7 +646,7 @@ defaultColors : List Color.Color
 defaultColors =
   [ Colors.pink
   , Colors.blue
-  , Colors.orange
+  , Colors.gold
   ]
 
 

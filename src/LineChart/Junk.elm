@@ -1,5 +1,5 @@
 module LineChart.Junk exposing
-  ( Config, Layers, none, custom
+  ( Config, Layers, default, none, custom
   , Transfrom, transform, move, offset
   , vertical, horizontal, rectangle, label
   , withinChartArea
@@ -8,7 +8,7 @@ module LineChart.Junk exposing
 {-|
 
 # Quick start
-@docs none
+@docs default, none
 
 # Custom
 @docs Config, custom, Layers
@@ -34,6 +34,13 @@ import Color.Convert
 
 
 -- QUICK START
+
+
+{-| No junk!
+-}
+default : Config msg
+default =
+  none
 
 
 {-| No junk!

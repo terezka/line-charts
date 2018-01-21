@@ -141,10 +141,9 @@ style width color =
 type alias Arguments data =
   { system : Coordinate.System
   , dotLook : Dot.Config data
-  , interpolation : Interpolation.Interpolation
+  , interpolation : Interpolation.Config
   , lineLook : Config data
   , area : Area.Config
-  , id : String
   }
 
 
@@ -245,7 +244,7 @@ viewDot arguments (Series lineConfig) (Style style) =
 
 
 viewSeries : Arguments data -> Series data -> Style -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
-viewSeries { system, lineLook, id } line style interpolation data =
+viewSeries { system, lineLook } line style interpolation data =
   let
     attributes =
       Junk.withinChartArea system :: toSeriesAttributes line style
@@ -270,7 +269,7 @@ toSeriesAttributes (Series { color, dashing }) (Style style) =
 
 
 viewArea : Arguments data -> Series data -> Style -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
-viewArea { system, lineLook, area, id } line style interpolation data =
+viewArea { system, lineLook, area } line style interpolation data =
   let
     ground data =
       Data.Point data.point.x (Utils.towardsZero system.y)

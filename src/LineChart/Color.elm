@@ -1,9 +1,9 @@
-module LineChart.Color exposing (pink, blue, orange, gray, grayLight, grayLightest, transparent)
+module LineChart.Color exposing (pink, blue, gold, gray, grayLight, grayLightest, transparent)
 
 {-|
 
 # Defaults
-@docs pink, blue, orange, gray, grayLight, grayLightest, transparent
+@docs pink, blue, gold, gray, grayLight, grayLightest, transparent
 
 -}
 
@@ -17,8 +17,8 @@ pink =
 
 
 {-| -}
-orange : Color.Color
-orange =
+gold : Color.Color
+gold =
   Color.rgb 205 145 60
 
 

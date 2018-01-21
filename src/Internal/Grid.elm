@@ -23,7 +23,7 @@ type Config
 {-| -}
 default : Config
 default =
-  lines 1 Colors.grayLight
+  lines 1 Colors.grayLightest
 
 
 {-| -}

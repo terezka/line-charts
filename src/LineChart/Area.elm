@@ -1,4 +1,4 @@
-module LineChart.Area exposing (Config, none, percentage, normal, stacked)
+module LineChart.Area exposing (Config, default, none, percentage, normal, stacked)
 
 {-| -}
 
@@ -8,6 +8,12 @@ import Internal.Area as Area
 {-| -}
 type alias Config =
   Area.Config
+
+
+{-| -}
+default : Config
+default =
+  none
 
 
 {-| No color below your LineChart.

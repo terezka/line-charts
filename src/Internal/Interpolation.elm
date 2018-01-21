@@ -1,4 +1,4 @@
-module Internal.Interpolation exposing (Interpolation(..), toCommands)
+module Internal.Interpolation exposing (Config(..), toCommands)
 
 {-| -}
 
@@ -8,7 +8,7 @@ import LineChart.Coordinate as Coordinate  exposing (..)
 
 
 {-| -}
-type Interpolation
+type Config
   = Linear
   | Monotone
   | SteppedBefore
@@ -16,7 +16,7 @@ type Interpolation
 
 
 {-| -}
-toCommands : Interpolation -> List (List Point) -> List (List Command)
+toCommands : Config -> List (List Point) -> List (List Command)
 toCommands interpolation =
   case interpolation of
     Linear   -> linear
