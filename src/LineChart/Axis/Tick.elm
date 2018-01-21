@@ -1,4 +1,4 @@
-module Lines.Axis.Tick exposing
+module LineChart.Axis.Tick exposing
   ( Tick
   , Direction, negative, positive
   , int, float
@@ -23,8 +23,8 @@ module Lines.Axis.Tick exposing
 -}
 
 import Svg exposing (Svg, Attribute)
-import Lines.Junk as Junk
-import Lines.Coordinate as Coordinate
+import LineChart.Junk as Junk
+import LineChart.Coordinate as Coordinate
 import Internal.Axis.Tick as Tick
 import Internal.Svg as Svg
 import Date

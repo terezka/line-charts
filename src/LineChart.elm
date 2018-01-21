@@ -1,4 +1,4 @@
-module Lines exposing
+module LineChart exposing
   ( view1, view2, view3
   , view, Series, line, dash
   , viewCustom, Config
@@ -24,9 +24,9 @@ module Lines exposing
 import Html
 import Svg
 import Svg.Attributes as Attributes
-import Lines.Color as Colors
-import Lines.Junk as Junk
-import Lines.Dimension as Dimension
+import LineChart.Color as Colors
+import LineChart.Junk as Junk
+import LineChart.Dimension as Dimension
 import Internal.Area as Area
 import Internal.Axis as Axis
 import Internal.Axis.Intersection as Intersection
@@ -65,7 +65,7 @@ import Color
 
     chart : Html msg
     chart =
-      Lines.view1 .x .y
+      LineChart.view1 .x .y
         [ Point 0 2, Point 5 5, Point 10 10 ]
 
 _See the full example [here](https://ellie-app.com/s5M4fxFwGa1/0)._
@@ -79,7 +79,7 @@ So if we had more complex data structures, like a human with an `age`, `weight`,
 
     aliceChart : Html msg
     aliceChart =
-      Lines.view1 .age .weight
+      LineChart.view1 .age .weight
         [ Human  4 24 0.94 0
         , Human 25 75 1.73 25000
         , Human 43 83 1.75 40000
@@ -119,7 +119,7 @@ to their age. Here's how you could plot it.
 
     humanChart : Html msg
     humanChart =
-      Lines.view2 .age .weight alice chuck
+      LineChart.view2 .age .weight alice chuck
 
 _See the full example [here](https://ellie-app.com/scTM9Mw77a1/0)._
 
@@ -137,7 +137,7 @@ It works just like `view1` and `view2`.
 
     humanChart : Html msg
     humanChart =
-      Lines.view3 .age .weight alice bob chuck
+      LineChart.view3 .age .weight alice bob chuck
 
 _See the full example [here](https://ellie-app.com/sdNHxCfrJa1/0)._
 
@@ -162,10 +162,10 @@ the `line` function for more information.
 
     humanChart : Html msg
     humanChart =
-      Lines.view .age .weight
-        [ Lines.Line "red" Dot.cross "Alice" alice
-        , Lines.Line "blue" Dot.square "Bob" bob
-        , Lines.Line "green" Dot.circle "Chuck" chuck
+      LineChart.view .age .weight
+        [ LineChart.Line "red" Dot.cross "Alice" alice
+        , LineChart.Line "blue" Dot.square "Bob" bob
+        , LineChart.Line "green" Dot.circle "Chuck" chuck
         ]
 
 _See the full example [here](https://ellie-app.com/sgL9mdF7ra1/1)._
@@ -187,14 +187,14 @@ type alias Series data =
 
 ** Customize a solid line **
 
-Try changing the color or explore all the available dot shapes from `Lines.Dot`!
+Try changing the color or explore all the available dot shapes from `LineChart.Dot`!
 
     humanChart : Html msg
     humanChart =
-      Lines.view .age .weight
-        [ Lines.Line "darkslateblue" Dot.cross "Alice" alice
-        , Lines.Line "darkturquoise" Dot.diamond "Bob" bob
-        , Lines.Line "darkgoldenrod" Dot.triangle "Chuck" chuck
+      LineChart.view .age .weight
+        [ LineChart.Line "darkslateblue" Dot.cross "Alice" alice
+        , LineChart.Line "darkturquoise" Dot.diamond "Bob" bob
+        , LineChart.Line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
 _See the full example [here](https://ellie-app.com/stWdWjqGZa1/0)._
@@ -225,11 +225,11 @@ for examples of patterns.
 
     humanChart : Html msg
     humanChart =
-      Lines.view .age .weight
-        [ Lines.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
-        , Lines.Line "darkslateblue" Dot.cross "Alice" alice
-        , Lines.Line "darkturquoise" Dot.diamond "Bob" bob
-        , Lines.Line "darkgoldenrod" Dot.triangle "Chuck" chuck
+      LineChart.view .age .weight
+        [ LineChart.dash "rebeccapurple" Dot.none "Average" [ 2, 4 ] average
+        , LineChart.Line "darkslateblue" Dot.cross "Alice" alice
+        , LineChart.Line "darkturquoise" Dot.diamond "Bob" bob
+        , LineChart.Line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
     -- Try passing different numbers!
@@ -262,48 +262,48 @@ Use with `viewCustom`.
 
   - **margin**: Customizes the size and margins of your chart.
     Arguments are organized like CSS margins: top right bottom left.
-    See `Lines.Coordinate` for more information and examples.
+    See `LineChart.Coordinate` for more information and examples.
 
   - **x**: Customizes your horizontal axis.
-    See `Lines.Dimension` for more information and examples.
+    See `LineChart.Dimension` for more information and examples.
 
   - **y**: Customizes your vertical axis.
-    See `Lines.Dimension` for more information and examples.
+    See `LineChart.Dimension` for more information and examples.
 
   - **grid**: Customizes the style of your grid.
-    See `Lines.Grid` for more information and examples.
+    See `LineChart.Grid` for more information and examples.
 
   - **areaOpacity**: Determines the opacity of the area under your line.
     The area is always the same color as your line, but the transparency
     can be altered with this property. Takes a number between 0 and 1.
 
   - **intersection**: Determines where your axes meet.
-    See `Lines.Axis.Intersection` for more information and examples.
+    See `LineChart.Axis.Intersection` for more information and examples.
 
-  - **interpolation**: Customizes the curve of your lines.
+  - **interpolation**: Customizes the curve of your LineChart.
     See the `Interpolation` type for more information and examples.
 
   - **line**: Customizes your lines' width and color.
-    See `Lines.Line` for more information and examples.
+    See `LineChart.Line` for more information and examples.
 
   - **dot**: Customizes your dots' size and style.
-    See `Lines.Dot` for more information and examples.
+    See `LineChart.Dot` for more information and examples.
 
   - **legends**: Customizes your chart's legends.
-    See `Lines.Legends` for more information and examples.
+    See `LineChart.Legends` for more information and examples.
 
   - **attributes**: Customizes the SVG attributes added to the `svg` element
     containing your chart.
 
   - **events**: Customizes your chart's events, allowing you easily.
     make your chart interactive (adding tooltips, hover states etc.).
-    See `Lines.Events` for more information and examples.
+    See `LineChart.Events` for more information and examples.
 
   - **junk**: Gets its name from
     [Edward Tufte's concept of "chart junk"](https://en.wikipedia.org/wiki/Chartjunk).
     Here you are finally allowed set your creativity loose and add whatever
     SVG or HTML fun you can imagine.
-    See `Lines.Junk` for more information and examples.
+    See `LineChart.Junk` for more information and examples.
 
 
 ** Example configuration **
@@ -320,7 +320,7 @@ available for each property.
       , grid = Grid.default
       , areaOpacity = 0
       , intersection = Intersection.default
-      , interpolation = Lines.Linear
+      , interpolation = LineChart.Linear
       , line = Line.default
       , dot = Dot.default
       , legends = Legends.default
@@ -395,14 +395,14 @@ See the `Config` type for information about the available customizations
 
 ** Example customiztion **
 
-The example below adds color to the area below the lines.
+The example below adds color to the area below the LineChart.
 
     chart : Html msg
     chart =
-      Lines.viewCustom chartConfig
-        [ Lines.Line "darkslateblue" Dot.cross "Alice" alice
-        , Lines.Line "darkturquoise" Dot.diamond "Bob" bob
-        , Lines.Line "darkgoldenrod" Dot.triangle "Chuck" chuck
+      LineChart.viewCustom chartConfig
+        [ LineChart.Line "darkslateblue" Dot.cross "Alice" alice
+        , LineChart.Line "darkturquoise" Dot.diamond "Bob" bob
+        , LineChart.Line "darkgoldenrod" Dot.triangle "Chuck" chuck
         ]
 
     chartConfig : Config Info msg
@@ -414,7 +414,7 @@ The example below adds color to the area below the lines.
       , grid = Grid.default
       , areaOpacity = 0.25 -- Changed from the default!
       , intersection = Intersection.default
-      , interpolation = Lines.Linear
+      , interpolation = LineChart.Linear
       , line = Line.default
       , dot = Dot.default
       , legends = Legends.default

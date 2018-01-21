@@ -1,4 +1,4 @@
-module Lines.Dimension exposing (Config, default, full, time)
+module LineChart.Dimension exposing (Config, default, full, time)
 
 {-|
 
@@ -11,11 +11,11 @@ module Lines.Dimension exposing (Config, default, full, time)
 -}
 
 
-import Lines.Axis.Range as Range
-import Lines.Axis as Axis
-import Lines.Axis.Line as AxisLine
-import Lines.Axis.Tick as Tick
-import Lines.Axis.Values as Values
+import LineChart.Axis.Range as Range
+import LineChart.Axis as Axis
+import LineChart.Axis.Line as AxisLine
+import LineChart.Axis.Tick as Tick
+import LineChart.Axis.Values as Values
 import Internal.Axis.Title as Title
 import Internal.Coordinate as Coordinate
 
@@ -25,17 +25,17 @@ import Internal.Coordinate as Coordinate
 ** Customize a dimension **
 
   - **title**: Adds a title on your axis.
-    See `Lines.Axis.Title` for more information and examples.
+    See `LineChart.Axis.Title` for more information and examples.
 
   - **variable**: Determines what data is drawn in the chart!
 
   - **pixels**: The length of the dimension.
 
   - **range**: Determines the range of your dimension.
-    See `Lines.Axis.Range` for more information and examples.
+    See `LineChart.Axis.Range` for more information and examples.
 
   - **axis**: Customizes your axis line and ticks.
-    See `Lines.Axis` for more information and examples.
+    See `LineChart.Axis` for more information and examples.
 
 
     xDimension : Dimension Info msg

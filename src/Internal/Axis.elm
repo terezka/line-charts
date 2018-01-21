@@ -9,7 +9,7 @@ module Internal.Axis exposing
 
 import Svg exposing (Svg, Attribute, g, text_, tspan, text)
 import Svg.Attributes as Attributes exposing (class, strokeWidth, stroke)
-import Lines.Axis.Tick as Tick exposing (Direction)
+import LineChart.Axis.Tick as Tick exposing (Direction)
 import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
 import Internal.Axis.Tick as Tick

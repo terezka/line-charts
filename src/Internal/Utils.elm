@@ -4,7 +4,7 @@ module Internal.Utils exposing (..)
 
 import Html
 import Svg
-import Lines.Coordinate as Coordinate
+import LineChart.Coordinate as Coordinate
 
 
 

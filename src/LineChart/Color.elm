@@ -1,4 +1,4 @@
-module Lines.Color exposing (pink, blue, orange, gray, grayLight, grayLightest, transparent)
+module LineChart.Color exposing (pink, blue, orange, gray, grayLight, grayLightest, transparent)
 
 {-|
 

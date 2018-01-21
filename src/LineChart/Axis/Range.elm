@@ -1,4 +1,4 @@
-module Lines.Axis.Range exposing (Range, default, padded, window, custom)
+module LineChart.Axis.Range exposing (Range, default, padded, window, custom)
 
 {-|
 
@@ -14,7 +14,7 @@ module Lines.Axis.Range exposing (Range, default, padded, window, custom)
 -}
 
 import Internal.Axis.Range as Range
-import Lines.Coordinate as Coordinate
+import LineChart.Coordinate as Coordinate
 
 
 

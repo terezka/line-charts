@@ -1,4 +1,4 @@
-module Lines.Coordinate exposing
+module LineChart.Coordinate exposing
   ( Frame, Size, Margin
   , System, Range
   , Point, toSVG, toData

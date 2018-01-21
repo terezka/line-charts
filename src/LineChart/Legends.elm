@@ -1,4 +1,4 @@
-module Lines.Legends exposing
+module LineChart.Legends exposing
   ( none, default
   , Config, Legend
   , byEnding, byBeginning
@@ -24,7 +24,7 @@ The ones hanging by the line.
 -}
 
 import Svg
-import Lines.Coordinate as Coordinate exposing (..)
+import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Legends as Legends
 
 
@@ -32,9 +32,9 @@ import Internal.Legends as Legends
 -- QUICK START
 
 
-{-| To be used in the `Lines.Config` passed to `viewCustom` like this:
+{-| To be used in the `LineChart.Config` passed to `viewCustom` like this:
 
-    chartConfig : Lines.Config data msg
+    chartConfig : LineChart.Config data msg
     chartConfig =
       { ...
       , legends = Legends.none -- Use here!
@@ -81,7 +81,7 @@ type alias Config data msg
 
 {-| Places the label of your line by its end.
 
-    chartConfig : Lines.Config data msg
+    chartConfig : LineChart.Config data msg
     chartConfig =
       { ...
       , legends = Legends.byEnding (Junk.text "black")
@@ -108,7 +108,7 @@ byBeginning =
 {-| The two arguments constitute the position of the legend given the range of
 the respective axes.
 
-    chartConfig : Lines.Config data msg
+    chartConfig : LineChart.Config data msg
     chartConfig =
       { ...
       , legends = Legends.grouped .max .min -- Bottom right corner

@@ -1,4 +1,4 @@
-module Lines.Junk exposing
+module LineChart.Junk exposing
   ( Config, Layers, none, custom
   , Transfrom, transform, move, offset
   , vertical, horizontal, rectangle, label
@@ -25,7 +25,7 @@ module Lines.Junk exposing
 import Html
 import Svg
 import Svg.Attributes as Attributes
-import Lines.Coordinate as Coordinate
+import LineChart.Coordinate as Coordinate
 import Internal.Junk as Junk
 import Internal.Svg as Svg
 import Internal.Utils as Utils
@@ -49,10 +49,10 @@ none =
 
 {-| Junk for all the stuff which I don't let you do in the library, so for
 example if you want a picture of a kitten in the corner of your chart,
-you can use junk to add that. To be used in the `Lines.Config` passed to
+you can use junk to add that. To be used in the `LineChart.Config` passed to
 `viewCustom` like this:
 
-    chartConfig : Lines.Config data msg
+    chartConfig : LineChart.Config data msg
     chartConfig =
       { ...
       , junk = theJunk -- Use here!
@@ -81,7 +81,7 @@ type alias Layers msg =
 {-| Here is where you start producing your junk. You have the `System`
 available, meaning you can translate your charts coordinates into SVG
 coordinates and move things around easily. You add your elements to the "layer"
-you want in the resulting `Layers` type. Here's an example of adding grid lines.
+you want in the resulting `Layers` type. Here's an example of adding grid LineChart.
 
     theJunk : Info -> Junk.Junk msg
     theJunk info =

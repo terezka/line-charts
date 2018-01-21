@@ -10,7 +10,7 @@ module Internal.Dot exposing
 
 import Svg exposing (Svg)
 import Svg.Attributes as Attributes
-import Lines.Coordinate as Coordinate exposing (..)
+import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
 import Color
 import Color.Convert

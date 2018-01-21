@@ -3,7 +3,7 @@ module Internal.Interpolation exposing (Interpolation(..), toCommands)
 {-| -}
 
 import Internal.Path as Path exposing (..)
-import Lines.Coordinate as Coordinate  exposing (..)
+import LineChart.Coordinate as Coordinate  exposing (..)
 
 
 

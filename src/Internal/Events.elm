@@ -14,7 +14,7 @@ import DOM
 import Svg
 import Svg.Events
 import Html.Events
-import Lines.Coordinate as Coordinate exposing (..)
+import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
 import Internal.Utils exposing (withFirst)
 import Json.Decode as Json

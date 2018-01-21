@@ -7,7 +7,7 @@ import Internal.Utils as Utils
 import Date
 import Date.Extra as Date
 import Date.Extra.Facts as Date
-import Lines.Axis.Tick exposing (Time, Unit(..), Interval)
+import LineChart.Axis.Tick exposing (Time, Unit(..), Interval)
 
 
 

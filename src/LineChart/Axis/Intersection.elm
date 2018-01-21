@@ -1,4 +1,4 @@
-module Lines.Axis.Intersection exposing (Config, default, at, custom)
+module LineChart.Axis.Intersection exposing (Config, default, at, custom)
 
 {-|
 
@@ -12,7 +12,7 @@ module Lines.Axis.Intersection exposing (Config, default, at, custom)
 
 
 import Internal.Axis.Intersection as Intersection
-import Lines.Coordinate as Coordinate
+import LineChart.Coordinate as Coordinate
 
 
 {-| -}

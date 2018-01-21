@@ -1,6 +1,6 @@
 module Internal.Axis.Range exposing (Range, default, padded, window, custom, applyX, applyY)
 
-import Lines.Coordinate as Coordinate
+import LineChart.Coordinate as Coordinate
 
 
 {-| -}

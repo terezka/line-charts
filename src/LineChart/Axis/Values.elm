@@ -1,4 +1,4 @@
-module Lines.Axis.Values exposing (Amount, around, exactly, int, time, float, custom)
+module LineChart.Axis.Values exposing (Amount, around, exactly, int, time, float, custom)
 
 {-|
 
@@ -10,7 +10,7 @@ module Lines.Axis.Values exposing (Amount, around, exactly, int, time, float, cu
 
 -}
 
-import Lines.Axis.Tick as Tick
+import LineChart.Axis.Tick as Tick
 import Internal.Axis.Values as Values
 import Internal.Coordinate as Coordinate
 

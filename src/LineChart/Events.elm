@@ -1,4 +1,4 @@
-module Lines.Events exposing
+module LineChart.Events exposing
   ( Config, default, none, hover, hoverOne, click, custom
   , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
   , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
@@ -34,7 +34,7 @@ module Lines.Events exposing
 
 import Html.Events
 import Internal.Events as Events
-import Lines.Coordinate as Coordinate
+import LineChart.Coordinate as Coordinate
 
 
 

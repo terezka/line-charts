@@ -2,7 +2,7 @@ module Internal.Axis.Line exposing (Line, none, default, full, rangeFrame, Confi
 
 
 import Svg exposing (Attribute)
-import Lines.Color as Colors
+import LineChart.Color as Colors
 import Internal.Coordinate as Coordinate
 import Color
 

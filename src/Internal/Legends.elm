@@ -11,8 +11,8 @@ module Internal.Legends exposing
 
 import Svg exposing (Svg)
 import Svg.Attributes as Attributes
-import Lines.Area as Area
-import Lines.Coordinate as Coordinate
+import LineChart.Area as Area
+import LineChart.Coordinate as Coordinate
 import Internal.Data as Data
 import Internal.Dot as Dot
 import Internal.Line as Line

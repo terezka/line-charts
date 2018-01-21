@@ -14,7 +14,7 @@ module Internal.Line exposing
 
 import Svg
 import Svg.Attributes as Attributes
-import Lines.Junk as Junk
+import LineChart.Junk as Junk
 import Internal.Area as Area
 import Internal.Coordinate as Coordinate
 import Internal.Data as Data

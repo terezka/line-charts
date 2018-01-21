@@ -2,7 +2,7 @@ module Internal.Axis.Values exposing (Amount, around, exactly, int, time, float,
 
 
 import Round
-import Lines.Axis.Tick exposing (Time, Unit(..), Interval)
+import LineChart.Axis.Tick exposing (Time, Unit(..), Interval)
 import Internal.Axis.Values.Time as Time
 import Internal.Utils as Utils
 import Internal.Coordinate as Coordinate

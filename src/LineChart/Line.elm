@@ -1,4 +1,4 @@
-module Lines.Line exposing
+module LineChart.Line exposing
   ( Config, default
   , wider, custom
   , Style, style

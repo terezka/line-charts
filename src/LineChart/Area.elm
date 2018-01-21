@@ -1,4 +1,4 @@
-module Lines.Area exposing (Config, none, percentage, normal, stacked)
+module LineChart.Area exposing (Config, none, percentage, normal, stacked)
 
 {-| -}
 
@@ -10,14 +10,14 @@ type alias Config =
   Area.Config
 
 
-{-| No color below your lines.
+{-| No color below your LineChart.
 -}
 none : Config
 none =
   Area.none
 
 
-{-| Color the area below your lines. The color is always the color of
+{-| Color the area below your LineChart. The color is always the color of
 your line, but you can pass the opacity.
 -}
 normal : Float -> Config

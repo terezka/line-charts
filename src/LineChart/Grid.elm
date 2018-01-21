@@ -1,4 +1,4 @@
-module Lines.Grid exposing (Config, default, dots, lines)
+module LineChart.Grid exposing (Config, default, dots, lines)
 
 {-|
 
@@ -17,7 +17,7 @@ The path to the tick in the configuration does through the `x` or `y`
 property for vertical and horizontal grids respectivily and then in the
 `axis` property.
 
-See `Lines.Dimension` -> `Lines.Axis` -> `Lines.Axis.Tick`.
+See `LineChart.Dimension` -> `LineChart.Axis` -> `LineChart.Axis.Tick`.
 
 -}
 

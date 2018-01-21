@@ -1,21 +1,21 @@
 module HintExample exposing (main)
 
 import Html exposing (Html, div, h1, node, p, text)
-import Lines as Lines
-import Lines.Junk as Junk exposing (..)
-import Lines.Color as Colors
-import Lines.Dot as Dot
-import Lines.Axis.Intersection as Intersection
-import Lines.Coordinate as Coordinate
-import Lines.Legends as Legends
-import Lines.Line as Line
-import Lines.Events as Events
-import Lines.Grid as Grid
-import Lines.Dimension as Dimension
-import Lines.Legends as Legends
 import Svg exposing (Attribute, Svg, g, text_, tspan)
+import LineChart as LineChart
+import LineChart.Junk as Junk exposing (..)
+import LineChart.Color as Colors
+import LineChart.Dot as Dot
+import LineChart.Axis.Intersection as Intersection
+import LineChart.Coordinate as Coordinate
+import LineChart.Legends as Legends
+import LineChart.Line as Line
+import LineChart.Events as Events
+import LineChart.Grid as Grid
+import LineChart.Dimension as Dimension
+import LineChart.Legends as Legends
+import LineChart.Area as Area
 import Svg.Attributes as SvgA
-import Lines.Area as Area
 import Color
 
 
@@ -69,7 +69,7 @@ update msg model =
 
 view : Model -> Svg Msg
 view model =
-    Lines.viewCustom
+    LineChart.viewCustom
       { margin = Coordinate.Margin 150 150 150 150
       , attributes = [ SvgA.style "font: caption;" ]
       , events = Events.hoverOne HoverSingle
@@ -77,10 +77,7 @@ view model =
       , y = Dimension.default 670 "age" .age
       , intersection = Intersection.default
       , junk = junkX model.hoveringX
-          --Maybe.map junkSingle model.hovering
-          --Maybe.map2 (junk model.hoveringX) model.point model.hovering
-            --|> Maybe.withDefault Junk.none
-      , interpolation = Lines.monotone
+      , interpolation = LineChart.monotone
       , legends = Legends.default
       , line = Line.default
       , dot =
@@ -93,9 +90,9 @@ view model =
       , area = Area.none
       , id = "chart"
       }
-      [ Lines.line Colors.pink Dot.square "chuck" chuck
-      , Lines.line Colors.blue Dot.circle "bob" bob
-      , Lines.line Colors.orange Dot.triangle "alice" alice
+      [ LineChart.line Colors.pink Dot.square "chuck" chuck
+      , LineChart.line Colors.blue Dot.circle "bob" bob
+      , LineChart.line Colors.orange Dot.triangle "alice" alice
       ]
 
 

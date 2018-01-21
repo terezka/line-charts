@@ -1,4 +1,4 @@
-module Lines.Dot exposing
+module LineChart.Dot exposing
   ( Shape, none
   , circle, triangle, square, diamond, plus, cross
   , Config, default, static, hoverable
@@ -32,8 +32,8 @@ import Internal.Dot as Dot
 
     humanChart : Html msg
     humanChart =
-      Lines.view .age .income
-        [ Lines.Line Color.pink Dot.none "Alice" alice ]
+      LineChart.view .age .income
+        [ LineChart.Line Color.pink Dot.none "Alice" alice ]
 -}
 none : Shape
 none =
@@ -49,10 +49,10 @@ shape of your line's dot.
 
     humanChart : Html msg
     humanChart =
-      Lines.view .age .income
-        [ Lines.Line Color.orange Dot.plus "Alice" alice
-        , Lines.Line Color.blue Dot.square "Bob" bob
-        , Lines.Line Color.pink Dot.diamond "Chuck" chuck
+      LineChart.view .age .income
+        [ LineChart.Line Color.orange Dot.plus "Alice" alice
+        , LineChart.Line Color.blue Dot.square "Bob" bob
+        , LineChart.Line Color.pink Dot.diamond "Chuck" chuck
         ]
 -}
 type alias Shape =

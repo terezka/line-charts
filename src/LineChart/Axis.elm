@@ -1,4 +1,4 @@
-module Lines.Axis exposing
+module LineChart.Axis exposing
   ( Axis
   , int, time, float
   , intCustom, timeCustom, floatCustom, custom
@@ -14,11 +14,11 @@ module Lines.Axis exposing
 
 -}
 
-import Lines.Coordinate as Coordinate exposing (..)
+import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Axis as Axis
 import Internal.Axis.Values as Values
-import Lines.Axis.Tick as Tick
-import Lines.Axis.Line as Line
+import LineChart.Axis.Tick as Tick
+import LineChart.Axis.Line as Line
 
 
 {-| -}

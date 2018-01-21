@@ -1,4 +1,4 @@
-module Lines.Axis.Line exposing
+module LineChart.Axis.Line exposing
   ( Line, none, default
   , full, rangeFrame
   , Config, custom
@@ -18,7 +18,7 @@ module Lines.Axis.Line exposing
 -}
 
 import Svg exposing (Attribute)
-import Lines.Coordinate as Coordinate
+import LineChart.Coordinate as Coordinate
 import Internal.Axis.Line as Line
 import Color
 
