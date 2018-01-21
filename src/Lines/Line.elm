@@ -1,6 +1,6 @@
 module Lines.Line exposing
   ( Look, default
-  , wider, static, emphasizable
+  , wider, custom
   , Style, style
   )
 
@@ -10,7 +10,7 @@ module Lines.Line exposing
 @docs default
 
 # Customizations
-@docs Look, wider, static, emphasizable
+@docs Look, wider, custom
 
 # Styles
 @docs Style, style
@@ -19,18 +19,12 @@ module Lines.Line exposing
 
 import Internal.Line as Line
 import Color
-import Color.Convert
 
 
 
 {-| -}
 type alias Look data =
   Line.Look data
-
-
-{-| -}
-type alias Style =
-  Line.Style
 
 
 {-| -}
@@ -46,23 +40,17 @@ wider =
 
 
 {-| -}
-static : Style -> Look data
-static =
-  Line.static
+custom : (List data -> Style) -> Look data
+custom =
+  Line.custom
+
+
+{-| -}
+type alias Style =
+  Line.Style
 
 
 {-| -}
 style : Float -> (Color.Color -> Color.Color) -> Style
 style =
   Line.style
-
-
-{-| -}
-emphasizable :
-  { normal : Style
-  , emphasized : Style
-  , isEmphasized : List data -> Bool
-  }
-  -> Look data
-emphasizable =
-  Line.emphasizable

@@ -19,7 +19,6 @@ import Lines.Area as Area
 import Lines.Axis as Axis
 import Lines.Axis.Title as Title
 import Lines.Axis.Range as Range
-import Color.Convert
 import Color.Manipulate
 import Color
 
@@ -94,12 +93,14 @@ view model =
       , interpolation = Lines.linear
       , legends = Legends.default
       , line =
-          Line.emphasizable
-            { normal = Line.style 1 identity
-            , emphasized = Line.style 3 (Color.Manipulate.darken 0.2)
-            , isEmphasized = List.any (flip List.member model.hoveringX)
-            }
-      , dot = Dot.static (Dot.bordered 10 2)
+          Line.custom <| \data ->
+            if List.isEmpty model.hoveringX then
+              Line.style 1 identity
+            else if List.any (flip List.member model.hoveringX) data then
+              Line.style 1.5 (Color.Manipulate.darken 0.15)
+            else
+              Line.style 1 (Color.Manipulate.lighten 0.15)
+      , dot = Dot.default
       , grid = Grid.lines 1 Colors.grayLightest
       , area = Area.none
       , id = "chart"

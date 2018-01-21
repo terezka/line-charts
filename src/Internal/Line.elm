@@ -1,6 +1,6 @@
 module Internal.Line exposing
   ( Line(..), Config, lineConfig, line, dash
-  , Look, default, wider, static, emphasizable
+  , Look, default, wider, custom
   , Style, style, getColor
   , view, viewSample
   )
@@ -63,51 +63,24 @@ dash color shape label dashing data =
 
 {-| -}
 type Look data =
-  Look
-    { normal : Style
-    , emphasized : Style
-    , isEmphasized : List data -> Bool
-    }
+  Look (List data -> Style)
 
 
 {-| -}
 default : Look data
 default =
-  Look
-    { normal = style 1 identity
-    , emphasized = style 2 identity
-    , isEmphasized = always False
-    }
+  Look <| \_ -> style 1 identity
 
 
 {-| -}
 wider : Float -> Look data
 wider width =
-  Look
-    { normal = style width identity
-    , emphasized = style width identity
-    , isEmphasized = always False
-    }
+  Look <| \_ -> style width identity
 
 
 {-| -}
-static : Style -> Look data
-static normal =
-  Look
-    { normal = normal
-    , emphasized = normal
-    , isEmphasized = always False
-    }
-
-
-{-| -}
-emphasizable :
-  { normal : Style
-  , emphasized : Style
-  , isEmphasized : List data -> Bool
-  }
-  -> Look data
-emphasizable =
+custom : (List data -> Style) -> Look data
+custom =
   Look
 
 
@@ -133,13 +106,8 @@ style width color =
 getColor : Look data -> List (Data.Data data) -> Color.Color -> Color.Color
 getColor (Look look) data =
   let
-    isEmphasized =
-      look.isEmphasized (List.map .data data)
-
     (Style style) =
-      if isEmphasized
-        then look.emphasized
-        else look.normal
+      look (List.map .data data)
   in
   style.color
 
@@ -213,13 +181,8 @@ viewSingle ({ system } as arguments) (Line lineConfig) dataPoints =
     (Look lineLook) =
       arguments.lineLook
 
-    isEmphasized =
-      lineLook.isEmphasized (List.map .data dataPoints)
-
     (Style style) =
-      if isEmphasized
-        then lineLook.emphasized
-        else lineLook.normal
+      lineLook (List.map .data dataPoints)
 
     viewDot =
       Dot.view
@@ -268,13 +231,8 @@ viewLine { system, lineLook, id } lineConfig interpolation dataPoints =
 toLineAttributes : Look data -> Config data -> List (Data.Data data) -> List (Svg.Attribute msg)
 toLineAttributes (Look look) { color, dashing } dataPoints =
   let
-    isEmphasized =
-      look.isEmphasized (List.map .data dataPoints)
-
     (Style style) =
-      if isEmphasized
-        then look.emphasized
-        else look.normal
+      look (List.map .data dataPoints)
   in
   [ Attributes.style "pointer-events: none;"
   , Attributes.class "chart__interpolation__line__fragment"
@@ -310,13 +268,8 @@ viewArea { system, lineLook, area, id } lineConfig interpolation dataPoints =
 toAreaAttributes : Look data -> Config data -> Area.Area -> List (Data.Data data) -> List (Svg.Attribute msg)
 toAreaAttributes (Look look) { color } area dataPoints =
   let
-    isEmphasized =
-      look.isEmphasized (List.map .data dataPoints)
-
     (Style style) =
-      if isEmphasized
-        then look.emphasized
-        else look.normal
+      look (List.map .data dataPoints)
   in
   [ Attributes.class "chart__interpolation__area__fragment"
   , Attributes.fill (Color.Convert.colorToHex (style.color color))
