@@ -1,5 +1,5 @@
 module Internal.Events exposing
-    ( Events, default, none, hover, hoverX, click, custom
+    ( Events, default, none, hover, hoverOne, click, custom
     , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
     , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
@@ -38,20 +38,20 @@ none =
 
 
 {-| -}
-hover : (Maybe data -> msg) -> Events data msg
+hover : (List data -> msg) -> Events data msg
 hover msg =
   custom
-    [ onMouseMove msg (getWithin 30)
-    , onMouseLeave (msg Nothing)
+    [ onMouseMove msg getNearestX
+    , onMouseLeave (msg [])
     ]
 
 
 {-| -}
-hoverX : (List data -> msg) -> Events data msg
-hoverX msg =
+hoverOne : (Maybe data -> msg) -> Events data msg
+hoverOne msg =
   custom
-    [ onMouseMove msg getNearestX
-    , onMouseLeave (msg [])
+    [ onMouseMove msg (getWithin 30)
+    , onMouseLeave (msg Nothing)
     ]
 
 

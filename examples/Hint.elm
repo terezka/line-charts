@@ -16,7 +16,6 @@ import Lines.Legends as Legends
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import Svg.Attributes as SvgA
 import Lines.Area as Area
-import Color.Manipulate
 import Color
 
 
@@ -73,7 +72,7 @@ view model =
     Lines.viewCustom
       { margin = Coordinate.Margin 150 150 150 150
       , attributes = [ SvgA.style "font: caption;" ]
-      , events = Events.hoverX HoverX
+      , events = Events.hover HoverX
       , x = Dimension.default 750 "income" .income
       , y = Dimension.default 670 "age" .age
       , intersection = Intersection.default
@@ -82,21 +81,14 @@ view model =
           --Maybe.map2 (junk model.hoveringX) model.point model.hovering
             --|> Maybe.withDefault Junk.none
       , interpolation = Lines.monotone
-      , legends = Legends.hover model.hoveringX
+      , legends = Legends.default
       , line =
           Line.custom <| \data ->
-            if List.isEmpty model.hoveringX then
-              Line.style 1 identity
-            else if List.any (flip List.member model.hoveringX) data then
+            if List.any (flip List.member model.hoveringX) data then
               Line.style 2 identity
             else
-              Line.style 1 (Color.Manipulate.lighten 0.2)
-      , dot =
-          Dot.emphasizable
-            { normal = Dot.disconnected 10 2
-            , emphasized = Dot.aura 5 5 0.2
-            , isEmphasized = flip List.member model.hoveringX
-            }
+              Line.style 1 identity
+      , dot = Dot.static (Dot.disconnected 10 2)
       , grid = Grid.dotted Colors.grayLight
       , area = Area.none
       , id = "chart"

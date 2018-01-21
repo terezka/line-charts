@@ -2,7 +2,7 @@ module Internal.Legends exposing
   ( Legends, default, none
   , byEnding, byBeginning
   , grouped, groupedCustom
-  , hover
+  , hover, hoverOne
   -- INTERNAL
   , view
   )
@@ -52,13 +52,21 @@ type alias Legend msg =
 {-| -}
 default : Legends data msg
 default =
-  Grouped 30 (defaultLegends .max .max [])
+  hover []
 
 
 {-| -}
 hover : List data -> Legends data msg
 hover data =
   Grouped 30 (defaultLegends .max .max data)
+
+
+{-| -}
+hoverOne : Maybe data -> Legends data msg
+hoverOne maybeOne =
+  case maybeOne of
+    Just data -> hover [ data ]
+    Nothing   -> hover []
 
 
 {-| -}

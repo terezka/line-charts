@@ -305,7 +305,7 @@ viewSample : Look data -> Line data -> Area.Area -> List (Data.Data data) -> Flo
 viewSample (Look look) line area data sampleWidth =
   let
     style =
-      look []
+      look (List.map .user data)
 
     lineAttributes =
       toLineAttributes line style

@@ -1,5 +1,5 @@
 module Lines.Events exposing
-  ( Events, default, none, hover, hoverX, click, custom
+  ( Events, default, none, hover, hoverOne, click, custom
   , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
   , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
@@ -11,7 +11,7 @@ module Lines.Events exposing
 @docs default, none
 
 # Configurations
-@docs Events, hover, hoverX, click, custom
+@docs Events, hover, hoverOne, click, custom
 
 ## Events
 @docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
@@ -59,15 +59,15 @@ none =
 
 
 {-| -}
-hover : (Maybe data -> msg) -> Events.Events data msg
-hover =
-  Events.hover
+hoverOne : (Maybe data -> msg) -> Events.Events data msg
+hoverOne =
+  Events.hoverOne
 
 
 {-| -}
-hoverX : (List data -> msg) -> Events.Events data msg
-hoverX =
-  Events.hoverX
+hover : (List data -> msg) -> Events.Events data msg
+hover =
+  Events.hover
 
 
 {-| -}

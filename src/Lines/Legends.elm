@@ -3,7 +3,6 @@ module Lines.Legends exposing
   , Legends, Legend
   , byEnding, byBeginning
   , grouped, groupedCustom
-  , hover
   )
 
 {-|
@@ -21,9 +20,6 @@ The ones gathered in one spot.
 ## Free legends
 The ones hanging by the line.
 @docs byEnding, byBeginning
-
-## Special
-@docs hover
 
 -}
 
@@ -62,6 +58,12 @@ default =
 hover : List data -> Legends data msg
 hover =
   Legends.hover
+
+
+{-| -}
+hoverOne : Maybe data -> Legends data msg
+hoverOne =
+  Legends.hoverOne
 
 
 
