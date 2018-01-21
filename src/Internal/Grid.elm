@@ -6,10 +6,12 @@ module Internal.Grid exposing (Grid, default, dotted, lines, view)
 import Svg
 import Svg.Attributes as Attributes
 import Internal.Svg as Svg
-import Lines.Color as Color
+import Lines.Color as Colors
 import Lines.Coordinate as Coordinate
 import Lines.Dimension as Dimension
 import Internal.Axis as Axis
+import Color
+import Color.Convert
 
 
 {-| -}
@@ -21,7 +23,7 @@ type Grid
 {-| -}
 default : Grid
 default =
-  lines 1 Color.grayLight
+  lines 1 Colors.grayLight
 
 
 {-| -}
@@ -79,7 +81,7 @@ viewLines : Coordinate.System -> List Float -> List Float -> Float -> Color.Colo
 viewLines system verticals horizontals width color =
   let
     attributes =
-      [ Attributes.strokeWidth (toString width), Attributes.stroke color ]
+      [ Attributes.strokeWidth (toString width), Attributes.stroke (Color.Convert.colorToHex color) ]
   in
   List.map (Svg.horizontalGrid system attributes) horizontals ++
   List.map (Svg.verticalGrid system attributes) verticals

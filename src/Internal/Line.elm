@@ -12,7 +12,6 @@ module Internal.Line exposing
 
 import Svg
 import Svg.Attributes as Attributes
-import Lines.Color as Color
 import Lines.Junk as Junk
 import Internal.Area as Area
 import Internal.Coordinate as Coordinate
@@ -21,7 +20,8 @@ import Internal.Dot as Dot
 import Internal.Interpolation as Interpolation
 import Internal.Path as Path
 import Internal.Utils as Utils
-
+import Color
+import Color.Convert
 
 
 {-| -}
@@ -278,7 +278,7 @@ toLineAttributes (Look look) { color, dashing } dataPoints =
   in
   [ Attributes.style "pointer-events: none;"
   , Attributes.class "chart__interpolation__line__fragment"
-  , Attributes.stroke (style.color color)
+  , Attributes.stroke (Color.Convert.colorToHex (style.color color))
   , Attributes.strokeWidth (toString style.width)
   , Attributes.strokeDasharray <| String.join " " (List.map toString dashing)
   , Attributes.fill "transparent"
@@ -319,7 +319,7 @@ toAreaAttributes (Look look) { color } area dataPoints =
         else look.normal
   in
   [ Attributes.class "chart__interpolation__area__fragment"
-  , Attributes.fill (style.color color)
+  , Attributes.fill (Color.Convert.colorToHex (style.color color))
   ]
 
 

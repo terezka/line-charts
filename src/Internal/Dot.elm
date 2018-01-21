@@ -9,10 +9,11 @@ module Internal.Dot exposing
 {-| -}
 
 import Svg exposing (Svg)
-import Lines.Color as Color
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
+import Color
+import Color.Convert
 
 
 {-| -}
@@ -312,23 +313,23 @@ varietyAttributes : Color.Color -> Variety -> List (Svg.Attribute msg)
 varietyAttributes color variety =
   case variety of
     Bordered width ->
-      [ Attributes.stroke color
+      [ Attributes.stroke (Color.Convert.colorToHex color)
       , Attributes.strokeWidth (toString width)
       , Attributes.fill "white"
       ]
 
     Aura width opacity ->
-      [ Attributes.stroke color
+      [ Attributes.stroke (Color.Convert.colorToHex color)
       , Attributes.strokeWidth (toString width)
       , Attributes.strokeOpacity (toString opacity)
-      , Attributes.fill color
+      , Attributes.fill (Color.Convert.colorToHex color)
       ]
 
     Disconnected width ->
       [ Attributes.stroke "white"
       , Attributes.strokeWidth (toString width)
-      , Attributes.fill color
+      , Attributes.fill (Color.Convert.colorToHex color)
       ]
 
     Full ->
-      [ Attributes.fill color ]
+      [ Attributes.fill (Color.Convert.colorToHex color) ]

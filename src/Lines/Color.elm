@@ -1,68 +1,52 @@
-module Lines.Color exposing (Color, pink, blue, orange, gray, grayLight, grayLightest, black, inherit)
+module Lines.Color exposing (pink, blue, orange, gray, grayLight, grayLightest, transparent)
 
 {-|
 
 # Defaults
-@docs Color, pink, blue, orange, gray, grayLight, grayLightest, black, inherit
+@docs pink, blue, orange, gray, grayLight, grayLightest, transparent
 
 -}
 
+import Color
 
 
 {-| -}
-type alias Color =
-  String
-
-
-{-| -}
-pink : Color
+pink : Color.Color
 pink =
-  "#f569d7"
+  Color.rgb 245 105 215
 
 
 {-| -}
-orange : Color
+orange : Color.Color
 orange =
-  "#cd913c"
+  Color.rgb 205 145 60
 
 
 {-| -}
-blue : Color
+blue : Color.Color
 blue =
-  "#28ebc7"
+  Color.rgb 40 235 199
 
 
 {-| -}
-gray : Color
+gray : Color.Color
 gray =
-  "#a3a3a3"
+  Color.rgb 163 163 163
 
 
 {-| -}
-grayLight : Color
+grayLight : Color.Color
 grayLight =
-  "#f3f3f3"
+  Color.rgb 211 211 211
 
 
 {-| -}
-grayLightest : Color
+grayLightest : Color.Color
 grayLightest =
-  "#d3d3d3"
+  Color.rgb 243 243 243
 
 
 {-| -}
-transparent : Color
+transparent : Color.Color
 transparent =
-  "transparent"
-
-
-{-| -}
-inherit : Color
-inherit =
-  "inherit"
-
-
-{-| -}
-black : Color
-black =
-  "black"
+  Color.rgba 0 0 0 0

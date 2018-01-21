@@ -23,13 +23,14 @@ module Lines.Axis.Tick exposing
 -}
 
 import Svg exposing (Svg, Attribute)
-import Lines.Color as Color
 import Lines.Junk as Junk
 import Lines.Coordinate as Coordinate
 import Internal.Axis.Tick as Tick
+import Internal.Svg as Svg
 import Date
 import Date.Extra as Date
 import Date.Format
+import Color
 
 
 
@@ -75,7 +76,7 @@ int n =
   , length = 5
   , grid = True
   , direction = negative
-  , label = Just <| Junk.text Color.inherit (toString n)
+  , label = Just <| Svg.label "inherit" (toString n)
   }
 
 
@@ -88,7 +89,7 @@ float n =
   , length = 5
   , grid = True
   , direction = negative
-  , label = Just <| Junk.text Color.inherit (toString n)
+  , label = Just <| Svg.label "inherit" (toString n)
   }
 
 
@@ -133,7 +134,7 @@ time time =
   , length = 5
   , grid = True
   , direction = negative
-  , label = Just <| Junk.text Color.inherit (format time)
+  , label = Just <| Svg.label "inherit" (format time)
   }
 
 

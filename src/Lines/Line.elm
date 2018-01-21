@@ -17,8 +17,9 @@ module Lines.Line exposing
 
 -}
 
-import Lines.Color as Color
 import Internal.Line as Line
+import Color
+import Color.Convert
 
 
 

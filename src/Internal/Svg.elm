@@ -4,6 +4,7 @@ module Internal.Svg exposing
   , rectangle
   , horizontalGrid, verticalGrid
   , xTick, yTick
+  , label
   , Anchor(..), anchorStyle
   , Transfrom, transform, move, offset
   )
@@ -29,6 +30,9 @@ module Internal.Svg exposing
 
 # Helpers
 
+## Label
+@docs label
+
 ## Anchor
 @docs Anchor, anchorStyle
 
@@ -39,11 +43,12 @@ module Internal.Svg exposing
 
 import Svg exposing (Svg, Attribute, g)
 import Svg.Attributes as Attributes
-import Lines.Color as Color
+import Lines.Color as Colors
 import Lines.Coordinate as Coordinate exposing (..)
 import Internal.Path as Path exposing (..)
 import Internal.Utils exposing (..)
-
+import Color
+import Color.Convert
 
 
 -- DOT
@@ -56,7 +61,7 @@ gridDot color point =
     [ Attributes.cx (toString point.x)
     , Attributes.cy (toString point.y)
     , Attributes.r "1"
-    , Attributes.fill color
+    , Attributes.fill (Color.Convert.colorToHex color)
     ]
     []
 
@@ -71,7 +76,7 @@ horizontal system userAttributes y x1 x2 =
   let
     attributes =
       concat
-        [ Attributes.stroke Color.gray
+        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray)
         , Attributes.style "pointer-events: none;"
         ] userAttributes []
   in
@@ -88,7 +93,7 @@ vertical system userAttributes x y1 y2 =
   let
     attributes =
       concat
-        [ Attributes.stroke Color.gray
+        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray)
         , Attributes.style "pointer-events: none;"
         ] userAttributes []
   in
@@ -104,7 +109,9 @@ rectangle : Coordinate.System -> List (Attribute msg) -> Float -> Float -> Float
 rectangle system userAttributes x1 x2 y1 y2 =
   let
     attributes =
-      concat [ Attributes.fill Color.gray ] userAttributes []
+      concat
+        [ Attributes.fill (Color.Convert.colorToHex Colors.gray) ]
+        userAttributes []
   in
     Path.view system attributes
       [ Move { x = x1, y = y1 }
@@ -120,7 +127,7 @@ horizontalGrid system userAttributes y =
   let
     attributes =
       concat
-        [ Attributes.stroke Color.gray
+        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray)
         , Attributes.style "pointer-events: none;"
         ] userAttributes []
   in
@@ -133,7 +140,7 @@ verticalGrid system userAttributes x =
   let
     attributes =
       concat
-        [ Attributes.stroke Color.gray
+        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray)
         , Attributes.style "pointer-events: none;"
         ] userAttributes []
   in
@@ -150,7 +157,7 @@ xTick system height userAttributes y x =
   let
     attributes =
       concat
-        [ Attributes.stroke Color.gray ]
+        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray) ]
         userAttributes
         [ Attributes.x1 <| toString (toSVGX system x)
         , Attributes.x2 <| toString (toSVGX system x)
@@ -168,7 +175,7 @@ yTick system width userAttributes x y =
     attributes =
       concat
         [ Attributes.class "chart__tick"
-        , Attributes.stroke Color.gray
+        , Attributes.stroke (Color.Convert.colorToHex Colors.gray)
         ]
         userAttributes
         [ Attributes.x1 <| toString (toSVGX system x)
@@ -179,6 +186,15 @@ yTick system width userAttributes x y =
   in
     Svg.line attributes []
 
+
+
+-- LABEL
+
+
+{-| -}
+label : String -> String -> Svg.Svg msg
+label color string =
+  Svg.text_ [ Attributes.fill color ] [ Svg.tspan [] [ Svg.text string ] ]
 
 
 -- ANCHOR

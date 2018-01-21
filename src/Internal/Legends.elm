@@ -218,5 +218,5 @@ defaultLegend index { sample, label } =
     [ sample
     , Svg.g
         [ Svg.transform [ Svg.offset 40 4 ] ]
-        [ Junk.text Color.inherit label ]
+        [ Svg.label "inherit" label ]
     ]

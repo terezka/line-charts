@@ -3,7 +3,7 @@ module HintExample exposing (main)
 import Html exposing (Html, div, h1, node, p, text)
 import Lines as Lines
 import Lines.Junk as Junk exposing (..)
-import Lines.Color as Color
+import Lines.Color as Colors
 import Lines.Dot as Dot
 import Lines.Axis.Intersection as Intersection
 import Lines.Coordinate as Coordinate
@@ -19,6 +19,9 @@ import Lines.Area as Area
 import Lines.Axis as Axis
 import Lines.Axis.Title as Title
 import Lines.Axis.Range as Range
+import Color.Convert
+import Color.Manipulate
+import Color
 
 
 -- MODEL
@@ -72,10 +75,10 @@ update msg model =
 view : Model -> Svg Msg
 view model =
     Lines.viewCustom
-      { margin = Coordinate.Margin 150 50 150 150
-      , attributes = []
+      { margin = Coordinate.Margin 150 150 150 150
+      , attributes = [ SvgA.style "font: caption;" ]
       , events = Events.hoverX HoverX
-      , x = Dimension.time 750 "income" .income
+      , x = Dimension.default 750 "income" .income
       , y =
           { title = Title.default "age"
           , variable = .age
@@ -93,17 +96,17 @@ view model =
       , line =
           Line.emphasizable
             { normal = Line.style 1 identity
-            , emphasized = Line.style 3 (\_ -> "purple")
+            , emphasized = Line.style 3 (Color.Manipulate.darken 0.2)
             , isEmphasized = List.any (flip List.member model.hoveringX)
             }
       , dot = Dot.static (Dot.bordered 10 2)
-      , grid = Grid.lines 1 Color.grayLight
+      , grid = Grid.lines 1 Colors.grayLightest
       , area = Area.none
       , id = "chart"
       }
-      [ Lines.line Color.pink Dot.square "chuck" chuck
-      , Lines.line Color.blue Dot.circle "bob" bob
-      , Lines.line Color.orange Dot.triangle "alice" alice
+      [ Lines.line Colors.pink Dot.square "chuck" chuck
+      , Lines.line Colors.blue Dot.circle "bob" bob
+      , Lines.line Colors.orange Dot.triangle "alice" alice
       ]
 
 
@@ -114,7 +117,7 @@ viewLegend index { sample, label } =
     [ sample
     , Svg.g
         [ Junk.transform [ Junk.offset 40 4 ] ]
-        [ Junk.text Color.black label ]
+        [ Junk.label Color.black label ]
     ]
 
 
@@ -184,9 +187,9 @@ type alias Info =
 
 alice : List Info
 alice =
-  [ Info (Just -1) -1
+  [ Info (Just -1) -3
   , Info (Just -2) -2
-  , Info (Just -3) -3
+  , Info (Just -3) -1
   , Info (Just 4) 4
   , Info (Just 5) 5
   ]
@@ -194,9 +197,9 @@ alice =
 
 bob : List Info
 bob =
-  [ Info (Just -1) -1
+  [ Info (Just -1) -3
   , Info (Just -1) -2.5
-  , Info (Just -1) -3
+  , Info (Just -1) -1
   , Info (Just 1) 4
   , Info (Just 1) 5
   ]

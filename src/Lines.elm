@@ -24,7 +24,7 @@ module Lines exposing
 import Html
 import Svg
 import Svg.Attributes as Attributes
-import Lines.Color as Color
+import Lines.Color as Colors
 import Lines.Junk as Junk
 import Lines.Dimension as Dimension
 import Internal.Area as Area
@@ -41,6 +41,7 @@ import Internal.Junk
 import Internal.Legends as Legends
 import Internal.Line as Line
 import Internal.Utils as Utils
+import Color
 
 -- TODO more default junk (hovers)
 -- TODO move tick groups to axis
@@ -683,9 +684,9 @@ defaultLines =
 
 defaultColors : List Color.Color
 defaultColors =
-  [ Color.pink
-  , Color.blue
-  , Color.orange
+  [ Colors.pink
+  , Colors.blue
+  , Colors.orange
   ]
 
 

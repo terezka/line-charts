@@ -19,6 +19,7 @@ import Internal.Axis.Title as Title
 import Internal.Axis.Values as Values
 import Internal.Svg as Svg exposing (..)
 import Internal.Utils exposing (..)
+import Color.Convert
 
 
 
@@ -219,7 +220,7 @@ viewVerticalAxisLine system axisPosition config =
 
 attributesLine : Line.Config msg -> List (Svg.Attribute msg)
 attributesLine { events, width, color } =
-  events ++ [ strokeWidth (toString width), stroke color ]
+  events ++ [ strokeWidth (toString width), stroke (Color.Convert.colorToHex color) ]
 
 
 
@@ -249,7 +250,7 @@ lengthOfTick { length, direction } =
 
 attributesTick : Tick.Tick msg -> List (Svg.Attribute msg)
 attributesTick { width, color } =
-  [ strokeWidth (toString width), stroke color ]
+  [ strokeWidth (toString width), stroke (Color.Convert.colorToHex color) ]
 
 
 viewHorizontalLabel : Coordinate.System -> Tick.Tick msg -> Data.Point -> Svg msg -> Svg msg

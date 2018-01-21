@@ -21,8 +21,8 @@ See `Lines.Dimension` -> `Lines.Axis` -> `Lines.Axis.Tick`.
 
 -}
 
-import Lines.Color as Color
 import Internal.Grid as Grid
+import Color
 
 
 {-| -}

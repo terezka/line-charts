@@ -1,7 +1,7 @@
 module Lines.Junk exposing
   ( Junk, Layers, none, custom
   , Transfrom, transform, move, offset
-  , vertical, horizontal, rectangle, text
+  , vertical, horizontal, rectangle, label
   , withinChartArea
   )
 
@@ -14,7 +14,7 @@ module Lines.Junk exposing
 @docs Junk, custom, Layers
 
 # Common junk
-@docs vertical, horizontal, rectangle, text, withinChartArea
+@docs vertical, horizontal, rectangle, label, withinChartArea
 
 # Placing helpers
 @docs Transfrom, transform, move, offset
@@ -26,11 +26,11 @@ import Html
 import Svg
 import Svg.Attributes as Attributes
 import Lines.Coordinate as Coordinate
-import Lines.Color as Color
 import Internal.Junk as Junk
 import Internal.Svg as Svg
 import Internal.Utils as Utils
-
+import Color
+import Color.Convert
 
 
 -- QUICK START
@@ -176,9 +176,9 @@ rectangle system attributes =
 
 
 {-| -}
-text : Color.Color -> String -> Svg.Svg msg
-text color string =
-  Svg.text_ [ Attributes.fill color ] [ Svg.tspan [] [ Svg.text string ] ]
+label : Color.Color -> String -> Svg.Svg msg
+label color =
+  Svg.label (Color.Convert.colorToHex color)
 
 
 
