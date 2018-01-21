@@ -110,7 +110,7 @@ viewLegend index { sample, label } =
     ]
 
 
-junkX : List Info -> Junk.Junk Msg
+junkX : List Info -> Junk.Config Msg
 junkX hovering =
   Junk.custom <| \system ->
     { below = []
@@ -119,7 +119,7 @@ junkX hovering =
     }
 
 
-junkSingle : Info -> Junk.Junk Msg
+junkSingle : Info -> Junk.Config Msg
 junkSingle hovering =
     Junk.custom <| \system ->
       { below = []
@@ -128,7 +128,7 @@ junkSingle hovering =
       }
 
 
-junk : List Info -> Coordinate.Point -> Info -> Junk.Junk Msg
+junk : List Info -> Coordinate.Point -> Info -> Junk.Config Msg
 junk hintx point hovering =
     Junk.custom <| \system ->
       { below = []

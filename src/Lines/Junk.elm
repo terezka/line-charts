@@ -1,5 +1,5 @@
 module Lines.Junk exposing
-  ( Junk, Layers, none, custom
+  ( Config, Layers, none, custom
   , Transfrom, transform, move, offset
   , vertical, horizontal, rectangle, label
   , withinChartArea
@@ -11,7 +11,7 @@ module Lines.Junk exposing
 @docs none
 
 # Custom
-@docs Junk, custom, Layers
+@docs Config, custom, Layers
 
 # Common junk
 @docs vertical, horizontal, rectangle, label, withinChartArea
@@ -38,7 +38,7 @@ import Color.Convert
 
 {-| No junk!
 -}
-none : Junk msg
+none : Config msg
 none =
   Junk.none
 
@@ -61,8 +61,8 @@ you can use junk to add that. To be used in the `Lines.Config` passed to
 
 
 -}
-type alias Junk msg =
-  Junk.Junk msg
+type alias Config msg =
+  Junk.Config msg
 
 
 {-| The layers where you can put your junk. Junk in the `below` property will
@@ -96,9 +96,9 @@ you want in the resulting `Layers` type. Here's an example of adding grid lines.
       List.map (Junk.horizontal system []) (Axis.defaultInterval system.y)
 
 -}
-custom : (Coordinate.System -> Layers msg) -> Junk msg
+custom : (Coordinate.System -> Layers msg) -> Config msg
 custom =
-  Junk.Junk
+  Junk.Config
 
 
 

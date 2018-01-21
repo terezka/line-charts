@@ -9,14 +9,14 @@ import Lines.Coordinate as Coordinate
 
 
 {-| -}
-type Junk msg =
-  Junk (Coordinate.System -> Layers msg)
+type Config msg =
+  Config (Coordinate.System -> Layers msg)
 
 
 {-| -}
-none : Junk msg
+none : Config msg
 none =
-  Junk (\_ -> Layers [] [] [])
+  Config (\_ -> Layers [] [] [])
 
 
 {-| -}
@@ -28,8 +28,8 @@ type alias Layers msg =
 
 
 {-| -}
-getLayers : Coordinate.System -> Layers msg -> Junk msg -> Layers msg
-getLayers system internalLayers (Junk toLayers) =
+getLayers : Coordinate.System -> Layers msg -> Config msg -> Layers msg
+getLayers system internalLayers (Config toLayers) =
   let layers = toLayers system in
   { below = internalLayers.below ++ layers.below
   , above = internalLayers.above ++ layers.above

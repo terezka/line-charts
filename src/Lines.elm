@@ -347,7 +347,7 @@ type alias Config data msg =
   , legends : Legends.Config data msg
   , attributes : List (Svg.Attribute msg)
   , events : Events.Config data msg
-  , junk : Junk.Junk msg
+  , junk : Junk.Config msg
   }
 
 
