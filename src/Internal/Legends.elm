@@ -185,7 +185,7 @@ viewSample { system, lineLook, dotLook, area } sampleWidth line data =
         |> Coordinate.toData system
 
     color =
-      Line.color lineLook data line
+      Line.color lineLook line data
 
     shape =
       Line.shape line
