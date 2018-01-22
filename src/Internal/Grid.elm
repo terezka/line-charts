@@ -8,8 +8,8 @@ import Svg.Attributes as Attributes
 import Internal.Svg as Svg
 import LineChart.Colors as Colors
 import LineChart.Coordinate as Coordinate
-import LineChart.Dimension as Dimension
-import Internal.Axis as Axis
+import LineChart.Axis as Axis
+import Internal.Axis.Ticks as Ticks
 import Color
 import Color.Convert
 
@@ -44,15 +44,15 @@ lines =
 
 
 {-| -}
-view : Coordinate.System -> Dimension.Config data msg -> Dimension.Config data msg -> Config -> List (Svg.Svg msg)
+view : Coordinate.System -> Axis.Config data msg -> Axis.Config data msg -> Config -> List (Svg.Svg msg)
 view system xDimension yDimension grid =
   let
     verticals =
-      Axis.ticks system.xData system.x xDimension.axis
+      Ticks.ticks system.xData system.x xDimension.ticks
         |> List.filterMap hasGrid
 
     horizontals =
-      Axis.ticks system.yData system.y yDimension.axis
+      Ticks.ticks system.yData system.y yDimension.ticks
         |> List.filterMap hasGrid
 
     hasGrid tick =

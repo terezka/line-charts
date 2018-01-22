@@ -9,12 +9,16 @@ import LineChart.Dots as Dots
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
+import LineChart.Axis.Title as Title
+import LineChart.Axis.Ticks as Ticks
+import LineChart.Axis.Range as Range
+import LineChart.Axis.Line as AxisLine
+import LineChart.Axis as Axis
 import LineChart.Coordinate as Coordinate
 import LineChart.Legends as Legends
 import LineChart.Line as Line
 import LineChart.Events as Events
 import LineChart.Grid as Grid
-import LineChart.Dimension as Dimension
 import LineChart.Legends as Legends
 import LineChart.Area as Area
 import Svg.Attributes as SvgA
@@ -72,8 +76,15 @@ update msg model =
 view : Model -> Svg Msg
 view model =
   LineChart.viewCustom
-    { y = Dimension.default 670 "age" .age
-    , x = Dimension.default 750 "income" .income
+    { y = Axis.default 670 "age" .age
+    , x =
+        { title = Title.default "income"
+        , variable = Just << .income
+        , pixels = 750
+        , range = Range.padded 20 20
+        , axisLine = AxisLine.rangeFrame
+        , ticks = Ticks.int 5
+        }
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
     , intersection = Intersection.default

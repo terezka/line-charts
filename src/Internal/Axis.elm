@@ -1,10 +1,5 @@
 module Internal.Axis exposing
-  ( Axis
-  , int, time, float
-  , intCustom, timeCustom, floatCustom, custom
-  -- INTERNAL
-  , ticks, viewHorizontal, viewVertical
-  )
+  ( viewHorizontal, viewVertical )
 
 
 import Svg exposing (Svg, Attribute, g, text_, tspan, text)
@@ -13,88 +8,13 @@ import LineChart.Axis.Tick as Tick exposing (Direction)
 import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
 import Internal.Axis.Tick as Tick
+import Internal.Axis.Ticks as Ticks
 import Internal.Axis.Line as Line
 import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Title as Title
-import Internal.Axis.Values as Values
 import Internal.Svg as Svg exposing (..)
 import Internal.Utils exposing (..)
 import Color.Convert
-
-
-
--- AXIS
-
-
-{-| -}
-type Axis data msg
-  = Axis (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
-
-
-
--- API
-
-
-{-| -}
-int : Int -> Axis data msg
-int amount =
-  intCustom amount Tick.int
-
-
-{-| -}
-float : Int -> Axis data msg
-float amount =
-  floatCustom amount Tick.float
-
-
-{-| -}
-time : Int -> Axis data msg
-time amount =
-  timeCustom amount Tick.time
-
-
-
--- API / CUSTOM
-
-
-{-| -}
-intCustom : Int -> (Int -> Tick.Tick msg) -> Axis data msg
-intCustom amount tick =
-  custom <| \data range ->
-    List.map tick <| Values.int (Values.around amount) (Coordinate.smallestRange data range)
-
-
-{-| -}
-floatCustom : Int -> (Float -> Tick.Tick msg) -> Axis data msg
-floatCustom amount tick =
-  custom <| \data range ->
-    List.map tick <| Values.float (Values.around amount) (Coordinate.smallestRange data range)
-
-
-{-| -}
-timeCustom : Int -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
-timeCustom amount tick =
-  custom <| \data range ->
-    List.map tick <| Values.time amount (Coordinate.smallestRange data range)
-
-
-
--- API / VERY CUSTOM
-
-
-{-| -}
-custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
-custom =
-  Axis
-
-
-
--- INTERNAL
-
-
-ticks : Coordinate.Range -> Coordinate.Range -> Axis data msg -> List (Tick.Tick msg)
-ticks dataRange range (Axis values) =
-  values dataRange range
 
 
 
@@ -110,12 +30,12 @@ type alias ViewConfig msg =
 
 
 {-| -}
-viewHorizontal : Coordinate.System -> Intersection.Config -> Title.Title msg -> Line.Config msg -> Axis data msg -> Svg msg
+viewHorizontal : Coordinate.System -> Intersection.Config -> Title.Title msg -> Line.Config msg -> Ticks.Config data msg -> Svg msg
 viewHorizontal system intersection title line axis =
     let
         config =
           { line = Line.config line system.xData system.x
-          , ticks = ticks system.xData system.x axis
+          , ticks = Ticks.ticks system.xData system.x axis
           , intersection = Intersection.getY intersection system
           , title = Title.config title
           }
@@ -137,12 +57,12 @@ viewHorizontal system intersection title line axis =
 
 
 {-| -}
-viewVertical : Coordinate.System -> Intersection.Config -> Title.Title msg -> Line.Config msg -> Axis data msg -> Svg msg
+viewVertical : Coordinate.System -> Intersection.Config -> Title.Title msg -> Line.Config msg -> Ticks.Config data msg -> Svg msg
 viewVertical system intersection title line axis =
     let
         config =
           { line = Line.config line system.yData system.y
-          , ticks = ticks system.yData system.y axis
+          , ticks = Ticks.ticks system.yData system.y axis
           , intersection = Intersection.getX intersection system
           , title = Title.config title
           }

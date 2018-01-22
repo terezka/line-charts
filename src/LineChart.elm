@@ -24,10 +24,10 @@ import Svg.Attributes as Attributes
 import LineChart.Colors as Colors
 import LineChart.Container as Container
 import LineChart.Junk as Junk
-import LineChart.Dimension as Dimension
 import LineChart.Interpolation as Interpolation
+import LineChart.Axis as Axis
 import Internal.Area as Area
-import Internal.Axis as Axis
+import Internal.Axis
 import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Range as Range
 import Internal.Coordinate as Coordinate
@@ -332,8 +332,8 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 
 -}
 type alias Config data msg =
-  { x : Dimension.Config data msg
-  , y : Dimension.Config data msg
+  { x : Axis.Config data msg
+  , y : Axis.Config data msg
   , container : Container.Config msg
   , intersection : Intersection.Config
   , interpolation : Interpolation.Config
@@ -454,8 +454,8 @@ viewCustom config lines =
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
       , viewLines lines data
       , chartAreaPlatform config dataAll system
-      , Axis.viewHorizontal system config.intersection config.x.title config.x.axisLine config.x.axis
-      , Axis.viewVertical   system config.intersection config.y.title config.y.axisLine config.y.axis
+      , Internal.Axis.viewHorizontal system config.intersection config.x.title config.x.axisLine config.x.ticks
+      , Internal.Axis.viewVertical   system config.intersection config.y.title config.y.axisLine config.y.ticks
       , viewLegends
       , Svg.g [ Attributes.class "chart__junk--above" ] junk.above
       ]
@@ -625,8 +625,8 @@ toSystem config data =
 
 defaultConfig : (data -> Float) -> (data -> Float) -> Config data msg
 defaultConfig toX toY =
-  { y = Dimension.default 670 "" toY
-  , x = Dimension.default 750 "" toX
+  { y = Axis.default 670 "" toY
+  , x = Axis.default 750 "" toX
   , container = Container.default "line-chart-1"
   , interpolation = Interpolation.default
   , intersection = Intersection.default
