@@ -1,7 +1,8 @@
 module LineChart.Junk exposing
   ( Config, Layers, default, custom
   , Transfrom, transform, move, offset
-  , vertical, horizontal, rectangle, label
+  , vertical, horizontal, verticalCustom, horizontalCustom
+  , rectangle, label
   , withinChartArea
   )
 
@@ -14,7 +15,12 @@ module LineChart.Junk exposing
 @docs Config, custom, Layers
 
 # Common junk
-@docs vertical, horizontal, rectangle, label, withinChartArea
+
+## Lines
+@docs vertical, horizontal, verticalCustom, horizontalCustom
+
+## Other
+@docs rectangle, label, withinChartArea
 
 # Placing helpers
 @docs Transfrom, transform, move, offset
@@ -59,7 +65,6 @@ you can use junk to add that. To be used in the `LineChart.Config` passed to
       , junk = theJunk -- Use here!
       , ...
       }
-
 
 -}
 type alias Config msg =
@@ -149,14 +154,26 @@ transform =
 
 
 {-| -}
-vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Svg.Svg msg
-vertical system attributes =
+vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
+vertical system attributes at =
+  Svg.vertical system (withinChartArea system :: attributes) at system.y.min system.y.max
+
+
+{-| -}
+horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
+horizontal system attributes at =
+  Svg.horizontal system (withinChartArea system :: attributes) at system.x.min system.x.max
+
+
+{-| -}
+verticalCustom : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Svg.Svg msg
+verticalCustom system attributes =
   Svg.vertical system (withinChartArea system :: attributes)
 
 
 {-| -}
-horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float ->  Float -> Svg.Svg msg
-horizontal system attributes =
+horizontalCustom : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float ->  Float -> Svg.Svg msg
+horizontalCustom system attributes =
   Svg.horizontal system (withinChartArea system :: attributes)
 
 
@@ -173,6 +190,7 @@ rectangle system attributes =
   Svg.rectangle system (withinChartArea system :: attributes)
 
 
+
 -- HELPERS
 
 
@@ -180,7 +198,6 @@ rectangle system attributes =
 label : Color.Color -> String -> Svg.Svg msg
 label color =
   Svg.label (Color.Convert.colorToHex color)
-
 
 
 {-| -}

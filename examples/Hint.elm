@@ -71,31 +71,24 @@ update msg model =
 
 view : Model -> Svg Msg
 view model =
-    LineChart.viewCustom
-      { y = Dimension.default 670 "age" .age
-      , x = Dimension.default 750 "income" .income
-      , container = Container.default "line-chart-1"
-      , interpolation = Interpolation.default
-      , intersection = Intersection.default
-      , legends = Legends.default
-      , events = Events.default
-      , junk = Junk.default
-      , grid = Grid.default
-      , area = Area.default
-      , line = Line.default
-      , dots = Dots.default
-      }
-      [ LineChart.line Colors.gold Dots.diamond "alice" alice
-      , LineChart.line Colors.blue Dots.circle  "bobby" bob
-      , LineChart.line Colors.pink Dots.square  "chuck" chuck
-      ]
-
-
-
-
-
-
-
+  LineChart.viewCustom
+    { y = Dimension.default 670 "age" .age
+    , x = Dimension.default 750 "income" .income
+    , container = Container.default "line-chart-1"
+    , interpolation = Interpolation.default
+    , intersection = Intersection.default
+    , legends = Legends.default
+    , events = Events.default
+    , junk = Junk.default
+    , grid = Grid.default
+    , area = Area.default
+    , line = Line.default
+    , dots = Dots.default
+    }
+    [ LineChart.line Colors.gold Dots.diamond "alice" alice
+    , LineChart.line Colors.blue Dots.circle  "bobby" bob
+    , LineChart.line Colors.pink Dots.square  "chuck" chuck
+    ]
 
 
 
@@ -114,7 +107,7 @@ junkX : List Info -> Junk.Config Msg
 junkX hovering =
   Junk.custom <| \system ->
     { below = []
-    , above = List.map (\info -> Junk.vertical system [] info.income system.y.min system.y.max) hovering
+    , above = List.map (\info -> Junk.vertical system [] info.income) hovering
     , html = []
     }
 

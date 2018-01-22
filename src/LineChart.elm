@@ -18,6 +18,7 @@ module LineChart exposing
 -}
 
 import Html
+import Html.Attributes
 import Svg
 import Svg.Attributes as Attributes
 import LineChart.Colors as Colors
@@ -30,7 +31,7 @@ import Internal.Axis as Axis
 import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Range as Range
 import Internal.Coordinate as Coordinate
-import Internal.Dots as Dot
+import Internal.Dots as Dots
 import Internal.Data as Data
 import Internal.Grid as Grid
 import Internal.Events as Events
@@ -207,7 +208,7 @@ For now though, I'd recommend you stick to `view` and get your lines and
 data right first, and then stepping up the complexity.
 
  -}
-line : Color.Color -> Dot.Shape -> String -> List data -> Series data
+line : Color.Color -> Dots.Shape -> String -> List data -> Series data
 line =
   Line.line
 
@@ -241,7 +242,7 @@ Dashed lines are especially good for visualizing processed data like
 averages or predicted values.
 
 -}
-dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Series data
+dash : Color.Color -> Dots.Shape -> String -> List Float -> List data -> Series data
 dash =
   Line.dash
 
@@ -342,7 +343,7 @@ type alias Config data msg =
   , area : Area.Config
   , grid : Grid.Config
   , line : Line.Config data
-  , dots : Dot.Config data
+  , dots : Dots.Config data
   , junk : Junk.Config msg
   }
 
@@ -401,7 +402,7 @@ significant, it's best to leave it out.
 viewCustom : Config data msg -> List (Series data) -> Svg.Svg msg
 viewCustom config lines =
   let
-    -- Data points
+    -- Data
     data = toDataPoints config lines
     dataSafe = List.map (List.filter .isReal) data
     dataAll = List.concat data
@@ -411,28 +412,12 @@ viewCustom config lines =
     system =
       toSystem config dataAllSafe
 
-    -- View
+    -- Junk
     junk =
-      Internal.Junk.getLayers system internalJunk config.junk
+      Internal.Junk.getLayers system config.junk
+        |> Internal.Junk.addBelow (Grid.view system config.x config.y config.grid)
 
-    internalJunk =
-      { below = Grid.view system config.x config.y config.grid
-      , above = []
-      , html = []
-      }
-
-    container plot =
-      Html.div config.container.attributes (plot :: junk.html)
-
-    attributes =
-      List.concat
-        [ config.container.attributesSVG
-        , Events.toContainerAttributes dataAll system config.events
-        , [ Attributes.width <| toString system.frame.size.width
-          , Attributes.height <| toString system.frame.size.height
-          ]
-        ]
-
+    -- View
     viewLines =
       Line.view
         { system = system
@@ -454,10 +439,19 @@ viewCustom config lines =
         , data = dataSafe
         , lines = lines
         }
+
+    attributes =
+      List.concat
+        [ config.container.attributesSVG
+        , Events.toContainerAttributes dataAll system config.events
+        , [ Attributes.width <| toString system.frame.size.width
+          , Attributes.height <| toString system.frame.size.height
+          ]
+        ]
   in
-  container <|
+  container config junk.html <|
     Svg.svg attributes
-      [ Svg.defs [] [ clipPath config system ]
+      [ Svg.defs [] [ clipPath system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
       , viewLines lines data
       , chartAreaPlatform config dataAll system
@@ -470,6 +464,16 @@ viewCustom config lines =
 
 
 -- INTERNAL
+
+
+container : Config data msg -> List (Html.Html msg) -> Html.Html msg -> Html.Html msg
+container config junkHtml plot  =
+  let
+    attributes =
+      [ Html.Attributes.style [ ( "position", "relative" ) ] ]
+      ++ config.container.attributes
+  in
+  Html.div attributes (plot :: junkHtml)
 
 
 chartAreaAttributes : Coordinate.System -> List (Svg.Attribute msg)
@@ -494,10 +498,10 @@ chartAreaPlatform config data system =
   Svg.rect attributes []
 
 
-clipPath : Config data msg -> Coordinate.System ->  Svg.Svg msg
-clipPath config system =
+clipPath : Coordinate.System ->  Svg.Svg msg
+clipPath system =
   Svg.clipPath
-    [ Attributes.id (Utils.toChartAreaId config.container.id) ]
+    [ Attributes.id (Utils.toChartAreaId system.id) ]
     [ Svg.rect (chartAreaAttributes system) [] ]
 
 
@@ -622,18 +626,18 @@ toSystem config data =
 
 defaultConfig : (data -> Float) -> (data -> Float) -> Config data msg
 defaultConfig toX toY =
-  { x = Dimension.default 650 "" toX
-  , y = Dimension.default 400 "" toY
-  , container = Container.default "line-chart-0"
-  , interpolation = Interpolation.linear
+  { y = Dimension.default 670 "" toY
+  , x = Dimension.default 750 "" toX
+  , container = Container.default "line-chart-1"
+  , interpolation = Interpolation.default
   , intersection = Intersection.default
   , legends = Legends.default
   , events = Events.default
-  , line = Line.default
+  , junk = Junk.default
   , grid = Grid.default
-  , area = Area.none
-  , junk = Junk.none
-  , dots = Dot.default
+  , area = Area.default
+  , line = Line.default
+  , dots = Dots.default
   }
 
 
@@ -650,11 +654,11 @@ defaultColors =
   ]
 
 
-defaultShapes : List Dot.Shape
+defaultShapes : List Dots.Shape
 defaultShapes =
-  [ Dot.Circle
-  , Dot.Triangle
-  , Dot.Cross
+  [ Dots.Circle
+  , Dots.Triangle
+  , Dots.Cross
   ]
 
 

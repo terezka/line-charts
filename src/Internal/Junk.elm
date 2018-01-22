@@ -28,16 +28,12 @@ type alias Layers msg =
 
 
 {-| -}
-getLayers : Coordinate.System -> Layers msg -> Config msg -> Layers msg
-getLayers system internalLayers (Config toLayers) =
-  let layers = toLayers system in
-  { below = internalLayers.below ++ layers.below
-  , above = internalLayers.above ++ layers.above
-  , html = internalLayers.html ++ layers.html
-  }
+getLayers : Coordinate.System -> Config msg -> Layers msg
+getLayers system (Config toLayers) =
+  toLayers system
 
 
 {-| -}
-addGrid : List (Svg msg) -> Layers msg -> Layers msg
-addGrid grid layers =
-  { layers | below = grid ++ layers.below }
+addBelow : List (Svg msg) -> Layers msg -> Layers msg
+addBelow below layers =
+  { layers | below = below ++ layers.below }

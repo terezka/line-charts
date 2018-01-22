@@ -1,6 +1,6 @@
 module Internal.Area
   exposing
-    ( Config(..), none, percentage, normal, stacked
+    ( Config(..), default, none, percentage, normal, stacked
     , hasArea, opacity, opacitySingle, opacityContainer
     )
 
@@ -14,6 +14,12 @@ type Config
   | Normal Float
   | Stacked Float
   | Percentage Float
+
+
+{-| -}
+default : Config
+default =
+  none
 
 
 {-| -}

@@ -23,7 +23,6 @@ module LineChart.Axis.Tick exposing
 -}
 
 import Svg exposing (Svg, Attribute)
-import LineChart.Junk as Junk
 import LineChart.Coordinate as Coordinate
 import Internal.Axis.Tick as Tick
 import Internal.Svg as Svg
