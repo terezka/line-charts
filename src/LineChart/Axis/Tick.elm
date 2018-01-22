@@ -33,7 +33,7 @@ import Color
 
 
 
-{-| -}
+{-| TODO rename to Config -}
 type alias Tick msg =
   { position : Float
   , color : Color.Color
