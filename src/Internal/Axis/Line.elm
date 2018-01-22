@@ -48,7 +48,7 @@ full =
 rangeFrame : Config msg
 rangeFrame =
   custom <| \data range ->
-    let smallest = (Coordinate.smallestRange data range) in
+    let smallest = Coordinate.smallestRange data range in
     { color = Colors.gray
     , width = 1
     , events = []

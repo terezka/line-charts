@@ -1,4 +1,4 @@
-module Internal.Axis.Title exposing (Config, Properties, default, byDataMax, at, custom, config)
+module Internal.Axis.Title exposing (Config, Properties, default, atDataMax, at, custom, config)
 
 import Svg exposing (Svg)
 import Internal.Coordinate as Coordinate
@@ -15,41 +15,29 @@ type Config msg =
 type alias Properties msg =
   { view : Svg msg
   , position : Coordinate.Range -> Coordinate.Range -> Float
-  , xOffset : Float
-  , yOffset : Float
+  , offset : ( Float, Float )
   }
 
 
 {-| -}
 default : String -> Config msg
-default title =
-  custom
-    { view = Svg.label "inherit" title
-    , position = \data range -> range.max
-    , xOffset = 0
-    , yOffset = 0
-    }
+default =
+  at (\data range -> range.max) ( 0, 0 )
 
 
 {-| -}
-byDataMax : String -> Config msg
-byDataMax title =
-  custom
-    { view = Svg.label "inherit" title
-    , position = \data range -> Coordinate.smallestRange data range |> .max
-    , xOffset = 0
-    , yOffset = 0
-    }
+atDataMax : String -> Config msg
+atDataMax =
+  at (\data range -> Basics.min data.max range.max) ( 0, 0 )
 
 
 {-| -}
-at : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Config msg
-at position xOffset yOffset title =
+at : (Coordinate.Range -> Coordinate.Range -> Float) -> ( Float, Float ) -> String -> Config msg
+at position offset title =
   custom
     { view = Svg.label "inherit" title
     , position = position
-    , xOffset = xOffset
-    , yOffset = yOffset
+    , offset = offset
     }
 
 

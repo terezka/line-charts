@@ -42,7 +42,7 @@ type alias Properties data msg =
 default : Int -> String -> (data -> Float) -> Config data msg
 default pixels title variable =
   custom
-    { title = Title.byDataMax title
+    { title = Title.atDataMax title
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 20 20
@@ -82,7 +82,7 @@ full pixels title variable =
 time : Int -> String -> (data -> Float) -> Config data msg
 time pixels title variable =
   custom
-    { title = Title.byDataMax title
+    { title = Title.atDataMax title
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 20 20
@@ -173,8 +173,8 @@ viewVertical : Coordinate.System -> Intersection.Config -> Config data msg -> Sv
 viewVertical system intersection (Config config) =
     let
         viewConfig =
-          { line = AxisLine.config config.axisLine system.xData system.x
-          , ticks = Ticks.ticks system.xData system.x config.ticks
+          { line = AxisLine.config config.axisLine system.yData system.y
+          , ticks = Ticks.ticks system.yData system.y config.ticks
           , intersection = Intersection.getX intersection system
           , title = Title.config config.title
           }
@@ -201,32 +201,30 @@ viewVertical system intersection (Config config) =
 
 viewHorizontalTitle : Coordinate.System -> (Float -> Data.Point) -> ViewConfig msg -> Svg msg
 viewHorizontalTitle system at { title } =
-  let
-    position =
-      at (title.position system.xData system.x)
+  let position = at (title.position system.xData system.x)
+      ( xOffset, yOffset ) = title.offset
   in
   g [ class "chart__title"
     , transform
         [ move system position.x position.y
-        , offset title.xOffset (title.yOffset + 40)
+        , offset (xOffset + 5) (yOffset + 20)
         ]
-    , anchorStyle Middle
+    , anchorStyle Start
     ]
     [ title.view ]
 
 
 viewVerticalTitle : Coordinate.System -> (Float -> Data.Point) -> ViewConfig msg -> Svg msg
 viewVerticalTitle system at { title } =
-  let
-    position =
-      at (title.position system.yData system.y)
+  let position = at (title.position system.yData system.y)
+      ( xOffset, yOffset ) = title.offset
   in
   g [ class "chart__title"
     , transform
         [ move system position.x position.y
-        , offset (title.xOffset - 5) (title.yOffset - 15)
+        , offset (xOffset - 5) (yOffset - 20)
         ]
-    , anchorStyle Middle
+    , anchorStyle End
     ]
     [ title.view ]
 

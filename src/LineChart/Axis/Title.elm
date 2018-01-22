@@ -1,4 +1,4 @@
-module LineChart.Axis.Title exposing (Config, default, at, custom, Properties)
+module LineChart.Axis.Title exposing (Config, default, atDataMax, at, custom, Properties)
 
 {-|
 
@@ -6,7 +6,7 @@ module LineChart.Axis.Title exposing (Config, default, at, custom, Properties)
 @docs Title, default
 
 # Configurations
-@docs at
+@docs atDataMax, at
 
 # Customiztion
 @docs custom, Properties
@@ -31,6 +31,12 @@ default =
   Title.default
 
 
+{-| -}
+atDataMax : String -> Config msg
+atDataMax =
+  Title.atDataMax
+
+
 {-| Place your string title in a spot along your axis.
 
   Arguments:
@@ -44,7 +50,7 @@ default =
       Title.at .max 10 20 "BMI"
 
 -}
-at : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Config msg
+at : (Coordinate.Range -> Coordinate.Range -> Float) -> ( Float, Float ) -> String -> Config msg
 at =
   Title.at
 
@@ -54,8 +60,7 @@ at =
 type alias Properties msg =
   { view : Svg msg
   , position : Coordinate.Range -> Coordinate.Range -> Float
-  , xOffset : Float
-  , yOffset : Float
+  , offset : ( Float, Float )
   }
 
 

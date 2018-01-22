@@ -77,15 +77,7 @@ view : Model -> Svg Msg
 view model =
   LineChart.viewCustom
     { y = Axis.default 670 "age" .age
-    , x =
-        Axis.custom
-          { title = Title.default "income"
-          , variable = Just << .income
-          , pixels = 750
-          , range = Range.padded 20 20
-          , axisLine = AxisLine.rangeFrame
-          , ticks = Ticks.int 5
-          }
+    , x = Axis.default 750 "income" .income
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
     , intersection = Intersection.default
