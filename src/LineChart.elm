@@ -430,8 +430,8 @@ viewCustom config lines =
       Legends.view
         { system = system
         , legends = config.legends
-        , x = config.x.variable
-        , y = config.y.variable
+        , x = Internal.Axis.variable config.x
+        , y = Internal.Axis.variable config.y
         , dotsConfig = config.dots
         , lineConfig = config.line
         , area = config.area
@@ -454,8 +454,8 @@ viewCustom config lines =
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
       , viewLines lines data
       , chartAreaPlatform config dataAll system
-      , Internal.Axis.viewHorizontal system config.intersection config.x.title config.x.axisLine config.x.ticks
-      , Internal.Axis.viewVertical   system config.intersection config.y.title config.y.axisLine config.y.ticks
+      , Internal.Axis.viewHorizontal system config.intersection config.x
+      , Internal.Axis.viewVertical   system config.intersection config.y
       , viewLegends
       , Svg.g [ Attributes.class "chart__junk--above" ] junk.above
       ]
@@ -507,8 +507,8 @@ clipPath system =
 toDataPoints : Config data msg -> List (Series data) -> List (List (Data.Data data))
 toDataPoints config lines =
   let
-    x = config.x.variable
-    y = config.y.variable
+    x = Internal.Axis.variable config.x
+    y = Internal.Axis.variable config.y
 
     data =
       List.map (Line.data >> List.filterMap addPoint) lines
@@ -594,7 +594,7 @@ toSystem : Config data msg -> List (Data.Data data) -> Coordinate.System
 toSystem config data =
   let
     hasArea = Area.hasArea config.area
-    size   = Coordinate.Size (toFloat config.x.pixels) (toFloat config.y.pixels)
+    size   = Coordinate.Size (Internal.Axis.pixels config.x) (Internal.Axis.pixels config.y)
     frame  = Coordinate.Frame config.container.margin size
     xRange = Coordinate.range (.point >> .x) data
     yRange = Coordinate.range (.point >> .y) data
@@ -614,8 +614,8 @@ toSystem config data =
         else domain
   in
   { system
-  | x = Range.applyX config.x.range system
-  , y = Range.applyY config.y.range system
+  | x = Range.applyX (Internal.Axis.range config.x) system
+  , y = Range.applyY (Internal.Axis.range config.y) system
   }
 
 

@@ -77,7 +77,8 @@ view : Model -> Svg Msg
 view model =
   LineChart.viewCustom
     { y = Axis.default 670 "age" .age
-    , x =
+    , x = 
+      Axis.custom
         { title = Title.default "income"
         , variable = Just << .income
         , pixels = 750

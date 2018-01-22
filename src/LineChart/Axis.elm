@@ -1,4 +1,4 @@
-module LineChart.Axis exposing (Config, default, full, time)
+module LineChart.Axis exposing (Config, default, full, time, custom)
 
 {-|
 
@@ -6,18 +6,16 @@ module LineChart.Axis exposing (Config, default, full, time)
 @docs default, full, time
 
 # Customizing
-@docs Config
+@docs Config, custom
 
 -}
 
 
 import LineChart.Axis.Range as Range
 import LineChart.Axis.Line as AxisLine
-import LineChart.Axis.Tick as Tick
 import LineChart.Axis.Ticks as Ticks
-import LineChart.Axis.Values as Values
+import Internal.Axis as Axis
 import Internal.Axis.Title as Title
-import Internal.Coordinate as Coordinate
 
 
 
@@ -49,6 +47,11 @@ import Internal.Coordinate as Coordinate
       }
 -}
 type alias Config data msg =
+  Axis.Config data msg
+
+
+{-| -}
+type alias Properties data msg =
   { title : Title.Title msg
   , variable : data -> Maybe Float
   , pixels : Int
@@ -80,56 +83,23 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 
 -}
 default : Int -> String -> (data -> Float) -> Config data msg
-default pixels title variable =
-  { title = Title.byDataMax title
-  , variable = Just << variable
-  , pixels = pixels
-  , range = Range.padded 20 20
-  , axisLine = AxisLine.rangeFrame
-  , ticks =
-      Ticks.custom <| \data range ->
-        let smallest = Coordinate.smallestRange data range
-            rangeLong = range.max - range.min
-            rangeSmall = smallest.max - smallest.min
-            diff = 1 - (rangeLong - rangeSmall) / rangeLong
-            amount = round <| diff * toFloat pixels / 90
-        in
-        List.map Tick.float <| Values.float (Values.around amount) smallest
-  }
+default =
+  Axis.default
 
 
 {-| -}
 full : Int -> String -> (data -> Float) -> Config data msg
-full pixels title variable =
-  { title = Title.default title
-  , variable = Just << variable
-  , pixels = pixels
-  , range = Range.padded 0 20
-  , axisLine = AxisLine.full
-  , ticks =
-      Ticks.custom <| \data range ->
-        let largest = Coordinate.largestRange data range
-            amount = pixels // 90
-        in
-        List.map Tick.float <| Values.float (Values.around amount) largest
-  }
+full =
+  Axis.full
 
 
 {-| -}
 time : Int -> String -> (data -> Float) -> Config data msg
-time pixels title variable =
-  { title = Title.byDataMax title
-  , variable = Just << variable
-  , pixels = pixels
-  , range = Range.padded 20 20
-  , axisLine = AxisLine.rangeFrame
-  , ticks =
-      Ticks.custom <| \data range ->
-        let smallest = Coordinate.smallestRange data range
-            rangeLong = range.max - range.min
-            rangeSmall = smallest.max - smallest.min
-            diff = 1 - (rangeLong - rangeSmall) / rangeLong
-            amount = round <| diff * toFloat pixels / 90
-        in
-        List.map Tick.time <| Values.time amount smallest
-  }
+time =
+  Axis.time
+
+
+{-| -}
+custom : Properties data msg -> Config data msg
+custom =
+  Axis.custom
