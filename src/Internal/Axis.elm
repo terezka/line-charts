@@ -222,7 +222,7 @@ viewVerticalTitle system at { title } =
   g [ class "chart__title"
     , transform
         [ move system position.x position.y
-        , offset (xOffset - 5) (yOffset - 20)
+        , offset (xOffset - 7) (yOffset - 20)
         ]
     , anchorStyle End
     ]
