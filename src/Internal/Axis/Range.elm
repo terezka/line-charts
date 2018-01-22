@@ -1,36 +1,36 @@
-module Internal.Axis.Range exposing (Range, default, padded, window, custom, applyX, applyY)
+module Internal.Axis.Range exposing (Config, default, padded, window, custom, applyX, applyY)
 
 import LineChart.Coordinate as Coordinate
 
 
 
 {-| -}
-type Range
+type Config
   = Padded Float Float
   | Window Float Float
   | Custom (Coordinate.Range -> Coordinate.Range)
 
 
 {-| -}
-default : Range
+default : Config
 default =
   padded 0 0
 
 
 {-| -}
-padded : Float -> Float -> Range
+padded : Float -> Float -> Config
 padded =
   Padded
 
 
 {-| -}
-window : Float -> Float -> Range
+window : Float -> Float -> Config
 window =
   Window
 
 
 {-| -}
-custom : (Coordinate.Range -> ( Float, Float )) -> Range
+custom : (Coordinate.Range -> ( Float, Float )) -> Config
 custom editRange =
   Custom <| \range ->
     let ( min, max ) = editRange range in
@@ -42,7 +42,7 @@ custom editRange =
 
 
 {-| -}
-applyX : Range -> Coordinate.System -> Coordinate.Range
+applyX : Config -> Coordinate.System -> Coordinate.Range
 applyX range system =
   case range of
     Padded padMin padMax ->
@@ -59,7 +59,7 @@ applyX range system =
 
 
 {-| -}
-applyY : Range -> Coordinate.System -> Coordinate.Range
+applyY : Config -> Coordinate.System -> Coordinate.Range
 applyY range system =
   case range of
     Padded padMin padMax ->

@@ -32,7 +32,7 @@ type alias Properties data msg =
   { title : Title.Title msg
   , variable : data -> Maybe Float
   , pixels : Int
-  , range : Range.Range
+  , range : Range.Config
   , axisLine : AxisLine.Config msg
   , ticks : Ticks.Config data msg
   }
@@ -118,7 +118,7 @@ pixels (Config config) =
 
 
 {-| -}
-range : Config data msg -> Range.Range
+range : Config data msg -> Range.Config
 range (Config config) =
   config.range
 

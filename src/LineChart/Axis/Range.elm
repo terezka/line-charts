@@ -1,4 +1,4 @@
-module LineChart.Axis.Range exposing (Range, default, padded, window, custom)
+module LineChart.Axis.Range exposing (Config, default, padded, window, custom)
 
 {-|
 
@@ -19,27 +19,27 @@ import LineChart.Coordinate as Coordinate
 
 
 {-| -}
-type alias Range =
-  Range.Range
+type alias Config =
+  Range.Config
 
 
 {-| Set the range to the full range of your data.
 -}
-default : Range
+default : Config
 default =
   Range.default
 
 
 {-| Add a given amount of pixels to the minimum and maximum respectivily.
 -}
-padded : Float -> Float -> Range
+padded : Float -> Float -> Config
 padded =
   Range.padded
 
 
 {-| Set the minimum and maximum of your range respectivily.
 -}
-window : Float -> Float -> Range
+window : Float -> Float -> Config
 window =
   Range.window
 
@@ -47,6 +47,6 @@ window =
 {-| Given your data's range, produce your desired minimum and maximum
 respectivily.
 -}
-custom : (Coordinate.Range -> ( Float, Float )) -> Range
+custom : (Coordinate.Range -> ( Float, Float )) -> Config
 custom =
   Range.custom
