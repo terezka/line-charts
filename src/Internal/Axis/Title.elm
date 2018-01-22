@@ -20,15 +20,15 @@ type alias Properties msg =
 
 
 {-| -}
-default : String -> Config msg
+default : ( Float, Float ) -> String -> Config msg
 default =
-  at (\data range -> range.max) ( 0, 0 )
+  at (\_ range -> range.max)
 
 
 {-| -}
-atDataMax : String -> Config msg
+atDataMax : ( Float, Float ) -> String -> Config msg
 atDataMax =
-  at (\data range -> Basics.min data.max range.max) ( 0, 0 )
+  at (\data range -> Basics.min data.max range.max)
 
 
 {-| -}

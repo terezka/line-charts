@@ -3,7 +3,6 @@ module LineChart.Axis.Tick exposing
   , Direction, negative, positive
   , int, float
   , time, Time, Unit(..), Interval, format
-  , hover, frame
   )
 
 {-|
@@ -17,13 +16,9 @@ module LineChart.Axis.Tick exposing
 # Time tick
 @docs time, Time, Unit, Interval, format
 
-# Groups
-@docs hover, frame
-
 -}
 
 import Svg exposing (Svg, Attribute)
-import LineChart.Coordinate as Coordinate
 import Internal.Axis.Tick as Tick
 import Internal.Svg as Svg
 import Date
@@ -147,22 +142,6 @@ format { change, interval, timestamp } =
   case change of
     Just change -> formatBold change timestamp
     Nothing     -> formatNorm interval.unit timestamp
-
-
-
--- GROUPS
-
-
-{-| -}
-hover : (data -> Tick msg) -> Maybe data -> List (Tick msg)
-hover tick =
-  Maybe.map (tick >> List.singleton) >> Maybe.withDefault []
-
-
-{-| -}
-frame : (Float -> Tick msg) -> Coordinate.Range -> List (Tick msg)
-frame tick data =
-  List.map tick [ data.min, data.max ]
 
 
 

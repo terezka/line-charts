@@ -26,13 +26,13 @@ type alias Config msg =
 
 {-| Place a given string title by the maximum of your axis.
 -}
-default : String -> Config msg
+default : ( Float, Float ) -> String -> Config msg
 default =
   Title.default
 
 
 {-| -}
-atDataMax : String -> Config msg
+atDataMax : ( Float, Float ) -> String -> Config msg
 atDataMax =
   Title.atDataMax
 

@@ -11,6 +11,7 @@ import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
 import LineChart.Axis.Title as Title
 import LineChart.Axis.Ticks as Ticks
+import LineChart.Axis.Tick as Tick
 import LineChart.Axis.Range as Range
 import LineChart.Axis.Line as AxisLine
 import LineChart.Axis as Axis
@@ -77,7 +78,18 @@ view : Model -> Svg Msg
 view model =
   LineChart.viewCustom
     { y = Axis.default 670 "age" .age
-    , x = Axis.default 750 "income" .income
+    , x = -- Axis.default 750 "income" .income
+        Axis.custom
+          { title = Title.atDataMax ( 15, 0 ) "income"
+          , variable = Just << .income
+          , pixels = 750
+          , range = Range.padded 20 20
+          , axisLine = AxisLine.rangeFrame
+          , ticks =
+              Ticks.custom <| \data range ->
+                Ticks.hoverOne Tick.float (Just 2) ++
+                Ticks.frame Tick.float data
+          }
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
     , intersection = Intersection.default
