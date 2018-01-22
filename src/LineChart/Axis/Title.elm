@@ -1,4 +1,4 @@
-module LineChart.Axis.Title exposing (Title, default, at, custom)
+module LineChart.Axis.Title exposing (Config, default, at, custom, Properties)
 
 {-|
 
@@ -9,7 +9,7 @@ module LineChart.Axis.Title exposing (Title, default, at, custom)
 @docs at
 
 # Customiztion
-@docs custom
+@docs custom, Properties
 
 -}
 
@@ -20,13 +20,13 @@ import LineChart.Coordinate as Coordinate
 
 
 {-| -}
-type alias Title msg =
-  Title.Title msg
+type alias Config msg =
+  Title.Config msg
 
 
 {-| Place a given string title by the maximum of your axis.
 -}
-default : String -> Title msg
+default : String -> Config msg
 default =
   Title.default
 
@@ -44,9 +44,19 @@ default =
       Title.at .max 10 20 "BMI"
 
 -}
-at : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Title msg
+at : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Config msg
 at =
   Title.at
+
+
+
+{-| -}
+type alias Properties msg =
+  { view : Svg msg
+  , position : Coordinate.Range -> Coordinate.Range -> Float
+  , xOffset : Float
+  , yOffset : Float
+  }
 
 
 {-| Same as `at` except instead of a string title, you pass a SVG title.
@@ -56,6 +66,6 @@ at =
     title =
       Title.custom .max 10 20 (Junk.text Color.pink "BMI")
 -}
-custom : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> Svg msg -> Title msg
+custom : Properties msg -> Config msg
 custom =
   Title.custom

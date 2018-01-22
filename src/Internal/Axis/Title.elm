@@ -1,4 +1,4 @@
-module Internal.Axis.Title exposing (Title, Config, default, byDataMax, at, custom, config)
+module Internal.Axis.Title exposing (Config, Properties, default, byDataMax, at, custom, config)
 
 import Svg exposing (Svg)
 import Internal.Coordinate as Coordinate
@@ -7,12 +7,12 @@ import Internal.Svg as Svg
 
 
 {-| -}
-type Title msg =
-  Title (Config msg)
+type Config msg =
+  Config (Properties msg)
 
 
 {-| -}
-type alias Config msg =
+type alias Properties msg =
   { view : Svg msg
   , position : Coordinate.Range -> Coordinate.Range -> Float
   , xOffset : Float
@@ -21,9 +21,9 @@ type alias Config msg =
 
 
 {-| -}
-default : String -> Title msg
+default : String -> Config msg
 default title =
-  Title
+  custom
     { view = Svg.label "inherit" title
     , position = \data range -> range.max
     , xOffset = 0
@@ -32,9 +32,9 @@ default title =
 
 
 {-| -}
-byDataMax : String -> Title msg
+byDataMax : String -> Config msg
 byDataMax title =
-  Title
+  custom
     { view = Svg.label "inherit" title
     , position = \data range -> Coordinate.smallestRange data range |> .max
     , xOffset = 0
@@ -43,9 +43,9 @@ byDataMax title =
 
 
 {-| -}
-at : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Title msg
+at : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Config msg
 at position xOffset yOffset title =
-  Title
+  custom
     { view = Svg.label "inherit" title
     , position = position
     , xOffset = xOffset
@@ -54,14 +54,9 @@ at position xOffset yOffset title =
 
 
 {-| -}
-custom : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> Svg msg -> Title msg
-custom position xOffset yOffset view =
-  Title
-    { view = view
-    , position = position
-    , xOffset = xOffset
-    , yOffset = yOffset
-    }
+custom : Properties msg -> Config msg
+custom =
+  Config
 
 
 
@@ -69,6 +64,6 @@ custom position xOffset yOffset view =
 
 
 {-| -}
-config : Title msg -> Config msg
-config (Title title) =
+config : Config msg -> Properties msg
+config (Config title) =
   title

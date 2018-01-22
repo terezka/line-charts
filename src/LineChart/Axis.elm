@@ -52,7 +52,7 @@ type alias Config data msg =
 
 {-| -}
 type alias Properties data msg =
-  { title : Title.Title msg
+  { title : Title.Config msg
   , variable : data -> Maybe Float
   , pixels : Int
   , range : Range.Config

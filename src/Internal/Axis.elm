@@ -29,7 +29,7 @@ type Config data msg =
 
 {-| -}
 type alias Properties data msg =
-  { title : Title.Title msg
+  { title : Title.Config msg
   , variable : data -> Maybe Float
   , pixels : Int
   , range : Range.Config
@@ -137,7 +137,7 @@ type alias ViewConfig msg =
   { line : AxisLine.Properties msg
   , ticks : List (Tick.Tick msg)
   , intersection : Float
-  , title : Title.Config msg
+  , title : Title.Properties msg
   }
 
 
