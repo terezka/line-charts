@@ -6,7 +6,7 @@ module Internal.Grid exposing (Config, default, dots, lines, view)
 import Svg
 import Svg.Attributes as Attributes
 import Internal.Svg as Svg
-import LineChart.Color as Colors
+import LineChart.Colors as Colors
 import LineChart.Coordinate as Coordinate
 import LineChart.Dimension as Dimension
 import Internal.Axis as Axis

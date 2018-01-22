@@ -20,7 +20,7 @@ module LineChart exposing
 import Html
 import Svg
 import Svg.Attributes as Attributes
-import LineChart.Color as Colors
+import LineChart.Colors as Colors
 import LineChart.Container as Container
 import LineChart.Junk as Junk
 import LineChart.Dimension as Dimension

@@ -4,7 +4,7 @@ import Html exposing (Html, div, h1, node, p, text)
 import Svg exposing (Attribute, Svg, g, text_, tspan)
 import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
-import LineChart.Color as Colors
+import LineChart.Colors as Colors
 import LineChart.Dots as Dots
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
@@ -68,7 +68,6 @@ update msg model =
 
 -- VIEW
 
--- TODO rename color module
 
 view : Model -> Svg Msg
 view model =

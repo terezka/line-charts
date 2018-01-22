@@ -43,7 +43,7 @@ module Internal.Svg exposing
 
 import Svg exposing (Svg, Attribute, g)
 import Svg.Attributes as Attributes
-import LineChart.Color as Colors
+import LineChart.Colors as Colors
 import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Path as Path exposing (..)
 import Internal.Utils exposing (..)
