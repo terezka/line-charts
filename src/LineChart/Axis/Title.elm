@@ -18,6 +18,7 @@ import Internal.Axis.Title as Title
 import LineChart.Coordinate as Coordinate
 
 
+
 {-| -}
 type alias Title msg =
   Title.Title msg

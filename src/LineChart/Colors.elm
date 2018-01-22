@@ -10,6 +10,7 @@ module LineChart.Colors exposing (pink, blue, gold, gray, grayLight, grayLightes
 import Color
 
 
+
 {-| -}
 pink : Color.Color
 pink =

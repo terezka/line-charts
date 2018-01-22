@@ -54,18 +54,6 @@ default =
   Legends.default
 
 
-{-| -}
-hover : List data -> Config data msg
-hover =
-  Legends.hover
-
-
-{-| -}
-hoverOne : Maybe data -> Config data msg
-hoverOne =
-  Legends.hoverOne
-
-
 
 -- CONFIG
 

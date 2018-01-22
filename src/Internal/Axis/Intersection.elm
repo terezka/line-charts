@@ -9,6 +9,7 @@ import Internal.Coordinate as Coordinate
 import Internal.Data as Data
 
 
+
 {-| -}
 type Config =
   Config (Coordinate.System -> Data.Point)

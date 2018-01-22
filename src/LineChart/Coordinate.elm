@@ -56,6 +56,7 @@ import Internal.Coordinate exposing (..)
 import LineChart.Container as Container
 
 
+
 {-| Specifies the size and margins of your chart.
 -}
 type alias Frame =

@@ -1,5 +1,5 @@
 module Internal.Events exposing
-    ( Config, default, none, hover, hoverOne, click, custom
+    ( Config, default, hover, hoverOne, click, custom
     , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
     , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
@@ -20,6 +20,7 @@ import Internal.Utils exposing (withFirst)
 import Json.Decode as Json
 
 
+
 {-| -}
 type Config data msg
   = Config (List (Event data msg))
@@ -28,12 +29,6 @@ type Config data msg
 {-| -}
 default : Config data msg
 default =
-  none
-
-
-{-| -}
-none : Config data msg
-none =
   custom []
 
 

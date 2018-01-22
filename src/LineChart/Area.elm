@@ -5,6 +5,7 @@ module LineChart.Area exposing (Config, default, none, percentage, normal, stack
 import Internal.Area as Area
 
 
+
 {-| -}
 type alias Config =
   Area.Config

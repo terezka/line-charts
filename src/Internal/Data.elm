@@ -5,6 +5,7 @@ module Internal.Data exposing (..)
 import Internal.Coordinate exposing (..)
 
 
+
 {-| -}
 type alias Data data =
   { user : data

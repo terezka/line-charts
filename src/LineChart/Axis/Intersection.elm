@@ -15,6 +15,7 @@ import Internal.Axis.Intersection as Intersection
 import LineChart.Coordinate as Coordinate
 
 
+
 {-| -}
 type alias Config =
   Intersection.Config

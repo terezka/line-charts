@@ -1,5 +1,5 @@
 module LineChart.Events exposing
-  ( Config, default, none, hover, hoverOne, click, custom
+  ( Config, default, hover, hoverOne, click, custom
   , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
   , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
@@ -8,7 +8,7 @@ module LineChart.Events exposing
 {-|
 
 # Quick start
-@docs default, none
+@docs default
 
 # Configurations
 @docs Config, hover, hoverOne, click, custom
@@ -50,12 +50,6 @@ type alias Config data msg =
 default : Config data msg
 default =
   Events.default
-
-
-{-| -}
-none : Config data msg
-none =
-  Events.none
 
 
 {-| -}

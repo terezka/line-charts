@@ -51,6 +51,7 @@ import Color
 import Color.Convert
 
 
+
 -- DOT
 
 
@@ -194,7 +195,7 @@ yTick system width userAttributes x y =
 {-| -}
 label : String -> String -> Svg.Svg msg
 label color string =
-  Svg.text_ 
+  Svg.text_
     [ Attributes.fill color
     , Attributes.style "pointer-events: none;"
     ]

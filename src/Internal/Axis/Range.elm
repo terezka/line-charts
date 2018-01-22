@@ -3,6 +3,7 @@ module Internal.Axis.Range exposing (Range, default, padded, window, custom, app
 import LineChart.Coordinate as Coordinate
 
 
+
 {-| -}
 type Range
   = Padded Float Float

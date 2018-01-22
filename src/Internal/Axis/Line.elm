@@ -7,6 +7,7 @@ import Internal.Coordinate as Coordinate
 import Color
 
 
+
 {-| -}
 type Line msg =
   Line (Coordinate.Range -> Coordinate.Range -> Config msg)

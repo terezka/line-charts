@@ -14,6 +14,7 @@ import Color
 import Color.Convert
 
 
+
 {-| -}
 type Config
   = Dots Color.Color
