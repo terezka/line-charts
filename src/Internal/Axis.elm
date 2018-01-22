@@ -28,7 +28,7 @@ import Color.Convert
 
 {-| -}
 type Axis data msg
-  = Axis (Line.Line msg) (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
+  = Axis (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
 
 
 
@@ -38,19 +38,19 @@ type Axis data msg
 {-| -}
 int : Int -> Axis data msg
 int amount =
-  intCustom amount Line.default Tick.int
+  intCustom amount Tick.int
 
 
 {-| -}
 float : Int -> Axis data msg
 float amount =
-  floatCustom amount Line.default Tick.float
+  floatCustom amount Tick.float
 
 
 {-| -}
 time : Int -> Axis data msg
 time amount =
-  timeCustom amount Line.default Tick.time
+  timeCustom amount Tick.time
 
 
 
@@ -58,23 +58,23 @@ time amount =
 
 
 {-| -}
-intCustom : Int -> Line.Line msg -> (Int -> Tick.Tick msg) -> Axis data msg
-intCustom amount line tick =
-  custom line <| \data range ->
+intCustom : Int -> (Int -> Tick.Tick msg) -> Axis data msg
+intCustom amount tick =
+  custom <| \data range ->
     List.map tick <| Values.int (Values.around amount) (Coordinate.smallestRange data range)
 
 
 {-| -}
-floatCustom : Int -> Line.Line msg -> (Float -> Tick.Tick msg) -> Axis data msg
-floatCustom amount line tick =
-  custom line <| \data range ->
+floatCustom : Int -> (Float -> Tick.Tick msg) -> Axis data msg
+floatCustom amount tick =
+  custom <| \data range ->
     List.map tick <| Values.float (Values.around amount) (Coordinate.smallestRange data range)
 
 
 {-| -}
-timeCustom : Int -> Line.Line msg -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
-timeCustom amount line tick =
-  custom line <| \data range ->
+timeCustom : Int -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
+timeCustom amount tick =
+  custom <| \data range ->
     List.map tick <| Values.time amount (Coordinate.smallestRange data range)
 
 
@@ -83,7 +83,7 @@ timeCustom amount line tick =
 
 
 {-| -}
-custom : Line.Line msg -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
 custom =
   Axis
 
@@ -93,13 +93,8 @@ custom =
 
 
 ticks : Coordinate.Range -> Coordinate.Range -> Axis data msg -> List (Tick.Tick msg)
-ticks dataRange range (Axis line values) =
+ticks dataRange range (Axis values) =
   values dataRange range
-
-
-line : Axis data msg -> Coordinate.Range -> Coordinate.Range -> Line.Config msg
-line (Axis line _) =
-  Line.config line
 
 
 
@@ -107,7 +102,7 @@ line (Axis line _) =
 
 
 type alias ViewConfig msg =
-  { line : Coordinate.Range -> Coordinate.Range -> Line.Config msg
+  { line : Line.Properties msg
   , ticks : List (Tick.Tick msg)
   , intersection : Float
   , title : Title.Config msg
@@ -115,11 +110,11 @@ type alias ViewConfig msg =
 
 
 {-| -}
-viewHorizontal : Coordinate.System -> Intersection.Config -> Title.Title msg -> Axis data msg -> Svg msg
-viewHorizontal system intersection title axis =
+viewHorizontal : Coordinate.System -> Intersection.Config -> Title.Title msg -> Line.Config msg -> Axis data msg -> Svg msg
+viewHorizontal system intersection title line axis =
     let
         config =
-          { line = line axis
+          { line = Line.config line system.xData system.x
           , ticks = ticks system.xData system.x axis
           , intersection = Intersection.getY intersection system
           , title = Title.config title
@@ -132,21 +127,21 @@ viewHorizontal system intersection title axis =
           viewHorizontalAxisLine system config.intersection
 
         viewTick tick =
-          viewHorizontalTick system config (at tick.position) tick
+          viewHorizontalTick system (at tick.position) tick
     in
     g [ class "chart__axis--horizontal" ]
       [ viewHorizontalTitle system at config
-      , viewAxisLine (config.line system.xData system.x)
+      , viewAxisLine config.line
       , g [ class "chart__ticks" ] (List.map viewTick config.ticks)
       ]
 
 
 {-| -}
-viewVertical : Coordinate.System -> Intersection.Config -> Title.Title msg -> Axis data msg -> Svg msg
-viewVertical system intersection title axis =
+viewVertical : Coordinate.System -> Intersection.Config -> Title.Title msg -> Line.Config msg -> Axis data msg -> Svg msg
+viewVertical system intersection title line axis =
     let
         config =
-          { line = line axis
+          { line = Line.config line system.yData system.y
           , ticks = ticks system.yData system.y axis
           , intersection = Intersection.getX intersection system
           , title = Title.config title
@@ -159,11 +154,11 @@ viewVertical system intersection title axis =
           viewVerticalAxisLine system config.intersection
 
         viewTick tick =
-          viewVerticalTick system config (at tick.position) tick
+          viewVerticalTick system (at tick.position) tick
     in
     g [ class "chart__axis--vertical" ]
       [ viewVerticalTitle system at config
-      , viewAxisLine (config.line system.yData system.y)
+      , viewAxisLine config.line
       , g [ class "chart__ticks" ] (List.map viewTick config.ticks)
       ]
 
@@ -208,17 +203,17 @@ viewVerticalTitle system at { title } =
 -- INTERNAL / VIEW / LINE
 
 
-viewHorizontalAxisLine : Coordinate.System -> Float -> Line.Config msg -> Svg msg
+viewHorizontalAxisLine : Coordinate.System -> Float -> Line.Properties msg -> Svg msg
 viewHorizontalAxisLine system axisPosition config =
   horizontal system (attributesLine config) axisPosition config.start config.end
 
 
-viewVerticalAxisLine : Coordinate.System -> Float -> Line.Config msg -> Svg msg
+viewVerticalAxisLine : Coordinate.System -> Float -> Line.Properties msg -> Svg msg
 viewVerticalAxisLine system axisPosition config =
   vertical system (attributesLine config) axisPosition config.start config.end
 
 
-attributesLine : Line.Config msg -> List (Svg.Attribute msg)
+attributesLine : Line.Properties msg -> List (Svg.Attribute msg)
 attributesLine { events, width, color } =
   events ++ [ strokeWidth (toString width), stroke (Color.Convert.colorToHex color) ]
 
@@ -227,16 +222,16 @@ attributesLine { events, width, color } =
 -- INTERNAL / VIEW / TICK
 
 
-viewHorizontalTick : Coordinate.System -> ViewConfig msg -> Data.Point -> Tick.Tick msg -> Svg msg
-viewHorizontalTick system config ({ x, y } as point) tick =
+viewHorizontalTick : Coordinate.System -> Data.Point -> Tick.Tick msg -> Svg msg
+viewHorizontalTick system ({ x, y } as point) tick =
   g [ class "chart__tick" ]
     [ xTick system (lengthOfTick tick) (attributesTick tick) y x
     , viewMaybe tick.label (viewHorizontalLabel system tick point)
     ]
 
 
-viewVerticalTick : Coordinate.System -> ViewConfig msg -> Data.Point -> Tick.Tick msg -> Svg msg
-viewVerticalTick system config ({ x, y } as point) tick =
+viewVerticalTick : Coordinate.System -> Data.Point -> Tick.Tick msg -> Svg msg
+viewVerticalTick system ({ x, y } as point) tick =
   g [ class "chart__tick" ]
     [ yTick system (lengthOfTick tick) (attributesTick tick) x y
     , viewMaybe tick.label (viewVerticalLabel system tick point)

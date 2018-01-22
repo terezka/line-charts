@@ -18,7 +18,6 @@ import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Axis as Axis
 import Internal.Axis.Values as Values
 import LineChart.Axis.Tick as Tick
-import LineChart.Axis.Line as Line
 
 
 
@@ -54,24 +53,24 @@ float =
 
 
 {-| -}
-intCustom : Int -> Line.Line msg -> (Int -> Tick.Tick msg) -> Axis data msg
+intCustom : Int -> (Int -> Tick.Tick msg) -> Axis data msg
 intCustom =
   Axis.intCustom
 
 
 {-| -}
-floatCustom : Int -> Line.Line msg -> (Float -> Tick.Tick msg) -> Axis data msg
+floatCustom : Int -> (Float -> Tick.Tick msg) -> Axis data msg
 floatCustom =
   Axis.floatCustom
 
 
 {-| -}
-timeCustom : Int -> Line.Line msg -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
+timeCustom : Int -> (Tick.Time -> Tick.Tick msg) -> Axis data msg
 timeCustom =
   Axis.timeCustom
 
 
 {-| -}
-custom : Line.Line msg -> (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
+custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Axis data msg
 custom =
   Axis.custom

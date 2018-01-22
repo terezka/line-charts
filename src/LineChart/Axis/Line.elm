@@ -1,7 +1,7 @@
 module LineChart.Axis.Line exposing
-  ( Line, none, default
+  ( Config, none, default
   , full, rangeFrame
-  , Config, custom
+  , Properties, custom
   )
 
 {-|
@@ -13,7 +13,7 @@ module LineChart.Axis.Line exposing
 @docs full, rangeFrame
 
 # Customiztion
-@docs Config, custom
+@docs Properties, custom
 
 -}
 
@@ -25,34 +25,34 @@ import Color
 
 
 {-| -}
-type alias Line msg =
-  Line.Line msg
+type alias Config msg =
+  Line.Config msg
 
 
 {-| Draws the axis line to fit the range of your data.
 -}
-default : Line msg
+default : Config msg
 default =
   Line.default
 
 
 {-| Removes the axis line entirely.
 -}
-none : Line msg
+none : Config msg
 none =
   Line.none
 
 
 {-| Draws the axis line as the full length of your dimension.
 -}
-full : Line msg
+full : Config msg
 full =
   Line.full
 
 
 {-| Draws the axis line to fit the range of your data.
 -}
-rangeFrame : Line msg
+rangeFrame : Config msg
 rangeFrame =
   Line.rangeFrame
 
@@ -62,7 +62,7 @@ rangeFrame =
 
 
 {-| -}
-type alias Config msg =
+type alias Properties msg =
   { color : Color.Color
   , width : Float
   , events : List (Attribute msg)
@@ -74,6 +74,6 @@ type alias Config msg =
 {-| Given the range of your data and your dimension range, define your own
 axis line configuration.
 -}
-custom : (Coordinate.Range -> Coordinate.Range -> Config msg) -> Line msg
+custom : (Coordinate.Range -> Coordinate.Range -> Properties msg) -> Config msg
 custom =
   Line.custom

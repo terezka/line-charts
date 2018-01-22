@@ -53,6 +53,7 @@ type alias Config data msg =
   , variable : data -> Maybe Float
   , pixels : Int
   , range : Range.Range
+  , axisLine : AxisLine.Config msg
   , axis : Axis.Axis data msg
   }
 
@@ -84,8 +85,9 @@ default pixels title variable =
   , variable = Just << variable
   , pixels = pixels
   , range = Range.padded 20 20
+  , axisLine = AxisLine.rangeFrame
   , axis =
-      Axis.custom AxisLine.rangeFrame <| \data range ->
+      Axis.custom <| \data range ->
         let smallest = Coordinate.smallestRange data range
             rangeLong = range.max - range.min
             rangeSmall = smallest.max - smallest.min
@@ -103,8 +105,9 @@ full pixels title variable =
   , variable = Just << variable
   , pixels = pixels
   , range = Range.padded 0 20
+  , axisLine = AxisLine.full
   , axis =
-      Axis.custom AxisLine.full <| \data range ->
+      Axis.custom <| \data range ->
         let largest = Coordinate.largestRange data range
             amount = pixels // 90
         in
@@ -119,8 +122,9 @@ time pixels title variable =
   , variable = Just << variable
   , pixels = pixels
   , range = Range.padded 20 20
+  , axisLine = AxisLine.rangeFrame
   , axis =
-      Axis.custom AxisLine.rangeFrame <| \data range ->
+      Axis.custom <| \data range ->
         let smallest = Coordinate.smallestRange data range
             rangeLong = range.max - range.min
             rangeSmall = smallest.max - smallest.min

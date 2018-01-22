@@ -1,4 +1,4 @@
-module Internal.Axis.Line exposing (Line, none, default, full, rangeFrame, Config, custom, config)
+module Internal.Axis.Line exposing (Config, none, default, full, rangeFrame, Properties, custom, config)
 
 
 import Svg exposing (Attribute)
@@ -9,14 +9,20 @@ import Color
 
 
 {-| -}
-type Line msg =
-  Line (Coordinate.Range -> Coordinate.Range -> Config msg)
+type Config msg =
+  Config (Coordinate.Range -> Coordinate.Range -> Properties msg)
 
 
 {-| -}
-none : Line msg
+default : Config msg
+default =
+  rangeFrame
+
+
+{-| -}
+none : Config msg
 none =
-  Line <| \_ {min, max} ->
+  custom <| \_ {min, max} ->
     { color = Colors.transparent
     , width = 0
     , events = []
@@ -26,15 +32,9 @@ none =
 
 
 {-| -}
-default : Line msg
-default =
-  rangeFrame
-
-
-{-| -}
-full : Line msg
+full : Config msg
 full =
-  Line <| \data range ->
+  custom <| \data range ->
     let largest = Coordinate.largestRange data range in
     { color = Colors.gray
     , width = 1
@@ -45,9 +45,9 @@ full =
 
 
 {-| -}
-rangeFrame : Line msg
+rangeFrame : Config msg
 rangeFrame =
-  Line <| \data range ->
+  custom <| \data range ->
     let smallest = (Coordinate.smallestRange data range) in
     { color = Colors.gray
     , width = 1
@@ -62,7 +62,7 @@ rangeFrame =
 
 
 {-| -}
-type alias Config msg =
+type alias Properties msg =
   { color : Color.Color
   , width : Float
   , events : List (Attribute msg)
@@ -72,9 +72,9 @@ type alias Config msg =
 
 
 {-| -}
-custom : (Coordinate.Range -> Coordinate.Range -> Config msg) -> Line msg
+custom : (Coordinate.Range -> Coordinate.Range -> Properties msg) -> Config msg
 custom =
-  Line
+  Config
 
 
 
@@ -82,6 +82,6 @@ custom =
 
 
 {-| -}
-config : Line msg -> Coordinate.Range -> Coordinate.Range -> Config msg
-config (Line config) =
+config : Config msg -> Coordinate.Range -> Coordinate.Range -> Properties msg
+config (Config config) =
   config

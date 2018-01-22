@@ -42,7 +42,6 @@ import Internal.Utils as Utils
 import Color
 
 -- TODO
--- more default junk (hovers)
 -- move tick groups to axis
 -- more default dimensions
 -- more default title options
@@ -455,8 +454,8 @@ viewCustom config lines =
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
       , viewLines lines data
       , chartAreaPlatform config dataAll system
-      , Axis.viewHorizontal system config.intersection config.x.title config.x.axis
-      , Axis.viewVertical   system config.intersection config.y.title config.y.axis
+      , Axis.viewHorizontal system config.intersection config.x.title config.x.axisLine config.x.axis
+      , Axis.viewVertical   system config.intersection config.y.title config.y.axisLine config.y.axis
       , viewLegends
       , Svg.g [ Attributes.class "chart__junk--above" ] junk.above
       ]
