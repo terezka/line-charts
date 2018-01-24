@@ -77,7 +77,15 @@ update msg model =
 view : Model -> Svg Msg
 view model =
   LineChart.viewCustom
-    { y = Axis.default 670 "age" .age
+    { y = -- Axis.default 670 "age" .age
+        Axis.custom
+          { title = Title.atDataMax ( 15, 0 ) "age"
+          , variable = .age
+          , pixels = 670
+          , range = Range.padded 20 20
+          , axisLine = AxisLine.rangeFrame
+          , ticks = Ticks.float 5
+          }
     , x = -- Axis.default 750 "income" .income
         Axis.custom
           { title = Title.atDataMax ( 15, 0 ) "income"
@@ -85,14 +93,11 @@ view model =
           , pixels = 750
           , range = Range.padded 20 20
           , axisLine = AxisLine.rangeFrame
-          , ticks =
-              Ticks.custom <| \data range ->
-                Ticks.hoverOne (.income >> Tick.float) model.hovering ++
-                Ticks.frame Tick.float data
+          , ticks = Ticks.float 5
           }
     , container = Container.default "line-chart-1"
-    , interpolation = Interpolation.monotone
-    , intersection = Intersection.default
+    , interpolation = Interpolation.linear
+    , intersection = Intersection.custom .min .min
     , legends = Legends.default
     , events = Events.hoverOne HoverSingle
     , junk = Junk.default
@@ -101,9 +106,7 @@ view model =
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Colors.gold Dots.diamond "alice" alice
-    , LineChart.line Colors.blue Dots.circle  "bobby" bob
-    , LineChart.line Colors.pink Dots.square  "chuck" chuck
+    [ LineChart.line Colors.gold Dots.diamond "alice" alice1
     ]
 
 
@@ -162,7 +165,7 @@ tooltip system index hovered =
   Svg.g
     [ Junk.transform [ Junk.offset 520 (100 + toFloat index * 40) ] ]
     [ Svg.text_ []
-        [ dimension "age" hovered.age
+        [ dimension "age" (Maybe.withDefault 0 hovered.age)
         ]
     ]
 
@@ -178,38 +181,56 @@ dimension label value =
 
 
 type alias Info =
+  { age : Maybe Float
+  , income : Float
+  }
+
+
+type alias Info2 =
   { age : Float
   , income : Float
   }
 
 
-alice : List Info
+alice1 : List Info
+alice1 =
+  [ Info (Just -1) -3
+  , Info (Just -2) -2
+  , Info (Just -3) -1
+  , Info (Nothing) 0
+  , Info (Just 5) 1
+  , Info (Just 3) 2
+  , Info (Just 7) 3
+  ]
+
+
+alice : List Info2
 alice =
-  [ Info ( -1) -3.2
-  , Info ( -2) -2.4
-  , Info ( -3) -1.1
-  , Info ( 4) 4
-  , Info ( 5) 5.2
+  [ Info2 ( -1) -3.2
+  , Info2 ( -2) -2.4
+  , Info2 ( -3) -1.1
+  , Info2 ( 4) 4
+  , Info2 ( 5) 5.2
   ]
 
 
-bob : List Info
+bob : List Info2
 bob =
-  [ Info ( -1) -3
-  , Info ( -1) -2.5
-  , Info ( -1) -1
-  , Info ( 1) 4
-  , Info ( 1) 5.1
+  [ Info2 ( -1) -3
+  , Info2 ( -1) -2.5
+  , Info2 ( -1) -1
+  , Info2 ( 1) 4
+  , Info2 ( 1) 5.1
   ]
 
 
-chuck : List Info
+chuck : List Info2
 chuck =
-  [ Info ( 2) 1
-  , Info ( 3) 2
-  , Info ( 5) 3
-  , Info ( 2) 4
-  , Info ( 4) 5.5
+  [ Info2 ( 2) 1
+  , Info2 ( 3) 2
+  , Info2 ( 5) 3
+  , Info2 ( 2) 4
+  , Info2 ( 4) 5.5
   ]
 
 

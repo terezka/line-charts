@@ -189,8 +189,11 @@ viewSingle : Arguments data -> Series data -> List (Data.Data data) -> ( Svg.Svg
 viewSingle arguments line data =
   let
     -- Parting
-    parts =
+    sections =
       Utils.part .isReal data [] []
+
+    parts =
+      List.map Tuple.first sections
 
     -- Style
     style =
@@ -206,8 +209,7 @@ viewSingle arguments line data =
 
     -- Interpolations
     commands =
-      Interpolation.toCommands arguments.interpolation <|
-        List.map (List.map .point) parts
+      Interpolation.toCommands arguments.interpolation sections
 
     viewAreas () =
       Svg.g

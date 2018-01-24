@@ -1,9 +1,9 @@
-module LineChart.Interpolation exposing (Config, default, linear, monotone, steppedBefore, steppedAfter)
+module LineChart.Interpolation exposing (Config, default, linear, monotone, stepped)
 
 {-|
 
 ## Interpolations
-@docs Config, default, linear, monotone, steppedBefore, steppedAfter
+@docs Config, default, linear, monotone, stepped
 
 -}
 
@@ -36,13 +36,6 @@ monotone =
 
 {-| A stepped interpolation where the step comes before the point.
 -}
-steppedBefore : Config
-steppedBefore =
-  Interpolation.SteppedBefore
-
-
-{-| A stepped interpolation where the step comes after the point.
--}
-steppedAfter : Config
-steppedAfter =
-  Interpolation.SteppedAfter
+stepped : Config
+stepped =
+  Interpolation.Stepped

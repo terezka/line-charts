@@ -3,7 +3,7 @@ module Internal.Interpolation exposing (Config(..), toCommands)
 {-| -}
 
 import Internal.Path as Path exposing (..)
-import LineChart.Coordinate as Coordinate  exposing (..)
+import Internal.Data as Data exposing (..)
 
 
 
@@ -11,18 +11,23 @@ import LineChart.Coordinate as Coordinate  exposing (..)
 type Config
   = Linear
   | Monotone
-  | SteppedBefore
-  | SteppedAfter
+  | Stepped
 
 
 {-| -}
-toCommands : Config -> List (List Point) -> List (List Command)
-toCommands interpolation =
+toCommands : Config -> List (List (Data.Data data), Maybe (Data.Data data)) -> List (List Command)
+toCommands interpolation data =
+  let
+    points =
+      List.map (Tuple.first >> List.map .point)
+
+    pointsSections =
+      List.map (Tuple.mapFirst (List.map .point) >> Tuple.mapSecond (Maybe.map .point))
+  in
   case interpolation of
-    Linear   -> linear
-    Monotone -> monotone
-    SteppedBefore  -> stepped before
-    SteppedAfter  -> stepped after
+    Linear   -> linear (points data)
+    Monotone -> monotone (points data)
+    Stepped  -> stepped (pointsSections data)
 
 
 
@@ -154,23 +159,19 @@ sign x =
 -- INTERNAL / STEPPED
 
 
-stepped : (Point -> Point -> List Point) -> List (List Point) -> List (List Command)
-stepped step sections =
+stepped : List (List Point, Maybe Point) -> List (List Command)
+stepped sections =
   let
     expand result section =
       case section of
-        a :: b :: rest -> expand (step a b ++ result) (b :: rest)
-        last :: []     -> result
-        []             -> result
+        (a :: b :: rest, broken)  -> expand (result ++ after a b) (b :: rest, broken)
+        (last :: [], Just broken) -> result ++ [ Point broken.x last.y ]
+        (last :: [], Nothing)     -> result
+        ([], _)                   -> result
   in
-  List.map (expand [] >> List.reverse >> List.map Line) sections
-
-
-before : Point -> Point -> List Point
-before a b =
-  [ b, Point b.x a.y, a ]
+  List.map (expand [] >> List.map Line) sections
 
 
 after : Point -> Point -> List Point
 after a b =
-  [ b, Point a.x b.y, a ]
+  [ a, Point b.x a.y, b ]

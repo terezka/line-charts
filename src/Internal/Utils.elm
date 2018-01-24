@@ -145,14 +145,14 @@ magnitude num =
 
 
 {-| -}
-part : (a -> Bool) -> List a -> List a -> List (List a) -> List (List a)
+part : (a -> Bool) -> List a -> List a -> List ( List a, Maybe a ) -> List ( List a, Maybe a )
 part isReal points current parts =
   case points of
     first :: rest ->
       if isReal first then
-        part isReal rest (first :: current) parts
+        part isReal rest (current ++ [first]) parts
       else
-        part isReal rest [] (current :: parts)
+        part isReal rest [] ( ( current, Just first ) :: parts)
 
     [] ->
-      current :: parts
+      ( current, Nothing ) :: parts
