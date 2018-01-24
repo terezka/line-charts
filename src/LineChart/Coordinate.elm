@@ -88,7 +88,7 @@ SVG coordinates.
 -}
 type alias System =
   { frame : Frame
-  , x : Range
+  , x : Range -- TODO { full : Range, data : Range } ?
   , y : Range
   , xData : Range
   , yData : Range

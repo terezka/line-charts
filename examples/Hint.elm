@@ -87,14 +87,14 @@ view model =
           , axisLine = AxisLine.rangeFrame
           , ticks =
               Ticks.custom <| \data range ->
-                Ticks.hoverOne Tick.float (Just 2) ++
+                Ticks.hoverOne (.income >> Tick.float) model.hovering ++
                 Ticks.frame Tick.float data
           }
     , container = Container.default "line-chart-1"
-    , interpolation = Interpolation.default
+    , interpolation = Interpolation.monotone
     , intersection = Intersection.default
     , legends = Legends.default
-    , events = Events.default
+    , events = Events.hoverOne HoverSingle
     , junk = Junk.default
     , grid = Grid.default
     , area = Area.default

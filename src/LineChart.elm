@@ -41,9 +41,6 @@ import Internal.Utils as Utils
 import Color
 
 -- TODO
--- move tick groups to axis
--- more default dimensions
--- more default title options
 -- viewport instead of height / width
 
 -- consider tick space tolerance as determinating factor of tick amount

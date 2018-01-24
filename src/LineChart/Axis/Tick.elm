@@ -1,8 +1,9 @@
 module LineChart.Axis.Tick exposing
-  ( Tick
+  ( Config, Properties
   , Direction, negative, positive
   , int, float
   , time, Time, Unit(..), Interval, format
+  , custom
   )
 
 {-|
@@ -11,7 +12,7 @@ module LineChart.Axis.Tick exposing
 @docs int, float
 
 # Definition
-@docs Tick, Direction, negative, positive
+@docs Config, Properties, Direction, negative, positive, custom
 
 # Time tick
 @docs time, Time, Unit, Interval, format
@@ -28,8 +29,13 @@ import Color
 
 
 
-{-| TODO rename to Config -}
-type alias Tick msg =
+{-| -}
+type alias Config msg =
+  Tick.Config msg
+
+
+{-| -}
+type alias Properties msg =
   { position : Float
   , color : Color.Color
   , width : Float
@@ -62,29 +68,20 @@ positive =
 
 
 {-| -}
-int : Int -> Tick msg
-int n =
-  { position = toFloat n
-  , color = Color.gray
-  , width = 1
-  , length = 5
-  , grid = True
-  , direction = negative
-  , label = Just <| Svg.label "inherit" (toString n)
-  }
+int : Int -> Config msg
+int =
+  Tick.int
 
 
 {-| -}
-float : Float -> Tick msg
-float n =
-  { position = n
-  , color = Color.gray
-  , width = 1
-  , length = 5
-  , grid = True
-  , direction = negative
-  , label = Just <| Svg.label "inherit" (toString n)
-  }
+float : Float -> Config msg
+float =
+  Tick.float
+
+
+custom : Properties msg -> Config msg
+custom =
+  Tick.custom
 
 
 
@@ -120,16 +117,17 @@ type alias Interval =
 
 
 {-| -}
-time : Time -> Tick msg
+time : Time -> Config msg
 time time =
-  { position = time.timestamp
-  , color = Color.gray
-  , width = 1
-  , length = 5
-  , grid = True
-  , direction = negative
-  , label = Just <| Svg.label "inherit" (format time)
-  }
+  custom
+    { position = time.timestamp
+    , color = Color.gray
+    , width = 1
+    , length = 5
+    , grid = True
+    , direction = negative
+    , label = Just <| Svg.label "inherit" (format time)
+    }
 
 
 

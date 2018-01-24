@@ -8,7 +8,8 @@ module Internal.Axis.Ticks exposing
 
 
 
-import LineChart.Axis.Tick as Tick exposing (Direction)
+import LineChart.Axis.Tick as Tick
+import Internal.Axis.Tick
 import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Axis.Values as Values
 
@@ -19,7 +20,7 @@ import Internal.Axis.Values as Values
 
 {-| TODO why does this now warn me about the unused data type? -}
 type Config data msg
-  = Config (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg))
+  = Config (Coordinate.Range -> Coordinate.Range -> List (Tick.Config msg))
 
 
 
@@ -49,21 +50,21 @@ time amount =
 
 
 {-| -}
-intCustom : Int -> (Int -> Tick.Tick msg) -> Config data msg
+intCustom : Int -> (Int -> Tick.Config msg) -> Config data msg
 intCustom amount tick =
   custom <| \data range ->
     List.map tick <| Values.int (Values.around amount) (Coordinate.smallestRange data range)
 
 
 {-| -}
-floatCustom : Int -> (Float -> Tick.Tick msg) -> Config data msg
+floatCustom : Int -> (Float -> Tick.Config msg) -> Config data msg
 floatCustom amount tick =
   custom <| \data range ->
     List.map tick <| Values.float (Values.around amount) (Coordinate.smallestRange data range)
 
 
 {-| -}
-timeCustom : Int -> (Tick.Time -> Tick.Tick msg) -> Config data msg
+timeCustom : Int -> (Tick.Time -> Tick.Config msg) -> Config data msg
 timeCustom amount tick =
   custom <| \data range ->
     List.map tick <| Values.time amount (Coordinate.smallestRange data range)
@@ -74,7 +75,7 @@ timeCustom amount tick =
 
 
 {-| -}
-custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Config data msg
+custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Config msg)) -> Config data msg
 custom =
   Config
 
@@ -83,6 +84,6 @@ custom =
 -- INTERNAL
 
 
-ticks : Coordinate.Range -> Coordinate.Range -> Config data msg -> List (Tick.Tick msg)
+ticks : Coordinate.Range -> Coordinate.Range -> Config data msg -> List (Tick.Properties msg)
 ticks dataRange range (Config values) =
-  values dataRange range
+  List.map Internal.Axis.Tick.properties <| values dataRange range

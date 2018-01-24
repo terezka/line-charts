@@ -7,7 +7,7 @@ import Svg
 
 
 
-{-| -}
+{-| TODO box -}
 type alias Config msg =
   { attributes : List (Html.Attribute msg)
   , attributesSVG : List (Svg.Attribute msg)

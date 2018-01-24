@@ -35,6 +35,7 @@ type alias Amount =
   Values.Amount
 
 
+
 -- API / AXIS
 
 
@@ -57,25 +58,25 @@ float =
 
 
 {-| -}
-intCustom : Int -> (Int -> Tick.Tick msg) -> Config data msg
+intCustom : Int -> (Int -> Tick.Config msg) -> Config data msg
 intCustom =
   Ticks.intCustom
 
 
 {-| -}
-floatCustom : Int -> (Float -> Tick.Tick msg) -> Config data msg
+floatCustom : Int -> (Float -> Tick.Config msg) -> Config data msg
 floatCustom =
   Ticks.floatCustom
 
 
 {-| -}
-timeCustom : Int -> (Tick.Time -> Tick.Tick msg) -> Config data msg
+timeCustom : Int -> (Tick.Time -> Tick.Config msg) -> Config data msg
 timeCustom =
   Ticks.timeCustom
 
 
 {-| -}
-custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Tick msg)) -> Config data msg
+custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Config msg)) -> Config data msg
 custom =
   Ticks.custom
 
@@ -85,12 +86,12 @@ custom =
 
 
 {-| -}
-hoverOne : (data -> Tick.Tick msg) -> Maybe data -> List (Tick.Tick msg)
+hoverOne : (data -> Tick.Config msg) -> Maybe data -> List (Tick.Config msg)
 hoverOne tick =
   Maybe.map (tick >> List.singleton) >> Maybe.withDefault []
 
 
 {-| -}
-frame : (Float -> Tick.Tick msg) -> Coordinate.Range -> List (Tick.Tick msg)
+frame : (Float -> Tick.Config msg) -> Coordinate.Range -> List (Tick.Config msg)
 frame tick data =
   List.map tick [ data.min, data.max ]

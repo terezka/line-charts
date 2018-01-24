@@ -11,7 +11,7 @@ import LineChart.Axis.Tick as Tick exposing (Direction)
 import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
 import Internal.Axis.Range as Range
-import Internal.Axis.Tick as Tick
+import Internal.Axis.Tick
 import Internal.Axis.Values as Values
 import Internal.Axis.Ticks as Ticks
 import Internal.Axis.Line as AxisLine
@@ -135,7 +135,7 @@ ticks (Config config) =
 
 type alias ViewConfig msg =
   { line : AxisLine.Properties msg
-  , ticks : List (Tick.Tick msg)
+  , ticks : List (Tick.Properties msg)
   , intersection : Float
   , title : Title.Properties msg
   }
@@ -252,7 +252,7 @@ attributesLine { events, width, color } =
 -- INTERNAL / VIEW / TICK
 
 
-viewHorizontalTick : Coordinate.System -> Data.Point -> Tick.Tick msg -> Svg msg
+viewHorizontalTick : Coordinate.System -> Data.Point -> Tick.Properties msg -> Svg msg
 viewHorizontalTick system ({ x, y } as point) tick =
   g [ class "chart__tick" ]
     [ xTick system (lengthOfTick tick) (attributesTick tick) y x
@@ -260,7 +260,7 @@ viewHorizontalTick system ({ x, y } as point) tick =
     ]
 
 
-viewVerticalTick : Coordinate.System -> Data.Point -> Tick.Tick msg -> Svg msg
+viewVerticalTick : Coordinate.System -> Data.Point -> Tick.Properties msg -> Svg msg
 viewVerticalTick system ({ x, y } as point) tick =
   g [ class "chart__tick" ]
     [ yTick system (lengthOfTick tick) (attributesTick tick) x y
@@ -268,20 +268,20 @@ viewVerticalTick system ({ x, y } as point) tick =
     ]
 
 
-lengthOfTick : Tick.Tick msg -> Float
+lengthOfTick : Tick.Properties msg -> Float
 lengthOfTick { length, direction } =
-  if Tick.isPositive direction then -length else length
+  if Internal.Axis.Tick.isPositive direction then -length else length
 
 
-attributesTick : Tick.Tick msg -> List (Svg.Attribute msg)
+attributesTick : Tick.Properties msg -> List (Svg.Attribute msg)
 attributesTick { width, color } =
   [ strokeWidth (toString width), stroke (Color.Convert.colorToHex color) ]
 
 
-viewHorizontalLabel : Coordinate.System -> Tick.Tick msg -> Data.Point -> Svg msg -> Svg msg
+viewHorizontalLabel : Coordinate.System -> Tick.Properties msg -> Data.Point -> Svg msg -> Svg msg
 viewHorizontalLabel system { direction, length } position view =
   let
-    yOffset = if Tick.isPositive direction then -5 - length else 15 + length
+    yOffset = if Internal.Axis.Tick.isPositive direction then -5 - length else 15 + length
   in
   g [ transform [ move system position.x position.y, offset 0 yOffset ]
     , anchorStyle Middle
@@ -289,11 +289,11 @@ viewHorizontalLabel system { direction, length } position view =
     [ view ]
 
 
-viewVerticalLabel : Coordinate.System -> Tick.Tick msg -> Data.Point -> Svg msg -> Svg msg
+viewVerticalLabel : Coordinate.System -> Tick.Properties msg -> Data.Point -> Svg msg -> Svg msg
 viewVerticalLabel system { direction, length } position view =
   let
-    anchor = if Tick.isPositive direction then Start else End
-    xOffset = if Tick.isPositive direction then 5 + length else -5 - length
+    anchor = if Internal.Axis.Tick.isPositive direction then Start else End
+    xOffset = if Internal.Axis.Tick.isPositive direction then 5 + length else -5 - length
   in
   g [ transform [ move system position.x position.y, offset xOffset 5 ]
     , anchorStyle anchor
