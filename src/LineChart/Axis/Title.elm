@@ -3,7 +3,7 @@ module LineChart.Axis.Title exposing (Config, default, atDataMax, at, custom, Pr
 {-|
 
 # Quick start
-@docs Title, default
+@docs Config, default
 
 # Configurations
 @docs atDataMax, at

@@ -22,13 +22,13 @@ import Html.Attributes
 import Svg
 import Svg.Attributes as Attributes
 import LineChart.Colors as Colors
-import LineChart.Container as Container
 import LineChart.Junk as Junk
 import LineChart.Interpolation as Interpolation
 import Internal.Area as Area
 import Internal.Axis as Axis
 import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Range as Range
+import Internal.Container as Container
 import Internal.Coordinate as Coordinate
 import Internal.Dots as Dots
 import Internal.Data as Data
@@ -42,9 +42,6 @@ import Color
 
 -- TODO
 -- viewport instead of height / width
-
--- consider tick space tolerance as determinating factor of tick amount
--- Add range adjust for nice ticks?
 
 
 
@@ -437,14 +434,13 @@ viewCustom config lines =
 
     attributes =
       List.concat
-        [ config.container.attributesSVG
+        [ Container.properties config.container |> .attributesSVG
         , Events.toContainerAttributes dataAll system config.events
-        , [ Attributes.width <| toString system.frame.size.width
-          , Attributes.height <| toString system.frame.size.height
-          ]
+        , [ viewBoxAttribute system ]
+
         ]
   in
-  container config junk.html <|
+  container config system junk.html <|
     Svg.svg attributes
       [ Svg.defs [] [ clipPath system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
@@ -461,12 +457,21 @@ viewCustom config lines =
 -- INTERNAL
 
 
-container : Config data msg -> List (Html.Html msg) -> Html.Html msg -> Html.Html msg
-container config junkHtml plot  =
+viewBoxAttribute : Coordinate.System -> Html.Attribute msg
+viewBoxAttribute { frame } =
+  Attributes.viewBox <|
+    "0 0 " ++ toString frame.size.width ++ " " ++ toString frame.size.height
+
+
+container : Config data msg -> Coordinate.System -> List (Html.Html msg) -> Html.Html msg -> Html.Html msg
+container config { frame } junkHtml plot  =
   let
+    sizeStyles =
+      Container.sizeStyles config.container frame.size.width frame.size.height
+
     attributes =
-      [ Html.Attributes.style [ ( "position", "relative" ) ] ]
-      ++ config.container.attributes
+      [ Html.Attributes.style <| ( "position", "relative" ) :: sizeStyles ]
+      ++ (Container.properties config.container |> .attributes)
   in
   Html.div attributes (plot :: junkHtml)
 
@@ -591,7 +596,7 @@ toSystem config data =
   let
     hasArea = Area.hasArea config.area
     size   = Coordinate.Size (Axis.pixels config.x) (Axis.pixels config.y)
-    frame  = Coordinate.Frame config.container.margin size
+    frame  = Coordinate.Frame (Container.properties config.container |> .margin) size
     xRange = Coordinate.range (.point >> .x) data
     yRange = Coordinate.range (.point >> .y) data
 
@@ -601,7 +606,7 @@ toSystem config data =
       , y = adjustDomainRange yRange
       , xData = xRange
       , yData = yRange
-      , id = config.container.id
+      , id = Container.properties config.container |> .id
       }
 
     adjustDomainRange domain =
@@ -621,8 +626,8 @@ toSystem config data =
 
 defaultConfig : (data -> Float) -> (data -> Float) -> Config data msg
 defaultConfig toX toY =
-  { y = Axis.default 670 "" toY
-  , x = Axis.default 750 "" toX
+  { y = Axis.default 400 "" toY
+  , x = Axis.default 700 "" toX
   , container = Container.default "line-chart-1"
   , interpolation = Interpolation.default
   , intersection = Intersection.default
@@ -659,7 +664,7 @@ defaultShapes =
 
 defaultLabel : List String
 defaultLabel =
-  [ "Series 1"
-  , "Series 2"
-  , "Series 3"
+  [ "First"
+  , "Second"
+  , "Third"
   ]

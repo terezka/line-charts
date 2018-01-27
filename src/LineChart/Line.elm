@@ -39,7 +39,7 @@ wider =
   Line.wider
 
 
-{-| -}
+{-| -} -- TODO add index? label?
 custom : (List data -> Style) -> Config data
 custom =
   Line.custom

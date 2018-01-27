@@ -3,7 +3,7 @@ module LineChart.Axis.Range exposing (Config, default, padded, window, custom)
 {-|
 
 # Quick start
-@docs Range, default
+@docs Config, default
 
 # Configurations
 @docs padded, window

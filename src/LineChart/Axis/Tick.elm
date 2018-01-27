@@ -79,6 +79,7 @@ float =
   Tick.float
 
 
+{-| -}
 custom : Properties msg -> Config msg
 custom =
   Tick.custom

@@ -8,7 +8,7 @@ module LineChart.Axis.Ticks exposing
 {-|
 
 # Quick start
-@docs Axis, int, time, float
+@docs Config, int, time, float
 
 # Customiztion
 @docs intCustom, timeCustom, floatCustom, custom

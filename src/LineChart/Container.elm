@@ -1,19 +1,16 @@
-module LineChart.Container exposing (Config, Margin, default)
+module LineChart.Container exposing (Config, Properties, Size, Margin, default, custom, relative, static)
 
 {-| -}
 
 import Html
 import Svg
+import Internal.Container as Container
 
 
 
-{-| TODO box -}
+{-| -}
 type alias Config msg =
-  { attributes : List (Html.Attribute msg)
-  , attributesSVG : List (Svg.Attribute msg)
-  , margin : Margin
-  , id : String
-  }
+  Container.Config msg
 
 
 {-| -}
@@ -27,9 +24,42 @@ type alias Margin =
 
 {-| -}
 default : String -> Config msg
-default id =
-  { attributes = []
-  , attributesSVG = []
-  , margin = Margin 150 150 150 150
-  , id = id
+default =
+  Container.default
+
+
+{-| -}
+type alias Properties msg =
+  { attributes : List (Html.Attribute msg)
+  , attributesSVG : List (Svg.Attribute msg)
+  , size : Container.Size
+  , margin : Margin
+  , id : String
   }
+
+
+{-| -}
+custom : Properties msg -> Config msg
+custom =
+  Container.custom
+
+
+
+-- SIZE
+
+
+{-| -}
+type alias Size =
+  Container.Size
+
+
+{-| -}
+relative : Size
+relative =
+  Container.relative
+
+
+{-| -}
+static : Size
+static =
+  Container.static

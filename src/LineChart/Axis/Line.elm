@@ -7,7 +7,7 @@ module LineChart.Axis.Line exposing
 {-|
 
 # Quick start
-@docs Line, default, none
+@docs Config, default, none
 
 # Configurations
 @docs full, rangeFrame
