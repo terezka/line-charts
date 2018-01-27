@@ -1,7 +1,7 @@
 module LineChart.Dots exposing
   ( Shape, none
   , circle, triangle, square, diamond, plus, cross
-  , Config, default, static, hoverable
+  , Config, default, static, custom, hoverOne
   , Style, bordered, disconnected, aura, full
   )
 
@@ -14,7 +14,7 @@ module LineChart.Dots exposing
 @docs Shape, circle, triangle, square, diamond, plus, cross
 
 # Customizing style
-@docs Config, default, static, hoverable
+@docs Config, default, static, custom, hoverOne
 
 ## Styles
 @docs Style, full, bordered, disconnected, aura
@@ -126,7 +126,7 @@ static =
 
     dotsConfig : Dot.Config Info
     dotsConfig =
-      Dot.hoverable
+      Dot.custom
         { normal = Dot.full 5
         , emphasized = Dot.aura 7 4 0.5
         , isEmphasized = isOverweight
@@ -137,14 +137,24 @@ static =
       bmi info > 25
 
 -}
-hoverable :
+custom :
   { normal : Style
   , hovered : Style
   , isHovered : data -> Bool
   }
   -> Config data
-hoverable =
-  Dot.hoverable
+custom =
+  Dot.custom
+
+
+{-| -}
+hoverOne : Maybe data -> Config data
+hoverOne hovering =
+  Dot.custom
+    { normal = disconnected 10 2
+    , hovered = aura 7 6 0.4
+    , isHovered = Just >> (==) hovering
+    }
 
 
 

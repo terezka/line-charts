@@ -96,7 +96,7 @@ view model =
           , ticks = Ticks.float 5
           }
     , container = Container.default "line-chart-1"
-    , interpolation = Interpolation.linear
+    , interpolation = Interpolation.stepped
     , intersection = Intersection.custom .min .min
     , legends = Legends.default
     , events = Events.hoverOne HoverSingle

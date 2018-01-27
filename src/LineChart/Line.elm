@@ -1,6 +1,6 @@
 module LineChart.Line exposing
   ( Config, default
-  , wider, custom
+  , wider, custom, hoverOne
   , Style, style
   )
 
@@ -10,7 +10,7 @@ module LineChart.Line exposing
 @docs default
 
 # Customizations
-@docs Config, wider, custom
+@docs Config, wider, custom, hoverOne
 
 # Styles
 @docs Style, style
@@ -43,6 +43,17 @@ wider =
 custom : (List data -> Style) -> Config data
 custom =
   Line.custom
+
+
+{-| -}
+hoverOne : Maybe data -> Config data
+hoverOne hovered =
+  custom <| \data ->
+    if List.any (Just >> (==) hovered) data then
+      style 2 identity
+    else
+      style 1 identity
+
 
 
 {-| -}

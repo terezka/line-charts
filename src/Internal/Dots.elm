@@ -1,5 +1,5 @@
 module Internal.Dots exposing
-  ( Config, default, static, hoverable
+  ( Config, default, static, custom
   , Shape(..)
   , Style, style, bordered, disconnected, aura, full
   , Variety
@@ -47,13 +47,13 @@ static style =
 
 
 {-| -}
-hoverable :
+custom :
   { normal : Style
   , hovered : Style
   , isHovered : data -> Bool
   }
   -> Config data
-hoverable =
+custom =
   Config
 
 
