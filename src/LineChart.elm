@@ -466,14 +466,16 @@ viewBoxAttribute { frame } =
 container : Config data msg -> Coordinate.System -> List (Html.Html msg) -> Html.Html msg -> Html.Html msg
 container config { frame } junkHtml plot  =
   let
+    userAttributes =
+      Container.properties config.container |> .attributes
+
     sizeStyles =
       Container.sizeStyles config.container frame.size.width frame.size.height
 
-    attributes =
-      [ Html.Attributes.style <| ( "position", "relative" ) :: sizeStyles ]
-      ++ (Container.properties config.container |> .attributes)
+    styles =
+      Html.Attributes.style <| ( "position", "relative" ) :: sizeStyles
   in
-  Html.div attributes (plot :: junkHtml)
+  Html.div (styles :: userAttributes) (plot :: junkHtml)
 
 
 chartAreaAttributes : Coordinate.System -> List (Svg.Attribute msg)
@@ -594,9 +596,10 @@ setY datum y =
 toSystem : Config data msg -> List (Data.Data data) -> Coordinate.System
 toSystem config data =
   let
+    container = Container.properties config.container
     hasArea = Area.hasArea config.area
     size   = Coordinate.Size (Axis.pixels config.x) (Axis.pixels config.y)
-    frame  = Coordinate.Frame (Container.properties config.container |> .margin) size
+    frame  = Coordinate.Frame container.margin size
     xRange = Coordinate.range (.point >> .x) data
     yRange = Coordinate.range (.point >> .y) data
 
@@ -606,7 +609,7 @@ toSystem config data =
       , y = adjustDomainRange yRange
       , xData = xRange
       , yData = yRange
-      , id = Container.properties config.container |> .id
+      , id = container.id
       }
 
     adjustDomainRange domain =
