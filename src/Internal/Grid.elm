@@ -17,7 +17,7 @@ import Color.Convert
 
 {-| -}
 type Config
-  = Dots Color.Color
+  = Dots Float Color.Color
   | Lines Float Color.Color
 
 
@@ -28,7 +28,7 @@ default =
 
 
 {-| -}
-dots : Color.Color -> Config
+dots : Float -> Color.Color -> Config
 dots =
   Dots
 
@@ -59,12 +59,12 @@ view system xAxis yAxis grid =
       if tick.grid then Just tick.position else Nothing
   in
   case grid of
-    Dots color        -> viewDots  system verticals horizontals color
+    Dots radius color -> viewDots  system verticals horizontals radius color
     Lines width color -> viewLines system verticals horizontals width color
 
 
-viewDots : Coordinate.System -> List Float -> List Float -> Color.Color -> List (Svg.Svg msg)
-viewDots system verticals horizontals color =
+viewDots : Coordinate.System -> List Float -> List Float -> Float -> Color.Color -> List (Svg.Svg msg)
+viewDots system verticals horizontals radius color =
   let
     dots =
       List.concatMap dots_ verticals
@@ -75,7 +75,7 @@ viewDots system verticals horizontals color =
     dot x y =
       Coordinate.toSvg system (Coordinate.Point x y)
   in
-  List.map (Svg.gridDot color) dots
+  List.map (Svg.gridDot radius color) dots
 
 
 viewLines : Coordinate.System -> List Float -> List Float -> Float -> Color.Color -> List (Svg.Svg msg)

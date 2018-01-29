@@ -56,12 +56,12 @@ import Color.Convert
 
 
 {-| -}
-gridDot : Color.Color -> Point -> Svg msg
-gridDot color point =
+gridDot : Float -> Color.Color -> Point -> Svg msg
+gridDot radius color point =
   Svg.circle
     [ Attributes.cx (toString point.x)
     , Attributes.cy (toString point.y)
-    , Attributes.r "1"
+    , Attributes.r (toString radius)
     , Attributes.fill (Color.Convert.colorToHex color)
     ]
     []

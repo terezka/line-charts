@@ -37,8 +37,8 @@ default =
 
 
 {-| Gets you a dots grid of a given color.
--} -- TODO add size?
-dots : Color.Color -> Config
+-}
+dots : Float -> Color.Color -> Config
 dots =
   Grid.dots
 

@@ -42,7 +42,7 @@ chart =
     , junk = Junk.default
     , grid =
         -- Try out these different configs!
-        Grid.dots Color.gray
+        Grid.dots 1 Color.gray
         -- Grid.lines 2 Color.lightGray
 
         -- Note: Where the lines show up is determined by the ticks.
