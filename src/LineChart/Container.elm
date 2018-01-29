@@ -41,7 +41,7 @@ responsive =
 {-| -}
 type alias Properties msg =
   { attributesHtml : List (Html.Attribute msg)
-  , attributesSVG : List (Svg.Attribute msg)
+  , attributesSvg : List (Svg.Attribute msg)
   , size : Container.Size
   , margin : Margin
   , id : String

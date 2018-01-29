@@ -41,8 +41,7 @@ import Internal.Utils as Utils
 import Color
 
 -- TODO
--- First tick should format as "changed" (for time)
--- SVG vs Svg
+-- Svg vs Svg
 
 
 
@@ -435,10 +434,9 @@ viewCustom config lines =
 
     attributes =
       List.concat
-        [ Container.properties config.container |> .attributesSVG
+        [ Container.properties config.container |> .attributesSvg
         , Events.toContainerAttributes dataAll system config.events
         , [ viewBoxAttribute system ]
-
         ]
   in
   container config system junk.html <|

@@ -1,10 +1,10 @@
 module LineChart.Coordinate exposing
   ( Frame, Size
   , System, Range
-  , Point, toSVG, toData
-  , toSVGX, toSVGY
+  , Point, toSvg, toData
+  , toSvgX, toSvgY
   , toDataX, toDataY
-  , scaleSVGX, scaleSVGY
+  , scaleSvgX, scaleSvgY
   , scaleDataX, scaleDataY
   )
 
@@ -19,10 +19,10 @@ module LineChart.Coordinate exposing
 # Translation
 
 ## Point
-@docs Point, toSVG, toData
+@docs Point, toSvg, toData
 
 ## Single value
-@docs toSVGX, toSVGY, toDataX, toDataY
+@docs toSvgX, toSvgY, toDataX, toDataY
 
 # Scaling
 Scaling is different from translating in that it does not take a position as
@@ -40,15 +40,15 @@ account, scaling doesn't.
     data =
       Point 2 3
 
-    dataXinSVG : Float
-    dataXinSVG =
-      toSVGX system data.x    -- 30 (margin.left + 2 * 100 / 10)
+    dataXinSvg : Float
+    dataXinSvg =
+      toSvgX system data.x    -- 30 (margin.left + 2 * 100 / 10)
 
-    dataXinSVG : Float
-    dataXinSVG =
-      scaleSVGX system data.x -- 20 (2 * 100 / 10)
+    dataXinSvg : Float
+    dataXinSvg =
+      scaleSvgX system data.x -- 20 (2 * 100 / 10)
 
-@docs scaleSVGX, scaleSVGY, scaleDataX, scaleDataY
+@docs scaleSvgX, scaleSvgY, scaleDataX, scaleDataY
 
 -}
 
@@ -110,16 +110,16 @@ type alias Range =
 
 {-| Translate a x-coordinate from cartesian to SVG.
 -}
-toSVGX : System -> Float -> Float
-toSVGX system value =
-  scaleSVGX system (value - system.x.min) + system.frame.margin.left
+toSvgX : System -> Float -> Float
+toSvgX system value =
+  scaleSvgX system (value - system.x.min) + system.frame.margin.left
 
 
 {-| Translate a y-coordinate from cartesian to SVG.
 -}
-toSVGY : System -> Float -> Float
-toSVGY system value =
-  scaleSVGY system (system.y.max - value) + system.frame.margin.top
+toSvgY : System -> Float -> Float
+toSvgY system value =
+  scaleSvgY system (system.y.max - value) + system.frame.margin.top
 
 
 {-| Translate a x-coordinate from SVG to cartesian.
@@ -142,15 +142,15 @@ toDataY system value =
 
 {-| Scale a x-value from cartesian to SVG.
 -}
-scaleSVGX : System -> Float -> Float
-scaleSVGX system value =
+scaleSvgX : System -> Float -> Float
+scaleSvgX system value =
   value * (lengthX system) / (reachX system)
 
 
 {-| Scale a y-value from cartesian to SVG.
 -}
-scaleSVGY : System -> Float -> Float
-scaleSVGY system value =
+scaleSvgY : System -> Float -> Float
+scaleSvgY system value =
   value * (lengthY system) / (reachY system)
 
 
@@ -181,10 +181,10 @@ type alias Point =
 
 {-| Translates a data point to a SVG point.
 -}
-toSVG : System -> Point -> Point
-toSVG system point =
-  { x = toSVGX system point.x
-  , y = toSVGY system point.y
+toSvg : System -> Point -> Point
+toSvg system point =
+  { x = toSvgX system point.x
+  , y = toSvgY system point.y
   }
 
 

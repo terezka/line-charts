@@ -1,7 +1,7 @@
 module LineChart.Events exposing
   ( Config, default, hover, hoverOne, click, custom
   , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
-  , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
+  , Decoder, getSvg, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
   )
 
@@ -17,7 +17,7 @@ module LineChart.Events exposing
 @docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
 
 ## Decoders
-@docs Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
+@docs Decoder, getSvg, getData, getNearest, getNearestX, getWithin, getWithinX
 
 ### Maps
 
@@ -25,7 +25,7 @@ module LineChart.Events exposing
     events =
       Events.custom
         [ Events.onMouseMove Hover <|
-            Events.map2 (,) Events.getNearest Events.getSVG
+            Events.map2 (,) Events.getNearest Events.getSvg
         ]
 
 @docs map, map2, map3
@@ -145,9 +145,9 @@ type alias Decoder data msg =
 
 {-| Get the SVG coordinates of the event.
 -}
-getSVG : Decoder data Coordinate.Point
-getSVG =
-  Events.getSVG
+getSvg : Decoder data Coordinate.Point
+getSvg =
+  Events.getSvg
 
 
 {-| Get the data coordinates of the event.

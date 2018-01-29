@@ -85,7 +85,7 @@ type alias Layers msg =
 
 
 {-| Here is where you start producing your junk. You have the `System`
-available, meaning you can translate your charts coordinates into SVG
+available, meaning you can translate your charts coordinates into Svg
 coordinates and move things around easily. You add your elements to the "layer"
 you want in the resulting `Layers` type. Here's an example of adding grid LineChart.
 

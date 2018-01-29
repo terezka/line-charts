@@ -160,10 +160,10 @@ xTick system height userAttributes y x =
       concat
         [ Attributes.stroke (Color.Convert.colorToHex Colors.gray) ]
         userAttributes
-        [ Attributes.x1 <| toString (toSVGX system x)
-        , Attributes.x2 <| toString (toSVGX system x)
-        , Attributes.y1 <| toString (toSVGY system y)
-        , Attributes.y2 <| toString (toSVGY system y + height)
+        [ Attributes.x1 <| toString (toSvgX system x)
+        , Attributes.x2 <| toString (toSvgX system x)
+        , Attributes.y1 <| toString (toSvgY system y)
+        , Attributes.y2 <| toString (toSvgY system y + height)
         ]
   in
     Svg.line attributes []
@@ -179,10 +179,10 @@ yTick system width userAttributes x y =
         , Attributes.stroke (Color.Convert.colorToHex Colors.gray)
         ]
         userAttributes
-        [ Attributes.x1 <| toString (toSVGX system x)
-        , Attributes.x2 <| toString (toSVGX system x - width)
-        , Attributes.y1 <| toString (toSVGY system y)
-        , Attributes.y2 <| toString (toSVGY system y)
+        [ Attributes.x1 <| toString (toSvgX system x)
+        , Attributes.x2 <| toString (toSvgX system x - width)
+        , Attributes.y1 <| toString (toSvgY system y)
+        , Attributes.y2 <| toString (toSvgY system y)
         ]
   in
     Svg.line attributes []
@@ -237,7 +237,7 @@ type Transfrom =
 {-| -}
 move : Coordinate.System -> Float -> Float -> Transfrom
 move system x y =
-  Transfrom (toSVGX system x) (toSVGY system y)
+  Transfrom (toSvgX system x) (toSvgY system y)
 
 
 {-| -}

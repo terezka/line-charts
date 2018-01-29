@@ -73,7 +73,7 @@ viewDots system verticals horizontals color =
       List.map (dot g) horizontals
 
     dot x y =
-      Coordinate.toSVG system (Coordinate.Point x y)
+      Coordinate.toSvg system (Coordinate.Point x y)
   in
   List.map (Svg.gridDot color) dots
 

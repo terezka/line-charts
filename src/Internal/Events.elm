@@ -1,7 +1,7 @@
 module Internal.Events exposing
     ( Config, default, hover, hoverOne, click, custom
     , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
-    , Decoder, getSVG, getData, getNearest, getNearestX, getWithin, getWithinX
+    , Decoder, getSvg, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
     -- INTERNAL
     , toChartAttributes
@@ -150,8 +150,8 @@ type Decoder data msg =
 
 
 {-| -}
-getSVG : Decoder data Point
-getSVG =
+getSvg : Decoder data Point
+getSvg =
   Decoder <| \points system searched ->
     searched
 
@@ -285,12 +285,12 @@ getNearestXHelp points system searched =
 
 distanceX : System -> Point -> Point -> Float
 distanceX system searched dot =
-    abs <| toSVGX system dot.x - toSVGX system searched.x
+    abs <| toSvgX system dot.x - toSvgX system searched.x
 
 
 distanceY : System -> Point -> Point -> Float
 distanceY system searched dot =
-    abs <| toSVGY system dot.y - toSVGY system searched.y
+    abs <| toSvgY system dot.y - toSvgY system searched.y
 
 
 distance : System -> Point -> Point -> Float

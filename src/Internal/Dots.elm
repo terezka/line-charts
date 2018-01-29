@@ -171,7 +171,7 @@ viewSample (Config config) shape color system data =
 viewShape : Coordinate.System -> StyleConfig -> Shape -> Color.Color -> Point -> Svg msg
 viewShape system { radius, variety } shape color point =
   let size = 2 * pi * radius
-      pointSVG = toSVG system point
+      pointSvg = toSvg system point
       view =
         case shape of
           Circle   -> viewCircle
@@ -182,7 +182,7 @@ viewShape system { radius, variety } shape color point =
           Plus     -> viewPlus
           None     -> \_ _ _ _ _ -> Svg.text ""
   in
-  view [] variety color size pointSVG
+  view [] variety color size pointSvg
 
 
 

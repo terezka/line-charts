@@ -20,7 +20,7 @@ type Config msg =
 {-| -}
 type alias Properties msg =
   { attributesHtml : List (Html.Attribute msg)
-  , attributesSVG : List (Svg.Attribute msg)
+  , attributesSvg : List (Svg.Attribute msg)
   , size : Size
   , margin : Margin
   , id : String
@@ -47,7 +47,7 @@ default : String -> Config msg
 default id =
   custom
     { attributesHtml = []
-    , attributesSVG = []
+    , attributesSvg = []
     , size = static
     , margin = Margin 60 140 60 80
     , id = id
@@ -59,7 +59,7 @@ responsive : String -> Config msg
 responsive id =
   custom
     { attributesHtml = []
-    , attributesSVG = []
+    , attributesSvg = []
     , size = relative
     , margin = Margin 60 140 60 80
     , id = id
