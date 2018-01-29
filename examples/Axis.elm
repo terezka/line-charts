@@ -205,7 +205,7 @@ customFormatChange info =
     Tick.Year        -> "new y!"
 
 
-customTicks : Ticks.Config data msg
+customTicks : Ticks.Config msg
 customTicks =
   Ticks.custom <| \dataRange range ->
     List.map Tick.float [ 20, 23, 25, 28 ]

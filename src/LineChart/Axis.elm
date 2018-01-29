@@ -57,7 +57,7 @@ type alias Properties data msg =
   , pixels : Int
   , range : Range.Config
   , axisLine : AxisLine.Config msg
-  , ticks : Ticks.Config data msg
+  , ticks : Ticks.Config msg
   }
 
 

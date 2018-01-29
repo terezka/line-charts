@@ -26,8 +26,8 @@ import LineChart.Axis.Tick as Tick
 
 
 {-| -}
-type alias Config data msg =
-  Ticks.Config data msg
+type alias Config msg =
+  Ticks.Config msg
 
 
 {-| -}
@@ -40,43 +40,43 @@ type alias Amount =
 
 
 {-| -}
-int : Int -> Config data msg
+int : Int -> Config msg
 int =
    Ticks.int
 
 
 {-| -}
-time : Int -> Config data msg
+time : Int -> Config msg
 time =
    Ticks.time
 
 
 {-| -}
-float : Int -> Config data msg
+float : Int -> Config msg
 float =
    Ticks.float
 
 
 {-| -}
-intCustom : Int -> (Int -> Tick.Config msg) -> Config data msg
+intCustom : Int -> (Int -> Tick.Config msg) -> Config msg
 intCustom =
   Ticks.intCustom
 
 
 {-| -}
-floatCustom : Int -> (Float -> Tick.Config msg) -> Config data msg
+floatCustom : Int -> (Float -> Tick.Config msg) -> Config msg
 floatCustom =
   Ticks.floatCustom
 
 
 {-| -}
-timeCustom : Int -> (Tick.Time -> Tick.Config msg) -> Config data msg
+timeCustom : Int -> (Tick.Time -> Tick.Config msg) -> Config msg
 timeCustom =
   Ticks.timeCustom
 
 
 {-| -}
-custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Config msg)) -> Config data msg
+custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Config msg)) -> Config msg
 custom =
   Ticks.custom
 

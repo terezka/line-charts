@@ -18,8 +18,8 @@ import Internal.Axis.Values as Values
 -- AXIS
 
 
-{-| TODO why does this now warn me about the unused data type? -}
-type Config data msg
+{-| -}
+type Config msg
   = Config (Coordinate.Range -> Coordinate.Range -> List (Tick.Config msg))
 
 
@@ -28,19 +28,19 @@ type Config data msg
 
 
 {-| -}
-int : Int -> Config data msg
+int : Int -> Config msg
 int amount =
   intCustom amount Tick.int
 
 
 {-| -}
-float : Int -> Config data msg
+float : Int -> Config msg
 float amount =
   floatCustom amount Tick.float
 
 
 {-| -}
-time : Int -> Config data msg
+time : Int -> Config msg
 time amount =
   timeCustom amount Tick.time
 
@@ -50,21 +50,21 @@ time amount =
 
 
 {-| -}
-intCustom : Int -> (Int -> Tick.Config msg) -> Config data msg
+intCustom : Int -> (Int -> Tick.Config msg) -> Config msg
 intCustom amount tick =
   custom <| \data range ->
     List.map tick <| Values.int (Values.around amount) (Coordinate.smallestRange data range)
 
 
 {-| -}
-floatCustom : Int -> (Float -> Tick.Config msg) -> Config data msg
+floatCustom : Int -> (Float -> Tick.Config msg) -> Config msg
 floatCustom amount tick =
   custom <| \data range ->
     List.map tick <| Values.float (Values.around amount) (Coordinate.smallestRange data range)
 
 
 {-| -}
-timeCustom : Int -> (Tick.Time -> Tick.Config msg) -> Config data msg
+timeCustom : Int -> (Tick.Time -> Tick.Config msg) -> Config msg
 timeCustom amount tick =
   custom <| \data range ->
     List.map tick <| Values.time amount (Coordinate.smallestRange data range)
@@ -75,7 +75,7 @@ timeCustom amount tick =
 
 
 {-| -}
-custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Config msg)) -> Config data msg
+custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Config msg)) -> Config msg
 custom =
   Config
 
@@ -84,6 +84,6 @@ custom =
 -- INTERNAL
 
 
-ticks : Coordinate.Range -> Coordinate.Range -> Config data msg -> List (Tick.Properties msg)
+ticks : Coordinate.Range -> Coordinate.Range -> Config msg -> List (Tick.Properties msg)
 ticks dataRange range (Config values) =
   List.map Internal.Axis.Tick.properties <| values dataRange range

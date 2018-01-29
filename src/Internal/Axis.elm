@@ -34,7 +34,7 @@ type alias Properties data msg =
   , pixels : Int
   , range : Range.Config
   , axisLine : AxisLine.Config msg
-  , ticks : Ticks.Config data msg
+  , ticks : Ticks.Config msg
   }
 
 
@@ -124,7 +124,7 @@ range (Config config) =
 
 
 {-| -}
-ticks : Config data msg -> Ticks.Config data msg
+ticks : Config data msg -> Ticks.Config msg
 ticks (Config config) =
   config.ticks
 
