@@ -1,4 +1,4 @@
-module CustomLines exposing (main)
+module Dots exposing (main)
 
 
 import Html

@@ -1,4 +1,4 @@
-module Container exposing (main)
+module Axis exposing (main)
 
 
 import Html
@@ -138,7 +138,6 @@ customLabel position =
       ]
       []
     ]
-
 
 
 customIntTick : Int -> Tick.Config msg

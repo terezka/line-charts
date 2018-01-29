@@ -1,4 +1,4 @@
-module HintExample exposing (main)
+module Hint exposing (main)
 
 import Html exposing (Html, div, h1, node, p, text)
 import Svg exposing (Attribute, Svg, g, text_, tspan)

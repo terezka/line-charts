@@ -1,4 +1,4 @@
-module Intersection exposing (main)
+module Interpolation exposing (main)
 
 
 import Html

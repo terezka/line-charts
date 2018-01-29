@@ -1,4 +1,4 @@
-module CustomLines exposing (main)
+module Grid exposing (main)
 
 
 import Html

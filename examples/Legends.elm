@@ -1,4 +1,4 @@
-module CustomLines exposing (main)
+module Legends exposing (main)
 
 
 import Html

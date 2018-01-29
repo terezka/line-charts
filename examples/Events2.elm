@@ -1,4 +1,4 @@
-module Events exposing (main)
+module Events2 exposing (main)
 
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
