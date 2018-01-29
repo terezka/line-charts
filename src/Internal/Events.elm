@@ -175,7 +175,7 @@ getNearest =
       |> Maybe.map .user
 
 
-{-| TODO get _nearest_ within? -}
+{-| -}
 getWithin : Float -> Decoder data (Maybe data)
 getWithin radius =
   Decoder <| \points system searchedSvg ->
