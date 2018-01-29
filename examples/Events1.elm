@@ -17,6 +17,7 @@ import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
 import Color
+import Color.Manipulate
 
 
 
@@ -81,13 +82,41 @@ chart model =
     , junk = Junk.default
     , grid = Grid.default
     , area = Area.default
-    , line = Line.hoverOne model.hovering
-    , dots = Dots.hoverOne model.hovering
+    , line =
+        Line.hoverOne model.hovering
+        -- customLineHover model.hovering
+    , dots =
+        Dots.hoverOne model.hovering
+        -- customDotHover model.hovering
     }
     [ LineChart.line Color.orange Dots.triangle "Chuck" chuck
     , LineChart.line Color.yellow Dots.circle "Bob" bob
     , LineChart.line Color.purple Dots.diamond "Alice" alice
     ]
+
+
+customLineHover : Maybe Info -> Line.Config Info
+customLineHover maybeHovered =
+  Line.custom <| \data ->
+    case maybeHovered of
+      Just hovered ->
+        if List.any ((==) hovered) data then
+          Line.style 2 identity
+        else
+          Line.style 1 (Color.Manipulate.lighten 0.3)
+
+      Nothing ->
+        Line.style 1 identity
+
+
+
+customDotHover : Maybe Info -> Dots.Config Info
+customDotHover maybeHovered =
+  Dots.hoverable
+    { normal = Dots.bordered 8 1
+    , hovered = Dots.full 10
+    , isHovered = Just >> (==) maybeHovered
+    }
 
 
 

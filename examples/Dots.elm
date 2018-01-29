@@ -46,9 +46,9 @@ chart =
     , dots =
         -- Try out these different configs!
         -- Dots.default
-        -- Dots.static (Dots.full 10)
-        -- Dots.static (Dots.aura 7 7 0.2) -- This one's good for hovers!
-        Dots.static (Dots.bordered 10 1)
+        Dots.static (Dots.full 10)
+        -- Dots.static (Dots.aura 7 7 0.2)
+        -- Dots.static (Dots.bordered 10 1)
         -- For making the dots change based on whether it's hovered, see Events.elm!
     }
     [ LineChart.line Color.red Dots.diamond "Alice" alice

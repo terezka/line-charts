@@ -1,7 +1,7 @@
 module LineChart.Dots exposing
   ( Shape, none
   , circle, triangle, square, diamond, plus, cross
-  , Config, default, static, custom, hoverOne, hoverMany
+  , Config, default, static, hoverable, hoverOne, hoverMany
   , Style, bordered, disconnected, aura, full
   )
 
@@ -14,7 +14,7 @@ module LineChart.Dots exposing
 @docs Shape, circle, triangle, square, diamond, plus, cross
 
 # Customizing style
-@docs Config, default, static, custom, hoverOne, hoverMany
+@docs Config, default, static, hoverable, hoverOne, hoverMany
 
 ## Styles
 @docs Style, full, bordered, disconnected, aura
@@ -126,10 +126,10 @@ static =
 
     dotsConfig : Dot.Config Info
     dotsConfig =
-      Dot.custom
+      Dot.hoverable
         { normal = Dot.full 5
-        , emphasized = Dot.aura 7 4 0.5
-        , isEmphasized = isOverweight
+        , hovered = Dot.aura 7 4 0.5
+        , isHovered = isOverweight
         }
 
     isOverweight : Info -> Bool
@@ -137,20 +137,20 @@ static =
       bmi info > 25
 
 -}
-custom :
+hoverable :
   { normal : Style
   , hovered : Style
   , isHovered : data -> Bool
   }
   -> Config data
-custom =
-  Dot.custom
+hoverable =
+  Dot.hoverable
 
 
 {-| -}
 hoverOne : Maybe data -> Config data
 hoverOne hovering =
-  Dot.custom
+  Dot.hoverable
     { normal = disconnected 10 2
     , hovered = aura 7 6 0.4
     , isHovered = Just >> (==) hovering
@@ -160,7 +160,7 @@ hoverOne hovering =
 {-| -}
 hoverMany : List data -> Config data
 hoverMany hovering =
-  Dot.custom
+  Dot.hoverable
     { normal = disconnected 10 2
     , hovered = aura 7 6 0.4
     , isHovered = \data -> List.any ((==) data) hovering
