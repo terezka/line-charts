@@ -40,9 +40,6 @@ import Internal.Line as Line
 import Internal.Utils as Utils
 import Color
 
--- TODO
--- Svg vs Svg
-
 
 
 -- VIEW / SIMPLE
