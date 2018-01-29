@@ -1,16 +1,16 @@
-module Junk exposing (main)
+module Intersection exposing (main)
 
-import Html exposing (Html, div, h1, node, p, text)
+
+import Html
 import Html.Attributes exposing (class)
-import Svg exposing (Attribute, Svg, g, text_, tspan)
-import Svg.Attributes as SvgA
+import LineChart
+import LineChart.Dots as Dots
 import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
-import LineChart.Coordinate as Coordinate
 import LineChart.Axis as Axis
 import LineChart.Legends as Legends
 import LineChart.Line as Line
@@ -35,63 +35,25 @@ chart =
     , x = Axis.default 700 "Age" .age
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
-    , intersection = Intersection.default
+    , intersection =
+        -- Try out these different configs!
+        -- Intersection.default
+        -- Intersection.at 25 60
+        Intersection.custom .max .min
+
+        -- Note: Want to swap the direction of the ticks? Checkout out Axis.elm!
     , legends = Legends.default
     , events = Events.default
-    , junk = Junk.custom junk -- Junk goes here!
+    , junk = Junk.default
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.orange Dots.triangle "Chuck" chuck
-    , LineChart.line Color.yellow Dots.circle "Bob" bob
-    , LineChart.line Color.purple Dots.diamond "Alice" alice
+    [ LineChart.line Color.green Dots.triangle "Chuck" chuck
+    , LineChart.line Color.blue Dots.circle "Bob" bob
+    , LineChart.line Color.red Dots.diamond "Alice" alice
     ]
-
-
-junk : Coordinate.System -> Junk.Layers msg
-junk system =
-  { below = [ sectionBand system, picassoQuote system ]
-  , above = [ picassoImage system ]
-  , html = []
-  }
-
-
-picassoImage : Coordinate.System -> Svg msg
-picassoImage system =
-  let
-    x =
-      10 + Coordinate.toSVGX system system.x.max
-
-    y =
-      70 + Coordinate.toSVGY system system.y.max
-  in
-  Svg.image
-    [ SvgA.xlinkHref picassoImageLink
-    , SvgA.x (toString x)
-    , SvgA.y (toString y)
-    , SvgA.height "100px"
-    , SvgA.width "100px"
-    ]
-    []
-
-
-picassoImageLink : String
-picassoImageLink =
-  "https://s-media-cache-ak0.pinimg.com/originals/fe/a5/51/fea551e5d80a2472b6623fcfb308f661.jpg"
-
-
-picassoQuote : Coordinate.System -> Svg msg
-picassoQuote system =
-  Svg.g
-    [ Junk.transform [ Junk.move system 15 70 ] ]
-    [ Junk.label Color.black "Computers are useless. They only give you answers." ]
-
-
-sectionBand : Coordinate.System -> Svg msg
-sectionBand system =
-  Junk.rectangle system [ SvgA.fill "#b6b6b61a" ] 30 40 system.y.min system.y.max
 
 
 

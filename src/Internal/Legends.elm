@@ -58,7 +58,7 @@ default =
 {-| -}
 hover : List data -> Config data msg
 hover data =
-  Grouped 30 (defaultLegends .max .max data)
+  Grouped 30 (defaultLegends .max .max 0 10 data)
 
 
 {-| -}
@@ -88,9 +88,9 @@ byBeginning =
 
 
 {-| -}
-grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Config data msg
-grouped toX toY =
-  Grouped 30 (defaultLegends toX toY [])
+grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Float -> Float -> Config data msg
+grouped toX toY offsetX offsetY =
+  Grouped 30 (defaultLegends toX toY offsetX offsetY [])
 
 
 {-| -}
@@ -212,44 +212,26 @@ viewSample { system, lineConfig, dotsConfig, area } sampleWidth line data =
 defaultLegends
   :  (Coordinate.Range -> Float)
   -> (Coordinate.Range -> Float)
+  -> Float
+  -> Float
   -> List data
   -> Arguments data msg
   -> Coordinate.System
   -> List (Legend msg)
   -> Svg msg
-defaultLegends toX toY hovered arguments system legends =
-  let
-    viewLegends =
-      Utils.indexedMap2 (defaultLegend arguments hovered)
-  in
+defaultLegends toX toY offsetX offsetY hovered arguments system legends =
   Svg.g
     [ Attributes.class "chart__legends"
     , Svg.transform
         [ Svg.move system (toX system.x) (toY system.y)
-        , Svg.offset 0 10
+        , Svg.offset offsetX offsetY
         ]
     ]
-    (viewLegends legends arguments.data)
+    (List.indexedMap defaultLegend legends)
 
 
-defaultLegend : Arguments data msg -> List data -> Int -> Legend msg -> List (Data.Data data) -> Svg msg
-defaultLegend arguments hovered index { sample, label } data =
-  let
-    hoveredData =
-      List.map .user data
-        |> List.filter (flip List.member hovered)
-        |> List.head
-
-    hoveredText =
-      case hoveredData of
-        Nothing    -> ""
-        Just value -> printYValue value
-
-    printYValue value =
-      case arguments.y value of
-        Nothing    -> ": Unknown"
-        Just value -> ": " ++ toString value
-  in
+defaultLegend : Int -> Legend msg -> Svg msg
+defaultLegend index { sample, label } =
    Svg.g
     [ Attributes.class "chart__legend"
     , Svg.transform [ Svg.offset 20 (toFloat index * 20) ]
@@ -257,5 +239,5 @@ defaultLegend arguments hovered index { sample, label } data =
     [ sample
     , Svg.g
         [ Svg.transform [ Svg.offset 40 4 ] ]
-        [ Svg.label "inherit" (label ++ hoveredText) ]
+        [ Svg.label "inherit" label ]
     ]

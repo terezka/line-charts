@@ -1,16 +1,19 @@
-module Junk exposing (main)
+module CustomLines exposing (main)
 
-import Html exposing (Html, div, h1, node, p, text)
+
+import Html
 import Html.Attributes exposing (class)
-import Svg exposing (Attribute, Svg, g, text_, tspan)
+import Svg
 import Svg.Attributes as SvgA
+import LineChart
+import LineChart.Dots as Dots
 import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
 import LineChart.Container as Container
+import LineChart.Coordinate as Coordinate
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
-import LineChart.Coordinate as Coordinate
 import LineChart.Axis as Axis
 import LineChart.Legends as Legends
 import LineChart.Line as Line
@@ -36,62 +39,52 @@ chart =
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
     , intersection = Intersection.default
-    , legends = Legends.default
+    , legends =
+        -- Try out these different configs!
+        -- Legends.default
+        Legends.byEnding (Junk.label Color.black)
+        -- Legends.byBeginning (Junk.label Color.black)
+        -- Legends.grouped .max .min 0 -60 -- Argsuments: x-coordinate y-coordinate x-offset y-offset
+        -- Legends.groupedCustom 30 viewLegends
+        -- Legends.groupedCustom 20 viewLegends
     , events = Events.default
-    , junk = Junk.custom junk -- Junk goes here!
+    , junk = Junk.default
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.orange Dots.triangle "Chuck" chuck
-    , LineChart.line Color.yellow Dots.circle "Bob" bob
-    , LineChart.line Color.purple Dots.diamond "Alice" alice
+    [ LineChart.line Color.yellow Dots.triangle "Chuck" chuck
+    , LineChart.line Color.brown Dots.circle    "Bobby" bob
+    , LineChart.line Color.orange Dots.diamond  "Alice" alice
     ]
 
 
-junk : Coordinate.System -> Junk.Layers msg
-junk system =
-  { below = [ sectionBand system, picassoQuote system ]
-  , above = [ picassoImage system ]
-  , html = []
-  }
-
-
-picassoImage : Coordinate.System -> Svg msg
-picassoImage system =
-  let
-    x =
-      10 + Coordinate.toSVGX system system.x.max
-
-    y =
-      70 + Coordinate.toSVGY system system.y.max
-  in
-  Svg.image
-    [ SvgA.xlinkHref picassoImageLink
-    , SvgA.x (toString x)
-    , SvgA.y (toString y)
-    , SvgA.height "100px"
-    , SvgA.width "100px"
-    ]
-    []
-
-
-picassoImageLink : String
-picassoImageLink =
-  "https://s-media-cache-ak0.pinimg.com/originals/fe/a5/51/fea551e5d80a2472b6623fcfb308f661.jpg"
-
-
-picassoQuote : Coordinate.System -> Svg msg
-picassoQuote system =
+viewLegends : Coordinate.System -> List (Legends.Legend msg) -> Svg.Svg msg
+viewLegends system legends =
   Svg.g
-    [ Junk.transform [ Junk.move system 15 70 ] ]
-    [ Junk.label Color.black "Computers are useless. They only give you answers." ]
+    [ SvgA.class "chart__legends"
+    , Junk.transform
+        [ Junk.move system system.x.min system.y.min
+        , Junk.offset 20 20
+        ]
+    ]
+    (List.indexedMap viewLegend legends)
 
 
-sectionBand : Coordinate.System -> Svg msg
-sectionBand system =
-  Junk.rectangle system [ SvgA.fill "#b6b6b61a" ] 30 40 system.y.min system.y.max
+viewLegend : Int -> Legends.Legend msg -> Svg.Svg msg
+viewLegend index { sample, label } =
+   Svg.g
+    [ SvgA.class "chart__legend"
+    , Junk.transform [ Junk.offset (toFloat index * 100) 20 ]
+    ]
+    [ sample
+    , Svg.g
+        [ Junk.transform [ Junk.offset 40 4 ] ]
+        [ Junk.label Color.black label ]
+    ]
+
+
 
 
 

@@ -1,16 +1,14 @@
-module Junk exposing (main)
+module Events exposing (main)
 
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
 import Svg exposing (Attribute, Svg, g, text_, tspan)
-import Svg.Attributes as SvgA
 import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
-import LineChart.Coordinate as Coordinate
 import LineChart.Axis as Axis
 import LineChart.Legends as Legends
 import LineChart.Line as Line
@@ -21,15 +19,57 @@ import LineChart.Area as Area
 import Color
 
 
-main : Html.Html msg
+
+main : Program Never Model Msg
 main =
+  Html.beginnerProgram
+    { model = init
+    , update = update
+    , view = view
+    }
+
+
+
+-- MODEL
+
+
+type alias Model =
+    { hovering : Maybe Info }
+
+
+init : Model
+init =
+    { hovering = Nothing }
+
+
+
+-- UPDATE
+
+
+type Msg
+  = Hover (Maybe Info)
+
+
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
+    Hover hovering ->
+      { model | hovering = hovering }
+
+
+
+-- VIEW
+
+
+view : Model -> Svg Msg
+view model =
   Html.div
     [ class "container" ]
-    [ chart ]
+    [ chart model ]
 
 
-chart : Html.Html msg
-chart =
+chart : Model -> Html.Html Msg
+chart model =
   LineChart.viewCustom
     { y = Axis.default 450 "Weight" .weight
     , x = Axis.default 700 "Age" .age
@@ -37,61 +77,21 @@ chart =
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
-    , events = Events.default
-    , junk = Junk.custom junk -- Junk goes here!
+    , events =
+        Events.custom
+          [ Events.onMouseMove Hover Events.getNearest
+          , Events.onMouseLeave (Hover Nothing)
+          ]
+    , junk = Junk.default
     , grid = Grid.default
     , area = Area.default
-    , line = Line.default
-    , dots = Dots.default
+    , line = Line.hoverOne model.hovering
+    , dots = Dots.hoverOne model.hovering
     }
     [ LineChart.line Color.orange Dots.triangle "Chuck" chuck
     , LineChart.line Color.yellow Dots.circle "Bob" bob
     , LineChart.line Color.purple Dots.diamond "Alice" alice
     ]
-
-
-junk : Coordinate.System -> Junk.Layers msg
-junk system =
-  { below = [ sectionBand system, picassoQuote system ]
-  , above = [ picassoImage system ]
-  , html = []
-  }
-
-
-picassoImage : Coordinate.System -> Svg msg
-picassoImage system =
-  let
-    x =
-      10 + Coordinate.toSVGX system system.x.max
-
-    y =
-      70 + Coordinate.toSVGY system system.y.max
-  in
-  Svg.image
-    [ SvgA.xlinkHref picassoImageLink
-    , SvgA.x (toString x)
-    , SvgA.y (toString y)
-    , SvgA.height "100px"
-    , SvgA.width "100px"
-    ]
-    []
-
-
-picassoImageLink : String
-picassoImageLink =
-  "https://s-media-cache-ak0.pinimg.com/originals/fe/a5/51/fea551e5d80a2472b6623fcfb308f661.jpg"
-
-
-picassoQuote : Coordinate.System -> Svg msg
-picassoQuote system =
-  Svg.g
-    [ Junk.transform [ Junk.move system 15 70 ] ]
-    [ Junk.label Color.black "Computers are useless. They only give you answers." ]
-
-
-sectionBand : Coordinate.System -> Svg msg
-sectionBand system =
-  Junk.rectangle system [ SvgA.fill "#b6b6b61a" ] 30 40 system.y.min system.y.max
 
 
 

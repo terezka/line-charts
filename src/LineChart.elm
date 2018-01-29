@@ -41,7 +41,10 @@ import Internal.Utils as Utils
 import Color
 
 -- TODO
--- viewport instead of height / width
+-- investigate title placing
+-- First tick should format as "changed" (for time)
+-- Move x title up
+-- SVG vs Svg
 
 
 
@@ -467,7 +470,7 @@ container : Config data msg -> Coordinate.System -> List (Html.Html msg) -> Html
 container config { frame } junkHtml plot  =
   let
     userAttributes =
-      Container.properties config.container |> .attributes
+      Container.properties config.container |> .attributesHtml
 
     sizeStyles =
       Container.sizeStyles config.container frame.size.width frame.size.height

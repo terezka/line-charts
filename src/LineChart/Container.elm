@@ -1,4 +1,8 @@
-module LineChart.Container exposing (Config, Properties, Size, Margin, default, custom, relative, static)
+module LineChart.Container exposing
+  ( Config, Properties, Size, Margin
+  , default, responsive, custom
+  , relative, static
+  )
 
 {-| -}
 
@@ -29,8 +33,14 @@ default =
 
 
 {-| -}
+responsive : String -> Config msg
+responsive =
+  Container.responsive
+
+
+{-| -}
 type alias Properties msg =
-  { attributes : List (Html.Attribute msg)
+  { attributesHtml : List (Html.Attribute msg)
   , attributesSVG : List (Svg.Attribute msg)
   , size : Container.Size
   , margin : Margin

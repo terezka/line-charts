@@ -104,7 +104,7 @@ the respective axes.
       }
 
 -}
-grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Config data msg
+grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Float -> Float -> Config data msg
 grouped =
   Legends.grouped
 

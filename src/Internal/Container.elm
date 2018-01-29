@@ -1,6 +1,6 @@
 module Internal.Container exposing
   ( Config, Properties, Size, Margin
-  , default, custom
+  , default, responsive, custom
   , relative, static
   , properties, sizeStyles
   )
@@ -19,7 +19,7 @@ type Config msg =
 
 {-| -}
 type alias Properties msg =
-  { attributes : List (Html.Attribute msg)
+  { attributesHtml : List (Html.Attribute msg)
   , attributesSVG : List (Svg.Attribute msg)
   , size : Size
   , margin : Margin
@@ -46,10 +46,22 @@ type alias Margin =
 default : String -> Config msg
 default id =
   custom
-    { attributes = []
+    { attributesHtml = []
     , attributesSVG = []
     , size = static
-    , margin = Margin 20 140 40 80
+    , margin = Margin 20 140 60 80
+    , id = id
+    }
+
+
+{-| -}
+responsive : String -> Config msg
+responsive id =
+  custom
+    { attributesHtml = []
+    , attributesSVG = []
+    , size = relative
+    , margin = Margin 20 140 60 80
     , id = id
     }
 
