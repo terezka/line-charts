@@ -107,6 +107,7 @@ type alias Time =
   { change : Maybe Unit
   , interval : Interval
   , timestamp : Float
+  , isFirst : Bool
   }
 
 
@@ -137,10 +138,13 @@ time time =
 
 {-| -}
 format : Time -> String
-format { change, interval, timestamp } =
-  case change of
-    Just change -> formatBold change timestamp
-    Nothing     -> formatNorm interval.unit timestamp
+format { change, interval, timestamp, isFirst } =
+  if isFirst then
+    formatBold (nextUnit interval.unit) timestamp
+  else
+    case change of
+      Just change -> formatBold change timestamp
+      Nothing     -> formatNorm interval.unit timestamp
 
 
 
@@ -173,3 +177,16 @@ formatBold unit =
       Week        -> Date.toFormattedString "'Week' w"
       Month       -> Date.Format.format "%b"
       Year        -> Date.Format.format "%Y"
+
+
+nextUnit : Unit -> Unit
+nextUnit unit =
+  case unit of
+    Millisecond -> Second
+    Second      -> Minute
+    Minute      -> Hour
+    Hour        -> Day
+    Day         -> Week
+    Week        -> Month
+    Month       -> Year
+    Year        -> Year

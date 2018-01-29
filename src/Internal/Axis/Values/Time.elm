@@ -37,23 +37,29 @@ values amountRough range =
       let next_ = next beginning unit (i * multiple) in
       if next_ > range.max then acc else toPositions (acc ++ [ next_ ]) (i + 1)
 
-    toTime unitChange value =
-      { change = unitChange
-      , interval = Interval unit multiple
-      , timestamp = value
-      }
-
     toTimes values unitChange acc =
       case values of
         value :: next :: rest ->
-          toTime unitChange value :: acc
-            |> toTimes (next :: rest) (getUnitChange unit value next)
+          let
+            isFirst = List.isEmpty acc
+            newAcc = toTime unitChange value isFirst :: acc
+            newUnitChange = getUnitChange unit value next
+          in
+          toTimes (next :: rest) newUnitChange newAcc
 
         [ value ] ->
-           toTime unitChange value :: acc
+           toTime unitChange value (List.isEmpty acc) :: acc
 
         [] ->
           acc
+
+    toTime unitChange value isFirst =
+      { change = unitChange
+      , interval = Interval unit multiple
+      , timestamp = value
+      , isFirst = isFirst
+      }
+
   in
   toTimes (toPositions [] 0) Nothing []
 

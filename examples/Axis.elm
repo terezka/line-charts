@@ -68,7 +68,7 @@ customAxis : Axis.Config Info msg
 customAxis =
   Axis.custom
     { title = Title.default ( 0, 0 ) "Age"
-    , variable = Just << .age -- Try changing to date and use Ticks.time!
+    , variable = Just << .age -- Try changing to .date and use Ticks.time!
     , pixels = 700
     , range =
         Range.padded 20 20
@@ -84,7 +84,7 @@ customAxis =
         -- Ticks.floatCustom 7 customFloatTick
         -- Ticks.int 7 -- Only show's integers!
         -- Ticks.intCustom 7 customIntTick
-        -- Ticks.time 7 -- Try with the variable being .date!
+        -- Ticks.time 5 -- Try with the variable being .date!
         -- Ticks.timeCustom 7 customTimeTick
         -- customTicks
     }
