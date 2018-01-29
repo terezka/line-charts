@@ -43,10 +43,10 @@ chart =
     { y = Axis.default 450 "Weight" .weight
     , x =
         -- Try out these different configs!
-        -- Axis.default 700 "Age" .age
-        -- Axis.full 450 "Age" .age
-        -- Axis.time 450 "Date" .date
-        customAxis
+        Axis.default 700 "Age" .age
+        -- Axis.full 700 "Age" .age
+        -- Axis.time 700 "Date" .date
+        -- customAxis
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
     , intersection = Intersection.default
@@ -68,7 +68,7 @@ customAxis : Axis.Config Info msg
 customAxis =
   Axis.custom
     { title = Title.default ( 0, 0 ) "Age"
-    , variable = Just << .age
+    , variable = Just << .age -- Try changing to date and use Ticks.time!
     , pixels = 700
     , range =
         Range.padded 20 20
@@ -80,8 +80,8 @@ customAxis =
         -- AxisLine.none
         -- customAxisLine
     , ticks =
-        -- Ticks.float 7
-        Ticks.floatCustom 7 customFloatTick
+        Ticks.float 7
+        -- Ticks.floatCustom 7 customFloatTick
         -- Ticks.int 7 -- Only show's integers!
         -- Ticks.intCustom 7 customIntTick
         -- Ticks.time 7 -- Try with the variable being .date!

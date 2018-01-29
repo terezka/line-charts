@@ -41,9 +41,7 @@ import Internal.Utils as Utils
 import Color
 
 -- TODO
--- investigate title placing
 -- First tick should format as "changed" (for time)
--- Move x title up
 -- SVG vs Svg
 
 

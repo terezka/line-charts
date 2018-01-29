@@ -1,4 +1,4 @@
-module Internal.Axis.Title exposing (Config, Properties, default, atDataMax, at, custom, config)
+module Internal.Axis.Title exposing (Config, Properties, default, atRangeMax, atDataMax, at, custom, config)
 
 import Svg exposing (Svg)
 import Internal.Coordinate as Coordinate
@@ -22,6 +22,12 @@ type alias Properties msg =
 {-| -}
 default : ( Float, Float ) -> String -> Config msg
 default =
+  atRangeMax
+
+
+{-| -}
+atRangeMax : ( Float, Float ) -> String -> Config msg
+atRangeMax =
   at (\_ range -> range.max)
 
 

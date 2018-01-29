@@ -64,7 +64,7 @@ default pixels title variable =
 full : Int -> String -> (data -> Float) -> Config data msg
 full pixels title variable =
   custom
-    { title = Title.default ( 0, 0 ) title
+    { title = Title.atRangeMax ( 0, 0 ) title
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 0 20
@@ -207,7 +207,7 @@ viewHorizontalTitle system at { title } =
   g [ class "chart__title"
     , transform
         [ move system position.x position.y
-        , offset (xOffset + 5) (yOffset + 20)
+        , offset (xOffset + 15) (yOffset + 20)
         ]
     , anchorStyle Start
     ]
@@ -222,7 +222,7 @@ viewVerticalTitle system at { title } =
   g [ class "chart__title"
     , transform
         [ move system position.x position.y
-        , offset (xOffset - 20) (yOffset - 20)
+        , offset (xOffset - 10) (yOffset - 10)
         ]
     , anchorStyle End
     ]

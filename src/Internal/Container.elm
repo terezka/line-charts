@@ -49,7 +49,7 @@ default id =
     { attributesHtml = []
     , attributesSVG = []
     , size = static
-    , margin = Margin 20 140 60 80
+    , margin = Margin 60 140 60 80
     , id = id
     }
 
@@ -61,7 +61,7 @@ responsive id =
     { attributesHtml = []
     , attributesSVG = []
     , size = relative
-    , margin = Margin 20 140 60 80
+    , margin = Margin 60 140 60 80
     , id = id
     }
 
