@@ -1,4 +1,4 @@
-module CustomLines exposing (main)
+module Lines exposing (main)
 
 
 import Html
