@@ -7,7 +7,6 @@ import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
 import LineChart.Container as Container
-import LineChart.Coordinate as Coordinate
 import LineChart.Junk as Junk
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
@@ -81,9 +80,10 @@ chart model =
     , legends = Legends.default
     , events = Events.hoverOne Hover
     , junk =
-        case model.hovering of
-          Just info -> tooltip info
-          Nothing   -> Junk.default
+        Junk.tooltipOne model.hovering
+          [ ( "Age", toString << .age )
+          , ( "Weight", toString << .weight )
+          ]
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
@@ -93,59 +93,6 @@ chart model =
     , LineChart.line Color.yellow Dots.circle "Bob" bob
     , LineChart.line Color.purple Dots.diamond "Alice" alice
     ]
-
-
-tooltip : Info -> Junk.Config msg
-tooltip info =
-  Junk.custom <| \system ->
-    { below = []
-    , above = []
-    , html = [ tooltipHtml system info ]
-    }
-
-
-tooltipHtml : Coordinate.System -> Info -> Html.Html msg
-tooltipHtml system info =
-  let
-    shouldFlip =
-      -- is point closer to the left or right side?
-      -- if closer to the right, flip tooltip
-      info.age - system.x.min > system.x.max - info.age
-
-    space = if shouldFlip then -15 else 15
-    xPosition = Coordinate.toSvgX system info.age + space
-    yPosition = Coordinate.toSvgY system info.weight
-
-    containerStyles =
-      [ ( "left", toString xPosition ++ "px" )
-      , ( "top", toString yPosition ++ "px" )
-      , ( "width", "100px" )
-      , ( "position", "absolute" )
-      , ( "padding", "5px" )
-      , ( "background", "rgba(255,255,255,0.8)" )
-      , ( "border", "1px solid gray" )
-      , ( "border-radius", "5px" )
-      , ( "pointer-events", "none" )
-      , if shouldFlip
-          then ( "transform", "translateX(-100%)" )
-          else ( "transform", "translateX(0)" )
-      ]
-
-    viewValue ( label, value ) =
-      Html.p
-        [ Html.Attributes.style valueStyles ]
-        [ Html.text <| label ++ ": " ++ toString value ]
-
-    valueStyles =
-      [ ( "margin", "3px" ) ]
-
-    valuesHtml =
-      List.map viewValue
-        [ ( "Age", info.age )
-        , ( "Weight", info.weight )
-        ]
-  in
-  Html.div [ Html.Attributes.style containerStyles ] valuesHtml
 
 
 

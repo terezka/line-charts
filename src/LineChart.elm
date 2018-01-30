@@ -333,7 +333,7 @@ type alias Config data msg =
   , grid : Grid.Config
   , line : Line.Config data
   , dots : Dots.Config data
-  , junk : Junk.Config msg
+  , junk : Junk.Config data msg
   }
 
 
@@ -403,7 +403,7 @@ viewCustom config lines =
 
     -- Junk
     junk =
-      Internal.Junk.getLayers system config.junk
+      Internal.Junk.getLayers (Axis.variable config.x) (Axis.variable config.y) system config.junk
         |> Internal.Junk.addBelow (Grid.view system config.x config.y config.grid)
 
     -- View

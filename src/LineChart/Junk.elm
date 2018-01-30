@@ -1,5 +1,5 @@
 module LineChart.Junk exposing
-  ( Config, Layers, default, custom
+  ( Config, Layers, default, tooltipOne, custom
   , Transfrom, transform, move, offset
   , vertical, horizontal, verticalCustom, horizontalCustom
   , rectangle, label
@@ -9,10 +9,10 @@ module LineChart.Junk exposing
 {-|
 
 # Quick start
-@docs default
+@docs Config, default
 
 # Custom
-@docs Config, custom, Layers
+@docs tooltipOne, custom, Layers
 
 # Common junk
 
@@ -28,9 +28,9 @@ module LineChart.Junk exposing
 
 -}
 
-import Html
 import Svg
 import Svg.Attributes as Attributes
+import Html
 import LineChart.Coordinate as Coordinate
 import Internal.Junk as Junk
 import Internal.Svg as Svg
@@ -45,7 +45,7 @@ import Color.Convert
 
 {-| The default is no junk!
 -}
-default : Config msg
+default : Config data msg
 default =
   Junk.none
 
@@ -67,8 +67,8 @@ you can use junk to add that. To be used in the `LineChart.Config` passed to
       }
 
 -}
-type alias Config msg =
-  Junk.Config msg
+type alias Config data msg =
+  Junk.Config data msg
 
 
 {-| The layers where you can put your junk. Junk in the `below` property will
@@ -102,9 +102,9 @@ you want in the resulting `Layers` type. Here's an example of adding grid LineCh
       List.map (Junk.horizontal system []) (Axis.defaultInterval system.y)
 
 -}
-custom : (Coordinate.System -> Layers msg) -> Config msg
+custom : (Coordinate.System -> Layers msg) -> Config data msg
 custom =
-  Junk.Config
+  Junk.custom
 
 
 
@@ -204,3 +204,13 @@ label color =
 withinChartArea : Coordinate.System -> Svg.Attribute msg
 withinChartArea { id } =
   Attributes.clipPath <| "url(#" ++ Utils.toChartAreaId id ++ ")"
+
+
+
+-- TOOLTIP
+
+
+{-| -}
+tooltipOne : Maybe data -> List ( String, data -> String ) -> Config data msg
+tooltipOne =
+  Junk.tooltipOne

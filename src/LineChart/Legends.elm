@@ -1,25 +1,23 @@
 module LineChart.Legends exposing
-  ( none, default
-  , Config, Legend
+  ( Config, none, default
   , byEnding, byBeginning
-  , grouped, groupedCustom
+  , grouped, groupedCustom, Legend
   )
 
 {-|
 
 # Quick start
-@docs default, none
+@docs Config, default, none
 
-# Customizations
-@docs Config
-
-## Grouped legends
-The ones gathered in one spot.
-@docs grouped, groupedCustom, Legend
+# Options
 
 ## Free legends
-The ones hanging by the line.
+Where the title is hanging by its respective line.
 @docs byEnding, byBeginning
+
+## Grouped legends
+Where the titles are gathered in one spot.
+@docs grouped, groupedCustom, Legend
 
 -}
 

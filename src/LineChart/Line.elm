@@ -1,18 +1,22 @@
 module LineChart.Line exposing
   ( Config, default
-  , wider, custom, hoverOne
+  , wider, hoverOne
+  , custom
   , Style, style
   )
 
 {-|
 
 # Quick start
-@docs default
+@docs Config, default
 
-# Customizations
-@docs Config, wider, custom, hoverOne
+# Options
+@docs wider, hoverOne
 
-# Styles
+# Custom
+@docs custom
+
+## Styles
 @docs Style, style
 
 -}
@@ -39,7 +43,7 @@ wider =
   Line.wider
 
 
-{-| -} -- TODO add index? label?
+{-| -}
 custom : (List data -> Style) -> Config data
 custom =
   Line.custom
