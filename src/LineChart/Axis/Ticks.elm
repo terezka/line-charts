@@ -1,5 +1,5 @@
 module LineChart.Axis.Ticks exposing
-  ( Config
+  ( Config, default
   , int, time, float
   , intCustom, timeCustom, floatCustom, custom
   , hoverOne, frame
@@ -8,7 +8,7 @@ module LineChart.Axis.Ticks exposing
 {-|
 
 # Quick start
-@docs Config, int, time, float
+@docs default, Config, int, time, float
 
 # Customiztion
 @docs intCustom, timeCustom, floatCustom, custom
@@ -37,6 +37,12 @@ type alias Amount =
 
 
 -- API / AXIS
+
+
+{-| -}
+default : Config msg
+default =
+   Ticks.float 5
 
 
 {-| -}
