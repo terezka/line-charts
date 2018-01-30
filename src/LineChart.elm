@@ -542,21 +542,30 @@ stack dataset =
 
 
 addBelows : List (Data.Data data) -> List (Data.Data data) -> List (Data.Data data)
-addBelows data belows =
+addBelows data dataBelow =
   let
-    iterate prevD data belows result =
-      case ( data, belows ) of
-        ( datum :: data, below :: belows ) ->
-          if datum.point.x > below.point.x
-            then iterate prevD (datum :: data) belows (add below prevD :: result)
-            else iterate datum data (below :: belows) result
+    iterate datum0 data dataBelow result =
+      case ( data, dataBelow ) of
+        ( datum1 :: data, datumBelow :: dataBelow ) ->
+          -- if the data point is after the point below, add it
+          if datum1.point.x > datumBelow.point.x
+            then
+              if datumBelow.isReal then
+                iterate datum0 (datum1 :: data) dataBelow (add datumBelow datum0 :: result)
+              else
+                let breakdata = { datum0 | isReal = False } in
+                iterate datum0 (datum1 :: data) dataBelow (add datumBelow datum0 :: result)
+            -- if not, try the next
+            else iterate datum1 data (datumBelow :: dataBelow) result
 
-        ( [], below :: belows ) ->
-          if prevD.point.x <= below.point.x
-            then iterate prevD [] belows (add below prevD :: result)
-            else iterate prevD [] belows (below :: result)
+        ( [], datumBelow :: dataBelow ) ->
+          -- if the data point is after the point below, add it
+          if datum0.point.x <= datumBelow.point.x
+            then iterate datum0 [] dataBelow (add datumBelow datum0 :: result)
+            -- if not, try the next
+            else iterate datum0 [] dataBelow (datumBelow :: result)
 
-        ( datum :: data, [] ) ->
+        ( datum1 :: data, [] ) ->
           result
 
         ( [], [] ) ->
@@ -566,13 +575,12 @@ addBelows data belows =
       setY below (below.point.y + datum.point.y)
   in
   List.reverse <| Maybe.withDefault [] <| Utils.withFirst data <| \first rest ->
-    iterate first rest belows []
+    iterate first rest dataBelow []
 
 
--- TODO
 normalize : List (List (Data.Data data)) -> List (List (Data.Data data))
-normalize dataset =
-  case dataset of
+normalize datasets =
+  case datasets of
     highest :: belows ->
       let
         toPercentage highest datum =
@@ -581,7 +589,7 @@ normalize dataset =
       List.map (List.map2 toPercentage highest) (highest :: belows)
 
     [] ->
-      dataset
+      datasets
 
 
 setY : Data.Data data -> Float -> Data.Data data

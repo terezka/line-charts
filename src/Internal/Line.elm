@@ -273,21 +273,21 @@ toSeriesAttributes (Series { color, dashing }) (Style style) =
 viewArea : Arguments data -> Series data -> Style -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
 viewArea { system, lineConfig, area } line style interpolation data =
   let
-    ground data =
-      Data.Point data.point.x (Utils.towardsZero system.y)
+    ground point =
+      Data.Point point.x (Utils.towardsZero system.y)
 
     attributes =
       Junk.withinChartArea system
         :: Attributes.fillOpacity (toString (Area.opacitySingle area))
         :: toAreaAttributes line style area
 
-    commands first rest last =
+    commands first middle last =
       Utils.concat
-        [ Path.Move (ground first), Path.Line first.point ] interpolation
-        [ Path.Line (ground last) ]
+        [ Path.Move (ground <| Path.toPoint first), Path.Line (Path.toPoint first) ] interpolation
+        [ Path.Line (ground <| Path.toPoint last) ]
   in
-  Utils.viewWithEdges data <| \first rest last ->
-     Path.view system attributes (commands first rest last)
+  Utils.viewWithEdges interpolation <| \first middle last ->
+     Path.view system attributes (commands first middle last)
 
 
 toAreaAttributes : Series data -> Style -> Area.Config -> List (Svg.Attribute msg)

@@ -1,4 +1,4 @@
-module LineChart.Area exposing (Config, default, none, percentage, normal, stacked)
+module LineChart.Area exposing (Config, default, none, normal, stacked)
 
 {-| -}
 
@@ -36,7 +36,9 @@ normal =
 always the color of your line, but you can pass the opacity.
 
 **Warning: Right now, this only works if all your lines have the
-same set of x values! If not, the area will not add properly.**
+same set of x values and don't have missing data!
+If not, the area will not stack properly.
+It's will be fixed sometime though!**
 -}
 stacked : Float -> Config
 stacked =

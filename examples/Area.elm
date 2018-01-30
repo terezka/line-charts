@@ -46,7 +46,6 @@ chart =
         -- Area.default
         -- Area.normal 0.5
         Area.stacked 0.5
-        -- Area.percentage 0.5
     , line = Line.default
     , dots = Dots.default
     }

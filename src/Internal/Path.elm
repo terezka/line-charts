@@ -1,4 +1,4 @@
-module Internal.Path exposing (Command(..), view)
+module Internal.Path exposing (Command(..), view, toPoint)
 
 {-| SVG path commands.
 
@@ -49,6 +49,25 @@ viewPath attributes =
 description : System -> List Command -> String
 description system commands =
   join (List.map (translate system >> toString) commands)
+
+
+toPoint : Command -> Point
+toPoint command =
+  case command of
+    Close -> Point 0 0
+
+    Move p       -> p
+    Line p       -> p
+    Horizontal x -> Point x 0
+    Vertical y   -> Point 0 y
+
+    CubicBeziers c1 c2 p    -> p
+    CubicBeziersShort c1 p  -> p
+    QuadraticBeziers c1 p   -> p
+    QuadraticBeziersShort p -> p
+
+    Arc rx ry xAxisRotation largeArcFlag sweepFlag p ->
+      p
 
 
 toString : Command -> String

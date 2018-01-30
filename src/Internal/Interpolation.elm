@@ -53,7 +53,12 @@ monotoneSection : List Point -> ( Tangent, List (List Command) ) -> ( Tangent, L
 monotoneSection points ( tangent, acc ) =
   let
     ( t0, commands ) =
-      monotonePart points ( tangent, [] )
+      case points of
+        p0 :: rest ->
+          monotonePart (p0 :: rest) ( tangent, [ Line p0 ] )
+
+        [] ->
+          ( tangent, [] )
   in
   ( t0, commands :: acc )
 
@@ -85,16 +90,16 @@ monotonePart points ( tangent, commands ) =
     ( First, [ p0, p1 ] ) ->
       let t1 = slope3 p0 p1 p1 in
       ( Previous t1
-      , commands ++ [ monotoneCurve p0 p1 t1 t1 ]
+      , commands ++ [ monotoneCurve p0 p1 t1 t1, Line p1 ]
       )
 
     ( Previous t0, [ p0, p1 ] ) ->
       let t1 = slope3 p0 p1 p1 in
       ( Previous t1
-      , commands ++ [ monotoneCurve p0 p1 t0 t1 ]
+      , commands ++ [ monotoneCurve p0 p1 t0 t1, Line p1 ]
       )
 
-    _ ->
+    ( _, _ ) ->
       ( tangent
       , commands
       )
