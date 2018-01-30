@@ -62,10 +62,10 @@ picassoImage : Coordinate.System -> Svg msg
 picassoImage system =
   let
     x =
-      10 + Coordinate.toSVGX system system.x.max
+      10 + Coordinate.toSvgX system system.x.max
 
     y =
-      70 + Coordinate.toSVGY system system.y.max
+      70 + Coordinate.toSvgY system system.y.max
   in
   Svg.image
     [ SvgA.xlinkHref picassoImageLink

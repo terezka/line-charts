@@ -40,7 +40,7 @@ chart =
         -- Container.responsive "line-chart-1" -- Try resizing the window!
         Container.custom
             { attributesHtml = []
-            , attributesSVG = [ SvgA.style "background: #f2fff1;" ]
+            , attributesSvg = [ SvgA.style "background: #f2fff1;" ]
             , size = Container.static
             , margin = Container.Margin 20 140 60 80
             , id = "line-chart-1"

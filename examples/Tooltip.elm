@@ -113,8 +113,8 @@ tooltipHtml system info =
       info.age - system.x.min > system.x.max - info.age
 
     space = if shouldFlip then -15 else 15
-    xPosition = Coordinate.toSVGX system info.age + space
-    yPosition = Coordinate.toSVGY system info.weight
+    xPosition = Coordinate.toSvgX system info.age + space
+    yPosition = Coordinate.toSvgY system info.weight
 
     containerStyles =
       [ ( "left", toString xPosition ++ "px" )
