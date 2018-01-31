@@ -8,13 +8,21 @@ module LineChart.Junk exposing
 
 {-|
 
+Junk is a way to draw whatever you like in the chart. The name comes from
+[Edward Tufte's concept of "chart junk"](https://en.wikipedia.org/wiki/Chartjunk).
+If you want to add tooltips, sections for emphasis, or kittens on your chart,
+this is where it's at.
+
 # Quick start
 @docs Config, default
 
-# Custom
-@docs hoverOne, custom, Layers
+# Options
+@docs hoverOne
 
-# Common junk
+# Custom
+@docs custom, Layers
+
+# Common
 
 ## Lines
 @docs vertical, horizontal, verticalCustom, horizontalCustom
@@ -22,7 +30,7 @@ module LineChart.Junk exposing
 ## Other
 @docs rectangle, label, withinChartArea
 
-# Placing helpers
+## Placing
 @docs Transfrom, transform, move, offset
 
 
@@ -43,7 +51,14 @@ import Color.Convert
 -- QUICK START
 
 
-{-| The default is no junk!
+{-| Doesn't draw any junk. Use in the `LineChart.Config` passed to `viewCustom`.
+
+    chartConfig : LineChart.Config Data msg
+    chartConfig =
+      { ...
+      , junk = Junk.default
+      , ...
+      }
 -}
 default : Config data msg
 default =
@@ -54,27 +69,33 @@ default =
 -- CUSTOMIZE
 
 
-{-| Junk for all the stuff which I don't let you do in the library, so for
-example if you want a picture of a kitten in the corner of your chart,
-you can use junk to add that. To be used in the `LineChart.Config` passed to
-`viewCustom` like this:
-
-    chartConfig : LineChart.Config data msg
-    chartConfig =
-      { ...
-      , junk = theJunk -- Use here!
-      , ...
-      }
-
--}
+{-| -}
 type alias Config data msg =
   Junk.Config data msg
 
 
-{-| The layers where you can put your junk. Junk in the `below` property will
-be placed below your lines, Junk in the `above` property will
-be placed above your lines, and the `html` junk will be placed on top on the
-chart entirely.
+{-| Draws the default tooltip.
+
+    junk : Maybe Data -> Junk.Junk msg
+    junk hovered =
+      Junk.hoverOne model.hovered
+        [ ( "Age", toString << .age )
+        , ( "Weight", toString << .weight )
+        ]
+
+_See full example [here](https://ellie-app.com/gpctbpbZ8a1/1)._
+
+-}
+hoverOne : Maybe data -> List ( String, data -> String ) -> Config data msg
+hoverOne =
+  Junk.hoverOne
+
+
+{-| The layers where you can put your junk.
+
+  - **below** junk will be placed below your lines
+  - **above** junk will be placed above your lines
+  - **html** junk will be placed on top of the SVG chart.
 
 -}
 type alias Layers msg =
@@ -84,22 +105,25 @@ type alias Layers msg =
   }
 
 
-{-| Here is where you start producing your junk. You have the `System`
-available, meaning you can translate your charts coordinates into Svg
-coordinates and move things around easily. You add your elements to the "layer"
-you want in the resulting `Layers` type. Here's an example of adding grid LineChart.
+{-| Draw whatever junk you'd like. You're given the `Coordinate.System` to help
+you place your junk on the intended spot in the chart, because it allows you
+to translate from data-space into SVG-space and vice versa.
 
-    theJunk : Info -> Junk.Junk msg
-    theJunk info =
+    junk : Junk.Junk msg
+    junk =
       Junk.custom <| \system ->
-        { below = gridLines
+        { below = [ emphasisSection system ]
         , above = []
         , html = []
         }
 
-    gridLines : Coordinate.System -> List (Svg msg)
-    gridLines system =
-      List.map (Junk.horizontal system []) (Axis.defaultInterval system.y)
+    emphasisSection : Coordinate.System -> List (Svg msg)
+    emphasisSection system =
+      Junk.rectangle system [] 5 8 system.y.min system.y.max
+
+
+_See full example [here](https://ellie-app.com/fyqDKvqrRa1/1)._
+
 
 -}
 custom : (Coordinate.System -> Layers msg) -> Config data msg
@@ -116,7 +140,27 @@ type alias Transfrom =
   Svg.Transfrom
 
 
-{-| Moves in chart space.
+{-| Produces a SVG transform attributes. Useful to move elements around.
+
+    movedStuff : Coordinate.System -> Data -> Svg msg
+    movedStuff system hovered =
+      Svg.g
+        [ Junk.transform
+            [ Junk.move system hovered.age hovered.weight
+            , Junk.offset 20 10
+            ]
+        ]
+        [ Junk.label Color.blue "stuff" ]
+
+_See full example [here](https://ellie-app.com/gfbQPqfPna1/1)._
+
+-}
+transform : List Transfrom -> Svg.Attribute msg
+transform =
+  Svg.transform
+
+
+{-| Moves in data space.
 -}
 move : Coordinate.System -> Float -> Float -> Transfrom
 move =
@@ -130,60 +174,59 @@ offset =
   Svg.offset
 
 
-{-| Produces a SVG transform attributes. Useful to move elements around in
-your junk.
-
-    movedStuff : Coordinate.System -> Info -> Svg msg
-    movedStuff system hovered =
-      Svg.g
-        [ Junk.transform
-            [ Junk.move system hovered.age hovered.weight
-            , Junk.offset 20 10
-            ]
-        ]
-        [ theStuff ]
-
--}
-transform : List Transfrom -> Svg.Attribute msg
-transform =
-  Svg.transform
-
 
 
 -- COMMON
 
 
-{-| -}
+{-| Draws a vertical line, which is the full length of the y-range, given the
+x-coordinate.
+
+**Note:** The line is truncated off if outside the chart area.
+-}
 vertical : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
 vertical system attributes at =
   Svg.vertical system (withinChartArea system :: attributes) at system.y.min system.y.max
 
 
-{-| -}
+{-| Draws a horizontal line which is the full length of the x-range, given the
+y-coordinate.
+
+**Note:** The line is truncated off if outside the chart area.
+-}
 horizontal : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Svg.Svg msg
 horizontal system attributes at =
   Svg.horizontal system (withinChartArea system :: attributes) at system.x.min system.x.max
 
 
-{-| -}
+{-| Draws a vertical line, given x-, y1- and y2-coordinates, respectively.
+
+**Note:** The line is truncated off if outside the chart area.
+-}
 verticalCustom : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Svg.Svg msg
 verticalCustom system attributes =
   Svg.vertical system (withinChartArea system :: attributes)
 
 
-{-| -}
+{-| Draws a horizontal line, given y-, x1- and x2-coordinates, respectively.
+
+**Note:** The line is truncated off if outside the chart area.
+-}
 horizontalCustom : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float ->  Float -> Svg.Svg msg
 horizontalCustom system attributes =
   Svg.horizontal system (withinChartArea system :: attributes)
 
 
-{-| A rectangle within the plot area. This can be used for grid bands
-and highlighting a range e.g. for selection.
+{-| A rectangle. This can be used for grid bands and highlighting a
+range e.g. for selection.
 
-    xSelectionArea : Coordinate.System -> (Float, Float) -> Svg msg
-    xSelectionArea system (startX, endX) =
-        Junk.rectangle system [ Attributes.fill "rgba(255,0,0,0.1)" ] startX endX system.y.min system.y.max
+    xSelectionArea : Coordinate.System -> Float -> Float -> Svg msg
+    xSelectionArea system startX endX =
+        Junk.rectangle system
+          [ Attributes.fill "rgba(255,0,0,0.1)" ]
+          startX endX system.y.min system.y.max
 
+**Note:** The rectangle is truncated off if outside the chart area.
 -}
 rectangle : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Float -> Svg.Svg msg
 rectangle system attributes =
@@ -194,23 +237,16 @@ rectangle system attributes =
 -- HELPERS
 
 
-{-| -}
+{-| Given a color, it draws the text in the second argument.
+-}
 label : Color.Color -> String -> Svg.Svg msg
 label color =
   Svg.label (Color.Convert.colorToHex color)
 
 
-{-| -}
+{-| An attribute which when added, truncates the rendered element if it
+extends outside the chart space.
+-}
 withinChartArea : Coordinate.System -> Svg.Attribute msg
 withinChartArea { id } =
   Attributes.clipPath <| "url(#" ++ Utils.toChartAreaId id ++ ")"
-
-
-
--- TOOLTIP
-
-
-{-| -}
-hoverOne : Maybe data -> List ( String, data -> String ) -> Config data msg
-hoverOne =
-  Junk.hoverOne
