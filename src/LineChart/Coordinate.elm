@@ -10,6 +10,18 @@ module LineChart.Coordinate exposing
 
 {-|
 
+**Data-space and SVG-space**
+
+Data-space is the regular cartesian coordinate system, the coordinate system you
+probably learned about in school. The x axis goes horizontally and the numbers
+grow larger as we progress to the right. The y axis goes vertically and the numbers
+grow larger as we progress upwards.
+
+SVG-space is different because here, the y axis numbers grow larger as we
+progress _downwards_, and there coordinates are relative to the pixel height and
+width of the chart, not your data.
+
+
 # Frame
 @docs Frame, Size
 

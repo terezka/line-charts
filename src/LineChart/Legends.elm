@@ -7,9 +7,11 @@ module LineChart.Legends exposing
 {-|
 
 # Quick start
-@docs Config, default, none
+@docs Config, default
 
 # Options
+
+@docs none
 
 ## Free legends
 Where the title is hanging by its respective line.
@@ -30,22 +32,23 @@ import Internal.Legends as Legends
 -- QUICK START
 
 
-{-| To be used in the `LineChart.Config` passed to `viewCustom` like this:
+{-| -}
+type alias Config data msg
+  = Legends.Config data msg
 
-    chartConfig : LineChart.Config data msg
+
+{-| Produces legends in the top right corner.
+Use in the `LineChart.Config` passed to `viewCustom`.
+
+    chartConfig : LineChart.Config Data msg
     chartConfig =
       { ...
-      , legends = Legends.none -- Use here!
+      , legends = Legends.default
       , ...
       }
 
--}
-none : Config data msg
-none =
-  Legends.none
+_See full example [here](https://ellie-app.com/fb6BqXBmba1/1)._
 
-
-{-| Produces your lines legends in the top right corner. Use like `none`.
 -}
 default : Config data msg
 default =
@@ -53,26 +56,40 @@ default =
 
 
 
--- CONFIG
+-- OPTIONS
 
 
-{-| -}
-type alias Config data msg
-  = Legends.Config data msg
+{-| Removes the legends.
+
+    chartConfig : LineChart.Config Data msg
+    chartConfig =
+      { ...
+      , legends = Legends.none
+      , ...
+      }
+
+_See full example [here](https://ellie-app.com/fbKZ6gGzRa1/1)._
+
+-}
+none : Config data msg
+none =
+  Legends.none
 
 
 
 -- FREE
 
 
-{-| Places the label of your line by its end.
+{-| Places the legend by the end of its line.
 
-    chartConfig : LineChart.Config data msg
+    chartConfig : LineChart.Config Data msg
     chartConfig =
       { ...
-      , legends = Legends.byEnding (Junk.text "black")
+      , legends = Legends.byEnding (Junk.text Color.black)
       , ...
       }
+
+_See full example [here](https://ellie-app.com/ff9LP3fYwa1/1)._
 
 -}
 byEnding : (String -> Svg.Svg msg) -> Config data msg
@@ -88,18 +105,26 @@ byBeginning =
 
 
 
--- BUCKETED
+-- GROUPED
 
 
-{-| The two arguments constitute the position of the legend given the range of
-the respective axes.
+{-| Draws some legends. You desicde where. Arguments:
 
-    chartConfig : LineChart.Config data msg
+  1. Given the x-axis range, you produce the x-coordinate in data-space of the legends.
+  2. Given the y-axis range, you produce the y-coordinate of data-space the legends.
+  3. Move the legends horizontally in SVG-space.
+  4. Move the legends vertically in SVG-space.
+
+
+    chartConfig : LineChart.Config Data msg
     chartConfig =
       { ...
-      , legends = Legends.grouped .max .min -- Bottom right corner
+      , legends = Legends.grouped .max .min 0 -60 -- Bottom right corner
       , ...
       }
+
+
+_See full example [here](https://ellie-app.com/frGFKHqbka1/1)._
 
 -}
 grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Float -> Float -> Config data msg
@@ -107,8 +132,8 @@ grouped =
   Legends.grouped
 
 
-{-| Everything you need to view a legend. A sample of your line as well your
-line's label.
+{-| Stuff that's helpful when you're drawing your legends.
+A sample of your line as well your line's label.
 -}
 type alias Legend msg =
   { sample : Svg.Svg msg
@@ -116,28 +141,42 @@ type alias Legend msg =
   }
 
 
-{-| Customize your own grouped legends. The first argument is the width of the
-samples you'd like from your lines (the little snippet of your line) and the
-second is a fuction which gives you the `Coordinate.System` as well as a list
-of your lines samples and labels (`List (Legend msg)`), so that you can put it
-in a SVG container of your liking.
+{-| Customize your grouped legends. Arguments:
+
+  1. The width of the line samples.
+  2. Your view function for the legends.
+
 
     legends : Legends data msg
     legends =
-      Legends.groupedCustom 10 <| \system legends ->
-        Svg.g
-          [ Junk.transform [ Junk.move system 100 120 ] ]
-          (List.indexedMap viewLegend legends)
+      Legends.groupedCustom 10 viewLegends
+
+
+    viewLegends : Coordinate.System -> List (Legend msg) -> Svg.Svg msg
+    viewLegends system legends =
+      let
+        legendViews =
+          List.indexedMap viewLegend legends
+      in
+      Svg.g [ Junk.transform [ Junk.move system 100 120 ] ] legendViews
+
 
     viewLegend : Int -> Legend msg -> Svg msg
     viewLegend index { sample, label } =
        Svg.g
         [ Junk.transform [ Junk.offset 20 (toFloat index * 20) ] ]
-        [ sample
-        , Svg.g
-            [ Junk.transform [ Junk.offset 40 4 ] ]
-            [ Junk.text Color.black label ]
-        ]
+        [ sample, viewLabel label ]
+
+
+    viewLabel : String -> Svg.Svg msg
+    viewLabel label =
+      Svg.g
+          [ Junk.transform [ Junk.offset 40 4 ] ]
+          [ Junk.text Color.black label ]
+
+
+_See full example [here](https://ellie-app.com/fygmS3nRPa1/1)._
+
 
 -}
 groupedCustom : Float -> (Coordinate.System -> List (Legend msg) -> Svg.Svg msg) -> Config data msg

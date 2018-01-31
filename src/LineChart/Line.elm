@@ -31,10 +31,10 @@ type alias Config data =
   Line.Config data
 
 
-{-| Makes a 1px wide line.
+{-| Makes a 1px wide line. Use in the `LineChart.Config` passed to `viewCustom`.
 
-    config : LineChart.Config Data msg
-    config =
+    chartConfig : LineChart.Config Data msg
+    chartConfig =
       { ...
       , line = Line.default
       , ...
@@ -48,8 +48,8 @@ default =
 
 {-| Pass the desired width of your lines.
 
-    config : LineChart.Config Data msg
-    config =
+    chartConfig : LineChart.Config Data msg
+    chartConfig =
       { ...
       , line = Line.wider 3
       , ...
@@ -65,8 +65,8 @@ wider =
 
 {-| Makes the line, to which the data in the first argument belongs, wider!
 
-    config : Model -> LineChart.Config Data Msg
-    config model =
+    chartConfig : Model -> LineChart.Config Data Msg
+    chartConfig model =
       { ...
       , line = Line.hoverOne model.hovering
       , ...
