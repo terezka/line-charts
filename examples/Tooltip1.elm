@@ -1,4 +1,4 @@
-module Tooltip exposing (main)
+module Tooltip1 exposing (main)
 
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
@@ -80,7 +80,7 @@ chart model =
     , legends = Legends.default
     , events = Events.hoverOne Hover
     , junk =
-        Junk.tooltipOne model.hovering
+        Junk.hoverOne model.hovering
           [ ( "Age", toString << .age )
           , ( "Weight", toString << .weight )
           ]

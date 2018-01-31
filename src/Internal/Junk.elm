@@ -50,8 +50,8 @@ addBelow below layers =
 -- SPECIAL
 
 
-tooltipOne : Maybe data -> List ( String, data -> String ) -> Config data msg
-tooltipOne hovered properties =
+hoverOne : Maybe data -> List ( String, data -> String ) -> Config data msg
+hoverOne hovered properties =
   Config <| \toX toY system ->
     { below = []
     , above = []

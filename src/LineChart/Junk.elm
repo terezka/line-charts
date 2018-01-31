@@ -1,5 +1,5 @@
 module LineChart.Junk exposing
-  ( Config, Layers, default, tooltipOne, custom
+  ( Config, Layers, default, hoverOne, custom
   , Transfrom, transform, move, offset
   , vertical, horizontal, verticalCustom, horizontalCustom
   , rectangle, label
@@ -12,7 +12,7 @@ module LineChart.Junk exposing
 @docs Config, default
 
 # Custom
-@docs tooltipOne, custom, Layers
+@docs hoverOne, custom, Layers
 
 # Common junk
 
@@ -211,6 +211,6 @@ withinChartArea { id } =
 
 
 {-| -}
-tooltipOne : Maybe data -> List ( String, data -> String ) -> Config data msg
-tooltipOne =
-  Junk.tooltipOne
+hoverOne : Maybe data -> List ( String, data -> String ) -> Config data msg
+hoverOne =
+  Junk.hoverOne
