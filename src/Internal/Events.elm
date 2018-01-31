@@ -1,5 +1,5 @@
 module Internal.Events exposing
-    ( Config, default, hover, hoverOne, click, custom
+    ( Config, default, hoverMany, hoverOne, click, custom
     , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
     , Decoder, getSvg, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
@@ -33,8 +33,8 @@ default =
 
 
 {-| -}
-hover : (List data -> msg) -> Config data msg
-hover msg =
+hoverMany : (List data -> msg) -> Config data msg
+hoverMany msg =
   custom
     [ onMouseMove msg getNearestX
     , onMouseLeave (msg [])

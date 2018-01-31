@@ -51,7 +51,8 @@ import Color.Convert
 -- QUICK START
 
 
-{-| Doesn't draw any junk. Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Doesn't draw any junk.
+Use in the `LineChart.Config` passed to `viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =

@@ -1,5 +1,5 @@
 module LineChart.Events exposing
-  ( Config, default, hover, hoverOne, click, custom
+  ( Config, default, hoverOne, hoverMany, click, custom
   , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
   , Decoder, getSvg, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
@@ -8,10 +8,13 @@ module LineChart.Events exposing
 {-|
 
 # Quick start
-@docs default
+@docs Config, default
 
-# Configurations
-@docs Config, hover, hoverOne, click, custom
+# Options
+@docs hoverOne, hoverMany, click
+
+# Custom
+@docs custom
 
 ## Events
 @docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
@@ -46,31 +49,78 @@ type alias Config data msg =
   Events.Config data msg
 
 
-{-| -}
+{-| Add no events.
+Use in the `LineChart.Config` passed to `viewCustom`.
+
+    chartConfig : LineChart.Config Data msg
+    chartConfig =
+      { ...
+      , events = Events.default
+      , ...
+      }
+
+-}
 default : Config data msg
 default =
   Events.default
 
 
-{-| -}
+{-| Sends you a given message with the data for the dot hovered or
+`Nothing` if you're not hovering anything.
+
+    chartConfig : LineChart.Config Data Msg
+    chartConfig =
+      { ...
+      , events = Events.hoverOne HoverOne
+      , ...
+      }
+
+-}
 hoverOne : (Maybe data -> msg) -> Config data msg
 hoverOne =
   Events.hoverOne
 
 
-{-| -}
-hover : (List data -> msg) -> Config data msg
-hover =
-  Events.hover
+{-| Sends you a given message with the data for all the dots on the hovered
+x-coordinate or an empty list if you're not hovering anything.
+
+    chartConfig : LineChart.Config Data Msg
+    chartConfig =
+      { ...
+      , events = Events.hoverMany HoverMany
+      , ...
+      }
+
+-}
+hoverMany : (List data -> msg) -> Config data msg
+hoverMany =
+  Events.hoverMany
 
 
-{-| -}
+{-| Sends a given message when clicking on a dot.
+-}
 click : (Maybe data -> msg) -> Config data msg
 click =
   Events.click
 
 
-{-| -}
+{-| Add your own combination of events.
+
+    chartConfig : LineChart.Config Data Msg
+    chartConfig =
+      { ...
+      , events =
+          Events.custom
+            [ Events.onMouseMove HoverOne Events.getNearest
+            , Events.onMouseLeave (HoverOne Nothing)
+            ]
+      , ...
+      }
+
+This example sends the `HoverOne` message with the data of the nearest dot when
+hovering and `HoverOne Nothing` when your leave the chart area.
+
+-}
 custom : List (Event data msg) -> Config data msg
 custom =
   Events.custom
@@ -115,42 +165,50 @@ onMouseLeave =
   Events.onMouseLeave
 
 
-{-| -}
+{-| Add any event to your chart. Arguments:
+
+  1. When `True`, the event also catches events in the margins of your chart.
+  2. The JavaScript event name.
+  3. The message.
+  3. The `Events.Decoder` to determine what data you want from the event.
+
+-}
 on : Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
 on =
   Events.on
 
 
-{-| -}
+{-| Same as `on`, but you can add prevent-default options too!
+-}
 onWithOptions : Html.Events.Options -> Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
 onWithOptions =
   Events.onWithOptions
 
 
 
--- SEARCHERS
+-- DECODERS
 
 
 {-| Gets you information about where your event happened on your chart.
-This example gets you the nearest data coordinates to where you are hovering.
+This example gets you the data of the nearest dot to where you are hovering.
 
     events : Config Data Msg
     events =
       Events.custom
-        [ Events.onMouseMove Hover Events.getNearest ]
+        [ Events.onMouseMove HoverOne Events.getNearest ]
 -}
 type alias Decoder data msg =
   Events.Decoder data msg
 
 
-{-| Get the SVG coordinates of the event.
+{-| Get the SVG-space coordinates of the event.
 -}
 getSvg : Decoder data Coordinate.Point
 getSvg =
   Events.getSvg
 
 
-{-| Get the data coordinates of the event.
+{-| Get the data-space coordinates of the event.
 -}
 getData : Decoder data Coordinate.Point
 getData =
@@ -165,7 +223,7 @@ getNearest =
   Events.getNearest
 
 
-{-| Get the data coordinates nearest of the event within the radius (in pixels)
+{-| Get the data coordinates nearest of the event within the radius
 you provide in the first argument. Returns `Nothing` if you have no data showing.
 -}
 getWithin : Float -> Decoder data (Maybe data)
@@ -181,7 +239,7 @@ getNearestX =
 
 
 {-| Finds the data coordinates horizontally nearest to the event, within the
-distance (in pixels) you provide in the first argument.
+distance you provide in the first argument.
 -}
 getWithinX : Float -> Decoder data (List data)
 getWithinX =

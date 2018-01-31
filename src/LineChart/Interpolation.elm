@@ -2,8 +2,11 @@ module LineChart.Interpolation exposing (Config, default, linear, monotone, step
 
 {-|
 
-## Interpolations
-@docs Config, default, linear, monotone, stepped
+# Quick start
+@docs Config, default
+
+# Options
+@docs linear, monotone, stepped
 
 -}
 
@@ -15,7 +18,17 @@ type alias Config =
   Interpolation.Config
 
 
-{-| -}
+{-| The vanilla of interpolations: Linear!
+Use in the `LineChart.Config` passed to `viewCustom`.
+
+    chartConfig : LineChart.Config Data msg
+    chartConfig =
+      { ...
+      , interpolation = Interpolation.default
+      , ...
+      }
+
+-}
 default : Config
 default =
   linear
@@ -34,7 +47,8 @@ monotone : Config
 monotone =
   Interpolation.Monotone
 
-{-| A stepped interpolation where the step comes before the point.
+
+{-| A stepped interpolation where the step comes after the dot.
 -}
 stepped : Config
 stepped =
