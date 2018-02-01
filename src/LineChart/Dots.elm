@@ -1,22 +1,29 @@
 module LineChart.Dots exposing
   ( Shape, none
   , circle, triangle, square, diamond, plus, cross
-  , Config, default, static, hoverable, hoverOne, hoverMany
+  , Config, default, custom, customAny, hoverOne, hoverMany
   , Style, bordered, disconnected, aura, full
   )
 
 {-|
 
 # Quick start
-@docs none
 
-# Customizing shape
-@docs Shape, circle, triangle, square, diamond, plus, cross
+## Shapes
+@docs Shape, none
 
-# Customizing style
-@docs Config, default, static, hoverable, hoverOne, hoverMany
+## Config
+@docs Config, default
 
-## Styles
+# Options
+
+## Shapes
+@docs circle, triangle, square, diamond, plus, cross
+
+## Config
+@docs custom, hoverOne, hoverMany, customAny
+
+### Styles
 @docs Style, full, bordered, disconnected, aura
 
 -}
@@ -28,12 +35,13 @@ import Internal.Dots as Dot
 -- QUICK START
 
 
-{-| If you don't want a dot at all.
+{-| Gets you a clean line without dots.
 
     humanChart : Html msg
     humanChart =
       LineChart.view .age .income
         [ LineChart.Line Color.pink Dot.none "Alice" alice ]
+
 -}
 none : Shape
 none =
@@ -44,8 +52,8 @@ none =
 -- SHAPES
 
 
-{-| The shapes in this section is the selection you have available to use as the
-shape of your line's dot.
+{-| The shape type referes to the shape of your dot, denoting where your
+data points are on your line.
 
     humanChart : Html msg
     humanChart =
@@ -54,6 +62,9 @@ shape of your line's dot.
         , LineChart.Line Color.blue Dot.square "Bob" bob
         , LineChart.Line Color.pink Dot.diamond "Chuck" chuck
         ]
+
+_See full example [here](https://ellie-app.com/9mFnMYLnba1/1)._
+
 -}
 type alias Shape =
   Dot.Shape
@@ -100,33 +111,46 @@ cross =
 -- LOOK
 
 
-{-| -}
+{-| Changes the style of _all_ your dots. See your style options under _Styles_.
+
+Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
+
+    chartConfig : LineChart.Config Data Msg
+    chartConfig =
+      { ...
+      , dots = Dots.default
+      , ...
+      }
+
+-}
 type alias Config data =
   Dot.Config data
 
 
-{-| -}
+{-| Draws a white outline around all your dots.
+-}
 default : Config data
 default =
   Dot.default
 
 
-{-|
+{-| Change the style of your dots.
 
     dotsConfig : Dot.Config data
     dotsConfig =
-      Dot.static (Dot.full 5)
+      Dots.custom (Dot.full 5)
 -}
-static : Style -> Config data
-static =
-  Dot.static
+custom : Style -> Config data
+custom =
+  Dot.custom
 
 
-{-|
+{-| Change the style of your dots and add another dot state. Particularily useful
+for hover states, but it can also be used for
 
     dotsConfig : Dot.Config Info
     dotsConfig =
-      Dot.hoverable
+      Dot.customAny
         { normal = Dot.full 5
         , hovered = Dot.aura 7 4 0.5
         , isHovered = isOverweight
@@ -136,34 +160,54 @@ static =
     isOverweight info =
       bmi info > 25
 
+
+_See full example [here](https://ellie-app.com/9n8tBnxV5a1/1)._
+
+
 -}
-hoverable :
-  { normal : Style
-  , hovered : Style
-  , isHovered : data -> Bool
+customAny :
+  { legend : List data -> Style
+  , individual : data -> Style
   }
   -> Config data
-hoverable =
-  Dot.hoverable
+customAny =
+  Dot.customAny
 
 
-{-| -}
+{-| Adds a hover effect on the given dot!
+
+    chartConfig : Maybe Data -> LineChart.Config Data Msg
+    chartConfig hovered =
+      { ...
+      , dots = Dots.hoverOne hovered
+      , ...
+      }
+
+_See full example [here](https://ellie-app.com/9psJRRS2ja1/1)._
+
+-}
 hoverOne : Maybe data -> Config data
 hoverOne hovering =
-  Dot.hoverable
-    { normal = disconnected 10 2
-    , hovered = aura 7 6 0.4
-    , isHovered = Just >> (==) hovering
+  Dot.customAny
+    { legend = \_ -> disconnected 10 2
+    , individual = \data ->
+        if Just data == hovering then
+          aura 7 6 0.4
+        else
+          disconnected 10 2
     }
 
 
 {-| -}
 hoverMany : List data -> Config data
 hoverMany hovering =
-  Dot.hoverable
-    { normal = disconnected 10 2
-    , hovered = aura 7 6 0.4
-    , isHovered = \data -> List.any ((==) data) hovering
+  Dot.customAny
+    { legend = \_ -> disconnected 10 2
+    , individual = \data ->
+        if List.any ((==) data) hovering then
+          aura 7 6 0.4
+        else
+          disconnected 10 2
     }
 
 

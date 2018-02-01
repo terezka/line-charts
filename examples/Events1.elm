@@ -84,10 +84,10 @@ chart model =
     , area = Area.default
     , line =
         Line.hoverOne model.hovering
-        -- customLineHover model.hovering
+        -- customLineConfig model.hovering
     , dots =
         Dots.hoverOne model.hovering
-        -- customDotHover model.hovering
+        -- customDotsConfig model.hovering
     }
     [ LineChart.line Color.orange Dots.triangle "Chuck" chuck
     , LineChart.line Color.yellow Dots.circle "Bob" bob
@@ -95,29 +95,66 @@ chart model =
     ]
 
 
-customLineHover : Maybe Info -> Line.Config Info
-customLineHover maybeHovered =
-  Line.custom <| \data ->
-    case maybeHovered of
-      Just hovered ->
-        if List.any ((==) hovered) data then
-          Line.style 2 identity
-        else
-          Line.style 1 (Color.Manipulate.lighten 0.3)
+customLineConfig : Maybe Info -> Line.Config Info
+customLineConfig maybeHovered =
+  let
+    styleDefault =
+      Line.style 1 identity
 
-      Nothing ->
-        Line.style 1 identity
+    styleHovered =
+      Line.style 2 identity
+
+    styleNotHovered =
+      Line.style 1 (Color.Manipulate.lighten 0.3)
+
+    lineConfig data = -- `data` being all the data for a line
+      case maybeHovered of
+        Just hovered ->
+          if List.any (dotIsHovered maybeHovered) data
+            -- This line is hovered
+            then styleHovered
+            -- Some line is hovered, but not this one
+            else styleNotHovered
+
+        Nothing ->
+          -- No line is hovered
+          styleDefault
+  in
+  Line.custom lineConfig
 
 
+customDotsConfig : Maybe Info -> Dots.Config Info
+customDotsConfig maybeHovered =
+  let
+    styleDefault =
+      Dots.bordered 5 2
 
-customDotHover : Maybe Info -> Dots.Config Info
-customDotHover maybeHovered =
-  Dots.hoverable
-    { normal = Dots.bordered 8 1
-    , hovered = Dots.full 10
-    , isHovered = Just >> (==) maybeHovered
+    styleHover =
+      Dots.full 8
+
+    styleLegend data = -- `data` being all the data for a line
+      if List.any (dotIsHovered maybeHovered) data
+        then styleHover
+        else styleDefault
+
+    styleIndividual datum = -- `datum` being a single data point on a line
+      if dotIsHovered maybeHovered datum
+        then styleHover
+        else styleDefault
+  in
+  Dots.customAny
+    { legend = styleLegend
+    , individual = styleIndividual
     }
 
+
+
+-- HELPERS
+
+
+dotIsHovered : Maybe Info -> Info -> Bool
+dotIsHovered maybeHovered datum =
+  Just datum == maybeHovered
 
 
 -- DATA

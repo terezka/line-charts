@@ -49,7 +49,7 @@ type alias Config data msg =
   Events.Config data msg
 
 
-{-| Add no events.
+{-| Adds no events.
 Use in the `LineChart.Config` passed to `viewCustom`.
 
     chartConfig : LineChart.Config Data msg
@@ -75,6 +75,9 @@ default =
       , ...
       }
 
+
+_See full example [here](https://ellie-app.com/9fDjmRLLPa1/1)._
+
 -}
 hoverOne : (Maybe data -> msg) -> Config data msg
 hoverOne =
@@ -90,6 +93,9 @@ x-coordinate or an empty list if you're not hovering anything.
       , events = Events.hoverMany HoverMany
       , ...
       }
+
+
+_See full example [here](https://ellie-app.com/9fY9Cj4X6a1/1)._
 
 -}
 hoverMany : (List data -> msg) -> Config data msg

@@ -1,5 +1,5 @@
 module Internal.Dots exposing
-  ( Config, default, static, hoverable
+  ( Config, default, custom, customAny
   , Shape(..)
   , Style, style, bordered, disconnected, aura, full
   , Variety
@@ -20,9 +20,8 @@ import Color.Convert
 {-| -}
 type Config data =
   Config
-    { normal : Style
-    , hovered : Style
-    , isHovered : data -> Bool
+    { legend : List data -> Style
+    , individual : data -> Style
     }
 
 
@@ -30,30 +29,27 @@ type Config data =
 default : Config data
 default =
   Config
-    { normal = disconnected 10 2
-    , hovered = aura 7 4 0.5
-    , isHovered = always False
+    { legend = \_ -> disconnected 10 2
+    , individual = \_ -> disconnected 10 2
     }
 
 
 {-| -}
-static : Style -> Config data
-static style =
+custom : Style -> Config data
+custom style =
   Config
-    { normal = style
-    , hovered = aura 5 4 0.5
-    , isHovered = always False
+    { legend = \_ -> style
+    , individual = \_ -> style
     }
 
 
 {-| -}
-hoverable :
-  { normal : Style
-  , hovered : Style
-  , isHovered : data -> Bool
+customAny :
+  { legend : List data -> Style
+  , individual : data -> Style
   }
   -> Config data
-hoverable =
+customAny =
   Config
 
 
@@ -145,9 +141,7 @@ view { system, dotsConfig, shape, color } data =
       dotsConfig
 
     (Style style) =
-      if config.isHovered data.user
-        then config.hovered
-        else config.normal
+      config.individual data.user
   in
   viewShape system style shape color data.point
 
@@ -157,9 +151,7 @@ viewSample : Config data -> Shape -> Color.Color -> Coordinate.System -> List (D
 viewSample (Config config) shape color system data =
   let
     (Style style) =
-      if List.any config.isHovered (List.map .user data)
-        then config.hovered
-        else config.normal
+       config.legend (List.map .user data)
   in
   viewShape system style shape color
 

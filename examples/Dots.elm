@@ -32,7 +32,7 @@ main =
 chart : Html.Html msg
 chart =
   LineChart.viewCustom
-    { y = Axis.default 450 "Height" .height
+    { y = Axis.default 450 "Weight" .weight
     , x = Axis.default 700 "Age" .age
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
@@ -46,15 +46,35 @@ chart =
     , dots =
         -- Try out these different configs!
         -- Dots.default
-        Dots.static (Dots.full 10)
-        -- Dots.static (Dots.aura 7 7 0.2)
-        -- Dots.static (Dots.bordered 10 1)
+        -- Dots.custom (Dots.full 10)
+        -- Dots.custom (Dots.aura 7 7 0.2)
+        -- Dots.custom (Dots.bordered 10 1)
+        customDotStyles
         -- For making the dots change based on whether it's hovered, see Events.elm!
     }
     [ LineChart.line Color.red Dots.diamond "Alice" alice
     , LineChart.line Color.blue Dots.circle "Bob" bob
     , LineChart.line Color.green Dots.triangle "Chuck" chuck
     ]
+
+
+customDotStyles : Dots.Config Info
+customDotStyles =
+  Dots.customAny
+    { legend = \_ -> dotDefaultStyle 7
+    , individual = \datum -> dotDefaultStyle (dotSize datum)
+    }
+
+
+dotSize : Info -> Float
+dotSize datum =
+  -- Change size based on height to add another dimension of information to the chart
+  (datum.height - 1) * 12
+
+
+dotDefaultStyle : Float -> Dots.Style
+dotDefaultStyle size =
+  Dots.full size
 
 
 
@@ -82,7 +102,7 @@ bob : List Info
 bob =
   [ Info 10 38 1.32 0
   , Info 17 69 1.75 2000
-  , Info 25 75 1.87 32000
+  , Info 25 78 1.87 32000
   , Info 43 77 1.87 52000
   ]
 
@@ -90,7 +110,7 @@ bob =
 chuck : List Info
 chuck =
   [ Info 10 42 1.35 0
-  , Info 15 72 1.72 1800
-  , Info 25 89 1.83 85000
-  , Info 43 95 1.84 120000
+  , Info 15 72 1.62 1800
+  , Info 25 89 1.68 85000
+  , Info 43 95 1.68 120000
   ]
