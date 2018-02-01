@@ -35,12 +35,11 @@ none =
 full : Config msg
 full =
   custom <| \data range ->
-    let largest = Coordinate.largestRange data range in
     { color = Colors.gray
     , width = 1
     , events = []
-    , start = largest.min
-    , end = largest.max
+    , start = range.min
+    , end = range.max
     }
 
 
