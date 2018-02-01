@@ -74,7 +74,7 @@ When I say "nice", I just mean that I try to calculate intervals which begin
 with 10, 5, 3, 2, 1 (adjusted to magnitude, of course!). For dates, I try to
 hit whole days, weeks, months or hours, minutes, and seconds.
 
-Not very politically correct, but I must serve the people!
+Not very politically correct, huh?
 
 -} -- TODO make better approximate
 default : Config msg

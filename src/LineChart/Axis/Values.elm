@@ -6,24 +6,30 @@ Use in `Ticks.custom` for creating "nice" values.
 
     ticksConfig : Ticks.Config msg
     ticksConfig =
-      let
-        ticks dataRange axisRange =
-          List.map Tick.float (niceValuesWithin dataRange)
+      Ticks.custom <| \dataRange axisRange ->
+        List.map Tick.float (valuesWithin dataRange)
 
-        niceValuesWithin range =
-          Values.float (Values.exactly 14) range
-      --  ^^^^^^^^^^^^  ^^^^^^^^^^^^^^
-      in
-      Ticks.custom ticks
+    valuesWithin : Coordinate.Range -> List Float
+    valuesWithin =
+      Values.int (Values.around 3)
 
 
 _See full example [here](https://ellie-app.com/dqLn8tZZ6a1/1)._
 
+** What are "nice" numbers/integers/datetimes? **
 
-@docs int, float, time, custom
+When I say "nice", I just mean that I try to calculate intervals which begin
+with 10, 5, 3, 2, 1 (adjusted to magnitude, of course!). For dates, I try to
+hit whole days, weeks, months or hours, minutes, and seconds.
 
-## Amount
-@docs Amount, around, exactly
+# Nice numbers
+@docs int, float, Amount, around, exactly
+
+# Custom numbers
+@docs custom
+
+# Nice times
+@docs time
 
 -}
 
@@ -38,7 +44,7 @@ type alias Amount =
   Values.Amount
 
 
-{-| Will get you around the number you pass it, although it will
+{-| Will get you around the amount of numbers you pass it, although it will
 prioritize getting "nice" numbers.
 -}
 around : Int -> Amount
@@ -46,8 +52,10 @@ around =
   Values.around
 
 
-{-| Will get you _closer_ to the number you pass it, although not actually
-_exactly_, since you still want decently "nice" numbers.
+{-| Will get you _closer_ to the amount of numbers you pass it,
+although not actually _exactly_, since you still want decently "nice" numbers.
+
+P.S. If you have a better name for this function, please contact me.
 -}
 exactly : Int -> Amount
 exactly =
@@ -58,28 +66,46 @@ exactly =
 -- NUMBERS
 
 
-{-| Given an amount indicating how many ticks you'd like and a range, you
-get a list of evenly spaces "nice" integers.
+{-| Makes nice integers.
+
+    valuesWithin : Coordinate.Range -> List Float
+    valuesWithin =
+      -- something like [ 1, 2, 3, 4 ]
+      Values.int (Values.around 3)
+
 -}
 int : Amount -> Coordinate.Range -> List Int
 int =
   Values.int
 
 
-{-| Given an amount indicating how many ticks you'd like and a range, you
-get a list of evenly spaces "nice" floats.
+{-| Makes nice floats.
+
+    valuesWithin : Coordinate.Range -> List Float
+    valuesWithin =
+      -- something like [ 1, 1.5, 2, 2.5 ]
+      Values.float (Values.exactly 4)
+
 -}
 float : Amount -> Coordinate.Range -> List Float
 float =
   Values.float
 
 
-{-| Gets you evenly spaces floats.
+{-| Makes evenly spaced floats.
 
-  Arguments:
+Arguments:
+
   1. A number which must be in your resulting numbers (Commonly 0).
   2. The interval between your numbers.
   3. The range which your numbers must be between.
+
+
+    valuesWithin : Coordinate.Range -> List Float
+    valuesWithin =
+      -- makes [ -3, 1, 5, 9, 13, ... ]
+      Values.custom 1 4
+
 -}
 custom : Float -> Float -> Coordinate.Range -> List Float
 custom =
@@ -90,7 +116,12 @@ custom =
 -- TIME
 
 
-{-| Given a desired number of ticks, this makes a list of `Tick.Time` values.
+{-| Makes nice times.
+
+    valuesWithin : Coordinate.Range -> List Float
+    valuesWithin =
+      Values.time 5
+
 -}
 time : Int -> Coordinate.Range -> List Tick.Time
 time =
