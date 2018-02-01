@@ -2,47 +2,81 @@ module LineChart.Axis.Ticks exposing
   ( Config, default
   , int, time, float
   , intCustom, timeCustom, floatCustom, custom
-  , hoverOne, frame
   )
 
 {-|
 
-# Quick start
-@docs Config, default, int, time, float
+@docs Config, default
 
-# Customiztion
+# Custom amount
+
+Choose the approximate amount of ticks on your axis!
+
+    ticksConfig : Ticks.Config msg
+    ticksConfig =
+      Ticks.int 7   -- makes ca. 7 ticks at nice integers
+      -- or
+      Ticks.time 7  -- makes ca. 7 ticks at nice datetimes
+      -- or
+      Ticks.float 7 -- makes ca. 7 ticks at nice float
+
+_See full example [here](https://ellie-app.com/f46B8MSCya1/1)._
+
+@docs int, time, float
+
+# Custom tick
+
+Now you get to decide how the ticks should look!
+
+    ticksConfig : Ticks.Config msg
+    ticksConfig =
+      Ticks.intCustom 7 customTick
+
+_See full example [here](https://ellie-app.com/f2tgyy8X3a1/1)._
+
 @docs intCustom, timeCustom, floatCustom
 
-# Wild customiztion
+# Custom positions
 @docs custom
-
-## Helpers
-@docs hoverOne, frame
 
 -}
 
 import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Axis.Ticks as Ticks
-import Internal.Axis.Values as Values
 import LineChart.Axis.Tick as Tick
 
 
 
-{-| -}
+{-| Part of the configuration in `Axis.custom`.
+
+    axisConfig : Axis.Config Data msg
+    axisConfig =
+      Axis.custom
+        { ..
+        , ticks = Ticks.default
+        , ...
+        }
+
+-}
 type alias Config msg =
   Ticks.Config msg
-
-
-{-| -}
-type alias Amount =
-  Values.Amount
 
 
 
 -- API / AXIS
 
 
-{-| -}
+{-| Makes around five ticks at "nice" numbers.
+
+** What are "nice" numbers/integers/datetimes? **
+
+When I say "nice", I just mean that I try to calculate intervals which begin
+with 10, 5, 3, 2, 1 (adjusted to magnitude, of course!). For dates, I try to
+hit whole days, weeks, months or hours, minutes, and seconds.
+
+Not very politically correct, but I must serve the people!
+
+-} -- TODO make better approximate
 default : Config msg
 default =
    Ticks.float 5
@@ -84,23 +118,30 @@ timeCustom =
   Ticks.timeCustom
 
 
-{-| -}
+{-| Make your own combination of ticks.
+
+    ticksConfig : Maybe Info -> Ticks.Config msg
+    ticksConfig maybeHovered =
+      let
+        hoverOne =
+          case maybeHovered of
+            Just hovered -> [ Tick.float hovered.age ]
+            Nothing -> []
+
+        framing range =
+          List.map Tick.float [ range.min, range.max ]
+      in
+      Ticks.custom <| \dataRange axisRange ->
+        framing dataRange ++ hoverOne
+
+
+_See full example [here](https://ellie-app.com/dZyX64dMXa1/1)._
+
+** What if I still want nice values?**
+
+You can use `Axis.Values` to produce "nice" values within a given range.
+
+-}
 custom : (Coordinate.Range -> Coordinate.Range -> List (Tick.Config msg)) -> Config msg
 custom =
   Ticks.custom
-
-
-
--- CUSTOM HELP
-
-
-{-| -}
-hoverOne : (data -> Tick.Config msg) -> Maybe data -> List (Tick.Config msg)
-hoverOne tick =
-  Maybe.map (tick >> List.singleton) >> Maybe.withDefault []
-
-
-{-| -}
-frame : (Float -> Tick.Config msg) -> Coordinate.Range -> List (Tick.Config msg)
-frame tick data =
-  List.map tick [ data.min, data.max ]
