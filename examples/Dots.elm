@@ -49,7 +49,7 @@ chart =
         -- Dots.custom (Dots.full 10)
         -- Dots.custom (Dots.aura 7 7 0.2)
         -- Dots.custom (Dots.bordered 10 1)
-        customDotStyles
+        customConfig
         -- For making the dots change based on whether it's hovered, see Events.elm!
     }
     [ LineChart.line Color.red Dots.diamond "Alice" alice
@@ -58,23 +58,16 @@ chart =
     ]
 
 
-customDotStyles : Dots.Config Info
-customDotStyles =
+customConfig : Dots.Config Info
+customConfig =
+  let
+    style size = Dots.full size
+    getSize datum = (datum.height - 1) * 12
+  in
   Dots.customAny
-    { legend = \_ -> dotDefaultStyle 7
-    , individual = \datum -> dotDefaultStyle (dotSize datum)
+    { legend = \_ -> style 7
+    , individual = \datum -> style (getSize datum)
     }
-
-
-dotSize : Info -> Float
-dotSize datum =
-  -- Change size based on height to add another dimension of information to the chart
-  (datum.height - 1) * 12
-
-
-dotDefaultStyle : Float -> Dots.Style
-dotDefaultStyle size =
-  Dots.full size
 
 
 
