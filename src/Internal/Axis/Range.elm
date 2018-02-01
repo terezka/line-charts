@@ -30,11 +30,9 @@ window =
 
 
 {-| -}
-custom : (Coordinate.Range -> ( Float, Float )) -> Config
-custom editRange =
-  Custom <| \range ->
-    let ( min, max ) = editRange range in
-    Coordinate.Range min max
+custom : (Coordinate.Range -> Coordinate.Range) -> Config
+custom =
+  Custom
 
 
 
