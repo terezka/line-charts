@@ -9,6 +9,7 @@ import Svg exposing (Svg, Attribute, g, text_, tspan, text)
 import Svg.Attributes as Attributes exposing (class, strokeWidth, stroke)
 import LineChart.Axis.Tick as Tick exposing (Direction)
 import Internal.Coordinate as Coordinate exposing (..)
+import LineChart.Colors as Colors
 import Internal.Data as Data
 import Internal.Axis.Range as Range
 import Internal.Axis.Tick
@@ -46,7 +47,7 @@ default pixels title variable =
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 20 20
-    , axisLine = AxisLine.rangeFrame
+    , axisLine = AxisLine.rangeFrame Colors.gray
     , ticks =
         Ticks.custom <| \data range ->
           let smallest = Coordinate.smallestRange data range
@@ -68,7 +69,7 @@ full pixels title variable =
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 0 20
-    , axisLine = AxisLine.full
+    , axisLine = AxisLine.default
     , ticks =
         Ticks.custom <| \data range ->
           let largest = Coordinate.largestRange data range
@@ -86,7 +87,7 @@ time pixels title variable =
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 20 20
-    , axisLine = AxisLine.rangeFrame
+    , axisLine = AxisLine.rangeFrame Colors.gray
     , ticks =
         Ticks.custom <| \data range ->
           let smallest = Coordinate.smallestRange data range
@@ -113,15 +114,15 @@ none pixels variable =
 
 
 {-| -}
-skinny : Int -> String -> (data -> Float) -> Config data msg
-skinny pixels title variable =
+skinny : Int -> String -> (data -> Float) -> List Float -> Config data msg
+skinny pixels title variable ticks =
   custom
     { title = Title.atAxisMax 13 0 title
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 20 20
-    , axisLine = AxisLine.full
-    , ticks = Ticks.custom <| \_ _ -> []
+    , axisLine = AxisLine.default
+    , ticks = Ticks.custom <| \_ _ -> List.map Tick.float ticks
     }
 
 

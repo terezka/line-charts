@@ -16,7 +16,7 @@ type Config msg =
 {-| -}
 default : Config msg
 default =
-  rangeFrame
+  full Colors.gray
 
 
 {-| -}
@@ -32,10 +32,10 @@ none =
 
 
 {-| -}
-full : Config msg
-full =
+full : Color.Color -> Config msg
+full color =
   custom <| \data range ->
-    { color = Colors.gray
+    { color = color
     , width = 1
     , events = []
     , start = range.min
@@ -44,11 +44,11 @@ full =
 
 
 {-| -}
-rangeFrame : Config msg
-rangeFrame =
+rangeFrame : Color.Color -> Config msg
+rangeFrame color =
   custom <| \data range ->
     let smallest = Coordinate.smallestRange data range in
-    { color = Colors.gray
+    { color = color
     , width = 1
     , events = []
     , start = smallest.min

@@ -1,4 +1,4 @@
-module Ranges exposing (main)
+module Intersections exposing (main)
 
 
 import Svg
@@ -40,11 +40,11 @@ main =
 chart : Html.Html msg
 chart =
   LineChart.viewCustom
-    { y = Axis.skinny 500 "y" .y
-    , x = customAxis
+    { y = Axis.skinny 500 "y" .y [ -1, 0, 1, 2, 3 ]
+    , x = Axis.skinny 700 "x" .x [ -1, 0 ,1, 2, 3]
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
-    , intersection = Intersection.default
+    , intersection = Intersection.at 0 0
     , legends = Legends.default
     , events = Events.default
     , junk = customJunk
@@ -57,46 +57,12 @@ chart =
     ]
 
 
-customAxis : Axis.Config Data msg
-customAxis =
-  Axis.custom
-    { title = Title.atAxisMax 0 -17 "x"
-    , variable = Just << .x
-    , pixels = 700
-    , range =
-        Range.custom <| \{ min, max } ->
-          { min = min - 1, max = max + 2 }
-    , axisLine = AxisLine.full
-    , ticks =
-        Ticks.custom <| \dataRange axisRange ->
-          List.map (customTick Tick.negative) [ dataRange.min, dataRange.max ] ++
-          List.map (customTick Tick.positive) [ axisRange.min, axisRange.max ]
-    }
-
-
-customTick : Tick.Direction -> Float -> Tick.Config msg
-customTick direction n =
-  let labelNumber = toFloat (round (n * 100)) / 100 in
-  Tick.custom
-    { position = n
-    , color = Colors.gray
-    , width = 1
-    , length = 10
-    , grid = True
-    , direction = direction
-    , label = Just <| Junk.label Color.black (toString labelNumber)
-    }
-
-
 customJunk : Junk.Config data msg
 customJunk =
   Junk.custom <| \system ->
     { below = []
     , above =
-        [ note system 2  1.5 0 -10 "← axis range →"
-        , note system 2 -1.5 0  18 "← data range →"
-        , rangeLine system  1.5 system.x.min system.x.max
-        , rangeLine system -1.5 system.xData.min system.xData.max
+        [ note system 0.2 0.25 0 0 "↙ The intersection"
         ]
     , html = []
     }
@@ -104,19 +70,12 @@ customJunk =
 
 note : Coordinate.System -> Float -> Float -> Float -> Float -> String -> Svg.Svg msg
 note system x y xo yo text =
+  let _ = Debug.log "system" system in
   Svg.g
     [ Junk.transform [ Junk.move system x y, Junk.offset xo yo ]
-    , Svg.Attributes.style "text-anchor: middle;"
+    , Svg.Attributes.style "text-anchor: start;"
     ]
     [ Junk.label Color.black text ]
-
-
-rangeLine : Coordinate.System -> Float -> Float -> Float -> Svg.Svg msg
-rangeLine system =
-  Junk.horizontalCustom system
-    [ Svg.Attributes.stroke "#65d842"
-    , Svg.Attributes.clipPath ""
-    ]
 
 
 
@@ -129,6 +88,6 @@ type alias Data =
 
 data : List Data
 data =
-  [ Data -1  -5
-  , Data  5  5
+  [ Data -1 -3
+  , Data  6 3
   ]

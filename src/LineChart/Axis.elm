@@ -102,7 +102,7 @@ none =
 
 
 {-| -}
-skinny : Int -> String -> (data -> Float) -> Config data msg
+skinny : Int -> String -> (data -> Float) -> List Float -> Config data msg
 skinny =
   Axis.skinny
 

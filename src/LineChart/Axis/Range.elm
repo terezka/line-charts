@@ -7,7 +7,7 @@ module LineChart.Axis.Range exposing (Config, default, padded, window, custom)
 Considering the following data:
 
     data =
-      [ { x = -1, y = -5 }
+      [ { x = -1, y = -1 }
       , { x = 5, y = 5 }
       ]
 

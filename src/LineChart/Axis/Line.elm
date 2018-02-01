@@ -1,16 +1,17 @@
 module LineChart.Axis.Line exposing
-  ( Config, none, default
-  , full, rangeFrame
+  ( Config, default, full, rangeFrame, none
   , Properties, custom
   )
 
 {-|
 
-# Quick start
-@docs Config, default, none, full, rangeFrame
+If your in doubt about the terminology of data range and axis range, please
+see the `Axis.Range` module.
+
+@docs Config, default, full, rangeFrame, none
 
 # Customiztion
-@docs Properties, custom
+@docs custom, Properties
 
 -}
 
@@ -21,16 +22,40 @@ import Color
 
 
 
-{-| -}
+{-| This configuration is part of the
+configuration in `Axis.custom`.
+
+    axisConfig : Axis.Config Data msg
+    axisConfig =
+      Axis.custom
+        { ..
+        , range = AxisLine.default
+        , ...
+        }
+-}
 type alias Config msg =
   Line.Config msg
 
 
-{-| Draws the axis line to fit the range of your data.
+{-| Draws the full length of your axis range.
 -}
 default : Config msg
 default =
   Line.default
+
+
+{-| Same as the default, except you get to pick the color.
+-}
+full : Color.Color -> Config msg
+full =
+  Line.full
+
+
+{-| Draws the full length of your data range in your given color.
+-}
+rangeFrame : Color.Color -> Config msg
+rangeFrame =
+  Line.rangeFrame
 
 
 {-| Removes the axis line entirely.
@@ -38,20 +63,6 @@ default =
 none : Config msg
 none =
   Line.none
-
-
-{-| Draws the axis line as the full length of your dimension.
--}
-full : Config msg
-full =
-  Line.full
-
-
-{-| Draws the axis line to fit the range of your data.
--}
-rangeFrame : Config msg
-rangeFrame =
-  Line.rangeFrame
 
 
 
@@ -68,8 +79,18 @@ type alias Properties msg =
   }
 
 
-{-| Given the range of your data and your dimension range, define your own
+{-| Given your data range and axis range respectivily, define your own
 axis line configuration.
+
+    axisLineConfig : AxisLine.Config msg
+    axisLineConfig =
+      AxisLine.custom <| \dataRange axisRange ->
+        { color = Colors.gray
+        , width = 2
+        , events = []
+        , start = dataRange.min
+        , end = 5
+        }
 -}
 custom : (Coordinate.Range -> Coordinate.Range -> Properties msg) -> Config msg
 custom =
