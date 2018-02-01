@@ -1,9 +1,9 @@
-module LineChart.Axis exposing (Config, default, full, time, custom)
+module LineChart.Axis exposing (Config, default, full, time, custom, none, skinny)
 
 {-|
 
 # Quick start
-@docs Config, default, full, time
+@docs Config, default, full, time, none, skinny
 
 # Customization
 @docs custom
@@ -93,6 +93,18 @@ full =
 time : Int -> String -> (data -> Float) -> Config data msg
 time =
   Axis.time
+
+
+{-| -}
+none : Int -> (data -> Float) -> Config data msg
+none =
+  Axis.none
+
+
+{-| -}
+skinny : Int -> String -> (data -> Float) -> Config data msg
+skinny =
+  Axis.skinny
 
 
 {-| -}

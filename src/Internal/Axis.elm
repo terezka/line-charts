@@ -1,5 +1,5 @@
 module Internal.Axis exposing
-  ( Config, default, custom, full, time
+  ( Config, default, custom, full, time, none, skinny
   , variable, pixels, range, ticks
   , viewHorizontal, viewVertical
   )
@@ -96,6 +96,32 @@ time pixels title variable =
               amount = round <| diff * toFloat pixels / 90
           in
           List.map Tick.time <| Values.time amount smallest
+    }
+
+
+{-| -}
+none : Int -> (data -> Float) ->  Config data msg
+none pixels variable =
+  custom
+    { title = Title.default ""
+    , variable = Just << variable
+    , pixels = pixels
+    , range = Range.padded 20 20
+    , axisLine = AxisLine.none
+    , ticks = Ticks.custom <| \_ _ -> []
+    }
+
+
+{-| -}
+skinny : Int -> String -> (data -> Float) -> Config data msg
+skinny pixels title variable =
+  custom
+    { title = Title.atAxisMax 13 0 title
+    , variable = Just << variable
+    , pixels = pixels
+    , range = Range.padded 20 20
+    , axisLine = AxisLine.full
+    , ticks = Ticks.custom <| \_ _ -> []
     }
 
 

@@ -2,11 +2,32 @@ module LineChart.Axis.Range exposing (Config, default, padded, window, custom)
 
 {-|
 
-# Quick start
-@docs Config, default, padded, window
+## Axis range vs. data range
 
-# Customiztion
-@docs custom
+Considering the following data:
+
+    data =
+      [ { x = -1, y = -5 }
+      , { x = 5, y = 5 }
+      ]
+
+From this we can see that **the smallest x is -1 and the largest x is 5**. We can
+call this **the x-data range**. By default, the axis range is the same as your
+data range, but you can make it far more complicated than that.
+
+You see, opposite our data range which is always only calculated from sticktly
+from your data, **your axis range can be changed with this module**.
+For example, you can make it larger than your data range, as illustrated below.
+
+<img alt="Ranges explained" width="610" src="https://github.com/terezka/lines/blob/master/images/ranges.png?raw=true"></src>
+
+This is cool because it looks good. You can also make the axis range
+smaller than the data range, and the result will we a "zoomed in" view of
+one section of the data, which can also be useful.
+
+Take a look at some of these functions if these effects interests you.
+
+@docs Config, default, window, padded, custom
 
 -}
 
@@ -15,35 +36,80 @@ import LineChart.Coordinate as Coordinate
 
 
 
-{-| -}
+{-| First of all, this configuration is part of the
+configuration in `Axis.custom`.
+
+    axisConfig : Axis.Config Data msg
+    axisConfig =
+      Axis.custom
+        { ..
+        , range = Range.default
+        , ...
+        }
+
+-}
 type alias Config =
   Range.Config
 
 
-{-| Set the range to the full range of your data.
+{-| Set the axis range to the full length of your data range.
+
+    rangeConfig : Range.Config
+    rangeConfig =
+      Range.default
+
+<img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges3.png?raw=true"></src>
+
 -}
 default : Config
 default =
   Range.default
 
 
-{-| Add a given amount of pixels to the minimum and maximum respectivily.
+{-| Add a given amount of pixels to the minimum and maximum of your axis range,
+respectivily.
+
+    rangeConfig : Range.Config
+    rangeConfig =
+      Range.padded 40 40
+
+<img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges.png?raw=true"></src>
+
 -}
 padded : Float -> Float -> Config
 padded =
   Range.padded
 
 
-{-| Set the minimum and maximum of your range respectivily.
+{-| Straight up set your axis range by specifying the minimum and maximum,
+respectivily.
+
+
+    rangeConfig : Range.Config
+    rangeConfig =
+      Range.window -0.5 4.5
+
+
+<img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges2.png?raw=true"></src>
+
 -}
 window : Float -> Float -> Config
 window =
   Range.window
 
 
-{-| Given your data's range, produce your desired minimum and maximum
-respectivily.
+{-| Given your data range, produce your desired axis range.
+
+    rangeConfig : Range.Config
+    rangeConfig =
+      Range.custom <| \{ min, max } ->
+        { min = min - 1, max = max + 2 }
+
+
+
+<img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges4.png?raw=true"></src>
+
 -}
-custom : (Coordinate.Range -> ( Float, Float )) -> Config
+custom : (Coordinate.Range -> Coordinate.Range) -> Config
 custom =
   Range.custom

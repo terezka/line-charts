@@ -8,6 +8,7 @@ module Internal.Axis.Tick exposing
 
 import Svg exposing (Svg, Attribute)
 import Internal.Svg as Svg
+import LineChart.Colors as Colors
 import Color
 
 
@@ -59,7 +60,7 @@ int : Int -> Config msg
 int n =
   custom
     { position = toFloat n
-    , color = Color.gray
+    , color = Colors.gray
     , width = 1
     , length = 5
     , grid = True
@@ -73,7 +74,7 @@ float : Float -> Config msg
 float n =
   custom
     { position = n
-    , color = Color.gray
+    , color = Colors.gray
     , width = 1
     , length = 5
     , grid = True
@@ -87,7 +88,7 @@ gridless : Float -> Config msg
 gridless n =
   custom
     { position = n
-    , color = Color.gray
+    , color = Colors.gray
     , width = 1
     , length = 5
     , grid = False
@@ -101,9 +102,9 @@ long : Float -> Config msg
 long n =
   custom
     { position = n
-    , color = Color.gray
+    , color = Colors.gray
     , width = 1
-    , length = 8
+    , length = 20
     , grid = True
     , direction = Negative
     , label = Just <| Svg.label "inherit" (toString n)
