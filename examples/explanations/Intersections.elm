@@ -44,7 +44,7 @@ chart =
     , x = Axis.skinny 700 "x" .x [ -1, 0 ,1, 2, 3]
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
-    , intersection = Intersection.at 0 0
+    , intersection = Intersection.at 1 1
     , legends = Legends.default
     , events = Events.default
     , junk = customJunk
@@ -62,7 +62,7 @@ customJunk =
   Junk.custom <| \system ->
     { below = []
     , above =
-        [ note system 0.2 0.25 0 0 "↙ The intersection"
+        [ note system 1.2 1.25 0 0 "↙ The intersection"
         ]
     , html = []
     }

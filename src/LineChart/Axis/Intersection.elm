@@ -2,11 +2,14 @@ module LineChart.Axis.Intersection exposing (Config, default, at, custom)
 
 {-|
 
-# Quick start
-@docs Config, default, at
+## Where is the intersection?
 
-# Customiztion
-@docs custom
+The intersection is where your two axis lines meet. By default this is at
+the origin (0, 0), but it need not be as illustated below.
+
+<img alt="Ranges explained" width="610" src="https://github.com/terezka/lines/blob/master/images/intersection1.png?raw=true"></src>
+
+@docs Config, default, at, custom
 
 -}
 
