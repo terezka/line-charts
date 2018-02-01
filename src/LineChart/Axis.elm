@@ -3,10 +3,10 @@ module LineChart.Axis exposing (Config, default, full, time, custom)
 {-|
 
 # Quick start
-@docs default, full, time
+@docs Config, default, full, time
 
-# Customizing
-@docs Config, custom
+# Customization
+@docs custom
 
 -}
 
@@ -25,14 +25,10 @@ import Internal.Axis.Title as Title
 
   - **title**: Adds a title on your axis.
     See `LineChart.Axis.Title` for more information and examples.
-
   - **variable**: Determines what data is drawn in the chart!
-
   - **pixels**: The length of the dimension.
-
   - **range**: Determines the range of your dimension.
     See `LineChart.Axis.Range` for more information and examples.
-
   - **axis**: Customizes your axis line and ticks.
     See `LineChart.Axis` for more information and examples.
 

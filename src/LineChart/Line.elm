@@ -8,12 +8,9 @@ module LineChart.Line exposing
 {-|
 
 # Quick start
-@docs Config, default
+@docs Config, default, wider, hoverOne
 
-# Options
-@docs wider, hoverOne
-
-# Custom
+# Customization
 @docs custom
 
 ## Styles

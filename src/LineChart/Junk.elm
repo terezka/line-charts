@@ -14,16 +14,12 @@ If you want to add tooltips, sections for emphasis, or kittens on your chart,
 this is where it's at.
 
 # Quick start
-@docs Config, default
+@docs Config, default, hoverOne
 
-# Options
-@docs hoverOne
-
-# Custom
+# Customization
 @docs custom, Layers
 
-# Common
-
+# Common junk
 ## Lines
 @docs vertical, horizontal, verticalCustom, horizontalCustom
 

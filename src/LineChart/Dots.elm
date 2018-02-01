@@ -7,25 +7,24 @@ module LineChart.Dots exposing
 
 {-|
 
-# Quick start:
+# Quick start: Shapes
+@docs Shape
 
-## Shape
-@docs Shape, none
-
-## Configuration
-@docs Config, default
-
-# Options
-
-## For shapes
+## Selection
 Hopefully, these are selfexplanatory.
 If not, I recommend [this tutorial](https://www.youtube.com/watch?v=QBD7CB-rroo).
-@docs circle, triangle, square, diamond, plus, cross
+@docs none, circle, triangle, square, diamond, plus, cross
 
-## For configurations
-@docs hoverOne, hoverMany, custom, customAny
+# Quick start: Styles
+@docs Config, default
 
-### Styles
+## Hover styles
+@docs hoverOne, hoverMany
+
+# Customization: Styles
+@docs custom, customAny
+
+### Selection
 @docs Style, full, bordered, disconnected, aura
 
 
@@ -43,8 +42,6 @@ import Internal.Dots as Dots
 **Change the shape of your dots**
 
 The shape type changes the shape of your dots.
-See the selection under _Options_.
-
 
     humanChart : Html msg
     humanChart =
@@ -70,57 +67,13 @@ type alias Shape =
   Dots.Shape
 
 
-{-| Gets you a clean line without dots.
-
-    humanChart : Html msg
-    humanChart =
-      LineChart.view .age .income
-        [ LineChart.line Color.pink Dots.none "Alice" alice ]
-        --                          ^^^^^^^^^
-
--}
+{-| -}
 none : Shape
 none =
   Dots.None
 
 
-{-|
-
-**Change the style of your dots**
-
-Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
-
-    chartConfig : LineChart.Config Data Msg
-    chartConfig =
-      { ...
-      , dots = Dots.default
-      , ...
-      }
-
-
-**What is a dot style?**
-
-The style of the dot includes the size of the dot and various other qualities
-like whether it has a border or not. See your options under _Styles_.
-
--}
-type alias Config data =
-  Dots.Config data
-
-
-{-| Draws a white outline around all your dots.
--}
-default : Config data
-default =
-  Dots.default
-
-
-
--- ALL SHAPES
-
-
-{-|
--}
+{-| -}
 circle : Shape
 circle =
   Dots.Circle
@@ -154,6 +107,37 @@ plus =
 cross : Shape
 cross =
   Dots.Cross
+
+
+{-|
+
+**Change the style of your dots**
+
+Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
+
+    chartConfig : LineChart.Config Data Msg
+    chartConfig =
+      { ...
+      , dots = Dots.default
+      , ...
+      }
+
+
+**What is a dot style?**
+
+The style of the dot includes the size of the dot and various other qualities
+like whether it has a border or not. See your options under _Styles_.
+
+-}
+type alias Config data =
+  Dots.Config data
+
+
+{-| Draws a white outline around all your dots.
+-}
+default : Config data
+default =
+  Dots.default
 
 
 
@@ -229,7 +213,7 @@ customAny =
 
 {-| Adds a hover effect on the given dot!
 
-    dotsConfig : Maybe Data -> LDots.Config Info
+    dotsConfig : Maybe Data -> Dots.Config Info
     dotsConfig hovered =
       Dots.hoverOne hovered
 
@@ -255,7 +239,7 @@ hoverOne maybeHovered =
 
 {-| Adds a hover effect on several given dots!
 
-    dotsConfig : List Data -> LDots.Config Info
+    dotsConfig : List Data -> Dots.Config Info
     dotsConfig hovered =
       Dots.hoverMany hovered
 

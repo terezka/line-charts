@@ -1,4 +1,4 @@
-module Internal.Axis.Title exposing (Config, Properties, default, atRangeMax, atDataMax, at, custom, config)
+module Internal.Axis.Title exposing (Config, Properties, default, atAxisMax, atDataMax, atPosition, custom, config)
 
 import Svg exposing (Svg)
 import Internal.Coordinate as Coordinate
@@ -20,37 +20,39 @@ type alias Properties msg =
 
 
 {-| -}
-default : ( Float, Float ) -> String -> Config msg
+default : String -> Config msg
 default =
-  atRangeMax
+  atAxisMax 0 0
 
 
 {-| -}
-atRangeMax : ( Float, Float ) -> String -> Config msg
-atRangeMax =
-  at (\_ range -> range.max)
+atAxisMax : Float -> Float -> String -> Config msg
+atAxisMax =
+  let position data range = range.max in
+  atPosition position
 
 
 {-| -}
-atDataMax : ( Float, Float ) -> String -> Config msg
+atDataMax : Float -> Float -> String -> Config msg
 atDataMax =
-  at (\data range -> Basics.min data.max range.max)
+  let position data range = Basics.min data.max range.max in
+  atPosition position
 
 
 {-| -}
-at : (Coordinate.Range -> Coordinate.Range -> Float) -> ( Float, Float ) -> String -> Config msg
-at position offset title =
-  custom
-    { view = Svg.label "inherit" title
-    , position = position
-    , offset = offset
-    }
+atPosition : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Config msg
+atPosition position x y =
+  custom position x y << Svg.label "inherit"
 
 
 {-| -}
-custom : Properties msg -> Config msg
-custom =
+custom : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> Svg msg -> Config msg
+custom position x y title =
   Config
+    { view = title
+    , position = position
+    , offset = ( x, y )
+    }
 
 
 

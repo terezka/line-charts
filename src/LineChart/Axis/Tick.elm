@@ -9,13 +9,16 @@ module LineChart.Axis.Tick exposing
 {-|
 
 # Quick start
-@docs int, float
+@docs Config, int, float
 
-# Definition
-@docs Config, Properties, Direction, negative, positive, custom
-
-# Time tick
+## For time axes
 @docs time, Time, Unit, Interval, format
+
+# Customiztion
+@docs Properties, custom
+
+## Direction
+@docs Direction, negative, positive
 
 -}
 

@@ -7,11 +7,7 @@ module LineChart.Legends exposing
 {-|
 
 # Quick start
-@docs Config, default
-
-# Options
-
-@docs none
+@docs Config, default, none
 
 ## Free legends
 Where the title is hanging by its respective line.

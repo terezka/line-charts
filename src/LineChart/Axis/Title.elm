@@ -1,15 +1,8 @@
-module LineChart.Axis.Title exposing (Config, default, atDataMax, at, custom, Properties)
+module LineChart.Axis.Title exposing (Config, default, atAxisMax, atDataMax, atPosition, custom)
 
 {-|
 
-# Quick start
-@docs Config, default
-
-# Configurations
-@docs atDataMax, at
-
-# Customiztion
-@docs custom, Properties
+@docs Config, default, atAxisMax, atDataMax, atPosition, custom
 
 -}
 
@@ -19,58 +12,96 @@ import LineChart.Coordinate as Coordinate
 
 
 
-{-| -}
+{-| Part of the configuration in `Axis.custom`.
+
+    axisConfig : Axis.Config Data msg
+    axisConfig =
+      Axis.custom
+        { title = Title.default
+        , ...
+        }
+
+-}
 type alias Config msg =
   Title.Config msg
 
 
-{-| Place a given string title by the maximum of your axis.
+{-| Place the title at the end of your axis.
 -}
-default : ( Float, Float ) -> String -> Config msg
+default : String -> Config msg
 default =
   Title.default
 
 
-{-| -}
-atDataMax : ( Float, Float ) -> String -> Config msg
+{-| Place the title at your highest data point. Arguments:
+
+  1. The x offset in SVG space.
+  2. The y offset in SVG space.
+  3. The title.
+
+
+    titleConfig : Title.Config msg
+    titleConfig =
+      Title.atDataMax 0 10 "Age"
+
+-}
+atDataMax : Float -> Float -> String -> Config msg
 atDataMax =
   Title.atDataMax
 
 
-{-| Place your string title in a spot along your axis.
+{-| Place the title at the end of your axis. Arguments:
 
-  Arguments:
+  1. The x offset in SVG space.
+  2. The y offset in SVG space.
+  3. The title.
+
+
+    titleConfig : Title.Config msg
+    titleConfig =
+      Title.atAxisMax 0 10 "Age"
+
+-}
+atAxisMax : Float -> Float -> String -> Config msg
+atAxisMax =
+  Title.atAxisMax
+
+
+{-| Place your title in any spot along your axis. Arguments:
+
   1. Given the data range and axis range, provide a position.
   2. The x offset in SVG space.
   3. The y offset in SVG space.
+  4. The title.
 
 
-    title : Title.Title Msg
-    title =
-      Title.at .max 10 20 "BMI"
+      titleConfig : Title.Title Msg
+      titleConfig =
+        let position dataRange axisRange = axisRange.max in
+        Title.atPosition position 10 20 "BMI"
 
 -}
-at : (Coordinate.Range -> Coordinate.Range -> Float) -> ( Float, Float ) -> String -> Config msg
-at =
-  Title.at
+atPosition : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Config msg
+atPosition =
+  Title.atPosition
 
 
+{-| Almost the same as `atPosition` except instead of a string title, you pass a
+SVG title. Arguments:
 
-{-| -}
-type alias Properties msg =
-  { view : Svg msg
-  , position : Coordinate.Range -> Coordinate.Range -> Float
-  , offset : ( Float, Float )
-  }
-
-
-{-| Same as `at` except instead of a string title, you pass a SVG title.
+  1. Given the data range and axis range, provide a position.
+  2. The x offset in SVG space.
+  3. The y offset in SVG space.
+  4. The title view.
 
 
-    title : Title.Title Msg
-    title =
-      Title.custom .max 10 20 (Junk.text Color.pink "BMI")
+    titleConfig : Title.Title Msg
+    titleConfig =
+      let position dataRange axisRange = axisRange.max in
+      Title.custom position 10 20 <|
+        Junk.text Color.pink "BMI"
+
 -}
-custom : Properties msg -> Config msg
+custom : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> (Svg msg) -> Config msg
 custom =
   Title.custom

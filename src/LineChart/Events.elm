@@ -8,12 +8,9 @@ module LineChart.Events exposing
 {-|
 
 # Quick start
-@docs Config, default
+@docs Config, default, hoverOne, hoverMany, click
 
-# Options
-@docs hoverOne, hoverMany, click
-
-# Custom
+# Customization
 @docs custom
 
 ## Events
@@ -44,12 +41,10 @@ import LineChart.Coordinate as Coordinate
 -- QUICK START
 
 
-{-| -}
-type alias Config data msg =
-  Events.Config data msg
+{-|
 
+** For adding events to your chart **
 
-{-| Adds no events.
 Use in the `LineChart.Config` passed to `viewCustom`.
 
     chartConfig : LineChart.Config Data msg
@@ -60,23 +55,28 @@ Use in the `LineChart.Config` passed to `viewCustom`.
       }
 
 -}
+type alias Config data msg =
+  Events.Config data msg
+
+
+{-| Adds no events.
+-}
 default : Config data msg
 default =
   Events.default
 
 
-{-| Sends you a given message with the data for the dot hovered or
-`Nothing` if you're not hovering anything.
+{-| Sends a message when the mouse is within a 30 pixel radius of a dot.
+Sends a `Nothing` when the mouse is not hovering a dot.
 
-    chartConfig : LineChart.Config Data Msg
-    chartConfig =
-      { ...
-      , events = Events.hoverOne HoverOne
-      , ...
-      }
+Pass a message taking the data of the data point hovered.
 
+    eventsConfig : Events.Config Data Msg
+    eventsConfig =
+      Events.hoverOne OnHoverOne
 
 _See full example [here](https://ellie-app.com/9fDjmRLLPa1/1)._
+
 
 -}
 hoverOne : (Maybe data -> msg) -> Config data msg
@@ -84,18 +84,18 @@ hoverOne =
   Events.hoverOne
 
 
-{-| Sends you a given message with the data for all the dots on the hovered
-x-coordinate or an empty list if you're not hovering anything.
+{-| Sends a message when the mouse is within a 30 pixel distance of a
+x-coordinate with one or several dots on. Sends a `[]` when the mouse
+is not hovering an dots.
 
-    chartConfig : LineChart.Config Data Msg
-    chartConfig =
-      { ...
-      , events = Events.hoverMany HoverMany
-      , ...
-      }
+Pass a message taking the data of the data points hovered.
 
+    eventsConfig : Events.Config Data Msg
+    eventsConfig =
+      Events.hoverMany OnHoverMany
 
 _See full example [here](https://ellie-app.com/9fY9Cj4X6a1/1)._
+
 
 -}
 hoverMany : (List data -> msg) -> Config data msg
@@ -104,6 +104,13 @@ hoverMany =
 
 
 {-| Sends a given message when clicking on a dot.
+
+Pass a message taking the data of the data points clicked.
+
+    eventsConfig : Events.Config Data Msg
+    eventsConfig =
+      Events.click OnClick
+
 -}
 click : (Maybe data -> msg) -> Config data msg
 click =
@@ -112,19 +119,17 @@ click =
 
 {-| Add your own combination of events.
 
-    chartConfig : LineChart.Config Data Msg
-    chartConfig =
-      { ...
-      , events =
-          Events.custom
-            [ Events.onMouseMove HoverOne Events.getNearest
-            , Events.onMouseLeave (HoverOne Nothing)
-            ]
-      , ...
-      }
+    eventsConfig : Events.Config Data Msg
+    eventsConfig =
+      Events.custom
+        [ Events.onMouseMove OnHoverOne Events.getNearest
+        , Events.onMouseLeave (OnHoverOne Nothing)
+        ]
 
-This example sends the `HoverOne` message with the data of the nearest dot when
-hovering and `HoverOne Nothing` when your leave the chart area.
+_See full example [here](https://ellie-app.com/cvbc9zvgQa1/1)._
+
+This example sends the `OnHoverOne` message with the data of the nearest dot when
+hovering the chart area and `OnHoverOne Nothing` when your leave the chart area.
 
 -}
 custom : List (Event data msg) -> Config data msg
@@ -171,7 +176,9 @@ onMouseLeave =
   Events.onMouseLeave
 
 
-{-| Add any event to your chart. Arguments:
+{-| Add any event to your chart.
+
+Arguments:
 
   1. When `True`, the event also catches events in the margins of your chart.
   2. The JavaScript event name.

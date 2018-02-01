@@ -3,10 +3,7 @@ module LineChart.Grid exposing (Config, default, dots, lines)
 {-|
 
 # Quick start
-@docs default
-
-# Customizing
-@docs Config, dots, lines
+@docs Config, default, dots, lines
 
 # How do I change where the grid lines/dots are placed?
 

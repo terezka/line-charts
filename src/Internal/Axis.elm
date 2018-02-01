@@ -42,7 +42,7 @@ type alias Properties data msg =
 default : Int -> String -> (data -> Float) -> Config data msg
 default pixels title variable =
   custom
-    { title = Title.atDataMax ( 0, 0 ) title
+    { title = Title.atDataMax 0 0 title
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 20 20
@@ -64,7 +64,7 @@ default pixels title variable =
 full : Int -> String -> (data -> Float) -> Config data msg
 full pixels title variable =
   custom
-    { title = Title.atRangeMax ( 0, 0 ) title
+    { title = Title.atAxisMax 0 0 title
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 0 20
@@ -82,7 +82,7 @@ full pixels title variable =
 time : Int -> String -> (data -> Float) -> Config data msg
 time pixels title variable =
   custom
-    { title = Title.atDataMax ( 0, 0 ) title
+    { title = Title.atDataMax 0 0 title
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 20 20

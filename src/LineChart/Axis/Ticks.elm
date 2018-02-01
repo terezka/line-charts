@@ -8,12 +8,15 @@ module LineChart.Axis.Ticks exposing
 {-|
 
 # Quick start
-@docs default, Config, int, time, float
+@docs Config, default, int, time, float
 
 # Customiztion
-@docs intCustom, timeCustom, floatCustom, custom
+@docs intCustom, timeCustom, floatCustom
 
-## Custom helpers
+# Wild customiztion
+@docs custom
+
+## Helpers
 @docs hoverOne, frame
 
 -}

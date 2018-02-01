@@ -2,7 +2,24 @@ module LineChart.Axis.Values exposing (Amount, around, exactly, int, time, float
 
 {-|
 
-# Values
+Use in `Ticks.custom` for creating "nice" values.
+
+    ticksConfig : Ticks.Config msg
+    ticksConfig =
+      let
+        ticks dataRange axisRange =
+          List.map Tick.float (niceValuesWithin dataRange)
+
+        niceValuesWithin range =
+          Values.float (Values.exactly 14) range
+      --  ^^^^^^^^^^^^  ^^^^^^^^^^^^^^
+      in
+      Ticks.custom ticks
+
+
+_See full example [here](https://ellie-app.com/dqLn8tZZ6a1/1)._
+
+
 @docs int, float, time, custom
 
 ## Amount
@@ -12,7 +29,7 @@ module LineChart.Axis.Values exposing (Amount, around, exactly, int, time, float
 
 import LineChart.Axis.Tick as Tick
 import Internal.Axis.Values as Values
-import Internal.Coordinate as Coordinate
+import LineChart.Coordinate as Coordinate
 
 
 

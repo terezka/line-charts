@@ -3,10 +3,10 @@ module LineChart.Axis.Intersection exposing (Config, default, at, custom)
 {-|
 
 # Quick start
-@docs Config, default
+@docs Config, default, at
 
 # Customiztion
-@docs at, custom
+@docs custom
 
 -}
 

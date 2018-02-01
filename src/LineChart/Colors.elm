@@ -2,7 +2,6 @@ module LineChart.Colors exposing (pink, blue, gold, gray, grayLight, grayLightes
 
 {-|
 
-# Defaults
 @docs pink, blue, gold, gray, grayLight, grayLightest, transparent
 
 -}

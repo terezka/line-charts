@@ -67,7 +67,7 @@ chart =
 customAxis : Axis.Config Info msg
 customAxis =
   Axis.custom
-    { title = Title.default ( 0, 0 ) "Age"
+    { title = Title.default "Age"
     , variable = Just << .age -- Try changing to .date and use Ticks.time!
     , pixels = 700
     , range =

@@ -3,10 +3,7 @@ module LineChart.Interpolation exposing (Config, default, linear, monotone, step
 {-|
 
 # Quick start
-@docs Config, default
-
-# Options
-@docs linear, monotone, stepped
+@docs Config, default, linear, monotone, stepped
 
 -}
 
