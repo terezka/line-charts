@@ -40,7 +40,7 @@ main =
 chart : Html.Html msg
 chart =
   LineChart.viewCustom
-    { y = Axis.skinny 500 "y" .y []
+    { y = Axis.quick 500 "y" .y []
     , x = customAxis
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
@@ -93,22 +93,13 @@ customJunk =
   Junk.custom <| \system ->
     { below = []
     , above =
-        [ note system 2  1.5 0 -10 "← axis range →"
-        , note system 2 -1.5 0  18 "← data range →"
+        [ Junk.labelPlaced system 2  1.5 0 -10 "middle" Color.black "← axis range →"
+        , Junk.labelPlaced system 2 -1.5 0  18 "middle" Color.black "← data range →"
         , rangeLine system  1.5 system.x.min system.x.max
         , rangeLine system -1.5 system.xData.min system.xData.max
         ]
     , html = []
     }
-
-
-note : Coordinate.System -> Float -> Float -> Float -> Float -> String -> Svg.Svg msg
-note system x y xo yo text =
-  Svg.g
-    [ Junk.transform [ Junk.move system x y, Junk.offset xo yo ]
-    , Svg.Attributes.style "text-anchor: middle;"
-    ]
-    [ Junk.label Color.black text ]
 
 
 rangeLine : Coordinate.System -> Float -> Float -> Float -> Svg.Svg msg

@@ -1,8 +1,8 @@
 module LineChart.Junk exposing
   ( Config, Layers, default, hoverOne, custom
-  , Transfrom, transform, move, offset
+  , Transfrom, transform, move, offset, placed
   , vertical, horizontal, verticalCustom, horizontalCustom
-  , rectangle, label
+  , rectangle, label, labelPlaced
   , withinChartArea
   )
 
@@ -16,21 +16,26 @@ this is where it's at.
 <img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/junk.png?raw=true"></src>
 
 
-# Quick start
 @docs Config, default, hoverOne
 
 # Customization
 @docs custom, Layers
 
-# Common junk
+# Helpers
+
+A good thing to know before reading this section is what I mean by "chart area".
+Below is an illustration.
+
+<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/chartarea.png?raw=true"></src>
+
 ## Lines
 @docs vertical, horizontal, verticalCustom, horizontalCustom
 
 ## Other
-@docs rectangle, label, withinChartArea
+@docs rectangle, label, labelPlaced, withinChartArea
 
 ## Placing
-@docs Transfrom, transform, move, offset
+@docs placed, Transfrom, transform, move, offset
 
 
 -}
@@ -50,15 +55,7 @@ import Color.Convert
 -- QUICK START
 
 
-{-| Doesn't draw any junk.
-Use in the `LineChart.Config` passed to `viewCustom`.
-
-    chartConfig : LineChart.Config Data msg
-    chartConfig =
-      { ...
-      , junk = Junk.default
-      , ...
-      }
+{-| For the junk-free chart.
 -}
 default : Config data msg
 default =
@@ -69,7 +66,16 @@ default =
 -- CUSTOMIZE
 
 
-{-| -}
+{-| Use in the `LineChart.Config` passed to `viewCustom`.
+
+    chartConfig : LineChart.Config Data msg
+    chartConfig =
+      { ...
+      , junk = Junk.default
+      , ...
+      }
+
+-}
 type alias Config data msg =
   Junk.Config data msg
 
@@ -108,6 +114,10 @@ type alias Layers msg =
 {-| Draw whatever junk you'd like. You're given the `Coordinate.System` to help
 you place your junk on the intended spot in the chart, because it allows you
 to translate from data-space into SVG-space and vice versa.
+
+To learn more about the `Coordinate.System` and how to use it, see the
+`Coordinate` module.
+
 
     junk : Junk.Junk msg
     junk =
@@ -175,7 +185,6 @@ offset =
 
 
 
-
 -- COMMON
 
 
@@ -233,6 +242,22 @@ rectangle system attributes =
   Svg.rectangle system (withinChartArea system :: attributes)
 
 
+{-| Place a list of elements on a given spot.
+
+  Arguments:
+    1. The coordinate system.
+    2. The x-coordinate in data-space.
+    3. The y-coordinate in data-space.
+    4. The x-offset in SVG-space.
+    5. The y-offset in SVG-space.
+    6. The list of elements
+
+-}
+placed : Coordinate.System -> Float -> Float -> Float -> Float -> List (Svg.Svg msg) -> Svg.Svg msg
+placed system x y xo yo =
+  Svg.g [ transform [ move system x y, offset xo yo ] ]
+
+
 
 -- HELPERS
 
@@ -242,6 +267,43 @@ rectangle system attributes =
 label : Color.Color -> String -> Svg.Svg msg
 label color =
   Svg.label (Color.Convert.colorToHex color)
+
+
+{-| A label, but you get to place it too.
+
+  Arguments:
+    1. The coordinate system.
+    2. The x-coordinate in data-space.
+    3. The y-coordinate in data-space.
+    4. The x-offset in SVG-space.
+    5. The y-offset in SVG-space.
+    6. The `text-anchor` css value.
+    7. The color of the text.
+    8. The text.
+
+
+    customJunk : Junk.Config data msg
+    customJunk =
+      Junk.custom <| \system ->
+        { below = []
+        , above =
+            [ Junk.labelPlaced system 2  1.5 0 -10 "middle" Color.black "← axis range →"
+            , Junk.labelPlaced system 2 -1.5 0  18 "middle" Color.black "← data range →"
+            -- Try changing the numbers!
+            ]
+        , html = []
+        }
+
+_See full example [here](https://ellie-app.com/gfbQPqfPna1/1 TODO)._
+
+-}
+labelPlaced : Coordinate.System -> Float -> Float -> Float -> Float -> String -> Color.Color -> String -> Svg.Svg msg
+labelPlaced system x y xo yo anchor color text =
+  Svg.g
+    [ transform [ move system x y, offset xo yo ]
+    , Attributes.style <| "text-anchor: " ++ anchor ++ ";"
+    ]
+    [ label color text ]
 
 
 {-| An attribute which when added, truncates the rendered element if it

@@ -117,7 +117,7 @@ none pixels variable =
 quick : Int -> String -> (data -> Float) -> List Float -> Config data msg
 quick pixels title variable ticks =
   custom
-    { title = Title.atAxisMax 13 0 title
+    { title = Title.atAxisMax 0 0 title
     , variable = Just << variable
     , pixels = pixels
     , range = Range.padded 20 20
