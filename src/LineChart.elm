@@ -20,6 +20,7 @@ module LineChart exposing
 import Html
 import Html.Attributes
 import Svg
+import Svg.Lazy
 import Svg.Attributes as Attributes
 import LineChart.Colors as Colors
 import LineChart.Junk as Junk
@@ -429,7 +430,7 @@ viewCustom config lines =
     Svg.svg attributes
       [ Svg.defs [] [ clipPath system ]
       , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
-      , viewLines lines data
+      , Svg.Lazy.lazy2 viewLines lines data
       , chartAreaPlatform config dataAll system
       , Axis.viewHorizontal system config.intersection config.x
       , Axis.viewVertical   system config.intersection config.y

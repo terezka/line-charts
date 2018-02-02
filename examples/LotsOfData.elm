@@ -7,26 +7,19 @@ import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
 import LineChart.Container as Container
+import LineChart.Colors as Colors
 import LineChart.Coordinate as Coordinate
 import LineChart.Junk as Junk
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
 import LineChart.Axis as Axis
-import LineChart.Axis.Title as Title
-import LineChart.Axis.Ticks as Ticks
-import LineChart.Axis.Tick as Tick
-import LineChart.Axis.Range as Range
-import LineChart.Axis.Line as AxisLine
-import LineChart.Axis.Values as Values
 import LineChart.Legends as Legends
 import LineChart.Line as Line
 import LineChart.Events as Events
 import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
-import Color
 import Random
-
 
 
 main : Program Never Model Msg
@@ -35,7 +28,7 @@ main =
     { init = init
     , update = update
     , view = view
-    , subscriptions = always Sub.none
+    , subscriptions = \_ -> Sub.none
     }
 
 
@@ -44,12 +37,16 @@ main =
 
 
 type alias Model =
-    { data : List Coordinate.Point }
+    { data : List Coordinate.Point
+    , hovered : Maybe Coordinate.Point
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { data = [] }, getNumbers )
+    ( { data = [], hovered = Nothing }
+    , getNumbers
+    )
 
 
 
@@ -58,6 +55,7 @@ init =
 
 type Msg
   = RecieveNumbers (List Float)
+  | Hover (Maybe Coordinate.Point)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -65,6 +63,11 @@ update msg model =
   case msg of
     RecieveNumbers numbers ->
       ( { model | data = List.indexedMap toData numbers }
+      , Cmd.none
+      )
+
+    Hover hovered ->
+      ( { model | hovered = hovered }
       , Cmd.none
       )
 
@@ -100,14 +103,18 @@ chart model =
     , interpolation = Interpolation.default
     , intersection = Intersection.custom .min .min
     , legends = Legends.default
-    , events = Events.default
-    , junk = Junk.default
+    , events = Events.hoverOne Hover
+    , junk =
+        Junk.hoverOne model.hovered
+          [ ( "x", toString << .x )
+          , ( "y", toString << .y )
+          ]
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.orange Dots.none "data" model.data ]
+    [ LineChart.line Colors.pink Dots.none "data" model.data ]
 
 
 

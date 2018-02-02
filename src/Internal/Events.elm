@@ -16,9 +16,9 @@ import Svg.Events
 import Html.Events
 import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
-import Internal.Utils exposing (withFirst)
+import Internal.Utils exposing (withFirst, lastSafe)
 import Json.Decode as Json
-
+import Array
 
 
 {-| -}
@@ -261,23 +261,47 @@ getNearestHelp points system searched =
 
 
 getNearestXHelp : List (Data.Data data) -> System -> Point -> List (Data.Data data)
-getNearestXHelp points system searched =
+getNearestXHelp allPoints system searched =
   let
-      distanceX_ =
-          distanceX system searched
+      realPoints =
+        allPoints
+          |> List.filter .isReal
+          |> List.sortBy (.point >> .x)
 
-      getClosest point allClosest =
-        case List.head allClosest of
-          Just closest ->
-              if closest.point.x == point.point.x then point :: allClosest
-              else if distanceX_ closest.point > distanceX_ point.point then [ point ]
-              else allClosest
+      points =
+        Array.fromList realPoints
 
-          Nothing ->
-            [ point ]
+      search lo hi lowest highest =
+        if lo > hi then
+          if abs (lowest.point.x - searched.x) < abs (highest.point.x - searched.x) then
+            [ lowest ]
+          else
+            [ highest ]
+        else
+          let mid = lo + (hi - lo) // 2
+              midValue = Array.get mid points
+          in
+          case midValue of
+            Nothing ->
+              if abs (lowest.point.x - searched.x) < abs (highest.point.x - searched.x) then
+                [ lowest ]
+              else
+                [ highest ]
+
+            Just value ->
+              if searched.x < value.point.x
+                then search lo (mid - 1) lowest value
+              else if searched.x > value.point.x
+                then search (mid + 1) hi value highest
+              else
+                [ value ]
   in
-  List.foldl getClosest [] points
+  case realPoints of
+    first :: rest ->
+      search 0 (List.length realPoints - 1) first (lastSafe first rest)
 
+    [] ->
+      []
 
 
 -- COORDINATE HELPERS
