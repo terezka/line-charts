@@ -15,6 +15,7 @@ this is where it's at.
 
 <img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/junk.png?raw=true"></src>
 
+_A lot of junk, huh?_
 
 @docs Config, default, hoverOne
 
@@ -23,16 +24,27 @@ this is where it's at.
 
 # Helpers
 
+## On chart area
+
 A good thing to know before reading this section is what I mean by "chart area".
+It is basically the rectangle which covers your entire x and y axis-range.
 Below is an illustration.
 
+_What is an axis-range? See the `Axis.Range` module._
+
 <img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/chartarea.png?raw=true"></src>
+
+@docs withinChartArea
+
 
 ## Lines
 @docs vertical, horizontal, verticalCustom, horizontalCustom
 
-## Other
-@docs rectangle, label, labelPlaced, withinChartArea
+## Rectangle
+@docs rectangle
+
+## Label
+@docs label, labelPlaced
 
 ## Placing
 @docs placed, Transfrom, transform, move, offset
@@ -188,8 +200,9 @@ offset =
 -- COMMON
 
 
-{-| Draws a vertical line, which is the full length of the y-range, given the
-x-coordinate.
+{-| Draws a vertical line, which is the full length of the y-range.
+
+Pass the x-coordinate.
 
 **Note:** The line is truncated off if outside the chart area.
 -}
@@ -198,8 +211,9 @@ vertical system attributes at =
   Svg.vertical system (withinChartArea system :: attributes) at system.y.min system.y.max
 
 
-{-| Draws a horizontal line which is the full length of the x-range, given the
-y-coordinate.
+{-| Draws a horizontal line which is the full length of the x-range.
+
+Pass the y-coordinate.
 
 **Note:** The line is truncated off if outside the chart area.
 -}
@@ -208,7 +222,9 @@ horizontal system attributes at =
   Svg.horizontal system (withinChartArea system :: attributes) at system.x.min system.x.max
 
 
-{-| Draws a vertical line, given x-, y1- and y2-coordinates, respectively.
+{-| Draws a vertical line.
+
+Pass the x-, y1- and y2-coordinates, respectively.
 
 **Note:** The line is truncated off if outside the chart area.
 -}
@@ -217,7 +233,9 @@ verticalCustom system attributes =
   Svg.vertical system (withinChartArea system :: attributes)
 
 
-{-| Draws a horizontal line, given y-, x1- and x2-coordinates, respectively.
+{-| Draws a horizontal line.
+
+Pass the  y-, x1- and x2-coordinates, respectively.
 
 **Note:** The line is truncated off if outside the chart area.
 -}
@@ -244,13 +262,13 @@ rectangle system attributes =
 
 {-| Place a list of elements on a given spot.
 
-  Arguments:
-    1. The coordinate system.
-    2. The x-coordinate in data-space.
-    3. The y-coordinate in data-space.
-    4. The x-offset in SVG-space.
-    5. The y-offset in SVG-space.
-    6. The list of elements
+Arguments:
+  1. The coordinate system.
+  2. The x-coordinate in data-space.
+  3. The y-coordinate in data-space.
+  4. The x-offset in SVG-space.
+  5. The y-offset in SVG-space.
+  6. The list of elements
 
 -}
 placed : Coordinate.System -> Float -> Float -> Float -> Float -> List (Svg.Svg msg) -> Svg.Svg msg
@@ -271,15 +289,15 @@ label color =
 
 {-| A label, but you get to place it too.
 
-  Arguments:
-    1. The coordinate system.
-    2. The x-coordinate in data-space.
-    3. The y-coordinate in data-space.
-    4. The x-offset in SVG-space.
-    5. The y-offset in SVG-space.
-    6. The `text-anchor` css value.
-    7. The color of the text.
-    8. The text.
+Arguments:
+  1. The coordinate system.
+  2. The x-coordinate in data-space.
+  3. The y-coordinate in data-space.
+  4. The x-offset in SVG-space.
+  5. The y-offset in SVG-space.
+  6. The `text-anchor` css value.
+  7. The color of the text.
+  8. The text.
 
 
     customJunk : Junk.Config data msg
@@ -307,7 +325,7 @@ labelPlaced system x y xo yo anchor color text =
 
 
 {-| An attribute which when added, truncates the rendered element if it
-extends outside the chart space.
+extends outside the chart area.
 -}
 withinChartArea : Coordinate.System -> Svg.Attribute msg
 withinChartArea { id } =
