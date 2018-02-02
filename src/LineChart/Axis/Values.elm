@@ -25,11 +25,11 @@ hit whole days, weeks, months or hours, minutes, and seconds.
 # Nice numbers
 @docs int, float, Amount, around, exactly
 
-# Custom numbers
-@docs custom
-
 # Nice times
 @docs time
+
+# Custom numbers
+@docs custom
 
 -}
 

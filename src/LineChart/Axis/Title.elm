@@ -26,14 +26,14 @@ type alias Config msg =
   Title.Config msg
 
 
-{-| Place the title at the end of your axis.
+{-| Place the title at the maxima of your axis range.
 -}
 default : String -> Config msg
 default =
   Title.default
 
 
-{-| Place the title at your highest data point. Arguments:
+{-| Place the title at the maxima of your data range. Arguments:
 
   1. The x offset in SVG space.
   2. The y offset in SVG space.
@@ -50,7 +50,7 @@ atDataMax =
   Title.atDataMax
 
 
-{-| Place the title at the end of your axis. Arguments:
+{-| Place the title at the maxima of your axis range. Arguments:
 
   1. The x offset in SVG space.
   2. The y offset in SVG space.

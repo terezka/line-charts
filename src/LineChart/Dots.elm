@@ -12,7 +12,7 @@ module LineChart.Dots exposing
 
 ## Selection
 Hopefully, these are selfexplanatory.
-<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/shapes.png?raw=true"></src>
+<img alt="Legends" width="610" style="margin-top: 10px; margin-left: -10px" src="https://github.com/terezka/lines/blob/master/images/shapes.png?raw=true"></src>
 
 @docs none, circle, triangle, square, diamond, plus, cross
 

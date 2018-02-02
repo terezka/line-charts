@@ -17,6 +17,7 @@
         "LineChart.Axis.Title",
         "LineChart.Axis.Values",
         "LineChart.Colors",
+        "LineChart.Container",
         "LineChart.Coordinate",
         "LineChart.Dots",
         "LineChart.Events",

@@ -4,7 +4,11 @@ module LineChart.Container exposing
   , relative, static
   )
 
-{-| -}
+{-|
+
+@docs Config, default, responsive, custom, Properties, Margin, Size, relative, static
+
+-}
 
 import Html
 import Svg

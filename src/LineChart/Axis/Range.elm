@@ -18,6 +18,7 @@ data range, but you can make it far more complicated than that.
 You see, opposite our data range which is always only calculated from sticktly
 from your data, **your axis range can be changed with this module**.
 For example, you can make it larger than your data range, as illustrated below.
+Notice how the data range begins and ends where the pink line begins and ends.
 
 <img alt="Ranges explained" width="610" src="https://github.com/terezka/lines/blob/master/images/ranges.png?raw=true"></src>
 
