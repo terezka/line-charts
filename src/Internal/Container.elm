@@ -7,9 +7,9 @@ module Internal.Container exposing
 
 {-| -}
 
-import Html
 import Svg
-import Svg.Attributes
+import Html
+import Html.Attributes
 
 
 
@@ -47,8 +47,8 @@ type alias Margin =
 default : String -> Config msg
 default id =
   custom
-    { attributesHtml = []
-    , attributesSvg = [ Svg.Attributes.style "font: caption;" ]
+    { attributesHtml = [ Html.Attributes.style [ ( "font", "caption" ) ] ]
+    , attributesSvg = []
     , size = static
     , margin = Margin 60 140 60 80
     , id = id
@@ -59,8 +59,8 @@ default id =
 responsive : String -> Config msg
 responsive id =
   custom
-    { attributesHtml = []
-    , attributesSvg = [ Svg.Attributes.style "font: caption;" ]
+    { attributesHtml = [ Html.Attributes.style [ ( "font", "caption" ) ] ]
+    , attributesSvg = []
     , size = relative
     , margin = Margin 60 140 60 80
     , id = id

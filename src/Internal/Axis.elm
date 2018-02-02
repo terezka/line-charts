@@ -234,7 +234,7 @@ viewHorizontalTitle system at { title } =
   g [ class "chart__title"
     , transform
         [ move system position.x position.y
-        , offset (xOffset + 15) (yOffset + 20)
+        , offset (xOffset + 15) (yOffset + 5)
         ]
     , anchorStyle Start
     ]
@@ -249,7 +249,7 @@ viewVerticalTitle system at { title } =
   g [ class "chart__title"
     , transform
         [ move system position.x position.y
-        , offset (xOffset - 10) (yOffset - 10)
+        , offset (xOffset + 2) (yOffset - 10)
         ]
     , anchorStyle End
     ]

@@ -37,7 +37,7 @@ chart =
   LineChart.viewCustom
       { y =
         Axis.custom
-          { title = Title.default ( 0, 0 ) "Weight"
+          { title = Title.default "Weight"
           , variable = .income -- or .weight -- as opposed to `Just << .height`
           , pixels = 450
           , range = Range.default

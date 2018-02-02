@@ -133,13 +133,14 @@ Properties:
 
     xAxis : Axis.Config Data msg
     xAxis =
-      { title = Title.default "Age (years)"
-      , variable = Just << .age
-      , pixels = 700
-      , range = Range.default
-      , axisLine = AxisLine.full Color.black
-      , ticks = Ticks.float 5
-      }
+      Axis.custom
+        { title = Title.default "Age (years)"
+        , variable = Just << .age
+        , pixels = 700
+        , range = Range.default
+        , axisLine = AxisLine.full Color.black
+        , ticks = Ticks.float 5
+        }
 
 _See full example [here](https://ellie-app.com/fb6BqXBmba1/1)._
 
