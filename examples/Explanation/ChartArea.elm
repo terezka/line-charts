@@ -1,4 +1,4 @@
-module ChartArea exposing (main)
+module Explanation.ChartArea exposing (main)
 
 
 import Svg

@@ -1,4 +1,4 @@
-module Ranges exposing (main)
+module Explanation.Ranges exposing (main)
 
 
 import Svg

@@ -1,4 +1,4 @@
-module Intersections exposing (main)
+module Explanation.Intersections exposing (main)
 
 
 import Svg
@@ -8,17 +8,11 @@ import Html.Attributes exposing (class)
 import LineChart
 import LineChart.Colors as Colors
 import LineChart.Coordinate as Coordinate
-import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
-import LineChart.Axis.Title as Title
-import LineChart.Axis.Ticks as Ticks
-import LineChart.Axis.Tick as Tick
-import LineChart.Axis.Range as Range
-import LineChart.Axis.Line as AxisLine
 import LineChart.Axis as Axis
 import LineChart.Legends as Legends
 import LineChart.Line as Line
@@ -40,8 +34,8 @@ main =
 chart : Html.Html msg
 chart =
   LineChart.viewCustom
-    { y = Axis.skinny 500 "y" .y [ -1, 0, 1, 2, 3 ]
-    , x = Axis.skinny 700 "x" .x [ -1, 0 ,1, 2, 3]
+    { y = Axis.quick 500 "y" .y [ -1, 0, 1, 2, 3 ]
+    , x = Axis.quick 700 "x" .x [ -1, 0 ,1, 2, 3]
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
     , intersection = Intersection.at 1 1

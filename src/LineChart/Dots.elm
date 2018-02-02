@@ -22,7 +22,7 @@ Hopefully, these are selfexplanatory.
 ## Hover styles
 @docs hoverOne, hoverMany
 
-# Customization
+## Customization
 @docs custom, customAny
 
 ### Selection
