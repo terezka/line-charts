@@ -12,7 +12,8 @@ module LineChart.Dots exposing
 
 ## Selection
 Hopefully, these are selfexplanatory.
-If not, I recommend [this tutorial](https://www.youtube.com/watch?v=QBD7CB-rroo).
+<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/shapes.png?raw=true"></src>
+
 @docs none, circle, triangle, square, diamond, plus, cross
 
 # Styles
@@ -298,7 +299,6 @@ bordered =
 
 
 {-| Makes dots with a colored core and a white border.
-This style is the inverse of the `bordered` style.
 
 Pass the radius and the width of the border.
 
