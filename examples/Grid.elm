@@ -4,10 +4,9 @@ module Grid exposing (main)
 import Html
 import Html.Attributes exposing (class)
 import LineChart
-import LineChart.Dots as Dots
-import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
+import LineChart.Colors as Colors
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
@@ -18,8 +17,6 @@ import LineChart.Events as Events
 import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
-import Color
-import Color
 
 
 main : Html.Html msg
@@ -32,8 +29,8 @@ main =
 chart : Html.Html msg
 chart =
   LineChart.viewCustom
-    { y = Axis.default 450 "Weight" .weight
-    , x = Axis.default 700 "Age" .age
+    { y = Axis.default 500 "Weight" .weight
+    , x = Axis.default 650 "Age" .age
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
     , intersection = Intersection.default
@@ -42,7 +39,7 @@ chart =
     , junk = Junk.default
     , grid =
         -- Try out these different configs!
-        Grid.dots 1 Color.gray
+        Grid.dots 1 Colors.grayLight
         -- Grid.lines 2 Color.lightGray
 
         -- Note: Where the lines show up is determined by the ticks.
@@ -51,9 +48,9 @@ chart =
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.green Dots.triangle "Chuck" chuck
-    , LineChart.line Color.blue Dots.circle "Bob" bob
-    , LineChart.line Color.red Dots.diamond "Alice" alice
+    [ LineChart.line Colors.pink Dots.triangle "Chuck" chuck
+    , LineChart.line Colors.blue Dots.circle   "Bob" bob
+    , LineChart.line Colors.gold Dots.diamond  "Alice" alice
     ]
 
 

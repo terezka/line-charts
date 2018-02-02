@@ -7,7 +7,6 @@ module LineChart.Events exposing
 
 {-|
 
-# Quick start
 @docs Config, default, hoverOne, hoverMany, click
 
 # Customization
@@ -41,11 +40,7 @@ import LineChart.Coordinate as Coordinate
 -- QUICK START
 
 
-{-|
-
-** For adding events to your chart **
-
-Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =

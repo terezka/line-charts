@@ -2,7 +2,6 @@ module LineChart.Grid exposing (Config, default, dots, lines)
 
 {-|
 
-# Quick start
 @docs Config, default, dots, lines
 
 # How do I change where the grid lines/dots are placed?
@@ -23,7 +22,16 @@ import Internal.Grid as Grid
 import Color
 
 
-{-| -}
+{-| Use in the `LineChart.Config` passed to `viewCustom`.
+
+    chartConfig : LineChart.Config Data msg
+    chartConfig =
+      { ...
+      , grid = Grid.default
+      , ...
+      }
+
+-}
 type alias Config =
   Grid.Config
 

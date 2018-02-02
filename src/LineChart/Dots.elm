@@ -7,7 +7,7 @@ module LineChart.Dots exposing
 
 {-|
 
-# Quick start: Shapes
+# Shapes
 @docs Shape
 
 ## Selection
@@ -15,13 +15,13 @@ Hopefully, these are selfexplanatory.
 If not, I recommend [this tutorial](https://www.youtube.com/watch?v=QBD7CB-rroo).
 @docs none, circle, triangle, square, diamond, plus, cross
 
-# Quick start: Styles
+# Styles
 @docs Config, default
 
 ## Hover styles
 @docs hoverOne, hoverMany
 
-# Customization: Styles
+# Customization
 @docs custom, customAny
 
 ### Selection
@@ -276,6 +276,9 @@ type alias Style =
 
 Pass the radius.
 
+<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/dots1.png?raw=true"></src>
+
+
 -}
 full : Float -> Style
 full =
@@ -285,6 +288,9 @@ full =
 {-| Makes dots with a white core and a colored border.
 
 Pass the radius and the width of the border.
+
+<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/dots3.png?raw=true"></src>
+
 -}
 bordered : Float -> Int -> Style
 bordered =
@@ -295,6 +301,9 @@ bordered =
 This style is the inverse of the `bordered` style.
 
 Pass the radius and the width of the border.
+
+<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/dots4.png?raw=true"></src>
+
 -}
 disconnected : Float -> Int -> Style
 disconnected =
@@ -305,6 +314,9 @@ disconnected =
 
 Pass the radius, the width of the aura, and the opacity of the
 aura (A number between 0 and 1).
+
+<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/dots2.png?raw=true"></src>
+
 
 -}
 aura : Float -> Int -> Float -> Style
