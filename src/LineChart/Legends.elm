@@ -10,10 +10,16 @@ module LineChart.Legends exposing
 
 ## Free legends
 Where the title is hanging by its respective line.
+
+<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/legends2.png?raw=true"></src>
+
 @docs byEnding, byBeginning
 
 ## Grouped legends
 Where the titles are gathered in one spot.
+
+<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/legends5.png?raw=true"></src>
+
 @docs grouped, groupedCustom, Legend
 
 -}
@@ -80,7 +86,7 @@ byEnding =
   Legends.byEnding
 
 
-{-| Same as `byEnding`, except by the beginning!
+{-| Same as `byEnding`, except by the beginning of the line!
 -}
 byBeginning : (String -> Svg.Svg msg) -> Config data msg
 byBeginning =
@@ -106,6 +112,10 @@ byBeginning =
       , ...
       }
 
+
+Makes this:
+
+<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/legends3.png?raw=true"></src>
 
 _See full example [here](https://ellie-app.com/frGFKHqbka1/1)._
 
@@ -135,27 +145,37 @@ type alias Legend msg =
       Legends.groupedCustom 10 viewLegends
 
 
-    viewLegends : Coordinate.System -> List (Legend msg) -> Svg.Svg msg
+    viewLegends : Coordinate.System -> List (Legends.Legend msg) -> Svg.Svg msg
     viewLegends system legends =
-      let
-        legendViews =
-          List.indexedMap viewLegend legends
-      in
-      Svg.g [ Junk.transform [ Junk.move system 100 120 ] ] legendViews
+      Svg.g
+        [ Svg.Attributes.class "chart__legends"
+        , Junk.transform
+            [ Junk.move system system.x.min system.y.min
+            , Junk.offset 20 20
+            ]
+        ]
+        (List.indexedMap viewLegend legends)
 
 
-    viewLegend : Int -> Legend msg -> Svg msg
+    viewLegend : Int -> Legends.Legend msg -> Svg.Svg msg
     viewLegend index { sample, label } =
        Svg.g
-        [ Junk.transform [ Junk.offset 20 (toFloat index * 20) ] ]
+        [ Svg.Attributes.class "chart__legend"
+        , Junk.transform [ Junk.offset (toFloat index * 100) 20 ]
+        ]
         [ sample, viewLabel label ]
 
 
     viewLabel : String -> Svg.Svg msg
     viewLabel label =
       Svg.g
-          [ Junk.transform [ Junk.offset 40 4 ] ]
-          [ Junk.text Color.black label ]
+        [ Junk.transform [ Junk.offset 40 4 ] ]
+        [ Junk.label Color.black label ]
+
+
+Makes this:
+
+<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/legends4.png?raw=true"></src>
 
 
 _See full example [here](https://ellie-app.com/fygmS3nRPa1/1)._

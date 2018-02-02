@@ -13,6 +13,9 @@ Junk is a way to draw whatever you like in the chart. The name comes from
 If you want to add tooltips, sections for emphasis, or kittens on your chart,
 this is where it's at.
 
+<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/junk.png?raw=true"></src>
+
+
 # Quick start
 @docs Config, default, hoverOne
 
