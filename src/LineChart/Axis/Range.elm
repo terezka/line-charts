@@ -2,7 +2,7 @@ module LineChart.Axis.Range exposing (Config, default, padded, window, custom)
 
 {-|
 
-## Axis range vs. data range
+## What is the axis range?
 
 Considering the following data:
 

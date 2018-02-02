@@ -1,5 +1,5 @@
 module Internal.Axis exposing
-  ( Config, default, custom, full, time, none, skinny
+  ( Config, default, custom, full, time, none, quick
   , variable, pixels, range, ticks
   , viewHorizontal, viewVertical
   )
@@ -114,8 +114,8 @@ none pixels variable =
 
 
 {-| -}
-skinny : Int -> String -> (data -> Float) -> List Float -> Config data msg
-skinny pixels title variable ticks =
+quick : Int -> String -> (data -> Float) -> List Float -> Config data msg
+quick pixels title variable ticks =
   custom
     { title = Title.atAxisMax 13 0 title
     , variable = Just << variable
