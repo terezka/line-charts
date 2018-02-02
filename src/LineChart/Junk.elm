@@ -36,7 +36,6 @@ _What is an axis-range? See the `Axis.Range` module._
 
 @docs withinChartArea
 
-
 ## Lines
 @docs vertical, horizontal, verticalCustom, horizontalCustom
 

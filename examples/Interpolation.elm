@@ -12,13 +12,13 @@ import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
 import LineChart.Axis as Axis
+import LineChart.Colors as Colors
 import LineChart.Legends as Legends
 import LineChart.Line as Line
 import LineChart.Events as Events
 import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
-import Color
 
 
 main : Html.Html msg
@@ -37,8 +37,8 @@ chart =
     , interpolation =
         -- Try out these different configs!
         -- Interpolation.linear
-        Interpolation.monotone
-        -- Interpolation.stepped
+        -- Interpolation.monotone
+         Interpolation.stepped
     , intersection = Intersection.default
     , legends = Legends.default
     , events = Events.default
@@ -48,9 +48,9 @@ chart =
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.green Dots.triangle "Chuck" chuck
-    , LineChart.line Color.blue Dots.circle "Bob" bob
-    , LineChart.line Color.red Dots.diamond "Alice" alice
+    [ LineChart.line Colors.gold Dots.triangle "Chuck" chuck
+    , LineChart.line Colors.pink Dots.circle "Bob" bob
+    , LineChart.line Colors.blue Dots.diamond "Alice" alice
     ]
 
 
