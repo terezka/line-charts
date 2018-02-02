@@ -271,22 +271,19 @@ getNearestXHelp allPoints system searched =
       points =
         Array.fromList realPoints
 
+      length =
+        List.length realPoints - 1
+
       search lo hi lowest highest =
         if lo > hi then
-          if abs (lowest.point.x - searched.x) < abs (highest.point.x - searched.x) then
-            [ lowest ]
-          else
-            [ highest ]
+          finish lo hi lowest highest
         else
           let mid = lo + (hi - lo) // 2
               midValue = Array.get mid points
           in
           case midValue of
             Nothing ->
-              if abs (lowest.point.x - searched.x) < abs (highest.point.x - searched.x) then
-                [ lowest ]
-              else
-                [ highest ]
+              finish lo hi lowest highest
 
             Just value ->
               if searched.x < value.point.x
@@ -294,11 +291,35 @@ getNearestXHelp allPoints system searched =
               else if searched.x > value.point.x
                 then search (mid + 1) hi value highest
               else
-                [ value ]
+                finish mid mid value value
+
+      finish lo hi loP hiP =
+        if distanceX_ loP < distanceX_ hiP then
+          findOfSameX lo loP.point.x [ loP ]
+        else
+          findOfSameX hi hiP.point.x [ hiP ]
+
+      distanceX_ p =
+        abs (p.point.x - searched.x)
+
+      findOfSameX index x values =
+        find (-) index x values ++ find (+) index x values
+
+      find op index x values =
+        let newIndex = op index 1
+            value = Array.get newIndex points
+        in
+          case value of
+            Nothing    -> values
+            Just value ->
+              if value.point.x == x then
+                find op newIndex x (value :: values)
+              else
+                values
   in
   case realPoints of
     first :: rest ->
-      search 0 (List.length realPoints - 1) first (lastSafe first rest)
+      search 0 length first (lastSafe first rest)
 
     [] ->
       []

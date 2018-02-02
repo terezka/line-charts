@@ -38,13 +38,13 @@ main =
 
 type alias Model =
     { data : List Coordinate.Point
-    , hovered : Maybe Coordinate.Point
+    , hovered : List Coordinate.Point
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { data = [], hovered = Nothing }
+    ( { data = [], hovered = [] }
     , getNumbers
     )
 
@@ -55,7 +55,7 @@ init =
 
 type Msg
   = RecieveNumbers (List Float)
-  | Hover (Maybe Coordinate.Point)
+  | Hover (List Coordinate.Point)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -79,7 +79,7 @@ toData index =
 
 getNumbers : Cmd Msg
 getNumbers =
-  Random.list 1501 (Random.float 0 20)
+  Random.list 5000 (Random.float 0 20)
     |> Random.generate RecieveNumbers
 
 
@@ -103,9 +103,9 @@ chart model =
     , interpolation = Interpolation.default
     , intersection = Intersection.custom .min .min
     , legends = Legends.default
-    , events = Events.hoverOne Hover
+    , events = Events.hoverMany Hover
     , junk =
-        Junk.hoverOne model.hovered
+        Junk.hoverOne (List.head model.hovered)
           [ ( "x", toString << .x )
           , ( "y", toString << .y )
           ]
