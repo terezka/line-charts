@@ -7,11 +7,7 @@ module LineChart.Line exposing
 
 {-|
 
-# Quick start
-@docs Config, default, wider, hoverOne
-
-# Customization
-@docs custom
+@docs Config, default, wider, hoverOne, custom
 
 ## Styles
 @docs Style, style
@@ -23,12 +19,7 @@ import Color
 
 
 
-{-| -}
-type alias Config data =
-  Line.Config data
-
-
-{-| Makes a 1px wide line. Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =
@@ -37,6 +28,12 @@ type alias Config data =
       , ...
       }
 
+-}
+type alias Config data =
+  Line.Config data
+
+
+{-| Makes 1px wide lines.
 -}
 default : Config data
 default =
@@ -62,10 +59,10 @@ wider =
 
 {-| Makes the line, to which the data in the first argument belongs, wider!
 
-    chartConfig : Model -> LineChart.Config Data Msg
-    chartConfig model =
+    chartConfig : Maybe Data -> LineChart.Config Data Msg
+    chartConfig hovered =
       { ...
-      , line = Line.hoverOne model.hovering
+      , line = Line.hoverOne hovered
       , ...
       }
 
@@ -97,10 +94,10 @@ hoverOne hovered =
         Just hovered -> -- Some line is hovered
           if List.any ((==) hovered) data then
             -- It is this one, so make it pop!
-            Line.style 2 (Color.Extra.Manipulate.darken 0.15)
+            Line.style 2 (Manipulate.darken 0.15)
           else
             -- It is not this one, so hide it a bit
-            Line.style 1 (Color.Extra.Manipulate.lighten 0.15)
+            Line.style 1 (Manipulate.lighten 0.15)
 
 
 _See full example [here](https://ellie-app.com/crf2pvCmta1/1)._

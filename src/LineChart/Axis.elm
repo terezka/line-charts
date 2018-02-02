@@ -30,9 +30,10 @@ type alias Config data msg =
   Axis.Config data msg
 
 
-{-|
+{-| Draws a line indicating the range of your data and adds a little space on
+both sides of the line. Also adds some nice ticks to it.
 
-Takes the length of your axis in pixels, the title and it's variable.
+Pass the length of your axis in pixels, the title and it's variable.
 
       chartConfig : Config data msg
       chartConfig =
@@ -53,7 +54,10 @@ default =
   Axis.default
 
 
-{-| Draws the full length of your axis and adds some nice numbers to it.
+{-| Draws the full length of your axis and adds some nice ticks to it.
+
+Pass the length of your axis in pixels, the title and it's variable.
+
 
     axisConfig : AxisConfig Data msg
     axisConfig =
@@ -65,7 +69,10 @@ full =
   Axis.full
 
 
-{-| Draws the full length of your axis and adds some nice datetimes to it.
+{-| Draws the full length of your axis and adds some nice datetime ticks to it.
+
+Pass the length of your axis in pixels, the title and it's variable.
+
 
     axisConfig : AxisConfig Data msg
     axisConfig =
@@ -79,6 +86,9 @@ time =
 
 {-| Doesn't draw the axis al all.
 
+Pass the length of your axis in pixels and it's variable.
+
+
     axisConfig : AxisConfig Data msg
     axisConfig =
       Axis.none 650 .age
@@ -90,6 +100,10 @@ none =
 
 {-| Draws the full length of your axis and adds some ticks at the positions
 specified in the last argument.
+
+Pass the length of your axis in pixels, the title, it's variable and the
+numbers where you'd like ticks to show up.
+
 
     axisConfig : AxisConfig Data msg
     axisConfig =
@@ -126,6 +140,8 @@ Properties:
       , axisLine = AxisLine.full Color.black
       , ticks = Ticks.float 5
       }
+
+_See full example [here](https://ellie-app.com/fb6BqXBmba1/1)._
 
 -}
 custom : Properties data msg -> Config data msg

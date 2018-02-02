@@ -51,6 +51,8 @@ default =
     intersectionConfig =
       Intersection.at 0 3
 
+_See full example [here](https://ellie-app.com/fbKZ6gGzRa1/1)._
+
 -}
 at : Float -> Float -> Config
 at =

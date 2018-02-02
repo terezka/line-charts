@@ -6,7 +6,6 @@ module LineChart.Legends exposing
 
 {-|
 
-# Quick start
 @docs Config, default, none
 
 ## Free legends
@@ -28,13 +27,7 @@ import Internal.Legends as Legends
 -- QUICK START
 
 
-{-| -}
-type alias Config data msg
-  = Legends.Config data msg
-
-
-{-| Produces legends in the top right corner.
-Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =
@@ -43,8 +36,12 @@ Use in the `LineChart.Config` passed to `viewCustom`.
       , ...
       }
 
-_See full example [here](https://ellie-app.com/fb6BqXBmba1/1)._
+-}
+type alias Config data msg
+  = Legends.Config data msg
 
+
+{-| Produces legends in the top right corner.
 -}
 default : Config data msg
 default =
@@ -56,16 +53,6 @@ default =
 
 
 {-| Removes the legends.
-
-    chartConfig : LineChart.Config Data msg
-    chartConfig =
-      { ...
-      , legends = Legends.none
-      , ...
-      }
-
-_See full example [here](https://ellie-app.com/fbKZ6gGzRa1/1)._
-
 -}
 none : Config data msg
 none =

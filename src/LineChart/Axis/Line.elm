@@ -8,10 +8,7 @@ module LineChart.Axis.Line exposing
 If your in doubt about the terminology of data range and axis range, please
 see the `Axis.Range` module.
 
-@docs Config, default, full, rangeFrame, none
-
-# Customiztion
-@docs custom, Properties
+@docs Config, default, full, rangeFrame, none, custom, Properties
 
 -}
 

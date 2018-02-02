@@ -75,7 +75,7 @@ customAxis =
         -- Range.padded 0 10
         -- Range.padded 10 0
     , axisLine =
-        AxisLine.rangeFrame
+        AxisLine.rangeFrame Color.gray
         -- AxisLine.full
         -- AxisLine.none
         -- customAxisLine

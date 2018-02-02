@@ -15,6 +15,7 @@ import LineChart.Coordinate as Coordinate
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
 import LineChart.Axis as Axis
+import LineChart.Colors as Colors
 import LineChart.Legends as Legends
 import LineChart.Line as Line
 import LineChart.Events as Events
@@ -41,10 +42,10 @@ chart =
     , intersection = Intersection.default
     , legends =
         -- Try out these different configs!
-        -- Legends.default
-        Legends.byEnding (Junk.label Color.black)
+        Legends.default
+        -- Legends.byEnding (Junk.label Color.black)
         -- Legends.byBeginning (Junk.label Color.black)
-        -- Legends.grouped .max .min 0 -60 -- Argsuments: x-coordinate y-coordinate x-offset y-offset
+        -- Legends.grouped .max .min 0 -60 -- Arguments: x-coordinate y-coordinate x-offset y-offset
         -- Legends.groupedCustom 30 viewLegends
         -- Legends.groupedCustom 20 viewLegends
     , events = Events.default
@@ -54,9 +55,9 @@ chart =
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.yellow Dots.triangle "Chuck" chuck
-    , LineChart.line Color.brown Dots.circle    "Bobby" bob
-    , LineChart.line Color.orange Dots.diamond  "Alice" alice
+    [ LineChart.line Colors.gold Dots.triangle "Chuck" chuck
+    , LineChart.line Colors.pink Dots.circle   "Bobby" bob
+    , LineChart.line Colors.blue Dots.diamond  "Alice" alice
     ]
 
 
