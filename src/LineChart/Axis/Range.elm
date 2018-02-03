@@ -11,16 +11,17 @@ Considering the following data:
       , { x = 5, y = 5 }
       ]
 
-From this we can see that **the smallest x is -1 and the largest x is 5**. We can
-call this **the x-data range**. By default, the axis range is the same as your
-data range, but you can make it far more complicated than that.
+From this we can see that the smallest x is -1 and the largest x is 5. We
+call this the x-data range. By default, the axis range is the same as your
+data range, but we can make it far more complicated than that.
 
-You see, opposite our data range which is always only calculated from sticktly
-from your data, **your axis range can be changed with this module**.
-For example, you can make it larger than your data range, as illustrated below.
-Notice how the data range begins and ends where the pink line begins and ends.
+Opposite your data range which is only calculated from  from your data,
+**your axis range can be changed with this module**. For example, you can make
+it larger than your data range, as illustrated below.
 
 <img alt="Ranges explained" width="610" src="https://github.com/terezka/lines/blob/master/images/ranges.png?raw=true"></src>
+
+_Notice how the data range begins and ends where the pink line begins and ends._
 
 This is cool because it looks good. You can also make the axis range
 smaller than the data range, and the result will we a "zoomed in" view of

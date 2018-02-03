@@ -2,7 +2,7 @@ module LineChart.Dots exposing
   ( Shape, none
   , circle, triangle, square, diamond, plus, cross
   , Config, default, custom, customAny, hoverOne, hoverMany
-  , Style, bordered, disconnected, aura, full
+  , Style, empty, disconnected, aura, full
   )
 
 {-|
@@ -26,7 +26,7 @@ Hopefully, these are selfexplanatory.
 @docs custom, customAny
 
 ### Selection
-@docs Style, full, bordered, disconnected, aura
+@docs Style, full, empty, disconnected, aura
 
 
 -}
@@ -293,9 +293,9 @@ Pass the radius and the width of the border.
 <img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/dots3.png?raw=true"></src>
 
 -}
-bordered : Float -> Int -> Style
-bordered =
-  Dots.bordered
+empty : Float -> Int -> Style
+empty =
+  Dots.empty
 
 
 {-| Makes dots with a colored core and a white border.

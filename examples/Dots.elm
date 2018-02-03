@@ -45,7 +45,7 @@ chart =
         -- Dots.default
         -- Dots.custom (Dots.full 10)
         -- Dots.custom (Dots.aura 7 7 0.2)
-        -- Dots.custom (Dots.bordered 10 1)
+        -- Dots.custom (Dots.empty 10 1)
         customConfig
         -- For making the dots change based on whether it's hovered, see Events.elm!
     }

@@ -127,7 +127,7 @@ customDotsConfig : Maybe Info -> Dots.Config Info
 customDotsConfig maybeHovered =
   let
     styleDefault =
-      Dots.bordered 5 2
+      Dots.empty 5 2
 
     styleHover =
       Dots.full 8

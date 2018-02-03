@@ -1,7 +1,7 @@
 module Internal.Dots exposing
   ( Config, default, custom, customAny
   , Shape(..)
-  , Style, style, bordered, disconnected, aura, full
+  , Style, style, empty, disconnected, aura, full
   , Variety
   , view, viewSample
   )
@@ -71,7 +71,7 @@ type alias StyleConfig =
 
 {-| -}
 type Variety
-  = Bordered Int
+  = Empty Int
   | Disconnected Int
   | Aura Int Float
   | Full
@@ -98,9 +98,9 @@ style radius variety =
 
 
 {-| -}
-bordered : Float -> Int -> Style
-bordered radius border =
-  style radius (Bordered border)
+empty : Float -> Int -> Style
+empty radius border =
+  style radius (Empty border)
 
 
 {-| -}
@@ -306,7 +306,7 @@ pathPlus area point =
 varietyAttributes : Color.Color -> Variety -> List (Svg.Attribute msg)
 varietyAttributes color variety =
   case variety of
-    Bordered width ->
+    Empty width ->
       [ Attributes.stroke (Color.Convert.colorToHex color)
       , Attributes.strokeWidth (toString width)
       , Attributes.fill "white"

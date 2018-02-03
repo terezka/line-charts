@@ -1,8 +1,16 @@
-module LineChart.Colors exposing (pink, blue, gold, gray, grayLight, grayLightest, transparent)
+module LineChart.Colors exposing
+  ( pink, blue, gold, gray, red, green, turquoise, purple
+  , pinkLight, blueLight, goldLight, purpleLight
+  , grayLight, grayLightest, transparent
+  )
 
 {-|
 
-@docs pink, blue, gold, gray, grayLight, grayLightest, transparent
+@docs pink, blue, gold, red, green, turquoise, purple
+
+@docs pinkLight, blueLight, goldLight, purpleLight
+
+@docs gray, grayLight, grayLightest, transparent
 
 -}
 
@@ -17,14 +25,62 @@ pink =
 
 
 {-| -}
+pinkLight : Color.Color
+pinkLight =
+  Color.rgb 244 143 177
+
+
+{-| -}
 gold : Color.Color
 gold =
   Color.rgb 205 145 60
 
 
 {-| -}
+goldLight : Color.Color
+goldLight =
+  Color.rgb 255 204 128
+
+
+{-| -}
 blue : Color.Color
 blue =
+  Color.rgb 3 169 244
+
+
+{-| -}
+blueLight : Color.Color
+blueLight =
+  Color.rgb 128 222 234
+
+
+{-| -}
+green : Color.Color
+green =
+  Color.rgb 29 233 182
+
+
+{-| -}
+red : Color.Color
+red =
+  Color.rgb 216 27 96
+
+
+{-| -}
+purple : Color.Color
+purple =
+  Color.rgb 156 39 176
+
+
+{-| -}
+purpleLight : Color.Color
+purpleLight =
+  Color.rgb 206 147 216
+
+
+{-| -}
+turquoise : Color.Color
+turquoise =
   Color.rgb 40 235 199
 
 

@@ -9,22 +9,16 @@ import LineChart.Dots as Dots
 import LineChart.Container as Container
 import LineChart.Coordinate as Coordinate
 import LineChart.Junk as Junk
+import LineChart.Colors as Colors
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
 import LineChart.Axis as Axis
-import LineChart.Axis.Title as Title
-import LineChart.Axis.Ticks as Ticks
-import LineChart.Axis.Tick as Tick
-import LineChart.Axis.Range as Range
-import LineChart.Axis.Line as AxisLine
-import LineChart.Axis.Values as Values
 import LineChart.Legends as Legends
 import LineChart.Line as Line
 import LineChart.Events as Events
 import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
-import Color
 import Random
 
 
@@ -107,7 +101,7 @@ chart model =
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.orange Dots.none "data" model.data ]
+    [ LineChart.line Colors.pink Dots.none "data" model.data ]
 
 
 

@@ -2,6 +2,11 @@ module LineChart.Axis exposing (Config, default, full, time, custom, none, quick
 
 {-|
 
+** Axis range vs. data range?**
+
+This module uses the words "axis range" and "data" range a bunch.
+Check out `Axis.Range` for an explanation!
+
 @docs Config, default, full, time, none, quick, custom
 
 -}
@@ -30,20 +35,16 @@ type alias Config data msg =
   Axis.Config data msg
 
 
-{-| Draws a line indicating the range of your data and adds a little space on
-both sides of the line. Also adds some nice ticks to it.
+{-| Draws a line the full length of your _data range_ and adds a little space on
+both sides of that line. Also adds some nice ticks to it.
 
 Pass the length of your axis in pixels, the title and it's variable.
 
-      chartConfig : Config data msg
-      chartConfig =
-        { ...
-        , x = Axis.default 650 "Age (years)" .age
-        , y = Axis.default 400 "Weight (kg)" .weight
-        , ...
-        }
+    xAxisConfig : Config data msg
+    xAxisConfig =
+      Axis.default 650 "Age (years)" .age
 
-      -- Try changing the length or the title!
+    -- Try changing the length or the title!
 
 
 _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
@@ -54,7 +55,7 @@ default =
   Axis.default
 
 
-{-| Draws the full length of your axis and adds some nice ticks to it.
+{-| Draws a line the full length of your _axis range_ and adds some nice ticks to it.
 
 Pass the length of your axis in pixels, the title and it's variable.
 
@@ -69,14 +70,14 @@ full =
   Axis.full
 
 
-{-| Draws the full length of your axis and adds some nice datetime ticks to it.
+{-| Draws a line the full length of your _data range_ and adds some nice datetime ticks to it.
 
 Pass the length of your axis in pixels, the title and it's variable.
 
 
     axisConfig : AxisConfig Data msg
     axisConfig =
-      Axis.time 650 "Age (years)" .age
+      Axis.time 650 "Date" .date
 
 -}
 time : Int -> String -> (data -> Float) -> Config data msg
@@ -84,7 +85,7 @@ time =
   Axis.time
 
 
-{-| Doesn't draw the axis al all.
+{-| Doesn't draw the axis at all.
 
 Pass the length of your axis in pixels and it's variable.
 

@@ -20,24 +20,37 @@ module LineChart exposing
 import Html
 import Html.Attributes
 import Svg
-import Svg.Attributes as Attributes
-import LineChart.Colors as Colors
+import Svg.Attributes
+
 import LineChart.Junk as Junk
+import LineChart.Area as Area
+import LineChart.Axis as Axis
+import LineChart.Junk as Junk
+import LineChart.Dots as Dots
+import LineChart.Grid as Grid
+import LineChart.Dots as Dots
+import LineChart.Line as Line
+import LineChart.Colors as Colors
+import LineChart.Events as Events
+import LineChart.Legends as Legends
+import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
-import Internal.Area as Area
-import Internal.Axis as Axis
-import Internal.Axis.Intersection as Intersection
-import Internal.Axis.Range as Range
-import Internal.Container as Container
-import Internal.Coordinate as Coordinate
-import Internal.Dots as Dots
-import Internal.Data as Data
-import Internal.Grid as Grid
-import Internal.Events as Events
+import LineChart.Axis.Intersection as Intersection
+
+import Internal.Area
+import Internal.Axis
 import Internal.Junk
-import Internal.Legends as Legends
-import Internal.Line as Line
+import Internal.Dots
+import Internal.Grid
+import Internal.Line
+import Internal.Events
+import Internal.Legends
+import Internal.Container
+import Internal.Axis.Range
+
+import Internal.Data as Data
 import Internal.Utils as Utils
+import Internal.Coordinate as Coordinate
 import Color
 
 
@@ -66,8 +79,8 @@ Notice that we provide `.x` and `.y` to specify which data we want to show.
 So if we had more complex data structures, like a human with an `age`, `weight`,
 `height`, and `income`, we can easily pick which two properties we want to plot:
 
-    aliceChart : Html msg
-    aliceChart =
+    chart : Html msg
+    chart =
       LineChart.view1 .age .weight
         [ Human  4 24 0.94 0
         , Human 25 75 1.73 25000
@@ -106,8 +119,8 @@ view1 toX toY dataset =
 Say you have two humans and you would like to see how their weight relates
 to their age. Here's how you could plot it.
 
-    humanChart : Html msg
-    humanChart =
+    chart : Html msg
+    chart =
       LineChart.view2 .age .weight alice chuck
 
 _See the full example [here](https://ellie-app.com/scTM9Mw77a1/0)._
@@ -124,8 +137,8 @@ view2 toX toY dataset1 dataset2 =
 
 It works just like `view1` and `view2`.
 
-    humanChart : Html msg
-    humanChart =
+    chart : Html msg
+    chart =
       LineChart.view3 .age .weight alice bob chuck
 
 _See the full example [here](https://ellie-app.com/sdNHxCfrJa1/0)._
@@ -149,12 +162,12 @@ view3 toX toY dataset1 dataset2 dataset3 =
 Try changing the color, the dot, or the title of a line, or see
 the `line` function for more information.
 
-    humanChart : Html msg
-    humanChart =
-      LineChart.view .age .weight
-        [ LineChart.line Color.red Dot.cross "Alice" alice
-        , LineChart.line Color.blue Dot.square "Bob" bob
-        , LineChart.line Color.green Dot.circle "Chuck" chuck
+    chart : Html msg
+    chart =
+      LineChart.view .age .height
+        [ LineChart.line Colors.purple Dots.cross "Alice" alice
+        , LineChart.line Colors.blue Dots.square "Bobby" bobby
+        , LineChart.line Colors.green Dots.circle "Chuck" chuck
         ]
 
 _See the full example [here](https://ellie-app.com/sgL9mdF7ra1/1)._
@@ -169,7 +182,7 @@ view toX toY =
 
 {-| -}
 type alias Series data =
-  Line.Series data
+  Internal.Line.Series data
 
 
 {-|
@@ -178,12 +191,12 @@ type alias Series data =
 
 Try changing the color or explore all the available dot shapes from `LineChart.Dot`!
 
-    humanChart : Html msg
-    humanChart =
+    chart : Html msg
+    chart =
       LineChart.view .age .weight
-        [ LineChart.line Colors.pink Dot.cross "Alice" alice
-        , LineChart.line Colors.gold Dot.diamond "Bob" bob
-        , LineChart.line Colors.blue Dot.triangle "Chuck" chuck
+        [ LineChart.line Colors.pinkLight Dots.plus "Alice" alice
+        , LineChart.line Colors.goldLight Dots.diamond "Bobby" bobby
+        , LineChart.line Colors.blueLight Dots.square "Chuck" chuck
         ]
 
 _See the full example [here](https://ellie-app.com/stWdWjqGZa1/0)._
@@ -199,7 +212,7 @@ data right first, and then stepping up the complexity.
  -}
 line : Color.Color -> Dots.Shape -> String -> List data -> Series data
 line =
-  Line.line
+  Internal.Line.line
 
 
 {-|
@@ -212,13 +225,14 @@ random numbers and see what happends, but alternativelly you can see the SVG `st
 [documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
 for examples of patterns.
 
-    humanChart : Html msg
-    humanChart =
-      LineChart.view .age .weight
-        [ LineChart.dash (Color.rgb 10 10 10) Dot.none "Average" [ 2, 4 ] average
-        , LineChart.line Colors.gold Dot.cross "Alice" alice
-        , LineChart.line Colors.pink Dot.diamond "Bob" bob
-        , LineChart.line Colors.blue Dot.triangle "Chuck" chuck
+    chart : Html msg
+    chart =
+      LineChart.view .age .height
+        [ LineChart.line Colors.pinkLight Dots.plus "Alice" alice
+        , LineChart.line Colors.goldLight Dots.diamond "Bobby" bobby
+        , LineChart.line Colors.blueLight Dots.square "Chuck" chuck
+        , LineChart.dash Colors.purpleLight Dots.none "Average" [ 4, 2 ] average
+        --                                                      ^^^^^^^^
         ]
 
     -- Try passing different numbers!
@@ -233,7 +247,7 @@ averages or predicted values.
 -}
 dash : Color.Color -> Dots.Shape -> String -> List Float -> List data -> Series data
 dash =
-  Line.dash
+  Internal.Line.dash
 
 
 
@@ -246,45 +260,45 @@ dash =
 
 Use with `viewCustom`.
 
-  - **x**: Customizes your horizontal axis.
-    See `LineChart.Axis` for more information and examples.
+  - **x**: Customizes your horizontal axis.</br>
+    _See `LineChart.Axis` for more information and examples._
 
-  - **y**: Customizes your vertical axis.
-    See `LineChart.Axis` for more information and examples.
+  - **y**: Customizes your vertical axis.</br>
+    _See `LineChart.Axis` for more information and examples._
 
-  - **intersection**: Determines where your axes meet.
-    See `LineChart.Axis.Intersection` for more information and examples.
+  - **intersection**: Determines where your axes meet.</br>
+    _See `LineChart.Axis.Intersection` for more information and examples._
 
-  - **interpolation**: Customizes the curve of your LineChart.
-    See the `LineChart.Interpolation` module for more information and examples.
+  - **interpolation**: Customizes the curve of your LineChart.</br>
+    _See the `LineChart.Interpolation` module for more information and examples._
 
-  - **container**: Customizes the container of your chart.
-    See the `LineChart.Container` module for more information and examples.
+  - **container**: Customizes the container of your chart.</br>
+    _See the `LineChart.Container` module for more information and examples._
 
-  - **legends**: Customizes your chart's legends.
-    See `LineChart.Legends` for more information and examples.
+  - **legends**: Customizes your chart's legends.</br>
+    _See `LineChart.Legends` for more information and examples._
 
-  - **events**: Customizes your chart's events, allowing you easily.
-    make your chart interactive (adding tooltips, hover states etc.).
-    See `LineChart.Events` for more information and examples.
+  - **events**: Customizes your chart's events, allowing you to easily
+    make your chart interactive (adding tooltips, selection states etc.).</br>
+    _See `LineChart.Events` for more information and examples._
 
-  - **grid**: Customizes the style of your grid.
-    See `LineChart.Grid` for more information and examples.
+  - **grid**: Customizes the style of your grid.</br>
+    _See `LineChart.Grid` for more information and examples._
 
-  - **area**: Customizes the area under your line.
-    See `LineChart.Area` for more information and examples.
+  - **area**: Customizes the area under your line.</br>
+    _See `LineChart.Area` for more information and examples._
 
-  - **line**: Customizes your lines' width and color.
-    See `LineChart.Line` for more information and examples.
+  - **line**: Customizes your lines' width and color.</br>
+    _See `LineChart.Line` for more information and examples._
 
-  - **dots**: Customizes your dots' size and style.
-    See `LineChart.Dots` for more information and examples.
+  - **dots**: Customizes your dots' size and style.</br>
+    _See `LineChart.Dots` for more information and examples._
 
   - **junk**: Gets its name from
     [Edward Tufte's concept of "chart junk"](https://en.wikipedia.org/wiki/Chartjunk).
     Here you are finally allowed set your creativity loose and add whatever
-    SVG or HTML fun you can imagine.
-    See `LineChart.Junk` for more information and examples.
+    SVG or HTML fun you can imagine.</br>
+    _See `LineChart.Junk` for more information and examples._
 
 
 ** Example configuration **
@@ -333,19 +347,19 @@ type alias Config data msg =
 
 ** Customize everything **
 
-See the `Config` type for information about the available customizations
-... or copy the example below if you're lazy. No one will tell.
+See the `Config` type for information about the available customizations.
+Or copy and play with the example below. No one will tell.
 
 ** Example customiztion **
 
-The example below adds color to the area below the LineChart.
+The example below makes the line chart an area chart.
 
     chart : Html msg
     chart =
       LineChart.viewCustom chartConfig
-        [ LineChart.line (Color.rgb 20 140 160) Dot.cross "Alice" alice
-        , LineChart.line (Color.rgb 120 40 160) Dot.diamond "Bob" bob
-        , LineChart.line (Color.rgb 120 140 60) Dot.triangle "Chuck" chuck
+        [ LineChart.line Colors.blueLight Dots.square "Chuck" chuck
+        , LineChart.line Colors.pinkLight Dots.plus "Alice" alice
+        , LineChart.line Colors.goldLight Dots.diamond "Bobby" bobby
         ]
 
     chartConfig : Config Info msg
@@ -359,7 +373,7 @@ The example below adds color to the area below the LineChart.
       , events = Events.default
       , junk = Junk.default
       , grid = Grid.default
-      , area = Area.normal 0.5 -- Changed from the default!
+      , area = Area.stacked 0.5 -- Changed from the default!
       , line = Line.default
       , dots = Dots.default
       }
@@ -370,11 +384,10 @@ _See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
 
 ** Speaking of area charts **
 
-Remember that area charts are for data chart
-where the area under the curve _matters_. Typically, this would be when you
-have an quantity changing with respect to time. In that case, the area under
-the curve shows how much the quantity changed. However if that amount is not
-significant, it's best to leave it out.
+Remember that area charts are for data where the area under the curve _matters_.
+Typically, this would be when you have an quantity changing with respect to time.
+In that case, the area under the curve shows how much the quantity changed.
+However if that amount is not significant, it's best to leave it out.
 
 -}
 viewCustom : Config data msg -> List (Series data) -> Svg.Svg msg
@@ -392,12 +405,12 @@ viewCustom config lines =
 
     -- Junk
     junk =
-      Internal.Junk.getLayers (Axis.variable config.x) (Axis.variable config.y) system config.junk
-        |> Internal.Junk.addBelow (Grid.view system config.x config.y config.grid)
+      Internal.Junk.getLayers (Internal.Axis.variable config.x) (Internal.Axis.variable config.y) system config.junk
+        |> Internal.Junk.addBelow (Internal.Grid.view system config.x config.y config.grid)
 
     -- View
     viewLines =
-      Line.view
+      Internal.Line.view
         { system = system
         , interpolation = config.interpolation
         , dotsConfig = config.dots
@@ -406,11 +419,11 @@ viewCustom config lines =
         }
 
     viewLegends =
-      Legends.view
+      Internal.Legends.view
         { system = system
         , legends = config.legends
-        , x = Axis.variable config.x
-        , y = Axis.variable config.y
+        , x = Internal.Axis.variable config.x
+        , y = Internal.Axis.variable config.y
         , dotsConfig = config.dots
         , lineConfig = config.line
         , area = config.area
@@ -420,21 +433,21 @@ viewCustom config lines =
 
     attributes =
       List.concat
-        [ Container.properties config.container |> .attributesSvg
-        , Events.toContainerAttributes dataAll system config.events
+        [ Internal.Container.properties config.container |> .attributesSvg
+        , Internal.Events.toContainerAttributes dataAll system config.events
         , [ viewBoxAttribute system ]
         ]
   in
   container config system junk.html <|
     Svg.svg attributes
       [ Svg.defs [] [ clipPath system ]
-      , Svg.g [ Attributes.class "chart__junk--below" ] junk.below
+      , Svg.g [ Svg.Attributes.class "chart__junk--below" ] junk.below
       , viewLines lines data
       , chartAreaPlatform config dataAll system
-      , Axis.viewHorizontal system config.intersection config.x
-      , Axis.viewVertical   system config.intersection config.y
+      , Internal.Axis.viewHorizontal system config.intersection config.x
+      , Internal.Axis.viewVertical   system config.intersection config.y
       , viewLegends
-      , Svg.g [ Attributes.class "chart__junk--above" ] junk.above
+      , Svg.g [ Svg.Attributes.class "chart__junk--above" ] junk.above
       ]
 
 
@@ -444,7 +457,7 @@ viewCustom config lines =
 
 viewBoxAttribute : Coordinate.System -> Html.Attribute msg
 viewBoxAttribute { frame } =
-  Attributes.viewBox <|
+  Svg.Attributes.viewBox <|
     "0 0 " ++ toString frame.size.width ++ " " ++ toString frame.size.height
 
 
@@ -452,10 +465,10 @@ container : Config data msg -> Coordinate.System -> List (Html.Html msg) -> Html
 container config { frame } junkHtml plot  =
   let
     userAttributes =
-      Container.properties config.container |> .attributesHtml
+      Internal.Container.properties config.container |> .attributesHtml
 
     sizeStyles =
-      Container.sizeStyles config.container frame.size.width frame.size.height
+      Internal.Container.sizeStyles config.container frame.size.width frame.size.height
 
     styles =
       Html.Attributes.style <| ( "position", "relative" ) :: sizeStyles
@@ -465,10 +478,10 @@ container config { frame } junkHtml plot  =
 
 chartAreaAttributes : Coordinate.System -> List (Svg.Attribute msg)
 chartAreaAttributes system =
-  [ Attributes.x <| toString system.frame.margin.left
-  , Attributes.y <| toString system.frame.margin.top
-  , Attributes.width <| toString (Coordinate.lengthX system)
-  , Attributes.height <| toString (Coordinate.lengthY system)
+  [ Svg.Attributes.x <| toString system.frame.margin.left
+  , Svg.Attributes.y <| toString system.frame.margin.top
+  , Svg.Attributes.width <| toString (Coordinate.lengthX system)
+  , Svg.Attributes.height <| toString (Coordinate.lengthY system)
   ]
 
 
@@ -477,9 +490,9 @@ chartAreaPlatform config data system =
   let
     attributes =
       List.concat
-        [ [ Attributes.fill "transparent" ]
+        [ [ Svg.Attributes.fill "transparent" ]
         , chartAreaAttributes system
-        , Events.toChartAttributes data system config.events
+        , Internal.Events.toChartAttributes data system config.events
         ]
   in
   Svg.rect attributes []
@@ -488,18 +501,18 @@ chartAreaPlatform config data system =
 clipPath : Coordinate.System ->  Svg.Svg msg
 clipPath system =
   Svg.clipPath
-    [ Attributes.id (Utils.toChartAreaId system.id) ]
+    [ Svg.Attributes.id (Utils.toChartAreaId system.id) ]
     [ Svg.rect (chartAreaAttributes system) [] ]
 
 
 toDataPoints : Config data msg -> List (Series data) -> List (List (Data.Data data))
 toDataPoints config lines =
   let
-    x = Axis.variable config.x
-    y = Axis.variable config.y
+    x = Internal.Axis.variable config.x
+    y = Internal.Axis.variable config.y
 
     data =
-      List.map (Line.data >> List.filterMap addPoint) lines
+      List.map (Internal.Line.data >> List.filterMap addPoint) lines
 
     addPoint datum =
       case ( x datum, y datum ) of
@@ -509,10 +522,10 @@ toDataPoints config lines =
         ( Nothing, Nothing ) -> Nothing
   in
   case config.area of
-    Area.None         -> data
-    Area.Normal _     -> data
-    Area.Stacked _    -> stack data
-    Area.Percentage _ -> normalize (stack data)
+    Internal.Area.None         -> data
+    Internal.Area.Normal _     -> data
+    Internal.Area.Stacked _    -> stack data
+    Internal.Area.Percentage _ -> normalize (stack data)
 
 
 stack : List (List (Data.Data data)) -> List (List (Data.Data data))
@@ -589,9 +602,9 @@ setY datum y =
 toSystem : Config data msg -> List (Data.Data data) -> Coordinate.System
 toSystem config data =
   let
-    container = Container.properties config.container
-    hasArea = Area.hasArea config.area
-    size   = Coordinate.Size (Axis.pixels config.x) (Axis.pixels config.y)
+    container = Internal.Container.properties config.container
+    hasArea = Internal.Area.hasArea config.area
+    size   = Coordinate.Size (Internal.Axis.pixels config.x) (Internal.Axis.pixels config.y)
     frame  = Coordinate.Frame container.margin size
     xRange = Coordinate.range (.point >> .x) data
     yRange = Coordinate.range (.point >> .y) data
@@ -611,8 +624,8 @@ toSystem config data =
         else domain
   in
   { system
-  | x = Range.applyX (Axis.range config.x) system
-  , y = Range.applyY (Axis.range config.y) system
+  | x = Internal.Axis.Range.applyX (Internal.Axis.range config.x) system
+  , y = Internal.Axis.Range.applyY (Internal.Axis.range config.y) system
   }
 
 
@@ -639,7 +652,7 @@ defaultConfig toX toY =
 
 defaultLines : List (List data) -> List (Series data)
 defaultLines =
-  List.map4 Line.line defaultColors defaultShapes defaultLabel
+  List.map4 Internal.Line.line defaultColors defaultShapes defaultLabel
 
 
 defaultColors : List Color.Color
@@ -652,9 +665,9 @@ defaultColors =
 
 defaultShapes : List Dots.Shape
 defaultShapes =
-  [ Dots.Circle
-  , Dots.Triangle
-  , Dots.Cross
+  [ Internal.Dots.Circle
+  , Internal.Dots.Triangle
+  , Internal.Dots.Cross
   ]
 
 
