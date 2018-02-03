@@ -1,15 +1,16 @@
-module LineChart.Axis.Intersection exposing (Config, default, at, custom)
+module LineChart.Axis.Intersection exposing (Config, default, atOrigin, at, custom)
 
 {-|
 
 ## Where is the intersection?
 
 The intersection is where your two axis lines meet. By default this is at
-the origin (0, 0), but it need not be as illustated below.
+the smallest coordinate possible (the downmost left corner), but it need
+not be as illustated below.
 
 <img alt="Ranges explained" width="610" src="https://github.com/terezka/lines/blob/master/images/intersection1.png?raw=true"></src>
 
-@docs Config, default, at, custom
+@docs Config, default, atOrigin, at, custom
 
 -}
 
@@ -33,11 +34,14 @@ type alias Config =
   Intersection.Config
 
 
-{-| Sets the intersection as close to the origin as your range and domain allows.
+{-| Sets the intersection at the minimum on both the range and domain.
 
-    intersectionConfig : Intersection.Config msg
+    intersectionConfig : Intersection.Config
     intersectionConfig =
       Intersection.default
+
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Intersection/Example1.elm)._
 
 -}
 default : Config
@@ -45,13 +49,30 @@ default =
   Intersection.default
 
 
+{-| Sets the intersection as close to the origin as your range and domain allows.
+
+    intersectionConfig : Intersection.Config
+    intersectionConfig =
+      Intersection.atOrigin
+
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Intersection/Example1.elm)._
+
+
+-}
+atOrigin : Config
+atOrigin =
+  Intersection.atOrigin
+
+
 {-| Sets the intersection to your chosen x and y respectivily.
 
-    intersectionConfig : Intersection.Config msg
+    intersectionConfig : Intersection.Config
     intersectionConfig =
       Intersection.at 0 3
 
-_See full example [here](https://ellie-app.com/fbKZ6gGzRa1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Intersection/Example1.elm)._
 
 -}
 at : Float -> Float -> Config
@@ -62,9 +83,15 @@ at =
 {-| Sets the intersection to your chosen x and y, given the range and domain
 respectivily.
 
-    intersectionConfig : Intersection.Config msg
+    intersectionConfig : Intersection.Config
     intersectionConfig =
-      Intersection.custom .min .max
+      Intersection.custom .min middle
+
+    middle : Coordinate.Range -> Float
+    middle { min, max } =
+      (max - min) / 2
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Intersection/Example1.elm)._
 
 -}
 custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Config

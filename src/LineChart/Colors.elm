@@ -1,16 +1,18 @@
 module LineChart.Colors exposing
-  ( pink, blue, gold, gray, red, green, turquoise, purple
+  ( pink, blue, gold, red, green, turquoise, purple
   , pinkLight, blueLight, goldLight, purpleLight
-  , grayLight, grayLightest, transparent
+  , black, gray, grayLight, grayLightest, transparent
   )
 
 {-|
 
 @docs pink, blue, gold, red, green, turquoise, purple
 
+## Light
 @docs pinkLight, blueLight, goldLight, purpleLight
 
-@docs gray, grayLight, grayLightest, transparent
+## Gray scale
+@docs black, gray, grayLight, grayLightest, transparent
 
 -}
 
@@ -82,6 +84,16 @@ purpleLight =
 turquoise : Color.Color
 turquoise =
   Color.rgb 40 235 199
+
+
+
+-- GRAY SCALE
+
+
+{-| -}
+black : Color.Color
+black =
+  Color.rgb 0 0 0
 
 
 {-| -}

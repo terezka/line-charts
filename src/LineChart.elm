@@ -70,7 +70,7 @@ import Color
       LineChart.view1 .x .y
         [ Point 0 2, Point 5 5, Point 10 10 ]
 
-_See the full example [here](https://ellie-app.com/s5M4fxFwGa1/0)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example1.elm)._
 
 
 ** Choosing your variables **
@@ -90,7 +90,7 @@ So if we had more complex data structures, like a human with an `age`, `weight`,
     -- Try changing .weight to .height
 
 
-_See the full example [here](https://ellie-app.com/s8kQfLfYZa1/1)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example2.elm)._
 
 
 ** Use any function as the variable **
@@ -123,7 +123,7 @@ to their age. Here's how you could plot it.
     chart =
       LineChart.view2 .age .weight alice chuck
 
-_See the full example [here](https://ellie-app.com/scTM9Mw77a1/0)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example3.elm)._
 
 -}
 view2 : (data -> Float) -> (data -> Float) -> List data -> List data -> Svg.Svg msg
@@ -141,7 +141,7 @@ It works just like `view1` and `view2`.
     chart =
       LineChart.view3 .age .weight alice bob chuck
 
-_See the full example [here](https://ellie-app.com/sdNHxCfrJa1/0)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example4.elm)._
 
 But what if you have more people? What if you have _four_ people?! In that case,
 check out `view`.
@@ -170,7 +170,7 @@ the `line` function for more information.
         , LineChart.line Colors.green Dots.circle "Chuck" chuck
         ]
 
-_See the full example [here](https://ellie-app.com/sgL9mdF7ra1/1)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example5.elm)._
 
 See `viewCustom` for all other customizations.
 
@@ -189,7 +189,7 @@ type alias Series data =
 
 ** Customize a solid line **
 
-Try changing the color or explore all the available dot shapes from `LineChart.Dot`!
+Try changing the color or explore all the available dot shapes from `LineChart.Dots`!
 
     chart : Html msg
     chart =
@@ -199,7 +199,7 @@ Try changing the color or explore all the available dot shapes from `LineChart.D
         , LineChart.line Colors.blueLight Dots.square "Chuck" chuck
         ]
 
-_See the full example [here](https://ellie-app.com/stWdWjqGZa1/0)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example6.elm)._
 
 
 ** Regarding the title **
@@ -237,7 +237,7 @@ for examples of patterns.
 
     -- Try passing different numbers!
 
-_See the full example [here](https://ellie-app.com/syMhqfR8qa1/1)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example7.elm)._
 
 ** When should I use a dashed line? **
 
@@ -270,10 +270,10 @@ Use with `viewCustom`.
     _See `LineChart.Axis.Intersection` for more information and examples._
 
   - **interpolation**: Customizes the curve of your LineChart.</br>
-    _See the `LineChart.Interpolation` module for more information and examples._
+    _See `LineChart.Interpolation` for more information and examples._
 
   - **container**: Customizes the container of your chart.</br>
-    _See the `LineChart.Container` module for more information and examples._
+    _See `LineChart.Container` for more information and examples._
 
   - **legends**: Customizes your chart's legends.</br>
     _See `LineChart.Legends` for more information and examples._
@@ -323,7 +323,7 @@ available for each property.
       , dots = Dots.default
       }
 
-_See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example8.elm)._
 
 -}
 type alias Config data msg =
@@ -379,7 +379,7 @@ The example below makes the line chart an area chart.
       }
 
 
-_See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example9.elm)._
 
 
 ** Speaking of area charts **

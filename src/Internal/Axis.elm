@@ -1,5 +1,5 @@
 module Internal.Axis exposing
-  ( Config, default, custom, full, time, none, quick
+  ( Config, default, custom, full, time, none, picky
   , variable, pixels, range, ticks
   , viewHorizontal, viewVertical
   )
@@ -68,7 +68,7 @@ full pixels title variable =
     { title = Title.atAxisMax 0 0 title
     , variable = Just << variable
     , pixels = pixels
-    , range = Range.padded 0 20
+    , range = Range.padded 20 20
     , axisLine = AxisLine.default
     , ticks =
         Ticks.custom <| \data range ->
@@ -114,8 +114,8 @@ none pixels variable =
 
 
 {-| -}
-quick : Int -> String -> (data -> Float) -> List Float -> Config data msg
-quick pixels title variable ticks =
+picky : Int -> String -> (data -> Float) -> List Float -> Config data msg
+picky pixels title variable ticks =
   custom
     { title = Title.atAxisMax 0 0 title
     , variable = Just << variable

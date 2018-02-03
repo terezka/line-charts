@@ -1,22 +1,20 @@
-module LineChart.Axis exposing (Config, default, full, time, custom, none, quick)
+module LineChart.Axis exposing (Config, default, full, time, custom, none, picky)
 
 {-|
 
-** Axis range vs. data range?**
+_If you're confused as to what "axis range" and "data range" means,
+check out `Axis.Range` for an explanation!_
 
-This module uses the words "axis range" and "data" range a bunch.
-Check out `Axis.Range` for an explanation!
-
-@docs Config, default, full, time, none, quick, custom
+@docs Config, default, full, time, none, picky, custom
 
 -}
 
 
+import Internal.Axis as Axis
+import Internal.Axis.Title as Title
 import LineChart.Axis.Range as Range
 import LineChart.Axis.Line as AxisLine
 import LineChart.Axis.Ticks as Ticks
-import Internal.Axis as Axis
-import Internal.Axis.Title as Title
 
 
 
@@ -40,14 +38,12 @@ both sides of that line. Also adds some nice ticks to it.
 
 Pass the length of your axis in pixels, the title and it's variable.
 
-    xAxisConfig : Config data msg
+    xAxisConfig : Config Data msg
     xAxisConfig =
       Axis.default 650 "Age (years)" .age
 
-    -- Try changing the length or the title!
 
-
-_See the full example [here](https://ellie-app.com/smkVxrpMfa1/2)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example1.elm)._
 
 -}
 default : Int -> String -> (data -> Float) -> Config data msg
@@ -60,9 +56,12 @@ default =
 Pass the length of your axis in pixels, the title and it's variable.
 
 
-    axisConfig : AxisConfig Data msg
-    axisConfig =
+    xAxisConfig : AxisConfig Data msg
+    xAxisConfig =
       Axis.full 650 "Age (years)" .age
+
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example2.elm)._
 
 -}
 full : Int -> String -> (data -> Float) -> Config data msg
@@ -75,28 +74,17 @@ full =
 Pass the length of your axis in pixels, the title and it's variable.
 
 
-    axisConfig : AxisConfig Data msg
-    axisConfig =
+    xAxisConfig : AxisConfig Data msg
+    xAxisConfig =
       Axis.time 650 "Date" .date
+
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example3.elm)._
 
 -}
 time : Int -> String -> (data -> Float) -> Config data msg
 time =
   Axis.time
-
-
-{-| Doesn't draw the axis at all.
-
-Pass the length of your axis in pixels and it's variable.
-
-
-    axisConfig : AxisConfig Data msg
-    axisConfig =
-      Axis.none 650 .age
--}
-none : Int -> (data -> Float) -> Config data msg
-none =
-  Axis.none
 
 
 {-| Draws the full length of your axis and adds some ticks at the positions
@@ -106,44 +94,70 @@ Pass the length of your axis in pixels, the title, it's variable and the
 numbers where you'd like ticks to show up.
 
 
-    axisConfig : AxisConfig Data msg
-    axisConfig =
-      Axis.quick 650 "Age (years)" .age [ 10, 15, 25, 34 ]
+    xAxisConfig : Config Data msg
+    xAxisConfig =
+      Axis.picky 650 "Age (years)" .age [ 4, 25, 46 ]
+
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example4.elm)._
+
+**Note:** This is of course not the only way for you to decide exactly where the
+ticks should go on the axis! If you need to customize ticks further, check out
+the `ticks` property in `Axis.custom`.
 
 -}
-quick : Int -> String -> (data -> Float) -> List Float -> Config data msg
-quick =
-  Axis.quick
+picky : Int -> String -> (data -> Float) -> List Float -> Config data msg
+picky =
+  Axis.picky
+
+
+{-| Doesn't draw the axis at all.
+
+Pass the length of your axis in pixels and it's variable.
+
+
+    xAxisConfig : AxisConfig Data msg
+    xAxisConfig =
+      Axis.none 650 .age
+
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example5.elm)._
+
+-}
+none : Int -> (data -> Float) -> Config data msg
+none =
+  Axis.none
 
 
 {-|
 
 Properties:
 
-  - **title**: Adds a title on your axis.
-    See `LineChart.Axis.Title` for more information and examples.
-  - **variable**: Determines what data is drawn in the chart!
+  - **title**: Adds a title on your axis. </br>
+    _See `LineChart.Axis.Title` for more information and examples._
+  - **variable**: Determines what data is drawn in the chart! </br>
   - **pixels**: The length of the dimension.
-  - **range**: Determines the axis range.
-    See `LineChart.Axis.Range` for more information and examples.
-  - **axisLine**: Customizes your axis line.
-    See `LineChart.Axis.Line` for more information and examples.
-  - **ticks**: Customizes your ticks.
-    See `LineChart.Axis.Ticks` for more information and examples.
+  - **range**: Determines the axis range. </br>
+    _See `LineChart.Axis.Range` for more information and examples._
+  - **axisLine**: Customizes your axis line. </br>
+    _See `LineChart.Axis.Line` for more information and examples._
+  - **ticks**: Customizes your ticks. </br>
+    _See `LineChart.Axis.Ticks` for more information and examples._
 
 
-    xAxis : Axis.Config Data msg
-    xAxis =
+    xAxisConfig : Config Data msg
+    xAxisConfig =
       Axis.custom
-        { title = Title.default "Age (years)"
-        , variable = Just << .age
+        { title = Title.default "Year"
+        , variable = Just << .date
         , pixels = 700
-        , range = Range.default
-        , axisLine = AxisLine.full Color.black
-        , ticks = Ticks.float 5
+        , range = Range.padded 20 20
+        , axisLine = AxisLine.full Colors.black
+        , ticks = Ticks.time 5
         }
 
-_See full example [here](https://ellie-app.com/fb6BqXBmba1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example8.elm)._
 
 -}
 custom : Properties data msg -> Config data msg

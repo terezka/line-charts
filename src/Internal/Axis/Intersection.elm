@@ -1,6 +1,6 @@
 module Internal.Axis.Intersection exposing
   ( Config
-  , default, at, custom
+  , default, atOrigin, at, custom
   -- INTERNAL
   , getX, getY
   )
@@ -18,6 +18,12 @@ type Config =
 {-| -}
 default : Config
 default =
+  custom .min .min
+
+
+{-| -}
+atOrigin : Config
+atOrigin =
   custom towardsZero towardsZero
 
 
