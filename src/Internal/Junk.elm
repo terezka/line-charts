@@ -82,7 +82,6 @@ tooltipHtml toX toY system hovered properties =
     containerStyles =
       [ ( "left", toString xPosition ++ "px" )
       , ( "top", toString yPosition ++ "px" )
-      , ( "width", "100px" )
       , ( "position", "absolute" )
       , ( "padding", "5px" )
       , ( "background", "rgba(255,255,255,0.8)" )
