@@ -29,12 +29,22 @@ configuration in `Axis.custom`.
         , range = AxisLine.default
         , ...
         }
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+
 -}
 type alias Config msg =
   Line.Config msg
 
 
 {-| Draws the full length of your axis range.
+
+    axisLineConfig : AxisLine.Config msg
+    axisLineConfig =
+      AxisLine.default
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+
 -}
 default : Config msg
 default =
@@ -42,6 +52,13 @@ default =
 
 
 {-| Same as the default, except you get to pick the color.
+
+    axisLineConfig : AxisLine.Config msg
+    axisLineConfig =
+      AxisLine.full Color.red
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+
 -}
 full : Color.Color -> Config msg
 full =
@@ -49,6 +66,13 @@ full =
 
 
 {-| Draws the full length of your data range in your given color.
+
+    axisLineConfig : AxisLine.Config msg
+    axisLineConfig =
+      AxisLine.rangeFrame Color.red
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+
 -}
 rangeFrame : Color.Color -> Config msg
 rangeFrame =
@@ -56,6 +80,13 @@ rangeFrame =
 
 
 {-| Removes the axis line entirely.
+
+    axisLineConfig : AxisLine.Config msg
+    axisLineConfig =
+      AxisLine.none
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+
 -}
 none : Config msg
 none =
@@ -88,6 +119,10 @@ axis line configuration.
         , start = dataRange.min
         , end = 5
         }
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+
+
 -}
 custom : (Coordinate.Range -> Coordinate.Range -> Properties msg) -> Config msg
 custom =

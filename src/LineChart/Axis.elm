@@ -20,7 +20,7 @@ import LineChart.Axis.Ticks as Ticks
 
 {-| Use in the `LineChart.Config` passed to `viewCustom`.
 
-    chartConfig : Config data msg
+    chartConfig : LineChart.Config data msg
     chartConfig =
       { ...
       , x = Axis.default 650 "Age (years)" .age
@@ -38,7 +38,7 @@ both sides of that line. Also adds some nice ticks to it.
 
 Pass the length of your axis in pixels, the title and it's variable.
 
-    xAxisConfig : Config Data msg
+    xAxisConfig : Axis.Config Data msg
     xAxisConfig =
       Axis.default 650 "Age (years)" .age
 
@@ -56,7 +56,7 @@ default =
 Pass the length of your axis in pixels, the title and it's variable.
 
 
-    xAxisConfig : AxisConfig Data msg
+    xAxisConfig : Axis.Config Data msg
     xAxisConfig =
       Axis.full 650 "Age (years)" .age
 
@@ -74,7 +74,7 @@ full =
 Pass the length of your axis in pixels, the title and it's variable.
 
 
-    xAxisConfig : AxisConfig Data msg
+    xAxisConfig : Axis.Config Data msg
     xAxisConfig =
       Axis.time 650 "Date" .date
 
@@ -94,7 +94,7 @@ Pass the length of your axis in pixels, the title, it's variable and the
 numbers where you'd like ticks to show up.
 
 
-    xAxisConfig : Config Data msg
+    xAxisConfig : Axis.Config Data msg
     xAxisConfig =
       Axis.picky 650 "Age (years)" .age [ 4, 25, 46 ]
 
@@ -116,7 +116,7 @@ picky =
 Pass the length of your axis in pixels and it's variable.
 
 
-    xAxisConfig : AxisConfig Data msg
+    xAxisConfig : Axis.Config Data msg
     xAxisConfig =
       Axis.none 650 .age
 
@@ -145,7 +145,7 @@ Properties:
     _See `LineChart.Axis.Ticks` for more information and examples._
 
 
-    xAxisConfig : Config Data msg
+    xAxisConfig : Axis.Config Data msg
     xAxisConfig =
       Axis.custom
         { title = Title.default "Year"

@@ -20,7 +20,8 @@ Choose the approximate amount of ticks on your axis!
       -- or
       Ticks.float 7 -- makes ca. 7 ticks at nice float
 
-_See full example [here](https://ellie-app.com/f46B8MSCya1/1)._
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Ticks/Example1.elm)._
 
 @docs int, time, float
 
@@ -32,7 +33,8 @@ Now you get to decide how the ticks should look!
     ticksConfig =
       Ticks.intCustom 7 customTick
 
-_See full example [here](https://ellie-app.com/f2tgyy8X3a1/1)._
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Ticks/Example1.elm)._
 
 @docs intCustom, timeCustom, floatCustom
 
@@ -70,11 +72,9 @@ type alias Config msg =
 
 ** What are "nice" numbers/integers/datetimes? **
 
-When I say "nice", I just mean that I try to calculate intervals which begin
-with 10, 5, 3, 2, 1 (adjusted to magnitude, of course!). For dates, I try to
-hit whole days, weeks, months or hours, minutes, and seconds.
-
-Not very politically correct, huh?
+"Nice" numbers are intervals which begin with 10, 5, 3, 2, 1
+(adjusted to magnitude, of course!). For dates, it means whole days, weeks,
+months or hours, minutes, and seconds.
 
 -} -- TODO make better approximate
 default : Config msg
@@ -135,7 +135,7 @@ timeCustom =
         framing dataRange ++ hoverOne
 
 
-_See full example [here](https://ellie-app.com/dZyX64dMXa1/1)._
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Ticks/Example2.elm)._
 
 ** What if I still want nice values?**
 

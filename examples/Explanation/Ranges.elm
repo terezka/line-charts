@@ -40,7 +40,7 @@ main =
 chart : Html.Html msg
 chart =
   LineChart.viewCustom
-    { y = Axis.quick 500 "y" .y []
+    { y = Axis.picky 500 "y" .y []
     , x = customAxis
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default

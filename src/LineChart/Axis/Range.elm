@@ -60,6 +60,9 @@ type alias Config =
     rangeConfig =
       Range.default
 
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Range/Example1.elm)._
+
 <img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges3.png?raw=true"></src>
 
 -}
@@ -75,6 +78,9 @@ respectivily.
     rangeConfig =
       Range.padded 40 40
 
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Range/Example1.elm)._
+
 <img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges.png?raw=true"></src>
 
 -}
@@ -89,8 +95,10 @@ respectivily.
 
     rangeConfig : Range.Config
     rangeConfig =
-      Range.window -0.5 4.5
+      Range.window 70 97
 
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Range/Example1.elm)._
 
 <img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges2.png?raw=true"></src>
 
@@ -104,10 +112,14 @@ window =
 
     rangeConfig : Range.Config
     rangeConfig =
-      Range.custom <| \{ min, max } ->
-        { min = min - 1, max = max + 2 }
+      Range.custom specialRange
+
+    specialRange : Coordinate.Range -> Coordinate.Range
+    specialRange { min, max } =
+      { min = min - 1, max = max + 2 }
 
 
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Range/Example1.elm)._
 
 <img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges4.png?raw=true"></src>
 

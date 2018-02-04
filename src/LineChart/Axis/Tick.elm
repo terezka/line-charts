@@ -1,14 +1,14 @@
 module LineChart.Axis.Tick exposing
   ( Config, Properties
   , Direction, negative, positive
-  , int, float, long, gridless
+  , int, float, long, gridless, opposite
   , time, Time, Unit(..), Interval, format
   , custom
   )
 
 {-|
 
-@docs Config, int, float, time, long, gridless
+@docs Config, int, float, time, long, gridless, opposite
 
 # Customiztion
 @docs custom, Properties, Direction, negative, positive
@@ -28,21 +28,29 @@ import Color
 
 
 
-{-| Used in the configuration in `Ticks`.
+{-| Used in the configuration in the `ticks` property of the
+options passed to `Axis.custom`.
+
+    xAxisConfig : Axis.Config Data msg
+    xAxisConfig =
+      Axis.custom
+        { ...
+        , ticks = ticksConfig
+        }
 
     ticksConfig : Ticks.Config msg
     ticksConfig =
       Ticks.intCustom 7 Tick.int
+      --                ^^^^^^^^
       -- or
       Ticks.timeCustom 7 Tick.time
       -- or
       Ticks.floatCustom 7 Tick.float
       -- or
-      Ticks.floatCustom 7 Tick.long
-      -- or
-      Ticks.floatCustom 7 Tick.gridless
-      -- or
       Ticks.floatCustom 7 customTick
+      -- or ... you get it
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Tick/Example1.elm)._
 
 -}
 type alias Config msg =
@@ -72,9 +80,16 @@ gridless =
 
 
 {-| -}
+opposite : Float -> Config msg
+opposite =
+  Tick.opposite
+
+
+{-| -}
 long : Float -> Config msg
 long =
   Tick.long
+
 
 
 -- TIME
@@ -140,7 +155,7 @@ change other properties of your time tick, but won't bother with the formatting.
 
     tickConfig : Tick.Time -> Tick.Config msg
     tickConfig time =
-      Ticks.custom
+      Tick.custom
         { position = time.timestamp
         , color = Color.blue
         , width = 1
@@ -148,7 +163,7 @@ change other properties of your time tick, but won't bother with the formatting.
         , grid = True
         , direction = Tick.positive
         , label = Just <|
-            Junk.text Color.blue (Tick.format time)
+            Junk.label Color.blue (Tick.format time)
         }
 
 -}
@@ -211,16 +226,28 @@ positive =
 
     customTick : Float -> Tick.Config msg
     customTick number =
-      Ticks.custom
+      let
+        color =
+          -- Change the color based on value!
+          if number < 50 then Colors.purple
+          else if number < 70 then Colors.green
+          else Colors.pinkLight
+
+        label =
+          Junk.label color (toString number)
+      in
+      Tick.custom
         { position = number
-        , color = Color.blue
+        , color = Colors.black
         , width = 1
         , length = 7
         , grid = True
         , direction = Tick.positive
-        , label = Just <|
-            Junk.text Color.blue (toString number)
+        , label = Just label
         }
+
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Tick/Example1.elm)._
 
 -}
 custom : Properties msg -> Config msg

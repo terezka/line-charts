@@ -11,7 +11,7 @@ module LineChart.Dots exposing
 @docs Shape
 
 ## Selection
-Hopefully, these are selfexplanatory.
+Hopefully, these are self-explanatory.
 <img alt="Legends" width="610" style="margin-top: 10px; margin-left: -10px" src="https://github.com/terezka/lines/blob/master/images/shapes.png?raw=true"></src>
 
 @docs none, circle, triangle, square, diamond, plus, cross
