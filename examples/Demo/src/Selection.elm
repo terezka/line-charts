@@ -1,4 +1,4 @@
-module Selection2 exposing (main)
+module Selection exposing (Model, init, Msg, update, view)
 
 import Html
 import Html.Attributes
@@ -215,7 +215,7 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [ Html.Attributes.style [ ("display", "flex") ] ] <|
+  Html.div [] <|
     case model.selection of
       Nothing ->
         [ chart model ]
@@ -337,14 +337,14 @@ viewChart data { range, junk, events, legends, dots, id } =
         Axis.custom
           { title = Title.default "x"
           , variable = Just << .x
-          , pixels = 700
+          , pixels = 650
           , range = range
           , axisLine = AxisLine.rangeFrame Colors.gray
           , ticks = Ticks.float 5
           }
     , container =
         Container.custom
-          { attributesHtml = [ Html.Attributes.style [ ( "font-family", "monospace" ) ] ]
+          { attributesHtml = [ Html.Attributes.style [ ( "display", "inline-block" ) ] ]
           , attributesSvg = []
           , size = Container.static
           , margin = Container.Margin 30 100 60 50

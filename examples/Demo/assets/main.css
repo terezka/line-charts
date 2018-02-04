@@ -1,0 +1,30 @@
+
+body {
+	margin: 0;
+	font-family: monospace;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+a {
+	color: #84868a;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+
+
+/* */
+
+
+.view {
+	margin: 300px 20px 300px 300px
+}
+
+.view__title__container {
+	position: fixed;
+	top: 40px;
+	left: 40px;
+}

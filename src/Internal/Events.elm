@@ -329,8 +329,8 @@ toJsonDecoder data system (Decoder decoder) =
       decoder data system <| Point (mouseX - left) (mouseY - top)
   in
   Json.map3 handle
-    (Json.field "clientX" Json.float)
-    (Json.field "clientY" Json.float)
+    (Json.field "pageX" Json.float) -- TODO
+    (Json.field "pageY" Json.float)
     (DOM.target position)
 
 

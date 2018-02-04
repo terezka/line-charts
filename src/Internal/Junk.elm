@@ -84,6 +84,7 @@ tooltipHtml toX toY system hovered properties =
       , ( "top", toString yPosition ++ "px" )
       , ( "position", "absolute" )
       , ( "padding", "5px" )
+      , ( "min-width", "100px" )
       , ( "background", "rgba(255,255,255,0.8)" )
       , ( "border", "1px solid #d3d3d3" )
       , ( "border-radius", "5px" )
