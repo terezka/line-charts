@@ -33,7 +33,7 @@ import Internal.Legends as Legends
 -- QUICK START
 
 
-{-| Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =
@@ -74,11 +74,12 @@ none =
     chartConfig : LineChart.Config Data msg
     chartConfig =
       { ...
-      , legends = Legends.byEnding (Junk.text Color.black)
+      , legends = Legends.byEnding (Junk.label Colors.black)
       , ...
       }
 
-_See full example [here](https://ellie-app.com/ff9LP3fYwa1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Legends/Example1.elm)._
 
 -}
 byEnding : (String -> Svg.Svg msg) -> Config data msg
@@ -117,7 +118,7 @@ Makes this:
 
 <img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/legends3.png?raw=true"></src>
 
-_See full example [here](https://ellie-app.com/frGFKHqbka1/1)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Legends/Example2.elm)._
 
 -}
 grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Float -> Float -> Config data msg
@@ -142,14 +143,13 @@ type alias Legend msg =
 
     legends : Legends data msg
     legends =
-      Legends.groupedCustom 10 viewLegends
+      Legends.groupedCustom 30 viewLegends
 
 
     viewLegends : Coordinate.System -> List (Legends.Legend msg) -> Svg.Svg msg
     viewLegends system legends =
       Svg.g
-        [ Svg.Attributes.class "chart__legends"
-        , Junk.transform
+        [ Junk.transform
             [ Junk.move system system.x.min system.y.min
             , Junk.offset 20 20
             ]
@@ -160,9 +160,7 @@ type alias Legend msg =
     viewLegend : Int -> Legends.Legend msg -> Svg.Svg msg
     viewLegend index { sample, label } =
        Svg.g
-        [ Svg.Attributes.class "chart__legend"
-        , Junk.transform [ Junk.offset (toFloat index * 100) 20 ]
-        ]
+        [ Junk.transform [ Junk.offset (toFloat index * 100) 20 ] ]
         [ sample, viewLabel label ]
 
 
@@ -170,7 +168,7 @@ type alias Legend msg =
     viewLabel label =
       Svg.g
         [ Junk.transform [ Junk.offset 40 4 ] ]
-        [ Junk.label Color.black label ]
+        [ Junk.label Colors.black label ]
 
 
 Makes this:
@@ -178,7 +176,7 @@ Makes this:
 <img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/legends4.png?raw=true"></src>
 
 
-_See full example [here](https://ellie-app.com/fygmS3nRPa1/1)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Legends/Example3.elm)._
 
 
 -}

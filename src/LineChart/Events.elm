@@ -20,12 +20,17 @@ module LineChart.Events exposing
 
 ### Maps
 
-    events : Config Data Msg
+    type Msg =
+      Hover ( Maybe Data, Coordinate.Point )
+
+    events : Events.Config Data Msg
     events =
       Events.custom
-        [ Events.onMouseMove Hover <|
-            Events.map2 (,) Events.getNearest Events.getSvg
-        ]
+        [ Events.onMouseMove Hover decoder ]
+
+    decoder : Events.Decoder
+    decoder =
+      Events.map2 (,) Events.getNearest Events.getSvg
 
 @docs map, map2, map3
 
@@ -40,7 +45,7 @@ import LineChart.Coordinate as Coordinate
 -- QUICK START
 
 
-{-| Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =
@@ -68,10 +73,10 @@ Pass a message taking the data of the data point hovered.
 
     eventsConfig : Events.Config Data Msg
     eventsConfig =
-      Events.hoverOne OnHoverOne
+      Events.hoverOne Hover
 
-_See full example [here](https://ellie-app.com/9fDjmRLLPa1/1)._
 
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Events/Example1.elm)._
 
 -}
 hoverOne : (Maybe data -> msg) -> Config data msg
@@ -89,8 +94,8 @@ Pass a message taking the data of the data points hovered.
     eventsConfig =
       Events.hoverMany OnHoverMany
 
-_See full example [here](https://ellie-app.com/9fY9Cj4X6a1/1)._
 
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Events/Example2.elm)._
 
 -}
 hoverMany : (List data -> msg) -> Config data msg
@@ -104,7 +109,10 @@ Pass a message taking the data of the data points clicked.
 
     eventsConfig : Events.Config Data Msg
     eventsConfig =
-      Events.click OnClick
+      Events.click Click
+
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Events/Example3.elm)._
 
 -}
 click : (Maybe data -> msg) -> Config data msg
@@ -112,19 +120,21 @@ click =
   Events.click
 
 
-{-| Add your own combination of events.
+{-| Add your own combination of events. The cool thing here is that you can pick
+another `Events.Decoder` or use `Events.on` for events without shortcuts.
 
     eventsConfig : Events.Config Data Msg
     eventsConfig =
       Events.custom
-        [ Events.onMouseMove OnHoverOne Events.getNearest
-        , Events.onMouseLeave (OnHoverOne Nothing)
+        [ Events.onMouseMove Hover Events.getNearest
+        , Events.onMouseLeave (Hover Nothing)
         ]
 
-_See full example [here](https://ellie-app.com/cvbc9zvgQa1/1)._
 
-This example sends the `OnHoverOne` message with the data of the nearest dot when
-hovering the chart area and `OnHoverOne Nothing` when your leave the chart area.
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Events/Example4.elm)._
+
+This example sends the `Hover` message with the data of the _nearest_ dot when
+hovering the chart area and `Hover Nothing` when your leave the chart area.
 
 -}
 custom : List (Event data msg) -> Config data msg
@@ -175,22 +185,21 @@ onMouseLeave =
 
 Arguments:
 
-  1. When `True`, the event also catches events in the margins of your chart.
-  2. The JavaScript event name.
-  3. The message.
+  1. The JavaScript event name.
+  2. The message.
   3. The `Events.Decoder` to determine what data you want from the event.
 
 -}
-on : Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
+on : String -> (a -> msg) -> Decoder data a -> Event data msg
 on =
-  Events.on
+  Events.on False
 
 
 {-| Same as `on`, but you can add prevent-default options too!
 -}
-onWithOptions : Html.Events.Options -> Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
-onWithOptions =
-  Events.onWithOptions
+onWithOptions : Html.Events.Options -> String -> (a -> msg) -> Decoder data a -> Event data msg
+onWithOptions options =
+  Events.onWithOptions options False
 
 
 
@@ -203,7 +212,8 @@ This example gets you the data of the nearest dot to where you are hovering.
     events : Config Data Msg
     events =
       Events.custom
-        [ Events.onMouseMove HoverOne Events.getNearest ]
+        [ Events.onMouseMove Hover Events.getNearest ]
+
 -}
 type alias Decoder data msg =
   Events.Decoder data msg

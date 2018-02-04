@@ -55,8 +55,8 @@ The shape type changes the shape of your dots.
         --                           ^^^^^^^^^^^^
         ]
 
-_See full example [here](https://ellie-app.com/9mFnMYLnba1/1)._
 
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example1.elm)._
 
 **What is a dot?**
 
@@ -147,9 +147,13 @@ default =
 
 {-| Change the style of _all_ your dots.
 
-    dotsConfig : Dots.Config data
+    dotsConfig : Dots.Config Data
     dotsConfig =
       Dots.custom (Dots.full 5)
+
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example2.elm)._
+
 
 -}
 custom : Style -> Config data
@@ -164,8 +168,8 @@ your chart by varying the size of your dots based on some property.
 
 **Extra dimension example**
 
-    customConfig : Dots.Config Info
-    customConfig =
+    customDotsConfig : Dots.Config Data
+    customDotsConfig =
       let
         styleLegend _ =
           Dots.full 7
@@ -178,20 +182,21 @@ your chart by varying the size of your dots based on some property.
         , individual = styleIndividual
         }
 
-_See full example [here](https://ellie-app.com/bX2JmhZ6qa1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example4.elm)._
 
 
 **Hover state example**
 
-    customConfig : Maybe Info -> Dots.Config Info
-    customConfig maybeHovered =
+    customDotsConfig : Maybe Data -> Dots.Config Data
+    customDotsConfig maybeHovered =
       let
         styleLegend _ =
           Dots.disconnected 10 2
 
         styleIndividual datum =
           if Just datum == maybeHovered
-            then Dots.aura 7 6 0.4
+            then Dots.empty 8 2
             else Dots.disconnected 10 2
       in
       Dots.customAny
@@ -199,7 +204,8 @@ _See full example [here](https://ellie-app.com/bX2JmhZ6qa1/1)._
         , individual = styleIndividual
         }
 
-_See full example [here](https://ellie-app.com/9n8tBnxV5a1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example6.elm)._
 
 
 -}
@@ -214,11 +220,12 @@ customAny =
 
 {-| Adds a hover effect on the given dot!
 
-    dotsConfig : Maybe Data -> Dots.Config Info
+    dotsConfig : Maybe Data -> Dots.Config Data
     dotsConfig hovered =
       Dots.hoverOne hovered
 
-_See full example [here](https://ellie-app.com/9psJRRS2ja1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example3.elm)._
 
 -}
 hoverOne : Maybe data -> Config data
@@ -229,7 +236,7 @@ hoverOne maybeHovered =
 
     styleIndividual datum =
       if Just datum == maybeHovered
-        then aura 7 6 0.4
+        then aura 7 6 0.3
         else disconnected 10 2
   in
   Dots.customAny
@@ -240,11 +247,11 @@ hoverOne maybeHovered =
 
 {-| Adds a hover effect on several given dots!
 
-    dotsConfig : List Data -> Dots.Config Info
+    dotsConfig : List Data -> Dots.Config Data
     dotsConfig hovered =
       Dots.hoverMany hovered
 
-_See full example [here](https://ellie-app.com/bCrgZfVKVa1/1)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example5.elm)._
 
 -}
 hoverMany : List data -> Config data
@@ -255,7 +262,7 @@ hoverMany hovered =
 
     styleIndividual datum =
       if List.any ((==) datum) hovered
-        then aura 7 6 0.4
+        then aura 7 6 0.3
         else disconnected 10 2
   in
   Dots.customAny

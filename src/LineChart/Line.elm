@@ -19,7 +19,7 @@ import Color
 
 
 
-{-| Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =
@@ -49,7 +49,8 @@ default =
       , ...
       }
 
-_See full example [here](https://ellie-app.com/ctGj27yVCa1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example1.elm)._
 
 -}
 wider : Float -> Config data
@@ -66,7 +67,8 @@ wider =
       , ...
       }
 
-_See full example [here](https://ellie-app.com/ck5yVJkqCa1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example2.elm)._
 
 -}
 hoverOne : Maybe data -> Config data
@@ -92,15 +94,15 @@ hoverOne hovered =
           Line.style 1 identity
 
         Just hovered -> -- Some line is hovered
-          if List.any ((==) hovered) data then
+          if List.any ((==) hovered) lineData then
             -- It is this one, so make it pop!
-            Line.style 2 (Manipulate.darken 0.15)
+            Line.style 2 (Manipulate.darken 0.1)
           else
             -- It is not this one, so hide it a bit
-            Line.style 1 (Manipulate.lighten 0.15)
+            Line.style 1 (Manipulate.lighten 0.35)
 
 
-_See full example [here](https://ellie-app.com/crf2pvCmta1/1)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example3.elm)._
 
 -}
 custom : (List data -> Style) -> Config data
@@ -123,19 +125,20 @@ type alias Style =
     vanilla =
       Line.style 1 identity
 
-    emphasize : List.Style
+    emphasize : Line.Style
     emphasize =
-      Line.style 2 (Color.Extra.Manipulate.darken 0.15)
+      Line.style 2 (Manipulate.darken 0.15)
 
-    hide : List.Style
+    hide : Line.Style
     hide =
-      Line.style 1 (Color.Extra.Manipulate.lighten 0.15)
+      Line.style 1 (Manipulate.lighten 0.15)
 
-    blacken : List.Style
+    blacken : Line.Style
     blacken =
-      Line.style 2 (\_ -> Color.black)
+      Line.style 2 (\_ -> Colors.black)
 
-_See full example [here](https://ellie-app.com/cqR72MhvZa1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example3.elm)._
 
 -}
 style : Float -> (Color.Color -> Color.Color) -> Style

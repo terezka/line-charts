@@ -19,7 +19,6 @@ import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
 import Color
-import Color
 
 
 main : Html.Html msg

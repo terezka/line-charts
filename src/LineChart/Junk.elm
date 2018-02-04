@@ -15,8 +15,6 @@ this is where it's at.
 
 <img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/junk.png?raw=true"></src>
 
-_A lot of junk, huh?_
-
 @docs Config, default, hoverOne
 
 # Customization
@@ -77,7 +75,7 @@ default =
 -- CUSTOMIZE
 
 
-{-| Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =
@@ -100,7 +98,7 @@ type alias Config data msg =
         , ( "Weight", toString << .weight )
         ]
 
-_See full example [here](https://ellie-app.com/gpctbpbZ8a1/1)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Junk/Example1.elm)._
 
 -}
 hoverOne : Maybe data -> List ( String, data -> String ) -> Config data msg
@@ -130,20 +128,25 @@ To learn more about the `Coordinate.System` and how to use it, see the
 `Coordinate` module.
 
 
-    junk : Junk.Junk msg
-    junk =
-      Junk.custom <| \system ->
-        { below = [ emphasisSection system ]
-        , above = []
-        , html = []
-        }
+    junk : Maybe Coordinate.Point -> Coordinate.System -> Junk.Layers msg
+    junk hovered system =
+      { below =
+          case hovered of
+            Just hovered -> [ sectionBand hovered system ]
+            Nothing      -> []
+      , above = []
+      , html = []
+      }
 
-    emphasisSection : Coordinate.System -> List (Svg msg)
-    emphasisSection system =
-      Junk.rectangle system [] 5 8 system.y.min system.y.max
+    sectionBand : Coordinate.Point -> Coordinate.System -> Svg.Svg msg
+    sectionBand hovered system =
+      Junk.rectangle system
+        [ Svg.Attributes.fill "#b6b6b61a" ]
+        (hovered.x - 5) (hovered.x + 5)
+        system.y.min    system.y.max
 
 
-_See full example [here](https://ellie-app.com/fyqDKvqrRa1/1)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Junk/Example2.elm)._
 
 
 -}
@@ -163,17 +166,19 @@ type alias Transfrom =
 
 {-| Produces a SVG transform attributes. Useful to move elements around.
 
-    movedStuff : Coordinate.System -> Data -> Svg msg
-    movedStuff system hovered =
+    movedStuff : Coordinate.System -> Svg.Svg msg
+    movedStuff system =
       Svg.g
         [ Junk.transform
-            [ Junk.move system hovered.age hovered.weight
+            [ Junk.move system someDataPoint.age someDataPoint.weight
             , Junk.offset 20 10
+            -- Try changing the offset!
             ]
         ]
-        [ Junk.label Color.blue "stuff" ]
+        [ Junk.label Colors.blue "stuff" ]
 
-_See full example [here](https://ellie-app.com/gfbQPqfPna1/1)._
+
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Junk/Example3.elm)._
 
 -}
 transform : List Transfrom -> Svg.Attribute msg
@@ -253,6 +258,7 @@ range e.g. for selection.
           startX endX system.y.min system.y.max
 
 **Note:** The rectangle is truncated off if outside the chart area.
+
 -}
 rectangle : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Float -> Svg.Svg msg
 rectangle system attributes =
@@ -311,8 +317,6 @@ Arguments:
             ]
         , html = []
         }
-
-_See full example [here](https://ellie-app.com/gfbQPqfPna1/1 TODO)._
 
 -}
 labelPlaced : Coordinate.System -> Float -> Float -> Float -> Float -> String -> Color.Color -> String -> Svg.Svg msg

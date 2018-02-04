@@ -20,7 +20,7 @@ import LineChart.Coordinate as Coordinate
 
 
 
-{-| Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =

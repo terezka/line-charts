@@ -18,7 +18,7 @@ import LineChart.Axis.Ticks as Ticks
 
 
 
-{-| Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
 
     chartConfig : LineChart.Config data msg
     chartConfig =

@@ -13,7 +13,7 @@ more data. It's not just for looks!
 import Internal.Interpolation as Interpolation
 
 
-{-| Use in the `LineChart.Config` passed to `viewCustom`.
+{-| Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
 
     chartConfig : LineChart.Config Data msg
     chartConfig =
