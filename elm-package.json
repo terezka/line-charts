@@ -8,6 +8,7 @@
     ],
     "exposed-modules": [
         "LineChart",
+        "LineChart.Area",
         "LineChart.Axis",
         "LineChart.Axis.Intersection",
         "LineChart.Axis.Line",

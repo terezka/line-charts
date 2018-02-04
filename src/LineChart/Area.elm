@@ -1,30 +1,37 @@
-module LineChart.Area exposing (Config, default, none, normal, stacked)
+module LineChart.Area exposing (Config, default, normal, stacked)
 
-{-| -}
+{-|
+
+@docs Config, default, normal, stacked
+
+-}
 
 import Internal.Area as Area
 
 
 
-{-| -}
+{-| Use in the `LineChart.Config` passed to `LineChart.viewCustom`.
+
+    chartConfig : LineChart.Config Data Msg
+    chartConfig =
+      { ...
+      , area = Area.default
+      , ...
+      }
+
+-}
 type alias Config =
   Area.Config
 
 
-{-| -}
+{-| No color below your lines.
+-}
 default : Config
 default =
-  none
-
-
-{-| No color below your LineChart.
--}
-none : Config
-none =
   Area.none
 
 
-{-| Color the area below your LineChart. The color is always the color of
+{-| Color the area below your lines. The color is always the color of
 your line, but you can pass the opacity.
 -}
 normal : Float -> Config
@@ -35,10 +42,10 @@ normal =
 {-| Stacks your values and colors the area in the line color. The color is
 always the color of your line, but you can pass the opacity.
 
-**Warning: Right now, this only works if all your lines have the
+**Warning:** Right now, this only works if all your lines have the
 same set of x values and don't have missing data!
 If not, the area will not stack properly.
-It's will be fixed sometime though!**
+It's will be fixed sometime though!
 -}
 stacked : Float -> Config
 stacked =
@@ -49,8 +56,8 @@ stacked =
 are made into percentages. The color is always the color of your line, but
 you can pass the opacity.
 
-**Warning: Right now, this only works if all your lines have the
-same set of x values! If not, the area will not add properly.**
+**Warning:** Right now, this only works if all your lines have the
+same set of x values! If not, the area will not add properly.
 -}
 percentage : Float -> Config
 percentage =
