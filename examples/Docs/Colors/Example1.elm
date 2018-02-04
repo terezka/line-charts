@@ -51,10 +51,10 @@ chart =
     , LineChart.line Colors.goldLight Dots.circle "goldLight" data
     , LineChart.line Colors.green Dots.circle "green" data
     , LineChart.line Colors.greenLight Dots.circle "greenLight" data
-    , LineChart.line Colors.cyan Dots.circle "cyan" data
-    , LineChart.line Colors.cyanLight Dots.circle "cyanLight" data
     , LineChart.line Colors.teal Dots.circle "teal" data
     , LineChart.line Colors.tealLight Dots.circle "tealLight" data
+    , LineChart.line Colors.cyan Dots.circle "cyan" data
+    , LineChart.line Colors.cyanLight Dots.circle "cyanLight" data
     , LineChart.line Colors.blue Dots.circle "blue" data
     , LineChart.line Colors.blueLight Dots.circle "blueLight" data
     , LineChart.line Colors.purple Dots.circle "purple" data
