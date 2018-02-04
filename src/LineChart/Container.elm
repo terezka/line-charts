@@ -40,7 +40,7 @@ type alias Config msg =
 
 Pass the id.
 
-_See an example [here](https://github.com/terezka/lines/blob/master/examples/Container.elm)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Container/Example1.elm)._
 
 -}
 default : String -> Config msg
@@ -52,7 +52,7 @@ default =
 
 Pass the id.
 
-_See an example [here](https://github.com/terezka/lines/blob/master/examples/Container.elm)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Container/Example2.elm)._
 
 -}
 responsive : String -> Config msg
@@ -88,20 +88,19 @@ type alias Margin =
   - **id** sets the id. It's important for this to be unique for every chart
     on your page.
 
-This is the default configuration made with `custom`:
 
-    default : String -> Container.Config msg
-    default id =
+    containerConfig : Container.Config msg
+    containerConfig =
       Container.custom
-        { attributesHtml = [ Html.Attributes.style [ ( "font", "caption" ) ] ]
+        { attributesHtml = [ Html.Attributes.style [ ( "font-family", "monospace" ) ] ]
         , attributesSvg = []
         , size = Container.static
-        , margin = Container.Margin 60 140 60 80
-        , id = id
+        , margin = Container.Margin 30 100 60 80
+        , id = "chart-id"
         }
 
 
-_See an example [here](https://github.com/terezka/lines/blob/master/examples/Container.elm)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Container/Example3.elm)._
 
 -}
 custom : Properties msg -> Config msg

@@ -115,13 +115,16 @@ vanilla : Line.Style
 vanilla =
   Line.style 1 identity
 
+
 emphasize : Line.Style
 emphasize =
   Line.style 2 (Manipulate.darken 0.15)
 
+
 hide : Line.Style
 hide =
   Line.style 1 (Manipulate.lighten 0.15)
+
 
 blacken : Line.Style
 blacken =

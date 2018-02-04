@@ -138,7 +138,7 @@ type alias Style =
       Line.style 2 (\_ -> Colors.black)
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example3.elm)._
+_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example4.elm)._
 
 -}
 style : Float -> (Color.Color -> Color.Color) -> Style
