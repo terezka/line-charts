@@ -56,7 +56,6 @@ import Html
 import LineChart.Coordinate as Coordinate
 import Internal.Junk as Junk
 import Internal.Svg as Svg
-import Internal.Utils as Utils
 import Color
 import Color.Convert
 
@@ -341,5 +340,5 @@ labelPlaced system x y xo yo anchor color text =
 extends outside the chart area.
 -}
 withinChartArea : Coordinate.System -> Svg.Attribute msg
-withinChartArea { id } =
-  Attributes.clipPath <| "url(#" ++ Utils.toChartAreaId id ++ ")"
+withinChartArea =
+  Svg.withinChartArea

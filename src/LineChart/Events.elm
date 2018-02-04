@@ -1,6 +1,6 @@
 module LineChart.Events exposing
   ( Config, default, hoverOne, hoverMany, click, custom
-  , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
+  , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions, Options
   , Decoder, getSvg, getData, getNearest, getNearestX, getWithin, getWithinX
   , map, map2, map3
   )
@@ -13,7 +13,7 @@ module LineChart.Events exposing
 @docs custom
 
 ## Events
-@docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
+@docs Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions, Options
 
 ## Decoders
 @docs Decoder, getSvg, getData, getNearest, getNearestX, getWithin, getWithinX
@@ -36,7 +36,6 @@ module LineChart.Events exposing
 
 -}
 
-import Html.Events
 import Internal.Events as Events
 import LineChart.Coordinate as Coordinate
 
@@ -192,14 +191,27 @@ Arguments:
 -}
 on : String -> (a -> msg) -> Decoder data a -> Event data msg
 on =
-  Events.on False
+  Events.on
 
 
-{-| Same as `on`, but you can add prevent-default options too!
+{-| Same as `on`, but you can add some options too!
+
+    1. The JavaScript event name.
+    2. The `Options`.
+    2. The message.
+    3. The `Events.Decoder` to determine what data you want from the event.
 -}
-onWithOptions : Html.Events.Options -> String -> (a -> msg) -> Decoder data a -> Event data msg
-onWithOptions options =
-  Events.onWithOptions options False
+onWithOptions : String -> Options -> (a -> msg) -> Decoder data a -> Event data msg
+onWithOptions =
+  Events.onWithOptions
+
+
+{-| -}
+type alias Options =
+  { stopPropagation : Bool
+  , preventDefault : Bool
+  , catchOutsideChart : Bool
+  }
 
 
 

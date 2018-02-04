@@ -1,4 +1,4 @@
-module Selection exposing (main)
+module Selection1 exposing (main)
 
 import Html
 import Svg

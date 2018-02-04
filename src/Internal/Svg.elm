@@ -7,6 +7,7 @@ module Internal.Svg exposing
   , label
   , Anchor(..), anchorStyle
   , Transfrom, transform, move, offset
+  , withinChartArea
   )
 
 {-|
@@ -39,6 +40,8 @@ module Internal.Svg exposing
 ## Transfrom
 @docs Transfrom, transform, move, offset
 
+@docs withinChartArea
+
 -}
 
 import Svg exposing (Svg, Attribute, g)
@@ -49,6 +52,13 @@ import Internal.Path as Path exposing (..)
 import Internal.Utils exposing (..)
 import Color
 import Color.Convert
+
+
+
+{-| -}
+withinChartArea : Coordinate.System -> Svg.Attribute msg
+withinChartArea { id } =
+  Attributes.clipPath <| "url(#" ++ toChartAreaId id ++ ")"
 
 
 

@@ -74,16 +74,22 @@ time =
 values : Bool -> Bool -> Int -> Coordinate.Range -> List Float
 values allowDecimals exact amountRough range =
     let
+      amountRoughSafe =
+        if amountRough == 0 then 1 else amountRough
+
       intervalRough =
         (range.max - range.min) / toFloat amountRough
 
       interval =
         getInterval intervalRough allowDecimals exact
 
+      intervalSafe =
+        if interval == 0 then 1 else interval
+
       beginning =
-        getBeginning range.min interval
+        getBeginning range.min intervalSafe
     in
-    positions range beginning interval 0 []
+    positions range beginning intervalSafe 0 []
 
 
 getBeginning : Float -> Float -> Float
@@ -99,8 +105,8 @@ getBeginning min interval =
 
 positions : Coordinate.Range -> Float -> Float -> Float -> List Float -> List Float
 positions range beginning interval m acc =
-  let next = correctFloat (getPrecision interval) (beginning + (m * interval))
-  in if next > range.max then acc else positions range beginning interval (m + 1) (acc ++ [ next ])
+  let next = correctFloat (getPrecision interval) (beginning + (m * interval)) in
+  if next > range.max then acc else positions range beginning interval (m + 1) (acc ++ [ next ])
 
 
 getInterval : Float -> Bool -> Bool -> Float

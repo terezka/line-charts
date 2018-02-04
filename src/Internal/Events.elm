@@ -1,6 +1,6 @@
 module Internal.Events exposing
     ( Config, default, hoverMany, hoverOne, click, custom
-    , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions
+    , Event, onClick, onMouseMove, onMouseUp, onMouseDown, onMouseLeave, on, onWithOptions, Options
     , Decoder, getSvg, getData, getNearest, getNearestX, getWithin, getWithinX
     , map, map2, map3
     -- INTERNAL
@@ -74,25 +74,25 @@ type Event data msg
 
 onClick : (a -> msg) -> Decoder data a -> Event data msg
 onClick =
-  on False "click"
+  on "click"
 
 
 {-| -}
 onMouseMove : (a -> msg) -> Decoder data a -> Event data msg
 onMouseMove =
-  on False "mousemove"
+  on "mousemove"
 
 
 {-| -}
 onMouseDown : (a -> msg) -> Decoder data a -> Event data msg
 onMouseDown =
-  on False "mousedown"
+  on "mousedown"
 
 
 {-| -}
 onMouseUp : (a -> msg) -> Decoder data a -> Event data msg
 onMouseUp =
-  on False "mouseup"
+  on "mouseup"
 
 
 {-| -}
@@ -103,18 +103,27 @@ onMouseLeave msg =
 
 
 {-| -}
-on : Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
-on catchOutsideChart event toMsg decoder =
-  Event catchOutsideChart <| \data system ->
+on : String -> (a -> msg) -> Decoder data a -> Event data msg
+on event toMsg decoder =
+  Event False <| \data system ->
     Svg.Events.on event (toJsonDecoder data system (map toMsg decoder))
 
 
 {-| -}
-onWithOptions : Html.Events.Options -> Bool -> String -> (a -> msg) -> Decoder data a -> Event data msg
-onWithOptions options catchOutsideChart event toMsg decoder =
-  Event catchOutsideChart <| \data system ->
-    Html.Events.onWithOptions event options (toJsonDecoder data system (map toMsg decoder))
+onWithOptions : String -> Options -> (a -> msg) -> Decoder data a -> Event data msg
+onWithOptions event options toMsg decoder =
+  Event options.catchOutsideChart <| \data system ->
+    Html.Events.onWithOptions event
+      (Html.Events.Options options.stopPropagation options.preventDefault)
+      (toJsonDecoder data system (map toMsg decoder))
 
+
+{-| -}
+type alias Options =
+  { stopPropagation : Bool
+  , preventDefault : Bool
+  , catchOutsideChart : Bool
+  }
 
 
 -- INTERNAL

@@ -262,17 +262,21 @@ viewVerticalTitle system at { title } =
 
 viewHorizontalAxisLine : Coordinate.System -> Float -> AxisLine.Properties msg -> Svg msg
 viewHorizontalAxisLine system axisPosition config =
-  horizontal system (attributesLine config) axisPosition config.start config.end
+  horizontal system (attributesLine system config) axisPosition config.start config.end
 
 
 viewVerticalAxisLine : Coordinate.System -> Float -> AxisLine.Properties msg -> Svg msg
 viewVerticalAxisLine system axisPosition config =
-  vertical system (attributesLine config) axisPosition config.start config.end
+  vertical system (attributesLine system config) axisPosition config.start config.end
 
 
-attributesLine : AxisLine.Properties msg -> List (Svg.Attribute msg)
-attributesLine { events, width, color } =
-  events ++ [ strokeWidth (toString width), stroke (Color.Convert.colorToHex color) ]
+attributesLine : Coordinate.System -> AxisLine.Properties msg -> List (Svg.Attribute msg)
+attributesLine system { events, width, color } =
+  events ++
+    [ strokeWidth (toString width)
+    , stroke (Color.Convert.colorToHex color)
+    , Svg.withinChartArea system
+    ]
 
 
 
