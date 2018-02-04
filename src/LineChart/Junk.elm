@@ -187,14 +187,14 @@ transform =
   Svg.transform
 
 
-{-| Moves in data space.
+{-| Moves in data-space.
 -}
 move : Coordinate.System -> Float -> Float -> Transfrom
 move =
   Svg.move
 
 
-{-| Moves in SVG space.
+{-| Moves in SVG-space.
 -}
 offset : Float -> Float -> Transfrom
 offset =

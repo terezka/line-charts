@@ -35,8 +35,8 @@ default =
 
 {-| Place the title at the maxima of your data range. Arguments:
 
-  1. The x offset in SVG space.
-  2. The y offset in SVG space.
+  1. The x offset in SVG-space.
+  2. The y offset in SVG-space.
   3. The title.
 
 
@@ -55,8 +55,8 @@ atDataMax =
 
 {-| Place the title at the maxima of your axis range. Arguments:
 
-  1. The x offset in SVG space.
-  2. The y offset in SVG space.
+  1. The x offset in SVG-space.
+  2. The y offset in SVG-space.
   3. The title.
 
 
@@ -76,8 +76,8 @@ atAxisMax =
 {-| Place your title in any spot along your axis. Arguments:
 
   1. Given the data range and axis range, provide a position.
-  2. The x offset in SVG space.
-  3. The y offset in SVG space.
+  2. The x offset in SVG-space.
+  3. The y offset in SVG-space.
   4. The title.
 
 
@@ -99,8 +99,8 @@ atPosition =
 SVG title. Arguments:
 
   1. Given the data range and axis range, provide a position.
-  2. The x offset in SVG space.
-  3. The y offset in SVG space.
+  2. The x offset in SVG-space.
+  3. The y offset in SVG-space.
   4. The title view.
 
 

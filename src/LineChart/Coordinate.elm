@@ -21,12 +21,21 @@ SVG-space is different because here, the y axis numbers grow larger as we
 progress _downwards_, and there coordinates are relative to the pixel height and
 width of the chart, not your data.
 
+<img alt="Space" width="610" src="https://github.com/terezka/lines/blob/master/images/space.png?raw=true"></src>
 
-# Frame
-@docs Frame, Size
+Since SVG only understand SVG-space coordinates, when we have data-space coordinates
+we need to translate them in order the use them for drawing. For this we need some
+info which I calculate for you which is in the `System` type and with that, we
+can use the translating functions contained in this module.
+
+**Note:** Most of the functions in `Junk` takes data-space coordinates, so it's
+only when you do you're own crazy junk in pure SVG that you have to worry about
+this module!
+
 
 # System
-@docs System, Range
+
+@docs System, Frame, Size, Range
 
 # Translation
 
@@ -37,6 +46,7 @@ width of the chart, not your data.
 @docs toSvgX, toSvgY, toDataX, toDataY
 
 # Scaling
+
 Scaling is different from translating in that it does not take a position as
 it's input, but a _distance_. Translating a position takes the frame into
 account, scaling doesn't.
@@ -92,11 +102,17 @@ type alias Size =
 {-| The system holds informations about the dimensions of your chart.
 
   - The `frame` which is information about the size and margins of your chart.
-  - The `x` which is the minimum and maximum of your range.
-  - The `y` which is the minimum and maximum of your domain.
+  - The `x` which is the minimum and maximum of your axis range.
+  - The `y` which is the minimum and maximum of your axis domain.
+  - The `xData` which is the minimum and maximum of your data range.
+  - The `yData` which is the minimum and maximum of your data domain.
 
 This is all the information we need for translating your data coordinates into
 SVG coordinates.
+
+_If you're confused as to what "axis range" and "data range" means,
+check out `Axis.Range` for an explanation!_
+
 -}
 type alias System =
   { frame : Frame
@@ -108,7 +124,7 @@ type alias System =
   }
 
 
-{-| These are minimum and maximum values of a dimension.
+{-| These are minimum and maximum values that make up a range.
 -}
 type alias Range =
   { min : Float
@@ -120,28 +136,28 @@ type alias Range =
 -- TRANSLATION
 
 
-{-| Translate a x-coordinate from cartesian to SVG.
+{-| Translate a x-coordinate from data-space to SVG-space.
 -}
 toSvgX : System -> Float -> Float
 toSvgX system value =
   scaleSvgX system (value - system.x.min) + system.frame.margin.left
 
 
-{-| Translate a y-coordinate from cartesian to SVG.
+{-| Translate a y-coordinate from data-space to SVG-space.
 -}
 toSvgY : System -> Float -> Float
 toSvgY system value =
   scaleSvgY system (system.y.max - value) + system.frame.margin.top
 
 
-{-| Translate a x-coordinate from SVG to cartesian.
+{-| Translate a x-coordinate from SVG-space to data-space.
 -}
 toDataX : System -> Float -> Float
 toDataX system value =
   system.x.min + scaleDataX system (value - system.frame.margin.left)
 
 
-{-| Translate a y-coordinate from SVG to cartesian.
+{-| Translate a y-coordinate from SVG-space to data-space.
 -}
 toDataY : System -> Float -> Float
 toDataY system value =
@@ -152,28 +168,28 @@ toDataY system value =
 -- Scaling
 
 
-{-| Scale a x-value from cartesian to SVG.
+{-| Scale a x-value from data-space to SVG-space.
 -}
 scaleSvgX : System -> Float -> Float
 scaleSvgX system value =
   value * (lengthX system) / (reachX system)
 
 
-{-| Scale a y-value from cartesian to SVG.
+{-| Scale a y-value from data-space to SVG-space.
 -}
 scaleSvgY : System -> Float -> Float
 scaleSvgY system value =
   value * (lengthY system) / (reachY system)
 
 
-{-| Scale a x-value from SVG to cartesian.
+{-| Scale a x-value from SVG-space to data-space.
 -}
 scaleDataX : System -> Float -> Float
 scaleDataX system value =
   value * (reachX system) / (lengthX system)
 
 
-{-| Scale a y-value from SVG to cartesian.
+{-| Scale a y-value from SVG-space to data-space.
 -}
 scaleDataY : System -> Float -> Float
 scaleDataY system value =
@@ -191,7 +207,7 @@ type alias Point =
   }
 
 
-{-| Translates a data point to a SVG point.
+{-| Translates a data-space point to a SVG-space point.
 -}
 toSvg : System -> Point -> Point
 toSvg system point =
@@ -200,7 +216,7 @@ toSvg system point =
   }
 
 
-{-| Translates a SVG point to a data point.
+{-| Translates a SVG-space point to a data-space point.
 -}
 toData : System -> Point -> Point
 toData system point =
