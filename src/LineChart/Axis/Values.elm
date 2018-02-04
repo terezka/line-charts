@@ -7,14 +7,14 @@ Use in `Ticks.custom` for creating "nice" values.
     ticksConfig : Ticks.Config msg
     ticksConfig =
       Ticks.custom <| \dataRange axisRange ->
-        List.map Tick.float (valuesWithin dataRange)
+        List.map Tick.int (valuesWithin dataRange)
 
-    valuesWithin : Coordinate.Range -> List Float
+    valuesWithin : Coordinate.Range -> List Int
     valuesWithin =
       Values.int (Values.around 3)
 
 
-_See full example [here](https://ellie-app.com/dqLn8tZZ6a1/1)._
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Values/Example1.elm)._
 
 ** What are "nice" numbers/integers/datetimes? **
 
@@ -68,10 +68,12 @@ exactly =
 
 {-| Makes nice integers.
 
-    valuesWithin : Coordinate.Range -> List Float
+    valuesWithin : Coordinate.Range -> List Int
     valuesWithin =
-      -- something like [ 1, 2, 3, 4 ]
       Values.int (Values.around 3)
+
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Values/Example1.elm)._
 
 -}
 int : Amount -> Coordinate.Range -> List Int
@@ -86,6 +88,7 @@ int =
       -- something like [ 1, 1.5, 2, 2.5 ]
       Values.float (Values.exactly 4)
 
+
 -}
 float : Amount -> Coordinate.Range -> List Float
 float =
@@ -96,15 +99,22 @@ float =
 
 Arguments:
 
-  1. A number which must be in your resulting numbers (Commonly 0).
+  1. A number which must be in your resulting numbers (commonly 0).
   2. The interval between your numbers.
   3. The range which your numbers must be between.
 
 
-    valuesWithin : Coordinate.Range -> List Float
-    valuesWithin =
-      -- makes [ -3, 1, 5, 9, 13, ... ]
-      Values.custom 1 4
+    ticksConfig : Ticks.Config msg
+    ticksConfig =
+      Ticks.custom <| \dataRange axisRange ->
+        List.map Tick.float (Values.custom 45 10 dataRange) ++
+        -- ^ Makes [ 25, 45, 55, 65, 75, 85, 95 ]
+
+        List.map Tick.long (Values.custom 30 20 dataRange)
+        -- ^ Makes [ 30, 50, 70, 90 ]
+
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Values/Example3.elm)._
 
 -}
 custom : Float -> Float -> Coordinate.Range -> List Float
@@ -121,6 +131,9 @@ custom =
     valuesWithin : Coordinate.Range -> List Float
     valuesWithin =
       Values.time 5
+
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Values/Example2.elm)._
 
 -}
 time : Int -> Coordinate.Range -> List Tick.Time

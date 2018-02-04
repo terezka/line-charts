@@ -59,7 +59,7 @@ intersectionConfig =
 
 middle : Coordinate.Range -> Float
 middle { min, max } =
-  (max - min) / 2
+  min + (max - min) / 2
 
 
 

@@ -44,6 +44,9 @@ default =
     titleConfig =
       Title.atDataMax 0 10 "Age"
 
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Title/Example1.elm)._
+
 -}
 atDataMax : Float -> Float -> String -> Config msg
 atDataMax =
@@ -61,6 +64,9 @@ atDataMax =
     titleConfig =
       Title.atAxisMax 0 10 "Age"
 
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Title/Example1.elm)._
+
 -}
 atAxisMax : Float -> Float -> String -> Config msg
 atAxisMax =
@@ -75,10 +81,13 @@ atAxisMax =
   4. The title.
 
 
-      titleConfig : Title.Title Msg
-      titleConfig =
-        let position dataRange axisRange = axisRange.max in
-        Title.atPosition position 10 20 "BMI"
+    titleConfig : Title.Config msg
+    titleConfig =
+      let position dataRange axisRange = 80 in
+      Title.atPosition position -15 30 "Weight"
+
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Title/Example1.elm)._
 
 -}
 atPosition : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Config msg
@@ -95,11 +104,20 @@ SVG title. Arguments:
   4. The title view.
 
 
-    titleConfig : Title.Title Msg
+    titleConfig : Title.Config msg
     titleConfig =
-      let position dataRange axisRange = axisRange.max in
-      Title.custom position 10 20 <|
-        Junk.text Color.pink "BMI"
+      let position dataRange axisRange = middle axisRange in
+      Title.custom position -10 35 <|
+        Svg.g
+          [ Svg.Attributes.style "text-anchor: middle;" ]
+          [ Junk.label Colors.pink "Weight" ]
+
+    middle : Coordinate.Range -> Float
+    middle { min, max } =
+      min + (max - min) / 2
+
+
+_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Title/Example1.elm)._
 
 -}
 custom : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> (Svg msg) -> Config msg

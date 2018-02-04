@@ -89,7 +89,7 @@ respectivily.
 
     middle : Coordinate.Range -> Float
     middle { min, max } =
-      (max - min) / 2
+      min + (max - min) / 2
 
 _See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Intersection/Example1.elm)._
 

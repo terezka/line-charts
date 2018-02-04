@@ -1,18 +1,21 @@
 module LineChart.Colors exposing
-  ( pink, blue, gold, red, green, turquoise, purple
-  , pinkLight, blueLight, goldLight, purpleLight
+  ( pink, blue, gold, red, green, cyan, teal, purple
+  , pinkLight, blueLight, goldLight, redLight, greenLight, cyanLight, tealLight, purpleLight
   , black, gray, grayLight, grayLightest, transparent
   )
 
 {-|
 
-@docs pink, blue, gold, red, green, turquoise, purple
+@docs pink, blue, gold, red, green, cyan, teal, purple
 
 ## Light
-@docs pinkLight, blueLight, goldLight, purpleLight
+@docs pinkLight, blueLight, goldLight, redLight, greenLight, cyanLight, tealLight, purpleLight
 
 ## Gray scale
-@docs black, gray, grayLight, grayLightest, transparent
+@docs black, gray, grayLight, grayLightest
+
+## Other
+@docs transparent
 
 -}
 
@@ -59,13 +62,25 @@ blueLight =
 {-| -}
 green : Color.Color
 green =
-  Color.rgb 29 233 182
+  Color.rgb 67 160 71
+
+
+{-| -}
+greenLight : Color.Color
+greenLight =
+  Color.rgb 197 225 165
 
 
 {-| -}
 red : Color.Color
 red =
   Color.rgb 216 27 96
+
+
+{-| -}
+redLight : Color.Color
+redLight =
+  Color.rgb 239 154 154
 
 
 {-| -}
@@ -81,9 +96,27 @@ purpleLight =
 
 
 {-| -}
-turquoise : Color.Color
-turquoise =
-  Color.rgb 40 235 199
+cyan : Color.Color
+cyan =
+  Color.rgb 0 229 255
+
+
+{-| -}
+cyanLight : Color.Color
+cyanLight =
+  Color.rgb 128 222 234
+
+
+{-| -}
+teal : Color.Color
+teal =
+  Color.rgb 29 233 182
+
+
+{-| -}
+tealLight : Color.Color
+tealLight =
+  Color.rgb 128 203 196
 
 
 
