@@ -2,7 +2,8 @@ module LineChart.Junk exposing
   ( Config, Layers, default, hoverOne, custom
   , Transfrom, transform, move, offset, placed
   , vertical, horizontal, verticalCustom, horizontalCustom
-  , rectangle, label, labelPlaced
+  , rectangle, circle
+  , label, labelPlaced
   , withinChartArea
   )
 
@@ -37,8 +38,8 @@ _What is an axis-range? See the `Axis.Range` module._
 ## Lines
 @docs vertical, horizontal, verticalCustom, horizontalCustom
 
-## Rectangle
-@docs rectangle
+## Shapes
+@docs rectangle, circle
 
 ## Label
 @docs label, labelPlaced
@@ -248,7 +249,7 @@ horizontalCustom system attributes =
   Svg.horizontal system (withinChartArea system :: attributes)
 
 
-{-| A rectangle. This can be used for grid bands and highlighting a
+{-| Draws a rectangle. This can be used for grid bands and highlighting a
 range e.g. for selection.
 
     xSelectionArea : Coordinate.System -> Float -> Float -> Svg msg
@@ -263,6 +264,14 @@ range e.g. for selection.
 rectangle : Coordinate.System -> List (Svg.Attribute msg) -> Float -> Float -> Float -> Float -> Svg.Svg msg
 rectangle system attributes =
   Svg.rectangle system (withinChartArea system :: attributes)
+
+
+{-| Draws a circle. Pass the system, radius, color and x- and y-coordinates respectively.
+
+-}
+circle : Coordinate.System -> Float -> Color.Color -> Float -> Float -> Svg.Svg msg
+circle system radius color x y =
+  Svg.gridDot radius color <| Coordinate.toSvg system (Coordinate.Point x y)
 
 
 {-| Place a list of elements on a given spot.

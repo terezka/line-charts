@@ -34,8 +34,8 @@ main =
 chart : Html.Html msg
 chart =
   LineChart.viewCustom
-    { y = Axis.quick 500 "y" .y [ -1, 0, 1, 2, 3 ]
-    , x = Axis.quick 700 "x" .x [ -1, 0 ,1, 2, 3]
+    { y = Axis.picky 500 "y" .y [ -1, 0, 1, 2, 3 ]
+    , x = Axis.picky 700 "x" .x [ -1, 0 ,1, 2, 3]
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
     , intersection = Intersection.at 1 1
