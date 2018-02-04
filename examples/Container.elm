@@ -56,7 +56,7 @@ chart =
     , dots = Dots.default
     }
     [ LineChart.line Color.green Dots.triangle "Chuck" chuck
-    , LineChart.line Color.blue Dots.circle "Bob" bob
+    , LineChart.line Color.blue Dots.circle "Bobby" bobby
     , LineChart.line Color.red Dots.diamond "Alice" alice
     ]
 
@@ -82,8 +82,8 @@ alice =
   ]
 
 
-bob : List Info
-bob =
+bobby : List Info
+bobby =
   [ Info 10 38 1.32 0
   , Info 17 69 1.75 2000
   , Info 25 75 1.87 32000
