@@ -34,7 +34,7 @@ default =
 {-| Color the area below your lines. The color is always the color of
 your line, but you can pass the opacity.
 
-_See example [here](https://github.com/terezka/lines/blob/master/examples/Area.elm)._
+_See example [here](https://github.com/terezka/line-charts/blob/master/examples/Area.elm)._
 
 -}
 normal : Float -> Config
@@ -45,7 +45,7 @@ normal =
 {-| Stacks your values and colors the area in the line color. The color is
 always the color of your line, but you can pass the opacity.
 
-_See example [here](https://github.com/terezka/lines/blob/master/examples/Area.elm)._
+_See example [here](https://github.com/terezka/line-charts/blob/master/examples/Area.elm)._
 
 **Warning:** Right now, this only works if all your lines have the
 same set of x values and don't have missing data!

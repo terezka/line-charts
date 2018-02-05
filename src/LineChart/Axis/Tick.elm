@@ -50,7 +50,7 @@ options passed to `Axis.custom`.
       Ticks.floatCustom 7 customTick
       -- or ... you get it
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Tick/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Tick/Example1.elm)._
 
 -}
 type alias Config msg =
@@ -247,7 +247,7 @@ positive =
         }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Tick/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Tick/Example1.elm)._
 
 -}
 custom : Properties msg -> Config msg

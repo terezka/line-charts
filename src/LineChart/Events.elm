@@ -75,7 +75,7 @@ Pass a message taking the data of the data point hovered.
       Events.hoverOne Hover
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Events/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Events/Example1.elm)._
 
 -}
 hoverOne : (Maybe data -> msg) -> Config data msg
@@ -94,7 +94,7 @@ Pass a message taking the data of the data points hovered.
       Events.hoverMany OnHoverMany
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Events/Example2.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Events/Example2.elm)._
 
 -}
 hoverMany : (List data -> msg) -> Config data msg
@@ -111,7 +111,7 @@ Pass a message taking the data of the data points clicked.
       Events.click Click
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Events/Example3.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Events/Example3.elm)._
 
 -}
 click : (Maybe data -> msg) -> Config data msg
@@ -130,7 +130,7 @@ another `Events.Decoder` or use `Events.on` for events without shortcuts.
         ]
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Events/Example4.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Events/Example4.elm)._
 
 This example sends the `Hover` message with the data of the _nearest_ dot when
 hovering the chart area and `Hover Nothing` when your leave the chart area.

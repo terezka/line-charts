@@ -40,7 +40,7 @@ type alias Config msg =
 
 Pass the id.
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Container/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Container/Example1.elm)._
 
 -}
 default : String -> Config msg
@@ -52,7 +52,7 @@ default =
 
 Pass the id.
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Container/Example2.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Container/Example2.elm)._
 
 -}
 responsive : String -> Config msg
@@ -100,7 +100,7 @@ type alias Margin =
         }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Container/Example3.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Container/Example3.elm)._
 
 -}
 custom : Properties msg -> Config msg

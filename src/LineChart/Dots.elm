@@ -12,7 +12,7 @@ module LineChart.Dots exposing
 
 ## Selection
 Hopefully, these are self-explanatory.
-<img alt="Legends" width="610" style="margin-top: 10px; margin-left: -10px" src="https://github.com/terezka/lines/blob/master/images/shapes.png?raw=true"></src>
+<img alt="Legends" width="610" style="margin-top: 10px; margin-left: -10px" src="https://github.com/terezka/line-charts/blob/master/images/shapes.png?raw=true"></src>
 
 @docs none, circle, triangle, square, diamond, plus, cross
 
@@ -56,7 +56,7 @@ The shape type changes the shape of your dots.
         ]
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Dots/Example1.elm)._
 
 **What is a dot?**
 
@@ -152,7 +152,7 @@ default =
       Dots.custom (Dots.full 5)
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example2.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Dots/Example2.elm)._
 
 
 -}
@@ -183,7 +183,7 @@ your chart by varying the size of your dots based on some property.
         }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example4.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Dots/Example4.elm)._
 
 
 **Hover state example**
@@ -205,7 +205,7 @@ _See the full example [here](https://github.com/terezka/lines/blob/master/exampl
         }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example6.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Dots/Example6.elm)._
 
 
 -}
@@ -225,7 +225,7 @@ customAny =
       Dots.hoverOne hovered
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example3.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Dots/Example3.elm)._
 
 -}
 hoverOne : Maybe data -> Config data
@@ -251,7 +251,7 @@ hoverOne maybeHovered =
     dotsConfig hovered =
       Dots.hoverMany hovered
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Dots/Example5.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Dots/Example5.elm)._
 
 -}
 hoverMany : List data -> Config data
@@ -284,7 +284,7 @@ type alias Style =
 
 Pass the radius.
 
-<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/dots1.png?raw=true"></src>
+<img alt="Legends" width="540" src="https://github.com/terezka/line-charts/blob/master/images/dots1.png?raw=true"></src>
 
 
 -}
@@ -297,7 +297,7 @@ full =
 
 Pass the radius and the width of the border.
 
-<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/dots3.png?raw=true"></src>
+<img alt="Legends" width="540" src="https://github.com/terezka/line-charts/blob/master/images/dots3.png?raw=true"></src>
 
 -}
 empty : Float -> Int -> Style
@@ -309,7 +309,7 @@ empty =
 
 Pass the radius and the width of the border.
 
-<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/dots4.png?raw=true"></src>
+<img alt="Legends" width="540" src="https://github.com/terezka/line-charts/blob/master/images/dots4.png?raw=true"></src>
 
 -}
 disconnected : Float -> Int -> Style
@@ -322,7 +322,7 @@ disconnected =
 Pass the radius, the width of the aura, and the opacity of the
 aura (A number between 0 and 1).
 
-<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/dots2.png?raw=true"></src>
+<img alt="Legends" width="540" src="https://github.com/terezka/line-charts/blob/master/images/dots2.png?raw=true"></src>
 
 
 -}

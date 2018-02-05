@@ -21,7 +21,7 @@ SVG-space is different because here, the y axis numbers grow larger as we
 progress _downwards_, and there coordinates are relative to the pixel height and
 width of the chart, not your data.
 
-<img alt="Space" width="610" src="https://github.com/terezka/lines/blob/master/images/space.png?raw=true"></src>
+<img alt="Space" width="610" src="https://github.com/terezka/line-charts/blob/master/images/space.png?raw=true"></src>
 
 Since SVG only understand SVG-space coordinates, when we have data-space coordinates
 we need to translate them in order the use them for drawing. For this we need some

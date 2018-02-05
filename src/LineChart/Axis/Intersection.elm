@@ -8,7 +8,7 @@ The intersection is where your two axis lines meet. By default this is at
 the smallest coordinate possible (the downmost left corner), but it need
 not be as illustated below.
 
-<img alt="Ranges explained" width="610" src="https://github.com/terezka/lines/blob/master/images/intersection1.png?raw=true"></src>
+<img alt="Ranges explained" width="610" src="https://github.com/terezka/line-charts/blob/master/images/intersection1.png?raw=true"></src>
 
 @docs Config, default, atOrigin, at, custom
 
@@ -41,7 +41,7 @@ type alias Config =
       Intersection.default
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Intersection/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Intersection/Example1.elm)._
 
 -}
 default : Config
@@ -56,7 +56,7 @@ default =
       Intersection.atOrigin
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Intersection/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Intersection/Example1.elm)._
 
 
 -}
@@ -72,7 +72,7 @@ atOrigin =
       Intersection.at 0 3
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Intersection/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Intersection/Example1.elm)._
 
 -}
 at : Float -> Float -> Config
@@ -91,7 +91,7 @@ respectivily.
     middle { min, max } =
       min + (max - min) / 2
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Intersection/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Intersection/Example1.elm)._
 
 -}
 custom : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Config

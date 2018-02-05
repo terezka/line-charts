@@ -70,7 +70,7 @@ import Color
       LineChart.view1 .x .y
         [ Point 0 2, Point 5 5, Point 10 10 ]
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example1.elm)._
 
 
 ** Choosing your variables **
@@ -90,7 +90,7 @@ So if we had more complex data structures, like a human with an `age`, `weight`,
     -- Try changing .weight to .height
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example2.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example2.elm)._
 
 
 ** Use any function as the variable **
@@ -123,7 +123,7 @@ to their age. Here's how you could plot it.
     chart =
       LineChart.view2 .age .weight alice chuck
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example3.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example3.elm)._
 
 -}
 view2 : (data -> Float) -> (data -> Float) -> List data -> List data -> Svg.Svg msg
@@ -141,7 +141,7 @@ It works just like `view1` and `view2`.
     chart =
       LineChart.view3 .age .weight alice bob chuck
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example4.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example4.elm)._
 
 But what if you have more people? What if you have _four_ people?! In that case,
 check out `view`.
@@ -170,7 +170,7 @@ the `line` function for more information.
         , LineChart.line Colors.green Dots.circle "Chuck" chuck
         ]
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example5.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example5.elm)._
 
 See `viewCustom` for all other customizations.
 
@@ -199,7 +199,7 @@ Try changing the color or explore all the available dot shapes from `LineChart.D
         , LineChart.line Colors.blueLight Dots.square "Chuck" chuck
         ]
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example6.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example6.elm)._
 
 
 ** Regarding the title **
@@ -237,7 +237,7 @@ for examples of patterns.
 
     -- Try passing different numbers!
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example7.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example7.elm)._
 
 ** When should I use a dashed line? **
 
@@ -323,7 +323,7 @@ available for each property.
       , dots = Dots.default
       }
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example8.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example8.elm)._
 
 -}
 type alias Config data msg =
@@ -379,7 +379,7 @@ The example below makes the line chart an area chart.
       }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/LineChart/Example9.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example9.elm)._
 
 
 ** Speaking of area charts **

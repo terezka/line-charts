@@ -9,9 +9,13 @@ body {
 }
 
 a {
-	color: #84868a;
+	color: #848484;
 	text-decoration: none;
 	cursor: pointer;
+}
+
+a:hover {
+	color: rgb(245, 105, 215);
 }
 
 
@@ -31,4 +35,8 @@ a {
 
 .view__title {
 	font-weight: lighter;
+}
+
+.view__tag-line {
+	max-width: 250px;
 }

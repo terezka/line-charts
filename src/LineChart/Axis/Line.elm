@@ -30,7 +30,7 @@ configuration in `Axis.custom`.
         , ...
         }
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/AxisLine/Example1.elm)._
 
 -}
 type alias Config msg =
@@ -43,7 +43,7 @@ type alias Config msg =
     axisLineConfig =
       AxisLine.default
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/AxisLine/Example1.elm)._
 
 -}
 default : Config msg
@@ -57,7 +57,7 @@ default =
     axisLineConfig =
       AxisLine.full Color.red
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/AxisLine/Example1.elm)._
 
 -}
 full : Color.Color -> Config msg
@@ -71,7 +71,7 @@ full =
     axisLineConfig =
       AxisLine.rangeFrame Color.red
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/AxisLine/Example1.elm)._
 
 -}
 rangeFrame : Color.Color -> Config msg
@@ -85,7 +85,7 @@ rangeFrame =
     axisLineConfig =
       AxisLine.none
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/AxisLine/Example1.elm)._
 
 -}
 none : Config msg
@@ -120,7 +120,7 @@ axis line configuration.
         , end = 5
         }
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/AxisLine/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/AxisLine/Example1.elm)._
 
 
 -}

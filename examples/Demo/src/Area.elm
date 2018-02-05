@@ -90,7 +90,7 @@ toData numbers =
 
 toDate : Int -> Time.Time
 toDate index =
-  Time.hour * 24 * 256 * 40 + Time.hour * 24 * 21 * toFloat index
+  Time.hour * 24 * 356 * 45 + Time.hour * 24 * 21 * toFloat index
 
 
 setHint : List Coordinate.Point -> Model -> Model

@@ -14,7 +14,7 @@ Junk is a way to draw whatever you like in the chart. The name comes from
 If you want to add tooltips, sections for emphasis, or kittens on your chart,
 this is where it's at.
 
-<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/junk.png?raw=true"></src>
+<img alt="Legends" width="610" src="https://github.com/terezka/line-charts/blob/master/images/junk.png?raw=true"></src>
 
 @docs Config, default, hoverOne, hoverMany
 
@@ -31,7 +31,7 @@ Below is an illustration.
 
 _What is an axis-range? See the `Axis.Range` module._
 
-<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/chartarea.png?raw=true"></src>
+<img alt="Legends" width="610" src="https://github.com/terezka/line-charts/blob/master/images/chartarea.png?raw=true"></src>
 
 @docs withinChartArea
 
@@ -98,7 +98,7 @@ type alias Config data msg =
         , ( "Weight", toString << .weight )
         ]
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Junk/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Junk/Example1.elm)._
 
 -}
 hoverOne : Maybe data -> List ( String, data -> String ) -> Config data msg
@@ -159,7 +159,7 @@ To learn more about the `Coordinate.System` and how to use it, see the
         system.y.min    system.y.max
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Junk/Example2.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Junk/Example2.elm)._
 
 
 -}
@@ -191,7 +191,7 @@ type alias Transfrom =
         [ Junk.label Colors.blue "stuff" ]
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Junk/Example3.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Junk/Example3.elm)._
 
 -}
 transform : List Transfrom -> Svg.Attribute msg

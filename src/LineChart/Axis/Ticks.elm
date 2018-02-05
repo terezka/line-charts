@@ -21,7 +21,7 @@ Choose the approximate amount of ticks on your axis!
       Ticks.float 7 -- makes ca. 7 ticks at nice float
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Ticks/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Ticks/Example1.elm)._
 
 @docs int, time, float
 
@@ -34,7 +34,7 @@ Now you get to decide how the ticks should look!
       Ticks.intCustom 7 customTick
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Ticks/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Ticks/Example1.elm)._
 
 @docs intCustom, timeCustom, floatCustom
 
@@ -135,7 +135,7 @@ timeCustom =
         framing dataRange ++ hoverOne
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Ticks/Example2.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Ticks/Example2.elm)._
 
 ** What if I still want nice values?**
 

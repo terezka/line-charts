@@ -36,7 +36,7 @@ default =
 
 {-| A linear interpolation.
 
-<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/interpolation3.png?raw=true"></src>
+<img alt="Legends" width="540" src="https://github.com/terezka/line-charts/blob/master/images/interpolation3.png?raw=true"></src>
 
 -}
 linear : Config
@@ -46,7 +46,7 @@ linear =
 
 {-| A monotone-x interpolation.
 
-<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/interpolation2.png?raw=true"></src>
+<img alt="Legends" width="540" src="https://github.com/terezka/line-charts/blob/master/images/interpolation2.png?raw=true"></src>
 
 -}
 monotone : Config
@@ -56,7 +56,7 @@ monotone =
 
 {-| A stepped interpolation where the step comes after the dot.
 
-<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/interpolation4.png?raw=true"></src>
+<img alt="Legends" width="540" src="https://github.com/terezka/line-charts/blob/master/images/interpolation4.png?raw=true"></src>
 
 -}
 stepped : Config

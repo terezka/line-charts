@@ -6,7 +6,7 @@ module LineChart.Colors exposing
 
 {-|
 
-<img alt="Colors!" width="610" src="https://github.com/terezka/lines/blob/master/images/colors.png?raw=true"></src>
+<img alt="Colors!" width="610" src="https://github.com/terezka/line-charts/blob/master/images/colors.png?raw=true"></src>
 
 @docs pink, blue, gold, red, green, cyan, teal, purple
 

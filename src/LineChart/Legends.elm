@@ -11,14 +11,14 @@ module LineChart.Legends exposing
 ## Free legends
 Where the title is hanging by its respective line.
 
-<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/legends2.png?raw=true"></src>
+<img alt="Legends" width="610" src="https://github.com/terezka/line-charts/blob/master/images/legends2.png?raw=true"></src>
 
 @docs byEnding, byBeginning
 
 ## Grouped legends
 Where the titles are gathered in one spot.
 
-<img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/legends5.png?raw=true"></src>
+<img alt="Legends" width="610" src="https://github.com/terezka/line-charts/blob/master/images/legends5.png?raw=true"></src>
 
 @docs grouped, groupedCustom, Legend
 
@@ -79,7 +79,7 @@ none =
       }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Legends/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Legends/Example1.elm)._
 
 -}
 byEnding : (String -> Svg.Svg msg) -> Config data msg
@@ -116,9 +116,9 @@ byBeginning =
 
 Makes this:
 
-<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/legends3.png?raw=true"></src>
+<img alt="Legends" width="540" src="https://github.com/terezka/line-charts/blob/master/images/legends3.png?raw=true"></src>
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Legends/Example2.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Legends/Example2.elm)._
 
 -}
 grouped : (Coordinate.Range -> Float) -> (Coordinate.Range -> Float) -> Float -> Float -> Config data msg
@@ -173,10 +173,10 @@ type alias Legend msg =
 
 Makes this:
 
-<img alt="Legends" width="540" src="https://github.com/terezka/lines/blob/master/images/legends4.png?raw=true"></src>
+<img alt="Legends" width="540" src="https://github.com/terezka/line-charts/blob/master/images/legends4.png?raw=true"></src>
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Legends/Example3.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Legends/Example3.elm)._
 
 
 -}

@@ -117,6 +117,10 @@ viewTitle =
                 [ Html.Attributes.href "https://twitter.com/terez_ka" ]
                 [ Html.text "Twitter" ]
             ]
+        , Html.p [ Html.Attributes.class "view__tag-line" ]
+            [ Html.text "A opinionated library for plotting lines charts in SVG." ]
+        , Html.p [ Html.Attributes.class "view__tag-line" ]
+            [ Html.text "Written in all Elm." ]
         ]
 
 

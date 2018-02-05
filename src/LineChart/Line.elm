@@ -50,7 +50,7 @@ default =
       }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Line/Example1.elm)._
 
 -}
 wider : Float -> Config data
@@ -68,7 +68,7 @@ wider =
       }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example2.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Line/Example2.elm)._
 
 -}
 hoverOne : Maybe data -> Config data
@@ -102,7 +102,7 @@ hoverOne hovered =
             Line.style 1 (Manipulate.lighten 0.35)
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example3.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Line/Example3.elm)._
 
 -}
 custom : (List data -> Style) -> Config data
@@ -138,7 +138,7 @@ type alias Style =
       Line.style 2 (\_ -> Colors.black)
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Line/Example4.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Line/Example4.elm)._
 
 -}
 style : Float -> (Color.Color -> Color.Color) -> Style

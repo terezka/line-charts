@@ -43,7 +43,7 @@ Pass the length of your axis in pixels, the title and it's variable.
       Axis.default 650 "Age (years)" .age
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Axis/Example1.elm)._
 
 -}
 default : Int -> String -> (data -> Float) -> Config data msg
@@ -61,7 +61,7 @@ Pass the length of your axis in pixels, the title and it's variable.
       Axis.full 650 "Age (years)" .age
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example2.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Axis/Example2.elm)._
 
 -}
 full : Int -> String -> (data -> Float) -> Config data msg
@@ -79,7 +79,7 @@ Pass the length of your axis in pixels, the title and it's variable.
       Axis.time 650 "Date" .date
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example3.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Axis/Example3.elm)._
 
 -}
 time : Int -> String -> (data -> Float) -> Config data msg
@@ -99,7 +99,7 @@ numbers where you'd like ticks to show up.
       Axis.picky 650 "Age (years)" .age [ 4, 25, 46 ]
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example4.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Axis/Example4.elm)._
 
 **Note:** This is of course not the only way for you to decide exactly where the
 ticks should go on the axis! If you need to customize ticks further, check out
@@ -121,7 +121,7 @@ Pass the length of your axis in pixels and it's variable.
       Axis.none 650 .age
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example5.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Axis/Example5.elm)._
 
 -}
 none : Int -> (data -> Float) -> Config data msg
@@ -157,7 +157,7 @@ Properties:
         }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Axis/Example8.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Axis/Example8.elm)._
 
 -}
 custom : Properties data msg -> Config data msg

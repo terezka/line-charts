@@ -45,7 +45,7 @@ default =
       Title.atDataMax 0 10 "Age"
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Title/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Title/Example1.elm)._
 
 -}
 atDataMax : Float -> Float -> String -> Config msg
@@ -65,7 +65,7 @@ atDataMax =
       Title.atAxisMax 0 10 "Age"
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Title/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Title/Example1.elm)._
 
 -}
 atAxisMax : Float -> Float -> String -> Config msg
@@ -87,7 +87,7 @@ atAxisMax =
       Title.atPosition position -15 30 "Weight"
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Title/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Title/Example1.elm)._
 
 -}
 atPosition : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> String -> Config msg
@@ -117,7 +117,7 @@ SVG title. Arguments:
       min + (max - min) / 2
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Title/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Title/Example1.elm)._
 
 -}
 custom : (Coordinate.Range -> Coordinate.Range -> Float) -> Float -> Float -> (Svg msg) -> Config msg

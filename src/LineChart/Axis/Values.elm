@@ -14,7 +14,7 @@ Use in `Ticks.custom` for creating "nice" values.
       Values.int (Values.around 3)
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Values/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Values/Example1.elm)._
 
 ** What are "nice" numbers/integers/datetimes? **
 
@@ -73,7 +73,7 @@ exactly =
       Values.int (Values.around 3)
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Values/Example1.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Values/Example1.elm)._
 
 -}
 int : Amount -> Coordinate.Range -> List Int
@@ -114,7 +114,7 @@ Arguments:
         -- ^ Makes [ 30, 50, 70, 90 ]
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Values/Example3.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Values/Example3.elm)._
 
 -}
 custom : Float -> Float -> Coordinate.Range -> List Float
@@ -133,7 +133,7 @@ custom =
       Values.time 5
 
 
-_See full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Values/Example2.elm)._
+_See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Values/Example2.elm)._
 
 -}
 time : Int -> Coordinate.Range -> List Tick.Time

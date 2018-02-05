@@ -19,7 +19,7 @@ Opposite your data range which is only calculated from  from your data,
 **your axis range can be changed with this module**. For example, you can make
 it larger than your data range, as illustrated below.
 
-<img alt="Ranges explained" width="610" src="https://github.com/terezka/lines/blob/master/images/ranges.png?raw=true"></src>
+<img alt="Ranges explained" width="610" src="https://github.com/terezka/line-charts/blob/master/images/ranges.png?raw=true"></src>
 
 _Notice how the data range begins and ends where the pink line begins and ends._
 
@@ -61,9 +61,9 @@ type alias Config =
       Range.default
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Range/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Range/Example1.elm)._
 
-<img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges3.png?raw=true"></src>
+<img alt="Ranges explained" width="540" src="https://github.com/terezka/line-charts/blob/master/images/ranges3.png?raw=true"></src>
 
 -}
 default : Config
@@ -79,9 +79,9 @@ respectivily.
       Range.padded 40 40
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Range/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Range/Example1.elm)._
 
-<img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges.png?raw=true"></src>
+<img alt="Ranges explained" width="540" src="https://github.com/terezka/line-charts/blob/master/images/ranges.png?raw=true"></src>
 
 -}
 padded : Float -> Float -> Config
@@ -98,9 +98,9 @@ respectivily.
       Range.window 70 97
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Range/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Range/Example1.elm)._
 
-<img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges2.png?raw=true"></src>
+<img alt="Ranges explained" width="540" src="https://github.com/terezka/line-charts/blob/master/images/ranges2.png?raw=true"></src>
 
 -}
 window : Float -> Float -> Config
@@ -119,9 +119,9 @@ window =
       { min = min - 1, max = max + 2 }
 
 
-_See the full example [here](https://github.com/terezka/lines/blob/master/examples/Docs/Range/Example1.elm)._
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Range/Example1.elm)._
 
-<img alt="Ranges explained" width="540" src="https://github.com/terezka/lines/blob/master/images/ranges4.png?raw=true"></src>
+<img alt="Ranges explained" width="540" src="https://github.com/terezka/line-charts/blob/master/images/ranges4.png?raw=true"></src>
 
 -}
 custom : (Coordinate.Range -> Coordinate.Range) -> Config

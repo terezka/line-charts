@@ -23163,7 +23163,7 @@ var _user$project$Area$setHint = F2(
 			{hinted: hinted});
 	});
 var _user$project$Area$toDate = function (index) {
-	return (((_elm_lang$core$Time$hour * 24) * 256) * 40) + (((_elm_lang$core$Time$hour * 24) * 21) * _elm_lang$core$Basics$toFloat(index));
+	return (((_elm_lang$core$Time$hour * 24) * 356) * 45) + (((_elm_lang$core$Time$hour * 24) * 21) * _elm_lang$core$Basics$toFloat(index));
 };
 var _user$project$Area$toData = function (numbers) {
 	return A2(
@@ -23934,7 +23934,37 @@ var _user$project$Main$viewTitle = A2(
 						}
 					}
 				}),
-			_1: {ctor: '[]'}
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$p,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('view__tag-line'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('A opinionated library for plotting lines charts in SVG.'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$p,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('view__tag-line'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Written in all Elm.'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
 		}
 	});
 var _user$project$Main$updateFocused = F2(
