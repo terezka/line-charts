@@ -179,7 +179,7 @@ viewHeader value =
         [ ( "margin-top", "3px" )
         , ( "margin-bottom", "5px" )
         , ( "padding", "3px" )
-        , ( "border-bottom", "1px solid #535353" )
+        , ( "border-bottom", "1px solid rgb(163, 163, 163)" )
         ]
     ]
     [ Html.text value ]

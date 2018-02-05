@@ -13806,7 +13806,7 @@ var _user$project$Internal_Junk$viewHeader = function (value) {
 							_0: {ctor: '_Tuple2', _0: 'padding', _1: '3px'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid #535353'},
+								_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid rgb(163, 163, 163)'},
 								_1: {ctor: '[]'}
 							}
 						}
