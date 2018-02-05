@@ -1,12 +1,12 @@
 module LineChart.Container exposing
   ( Config, Properties, Size, Margin
-  , default, responsive, custom
+  , default, spaced, responsive, custom
   , relative, static
   )
 
 {-|
 
-@docs Config, default, responsive
+@docs Config, default, spaced, responsive
 
 # Customization
 @docs custom, Properties, Margin
@@ -46,6 +46,16 @@ _See the full example [here](https://github.com/terezka/line-charts/blob/master/
 default : String -> Config msg
 default =
   Container.default
+
+
+{-| The default container configuration, but just decide the margins.
+
+Pass the id and the top, right, bottom, and left margin respectivily.
+
+-}
+spaced : String -> Float -> Float -> Float -> Float -> Config msg
+spaced =
+  Container.spaced
 
 
 {-| Makes the chart take the size of your container.

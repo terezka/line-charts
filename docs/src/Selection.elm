@@ -84,7 +84,7 @@ getNumbers : Cmd Msg
 getNumbers =
   let
     genNumbers =
-      Random.list 200 (Random.float 0 20)
+      Random.list 201 (Random.float 0 20)
   in
   Random.map3 (,,) genNumbers genNumbers genNumbers
     |> Random.generate RecieveNumbers

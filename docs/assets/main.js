@@ -12763,11 +12763,23 @@ var _user$project$Internal_Container$default = function (id) {
 			id: id
 		});
 };
+var _user$project$Internal_Container$spaced = F5(
+	function (id, top, right, bottom, left) {
+		return _user$project$Internal_Container$custom(
+			{
+				attributesHtml: {ctor: '[]'},
+				attributesSvg: {ctor: '[]'},
+				size: _user$project$Internal_Container$static,
+				margin: A4(_user$project$Internal_Container$Margin, top, right, bottom, left),
+				id: id
+			});
+	});
 
 var _user$project$LineChart_Container$static = _user$project$Internal_Container$static;
 var _user$project$LineChart_Container$relative = _user$project$Internal_Container$relative;
 var _user$project$LineChart_Container$custom = _user$project$Internal_Container$custom;
 var _user$project$LineChart_Container$responsive = _user$project$Internal_Container$responsive;
+var _user$project$LineChart_Container$spaced = _user$project$Internal_Container$spaced;
 var _user$project$LineChart_Container$default = _user$project$Internal_Container$default;
 var _user$project$LineChart_Container$Properties = F5(
 	function (a, b, c, d, e) {
@@ -19272,14 +19284,7 @@ var _user$project$Area$chart = function (model) {
 				function (_) {
 					return _.x;
 				}),
-			container: _user$project$LineChart_Container$custom(
-				{
-					attributesHtml: {ctor: '[]'},
-					attributesSvg: {ctor: '[]'},
-					size: _user$project$LineChart_Container$static,
-					margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 60, 70),
-					id: 'line-chart-area'
-				}),
+			container: A5(_user$project$LineChart_Container$spaced, 'line-chart-area', 30, 100, 60, 70),
 			interpolation: _user$project$LineChart_Interpolation$monotone,
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
@@ -19868,7 +19873,7 @@ var _user$project$Selection$RecieveNumbers = function (a) {
 var _user$project$Selection$getNumbers = function () {
 	var genNumbers = A2(
 		_elm_lang$core$Random$list,
-		200,
+		201,
 		A2(_elm_lang$core$Random$float, 0, 20));
 	return A2(
 		_elm_lang$core$Random$generate,

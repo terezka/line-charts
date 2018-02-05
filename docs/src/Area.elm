@@ -144,14 +144,7 @@ chart model =
   LineChart.viewCustom
     { y = Axis.default 450 "cash ($k)" .y
     , x = Axis.time 1270 "time" .x
-    , container =
-        Container.custom
-          { attributesHtml = []
-          , attributesSvg = []
-          , size = Container.static
-          , margin = Container.Margin 30 100 60 70
-          , id = "line-chart-area"
-          }
+    , container = Container.spaced "line-chart-area" 30 100 60 70
     , interpolation = Interpolation.monotone
     , intersection = Intersection.default
     , legends = Legends.default

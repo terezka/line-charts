@@ -1,6 +1,6 @@
 module Internal.Container exposing
   ( Config, Properties, Size, Margin
-  , default, responsive, custom
+  , default, spaced, responsive, custom
   , relative, static
   , properties, sizeStyles
   )
@@ -52,6 +52,19 @@ default id =
     , margin = Margin 60 140 60 80
     , id = id
     }
+
+
+{-| -}
+spaced : String -> Float -> Float -> Float -> Float -> Config msg
+spaced id top right bottom left =
+  custom
+    { attributesHtml = []
+    , attributesSvg = []
+    , size = static
+    , margin = Margin top right bottom left
+    , id = id
+    }
+
 
 
 {-| -}
