@@ -5,7 +5,7 @@
     "license": "BSD3",
     "source-directories": [
       "./src",
-      "./examples/Demo/src"
+      "./docs/src"
     ],
     "exposed-modules": [
         "LineChart",
