@@ -215,15 +215,29 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [] <|
+  Html.div
+    [ Html.Attributes.style [ ( "display", "flex" ) ] ] <|
     case model.selection of
       Nothing ->
-        [ chart model ]
+        [ selectPlaceholder, chart model ]
 
       Just selection ->
-        [ chart model
-        , chartZoom model selection
+        [ chartZoom model selection, chart model ]
+
+
+selectPlaceholder : Html.Html Msg
+selectPlaceholder =
+  Html.div
+    [ Html.Attributes.style
+        [ ( "margin", "40px 25px 30px 70px" )
+        , ( "width", "505px" )
+        , ( "height", "360px" )
+        , ( "background", "#b6b6b61a" )
+        , ( "text-align", "center" )
+        , ( "line-height", "340px" )
         ]
+    ]
+    [ Html.text "Select a range on the graph to the right!" ]
 
 
 
@@ -244,6 +258,8 @@ chart model =
           , Events.onWithOptions "mouseleave" (Events.Options True True False) LeaveChart Events.getData
           , Events.onWithOptions "mouseleave" (Events.Options True True True) LeaveContainer Events.getData
           ]
+    , width = 670
+    , margin = Container.Margin 30 100 30 70
     , dots = Dots.custom (Dots.full 0)
     , id = "line-chart"
     }
@@ -296,6 +312,8 @@ chartZoom model selection =
     , events = Events.hoverOne Hint
     , legends = Legends.none
     , dots = Dots.hoverOne model.hinted
+    , width = 600
+    , margin = Container.Margin 30 25 30 70
     , id = "line-chart-zoom"
     }
 
@@ -325,19 +343,21 @@ type alias Config =
   , events : Events.Config Coordinate.Point Msg
   , legends : Legends.Config Coordinate.Point Msg
   , dots : Dots.Config Coordinate.Point
+  , margin : Container.Margin
+  , width : Int
   , id : String
   }
 
 
 viewChart : Data -> Config -> Html.Html Msg
-viewChart data { range, junk, events, legends, dots, id } =
+viewChart data { range, junk, events, legends, dots, width, margin, id } =
   LineChart.viewCustom
-    { y = Axis.default 450 "y" .y
+    { y = Axis.default 420 "y" .y
     , x =
         Axis.custom
           { title = Title.default "x"
           , variable = Just << .x
-          , pixels = 650
+          , pixels = width
           , range = range
           , axisLine = AxisLine.rangeFrame Colors.gray
           , ticks = Ticks.float 5
@@ -347,7 +367,7 @@ viewChart data { range, junk, events, legends, dots, id } =
           { attributesHtml = [ Html.Attributes.style [ ( "display", "inline-block" ) ] ]
           , attributesSvg = []
           , size = Container.static
-          , margin = Container.Margin 30 100 60 50
+          , margin = margin
           , id = "chart-id"
           }
     , interpolation = Interpolation.monotone

@@ -1,5 +1,5 @@
 module LineChart.Junk exposing
-  ( Config, Layers, default, hoverOne, custom
+  ( Config, Layers, default, hoverOne, hoverMany, custom
   , Transfrom, transform, move, offset, placed
   , vertical, horizontal, verticalCustom, horizontalCustom
   , rectangle, circle
@@ -16,7 +16,7 @@ this is where it's at.
 
 <img alt="Legends" width="610" src="https://github.com/terezka/lines/blob/master/images/junk.png?raw=true"></src>
 
-@docs Config, default, hoverOne
+@docs Config, default, hoverOne, hoverMany
 
 # Customization
 @docs custom, Layers
@@ -104,6 +104,19 @@ _See the full example [here](https://github.com/terezka/lines/blob/master/exampl
 hoverOne : Maybe data -> List ( String, data -> String ) -> Config data msg
 hoverOne =
   Junk.hoverOne
+
+
+{-| -}
+type alias HoverManyConfig data =
+  { x : data -> String
+  , y : data -> String
+  }
+
+
+{-| -}
+hoverMany : List data -> HoverManyConfig data -> Config data msg
+hoverMany =
+  Junk.hoverMany
 
 
 {-| The layers where you can put your junk.

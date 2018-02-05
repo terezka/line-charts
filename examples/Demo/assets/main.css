@@ -20,11 +20,15 @@ a {
 
 
 .view {
-	margin: 300px 20px 300px 300px
+	margin: 200px 20px 300px 300px
 }
 
 .view__title__container {
 	position: fixed;
 	top: 40px;
 	left: 40px;
+}
+
+.view__title {
+	font-weight: lighter;
 }

@@ -36,12 +36,12 @@ main =
 
 
 type alias Model =
-    { hovering : Maybe Info }
+    { hovered : Maybe Info }
 
 
 init : Model
 init =
-    { hovering = Nothing }
+    { hovered = Nothing }
 
 
 
@@ -55,8 +55,8 @@ type Msg
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    Hover hovering ->
-      { model | hovering = hovering }
+    Hover hovered ->
+      { model | hovered = hovered }
 
 
 
@@ -81,13 +81,13 @@ chart model =
     , legends = Legends.default
     , events = Events.hoverOne Hover
     , junk =
-        case model.hovering of
+        case model.hovered of
           Just info -> tooltip info
           Nothing   -> Junk.default
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
-    , dots = Dots.hoverOne model.hovering
+    , dots = Dots.hoverOne model.hovered
     }
     [ LineChart.line Color.orange Dots.triangle "Chuck" chuck
     , LineChart.line Color.yellow Dots.circle "Bobby" bobby

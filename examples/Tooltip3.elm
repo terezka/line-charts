@@ -1,11 +1,11 @@
-module Tooltip1 exposing (main)
+module Tooltip3 exposing (main)
 
-import Html exposing (Html, div, h1, node, p, text)
-import Html.Attributes exposing (class)
-import Svg exposing (Attribute, Svg, g, text_, tspan)
+import Html
+import Html.Attributes
 import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
+import LineChart.Colors as Colors
 import LineChart.Container as Container
 import LineChart.Junk as Junk
 import LineChart.Interpolation as Interpolation
@@ -17,7 +17,6 @@ import LineChart.Events as Events
 import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
-import Color
 
 
 
@@ -35,12 +34,12 @@ main =
 
 
 type alias Model =
-    { hovered : Maybe Info }
+    { hovered : List Info }
 
 
 init : Model
 init =
-    { hovered = Nothing }
+    { hovered = [] }
 
 
 
@@ -48,7 +47,7 @@ init =
 
 
 type Msg
-  = Hover (Maybe Info)
+  = Hover (List Info)
 
 
 update : Msg -> Model -> Model
@@ -62,10 +61,10 @@ update msg model =
 -- VIEW
 
 
-view : Model -> Svg Msg
+view : Model -> Html.Html Msg
 view model =
   Html.div
-    [ class "container" ]
+    [ Html.Attributes.style [ ( "font-family", "monospace" ) ] ]
     [ chart model ]
 
 
@@ -78,20 +77,20 @@ chart model =
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
-    , events = Events.hoverOne Hover
+    , events = Events.hoverMany Hover
     , junk =
-        Junk.hoverOne model.hovered
-          [ ( "Age", toString << .age )
-          , ( "Weight", toString << .weight )
-          ]
+        Junk.hoverMany model.hovered
+          { x = \data -> "age:" ++ toString data.age
+          , y = toString
+          }
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
-    , dots = Dots.hoverOne model.hovered
+    , dots = Dots.hoverMany model.hovered
     }
-    [ LineChart.line Color.orange Dots.triangle "Chuck" chuck
-    , LineChart.line Color.yellow Dots.circle "Bobby" bobby
-    , LineChart.line Color.purple Dots.diamond "Alice" alice
+    [ LineChart.line Colors.pink Dots.triangle "Chuck" chuck
+    , LineChart.line Colors.cyan Dots.circle "Bobby" bobby
+    , LineChart.line Colors.purple Dots.diamond "Alice" alice
     ]
 
 

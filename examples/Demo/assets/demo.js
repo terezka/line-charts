@@ -13508,6 +13508,10 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _elm_lang$html$Html_Lazy$lazy3 = _elm_lang$virtual_dom$VirtualDom$lazy3;
+var _elm_lang$html$Html_Lazy$lazy2 = _elm_lang$virtual_dom$VirtualDom$lazy2;
+var _elm_lang$html$Html_Lazy$lazy = _elm_lang$virtual_dom$VirtualDom$lazy;
+
 var _elm_lang$svg$Svg$map = _elm_lang$virtual_dom$VirtualDom$map;
 var _elm_lang$svg$Svg$text = _elm_lang$virtual_dom$VirtualDom$text;
 var _elm_lang$svg$Svg$svgNamespace = A2(
@@ -16800,174 +16804,6 @@ var _user$project$LineChart_Coordinate$Point = F2(
 		return {x: a, y: b};
 	});
 
-var _user$project$Internal_Junk$tooltipHtml = F5(
-	function (toX, toY, system, hovered, properties) {
-		var valueStyles = {
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'margin', _1: '3px'},
-			_1: {ctor: '[]'}
-		};
-		var viewRow = function (_p0) {
-			var _p1 = _p0;
-			return A2(
-				_elm_lang$html$Html$p,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(valueStyles),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_p1._0,
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								': ',
-								_p1._1(hovered)))),
-					_1: {ctor: '[]'}
-				});
-		};
-		var valuesHtml = A2(_elm_lang$core$List$map, viewRow, properties);
-		var yMiddle = system.y.max - (system.y.min / 2);
-		var y = A2(
-			_elm_lang$core$Maybe$withDefault,
-			yMiddle,
-			toY(hovered));
-		var yPosition = A2(_user$project$LineChart_Coordinate$toSvgY, system, y);
-		var xMiddle = system.x.max - (system.x.min / 2);
-		var x = A2(
-			_elm_lang$core$Maybe$withDefault,
-			xMiddle,
-			toX(hovered));
-		var shouldFlip = _elm_lang$core$Native_Utils.cmp(x - system.x.min, system.x.max - x) > 0;
-		var space = shouldFlip ? -15 : 15;
-		var xPosition = A2(_user$project$LineChart_Coordinate$toSvgX, system, x) + space;
-		var containerStyles = {
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'left',
-				_1: A2(
-					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(xPosition),
-					'px')
-			},
-			_1: {
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'top',
-					_1: A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(yPosition),
-						'px')
-				},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'padding', _1: '5px'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'min-width', _1: '100px'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background', _1: 'rgba(255,255,255,0.8)'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid #d3d3d3'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'border-radius', _1: '5px'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'pointer-events', _1: 'none'},
-											_1: {
-												ctor: '::',
-												_0: shouldFlip ? {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(-100%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(0)'},
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		};
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(containerStyles),
-				_1: {ctor: '[]'}
-			},
-			valuesHtml);
-	});
-var _user$project$Internal_Junk$addBelow = F2(
-	function (below, layers) {
-		return _elm_lang$core$Native_Utils.update(
-			layers,
-			{
-				below: A2(_elm_lang$core$Basics_ops['++'], below, layers.below)
-			});
-	});
-var _user$project$Internal_Junk$getLayers = F4(
-	function (toX, toY, system, _p2) {
-		var _p3 = _p2;
-		return A3(_p3._0, toX, toY, system);
-	});
-var _user$project$Internal_Junk$Layers = F3(
-	function (a, b, c) {
-		return {below: a, above: b, html: c};
-	});
-var _user$project$Internal_Junk$Config = function (a) {
-	return {ctor: 'Config', _0: a};
-};
-var _user$project$Internal_Junk$none = _user$project$Internal_Junk$Config(
-	F3(
-		function (_p6, _p5, _p4) {
-			return A3(
-				_user$project$Internal_Junk$Layers,
-				{ctor: '[]'},
-				{ctor: '[]'},
-				{ctor: '[]'});
-		}));
-var _user$project$Internal_Junk$custom = function (func) {
-	return _user$project$Internal_Junk$Config(
-		F2(
-			function (_p8, _p7) {
-				return func;
-			}));
-};
-var _user$project$Internal_Junk$hoverOne = F2(
-	function (hovered, properties) {
-		return _user$project$Internal_Junk$Config(
-			F3(
-				function (toX, toY, system) {
-					return {
-						below: {ctor: '[]'},
-						above: {ctor: '[]'},
-						html: function () {
-							var _p9 = hovered;
-							if (_p9.ctor === 'Just') {
-								return {
-									ctor: '::',
-									_0: A5(_user$project$Internal_Junk$tooltipHtml, toX, toY, system, _p9._0, properties),
-									_1: {ctor: '[]'}
-								};
-							} else {
-								return {ctor: '[]'};
-							}
-						}()
-					};
-				}));
-	});
-
 var _user$project$LineChart_Colors$transparent = A4(_elm_lang$core$Color$rgba, 0, 0, 0, 0);
 var _user$project$LineChart_Colors$grayLightest = A3(_elm_lang$core$Color$rgb, 243, 243, 243);
 var _user$project$LineChart_Colors$grayLight = A3(_elm_lang$core$Color$rgb, 211, 211, 211);
@@ -17836,6 +17672,375 @@ var _user$project$Internal_Svg$transform = function (translations) {
 						')')))));
 };
 
+var _user$project$Internal_Junk$find = F2(
+	function (hovered, data) {
+		find:
+		while (true) {
+			var _p0 = hovered;
+			if (_p0.ctor === '[]') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				var _p1 = _p0._0;
+				if (A2(
+					_elm_lang$core$List$any,
+					F2(
+						function (x, y) {
+							return _elm_lang$core$Native_Utils.eq(x, y);
+						})(_p1),
+					data)) {
+					return _elm_lang$core$Maybe$Just(_p1);
+				} else {
+					var _v1 = _p0._1,
+						_v2 = data;
+					hovered = _v1;
+					data = _v2;
+					continue find;
+				}
+			}
+		}
+	});
+var _user$project$Internal_Junk$shouldFlip = F2(
+	function (system, x) {
+		return _elm_lang$core$Native_Utils.cmp(x - system.x.min, system.x.max - x) > 0;
+	});
+var _user$project$Internal_Junk$middle = F2(
+	function (r, system) {
+		var range = r(system);
+		return range.min + ((range.max - range.min) / 2);
+	});
+var _user$project$Internal_Junk$viewRow = F3(
+	function (color, label, value) {
+		return A2(
+			_elm_lang$html$Html$p,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'margin', _1: '3px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'color', _1: color},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						label,
+						A2(_elm_lang$core$Basics_ops['++'], ': ', value))),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Internal_Junk$viewHeader = function (value) {
+	return A2(
+		_elm_lang$html$Html$p,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '3px'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '5px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'padding', _1: '3px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid #535353'},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(value),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Internal_Junk$containerLook = {
+	ctor: '::',
+	_0: {ctor: '_Tuple2', _0: 'padding', _1: '5px'},
+	_1: {
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'min-width', _1: '100px'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'background', _1: 'rgba(255,255,255,0.8)'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid #d3d3d3'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'border-radius', _1: '5px'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'pointer-events', _1: 'none'},
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$Internal_Junk$hoverManyHtml = F7(
+	function (system, toX, toY, format, first, hovered, series) {
+		var viewValue = function (_p2) {
+			var _p3 = _p2;
+			return A2(
+				_user$project$Internal_Utils$viewMaybe,
+				A2(_user$project$Internal_Junk$find, hovered, _p3._2),
+				function (hovered) {
+					return A3(
+						_user$project$Internal_Junk$viewRow,
+						_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_p3._0),
+						_p3._1,
+						format.y(hovered));
+				});
+		};
+		var y = A2(
+			_user$project$Internal_Junk$middle,
+			function (_) {
+				return _.y;
+			},
+			system);
+		var yPosition = A2(_user$project$LineChart_Coordinate$toSvgY, system, y);
+		var x = A2(
+			_elm_lang$core$Maybe$withDefault,
+			A2(
+				_user$project$Internal_Junk$middle,
+				function (_) {
+					return _.x;
+				},
+				system),
+			toX(first));
+		var space = A2(_user$project$Internal_Junk$shouldFlip, system, x) ? -15 : 15;
+		var xPosition = A2(_user$project$LineChart_Coordinate$toSvgX, system, x) + space;
+		var containerStyles = A2(
+			_elm_lang$core$Basics_ops['++'],
+			_user$project$Internal_Junk$containerLook,
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'left',
+					_1: A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(xPosition),
+						'px')
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'top',
+						_1: A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(yPosition),
+							'px')
+					},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+						_1: {
+							ctor: '::',
+							_0: A2(_user$project$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translate(-100%, -50%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translate(0, -50%)'},
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(containerStyles),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _user$project$Internal_Junk$viewHeader(
+					format.x(first)),
+				_1: A2(_elm_lang$core$List$map, viewValue, series)
+			});
+	});
+var _user$project$Internal_Junk$hoverOneHtml = F5(
+	function (system, toX, toY, properties, hovered) {
+		var viewValue = function (_p4) {
+			var _p5 = _p4;
+			return A3(
+				_user$project$Internal_Junk$viewRow,
+				'inherit',
+				_p5._0,
+				_p5._1(hovered));
+		};
+		var y = A2(
+			_elm_lang$core$Maybe$withDefault,
+			A2(
+				_user$project$Internal_Junk$middle,
+				function (_) {
+					return _.y;
+				},
+				system),
+			toY(hovered));
+		var yPosition = A2(_user$project$LineChart_Coordinate$toSvgY, system, y);
+		var x = A2(
+			_elm_lang$core$Maybe$withDefault,
+			A2(
+				_user$project$Internal_Junk$middle,
+				function (_) {
+					return _.x;
+				},
+				system),
+			toX(hovered));
+		var space = A2(_user$project$Internal_Junk$shouldFlip, system, x) ? -15 : 15;
+		var xPosition = A2(_user$project$LineChart_Coordinate$toSvgX, system, x) + space;
+		var containerStyles = A2(
+			_elm_lang$core$Basics_ops['++'],
+			_user$project$Internal_Junk$containerLook,
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'left',
+					_1: A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(xPosition),
+						'px')
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'top',
+						_1: A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(yPosition),
+							'px')
+					},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+						_1: {
+							ctor: '::',
+							_0: A2(_user$project$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(-100%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(0)'},
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(containerStyles),
+				_1: {ctor: '[]'}
+			},
+			A2(_elm_lang$core$List$map, viewValue, properties));
+	});
+var _user$project$Internal_Junk$addBelow = F2(
+	function (below, layers) {
+		return _elm_lang$core$Native_Utils.update(
+			layers,
+			{
+				below: A2(_elm_lang$core$Basics_ops['++'], below, layers.below)
+			});
+	});
+var _user$project$Internal_Junk$getLayers = F5(
+	function (series, toX, toY, system, _p6) {
+		var _p7 = _p6;
+		return A4(_p7._0, series, toX, toY, system);
+	});
+var _user$project$Internal_Junk$Layers = F3(
+	function (a, b, c) {
+		return {below: a, above: b, html: c};
+	});
+var _user$project$Internal_Junk$HoverManyConfig = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _user$project$Internal_Junk$Config = function (a) {
+	return {ctor: 'Config', _0: a};
+};
+var _user$project$Internal_Junk$none = _user$project$Internal_Junk$Config(
+	F4(
+		function (_p11, _p10, _p9, _p8) {
+			return A3(
+				_user$project$Internal_Junk$Layers,
+				{ctor: '[]'},
+				{ctor: '[]'},
+				{ctor: '[]'});
+		}));
+var _user$project$Internal_Junk$custom = function (func) {
+	return _user$project$Internal_Junk$Config(
+		F3(
+			function (_p14, _p13, _p12) {
+				return func;
+			}));
+};
+var _user$project$Internal_Junk$hoverOne = F2(
+	function (hovered, properties) {
+		return _user$project$Internal_Junk$Config(
+			F4(
+				function (_p15, toX, toY, system) {
+					return {
+						below: {ctor: '[]'},
+						above: {ctor: '[]'},
+						html: {
+							ctor: '::',
+							_0: A2(
+								_user$project$Internal_Utils$viewMaybe,
+								hovered,
+								A4(_user$project$Internal_Junk$hoverOneHtml, system, toX, toY, properties)),
+							_1: {ctor: '[]'}
+						}
+					};
+				}));
+	});
+var _user$project$Internal_Junk$hoverMany = F2(
+	function (hovered, format) {
+		var _p16 = hovered;
+		if (_p16.ctor === '[]') {
+			return _user$project$Internal_Junk$none;
+		} else {
+			var _p17 = _p16._0;
+			return _user$project$Internal_Junk$Config(
+				F4(
+					function (series, toX, toY, system) {
+						var xValue = A2(
+							_elm_lang$core$Maybe$withDefault,
+							0,
+							toX(_p17));
+						return {
+							below: {
+								ctor: '::',
+								_0: A3(
+									_user$project$Internal_Svg$verticalGrid,
+									system,
+									{ctor: '[]'},
+									xValue),
+								_1: {ctor: '[]'}
+							},
+							above: {ctor: '[]'},
+							html: {
+								ctor: '::',
+								_0: A7(_user$project$Internal_Junk$hoverManyHtml, system, toX, toY, format, _p17, hovered, series),
+								_1: {ctor: '[]'}
+							}
+						};
+					}));
+		}
+	});
+
 var _user$project$LineChart_Junk$withinChartArea = _user$project$Internal_Svg$withinChartArea;
 var _user$project$LineChart_Junk$label = function (color) {
 	return _user$project$Internal_Svg$label(
@@ -17967,8 +18172,13 @@ var _user$project$LineChart_Junk$labelPlaced = F8(
 			});
 	});
 var _user$project$LineChart_Junk$custom = _user$project$Internal_Junk$custom;
+var _user$project$LineChart_Junk$hoverMany = _user$project$Internal_Junk$hoverMany;
 var _user$project$LineChart_Junk$hoverOne = _user$project$Internal_Junk$hoverOne;
 var _user$project$LineChart_Junk$default = _user$project$Internal_Junk$none;
+var _user$project$LineChart_Junk$HoverManyConfig = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
 var _user$project$LineChart_Junk$Layers = F3(
 	function (a, b, c) {
 		return {below: a, above: b, html: c};
@@ -22724,6 +22934,23 @@ var _user$project$LineChart$viewBoxAttribute = function (_p19) {
 };
 var _user$project$LineChart$viewCustom = F2(
 	function (config, lines) {
+		var junkLineInfo = function (line) {
+			return {
+				ctor: '_Tuple3',
+				_0: A3(
+					_user$project$Internal_Line$color,
+					config.line,
+					line,
+					{ctor: '[]'}),
+				_1: _user$project$Internal_Line$label(line),
+				_2: _user$project$Internal_Line$data(line)
+			};
+		};
+		var getJunk = A3(
+			_user$project$Internal_Junk$getLayers,
+			A2(_elm_lang$core$List$map, junkLineInfo, lines),
+			_user$project$Internal_Axis$variable(config.x),
+			_user$project$Internal_Axis$variable(config.y));
 		var data = A2(_user$project$LineChart$toDataPoints, config, lines);
 		var dataSafe = A2(
 			_elm_lang$core$List$map,
@@ -22734,15 +22961,10 @@ var _user$project$LineChart$viewCustom = F2(
 			data);
 		var dataAllSafe = _elm_lang$core$List$concat(dataSafe);
 		var system = A2(_user$project$LineChart$toSystem, config, dataAllSafe);
-		var junk = A2(
-			_user$project$Internal_Junk$addBelow,
-			A4(_user$project$Internal_Grid$view, system, config.x, config.y, config.grid),
-			A4(
-				_user$project$Internal_Junk$getLayers,
-				_user$project$Internal_Axis$variable(config.x),
-				_user$project$Internal_Axis$variable(config.y),
-				system,
-				config.junk));
+		var addGrid = _user$project$Internal_Junk$addBelow(
+			A4(_user$project$Internal_Grid$view, system, config.x, config.y, config.grid));
+		var junk = addGrid(
+			A2(getJunk, system, config.junk));
 		var viewLines = _user$project$Internal_Line$view(
 			{system: system, interpolation: config.interpolation, dotsConfig: config.dots, lineConfig: config.line, area: config.area});
 		var viewLegends = _user$project$Internal_Legends$view(
@@ -22998,7 +23220,7 @@ var _user$project$Area$chart = function (model) {
 			y: A3(
 				_user$project$LineChart_Axis$default,
 				450,
-				'cash',
+				'cash ($k)',
 				function (_) {
 					return _.y;
 				}),
@@ -23014,43 +23236,32 @@ var _user$project$Area$chart = function (model) {
 					attributesHtml: {ctor: '[]'},
 					attributesSvg: {ctor: '[]'},
 					size: _user$project$LineChart_Container$static,
-					margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 60, 50),
+					margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 60, 70),
 					id: 'line-chart-area'
 				}),
 			interpolation: _user$project$LineChart_Interpolation$monotone,
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
-			events: _user$project$LineChart_Events$hoverOne(_user$project$Area$Hint),
+			events: _user$project$LineChart_Events$hoverMany(_user$project$Area$Hint),
 			junk: A2(
-				_user$project$LineChart_Junk$hoverOne,
+				_user$project$LineChart_Junk$hoverMany,
 				model.hinted,
 				{
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'x',
-						_1: function (_p3) {
-							return _elm_lang$core$Basics$toString(
-								_user$project$Area$round100(
-									function (_) {
-										return _.x;
-									}(_p3)));
-						}
+					x: function (_p3) {
+						return A2(
+							_mgold$elm_date_format$Date_Format$format,
+							'%e. %b, %Y',
+							_elm_lang$core$Date$fromTime(
+								function (_) {
+									return _.x;
+								}(_p3)));
 					},
-					_1: {
-						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'y',
-							_1: function (_p4) {
-								return _elm_lang$core$Basics$toString(
-									_user$project$Area$round100(
-										function (_) {
-											return _.y;
-										}(_p4)));
-							}
-						},
-						_1: {ctor: '[]'}
+					y: function (_p4) {
+						return _elm_lang$core$Basics$toString(
+							_user$project$Area$round100(
+								function (_) {
+									return _.y;
+								}(_p4)));
 					}
 				}),
 			grid: A2(_user$project$LineChart_Grid$dots, 1, _user$project$LineChart_Colors$gray),
@@ -23064,10 +23275,10 @@ var _user$project$Area$chart = function (model) {
 			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$diamond, 'Alice', model.data.alice),
 			_1: {
 				ctor: '::',
-				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$red, _user$project$LineChart_Dots$circle, 'Bobby', model.data.bobby),
+				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Bobby', model.data.bobby),
 				_1: {
 					ctor: '::',
-					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$purple, _user$project$LineChart_Dots$triangle, 'Chuck', model.data.chuck),
+					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$triangle, 'Chuck', model.data.chuck),
 					_1: {ctor: '[]'}
 				}
 			}
@@ -23112,7 +23323,7 @@ var _user$project$Area$init = {
 			{ctor: '[]'},
 			{ctor: '[]'},
 			{ctor: '[]'}),
-		hinted: _elm_lang$core$Maybe$Nothing
+		hinted: {ctor: '[]'}
 	},
 	_1: _user$project$Area$getNumbers
 };
@@ -23142,7 +23353,7 @@ var _user$project$Selection$viewChart = F2(
 			{
 				y: A3(
 					_user$project$LineChart_Axis$default,
-					450,
+					420,
 					'y',
 					function (_) {
 						return _.y;
@@ -23156,7 +23367,7 @@ var _user$project$Selection$viewChart = F2(
 									return _.x;
 								}(_p2));
 						},
-						pixels: 650,
+						pixels: _p1.width,
 						range: _p1.range,
 						axisLine: _user$project$LineChart_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
 						ticks: _user$project$LineChart_Axis_Ticks$float(5)
@@ -23175,7 +23386,7 @@ var _user$project$Selection$viewChart = F2(
 						},
 						attributesSvg: {ctor: '[]'},
 						size: _user$project$LineChart_Container$static,
-						margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 60, 50),
+						margin: _p1.margin,
 						id: 'chart-id'
 					}),
 				interpolation: _user$project$LineChart_Interpolation$monotone,
@@ -23258,6 +23469,43 @@ var _user$project$Selection$junkConfig = function (model) {
 			};
 		});
 };
+var _user$project$Selection$selectPlaceholder = A2(
+	_elm_lang$html$Html$div,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$style(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'margin', _1: '40px 25px 30px 70px'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'width', _1: '505px'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'height', _1: '360px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'background', _1: '#b6b6b61a'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'line-height', _1: '340px'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('Select a range on the graph to the right!'),
+		_1: {ctor: '[]'}
+	});
 var _user$project$Selection$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -23404,9 +23652,9 @@ var _user$project$Selection$update = F2(
 					A2(_user$project$Selection$setHint, _p8._0, model));
 		}
 	});
-var _user$project$Selection$Config = F6(
-	function (a, b, c, d, e, f) {
-		return {range: a, junk: b, events: c, legends: d, dots: e, id: f};
+var _user$project$Selection$Config = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {range: a, junk: b, events: c, legends: d, dots: e, margin: f, width: g, id: h};
 	});
 var _user$project$Selection$Hint = function (a) {
 	return {ctor: 'Hint', _0: a};
@@ -23453,6 +23701,8 @@ var _user$project$Selection$chartZoom = F2(
 				events: _user$project$LineChart_Events$hoverOne(_user$project$Selection$Hint),
 				legends: _user$project$LineChart_Legends$none,
 				dots: _user$project$LineChart_Dots$hoverOne(model.hinted),
+				width: 600,
+				margin: A4(_user$project$LineChart_Container$Margin, 30, 25, 30, 70),
 				id: 'line-chart-zoom'
 			});
 	});
@@ -23526,6 +23776,8 @@ var _user$project$Selection$chart = function (model) {
 						}
 					}
 				}),
+			width: 670,
+			margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 30, 70),
 			dots: _user$project$LineChart_Dots$custom(
 				_user$project$LineChart_Dots$full(0)),
 			id: 'line-chart'
@@ -23534,22 +23786,35 @@ var _user$project$Selection$chart = function (model) {
 var _user$project$Selection$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
-		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
 		function () {
 			var _p13 = model.selection;
 			if (_p13.ctor === 'Nothing') {
 				return {
 					ctor: '::',
-					_0: _user$project$Selection$chart(model),
-					_1: {ctor: '[]'}
+					_0: _user$project$Selection$selectPlaceholder,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Selection$chart(model),
+						_1: {ctor: '[]'}
+					}
 				};
 			} else {
 				return {
 					ctor: '::',
-					_0: _user$project$Selection$chart(model),
+					_0: A2(_user$project$Selection$chartZoom, model, _p13._0),
 					_1: {
 						ctor: '::',
-						_0: A2(_user$project$Selection$chartZoom, model, _p13._0),
+						_0: _user$project$Selection$chart(model),
 						_1: {ctor: '[]'}
 					}
 				};
@@ -23766,14 +24031,14 @@ var _user$project$Main$view = function (model) {
 				ctor: '::',
 				_0: A2(
 					_elm_lang$html$Html$map,
-					_user$project$Main$SelectionMsg,
-					_user$project$Selection$view(model.selection)),
+					_user$project$Main$AreaMsg,
+					A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Area$view, model.area)),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html$map,
-						_user$project$Main$AreaMsg,
-						_user$project$Area$view(model.area)),
+						_user$project$Main$SelectionMsg,
+						A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Selection$view, model.selection)),
 					_1: {ctor: '[]'}
 				}
 			}
@@ -23793,7 +24058,7 @@ var _user$project$Main$Focus = function (a) {
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Selection.Msg":{"args":[],"tags":{"LeaveChart":["LineChart.Coordinate.Point"],"RecieveNumbers":["( List Float, List Float, List Float )"],"Hint":["Maybe.Maybe LineChart.Coordinate.Point"],"Drop":["LineChart.Coordinate.Point"],"LeaveContainer":["LineChart.Coordinate.Point"],"Hold":["LineChart.Coordinate.Point"],"Move":["LineChart.Coordinate.Point"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Main.Msg":{"args":[],"tags":{"Focus":["Maybe.Maybe Main.Id"],"AreaMsg":["Area.Msg"],"SelectionMsg":["Selection.Msg"]}},"Area.Msg":{"args":[],"tags":{"RecieveNumbers":["( List Float, List Float, List Float )"],"Hint":["Maybe.Maybe LineChart.Coordinate.Point"]}}},"aliases":{"LineChart.Coordinate.Point":{"args":[],"type":"{ x : Float, y : Float }"},"Main.Id":{"args":[],"type":"String"}},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Selection.Msg":{"args":[],"tags":{"LeaveChart":["LineChart.Coordinate.Point"],"RecieveNumbers":["( List Float, List Float, List Float )"],"Hint":["Maybe.Maybe LineChart.Coordinate.Point"],"Drop":["LineChart.Coordinate.Point"],"LeaveContainer":["LineChart.Coordinate.Point"],"Hold":["LineChart.Coordinate.Point"],"Move":["LineChart.Coordinate.Point"]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Main.Msg":{"args":[],"tags":{"Focus":["Maybe.Maybe Main.Id"],"AreaMsg":["Area.Msg"],"SelectionMsg":["Selection.Msg"]}},"Area.Msg":{"args":[],"tags":{"RecieveNumbers":["( List Float, List Float, List Float )"],"Hint":["List LineChart.Coordinate.Point"]}}},"aliases":{"LineChart.Coordinate.Point":{"args":[],"type":"{ x : Float, y : Float }"},"Main.Id":{"args":[],"type":"String"}},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

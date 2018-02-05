@@ -2,6 +2,7 @@ port module Main exposing (..)
 
 import Html
 import Html.Attributes
+import Html.Lazy
 import Selection
 import Area
 
@@ -93,10 +94,8 @@ view model =
   Html.div
     [ Html.Attributes.class "view" ]
     [ viewTitle
-    , Html.map SelectionMsg <|
-        Selection.view model.selection
-    , Html.map AreaMsg <|
-        Area.view model.area
+    , Html.map AreaMsg <| Html.Lazy.lazy Area.view model.area
+    , Html.map SelectionMsg <| Html.Lazy.lazy Selection.view model.selection
     ]
 
 

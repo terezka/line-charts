@@ -3,6 +3,8 @@ module Area exposing (Model, init, Msg, update, view)
 import Html
 import Time
 import Random
+import Date
+import Date.Format
 import LineChart
 import LineChart.Junk as Junk
 import LineChart.Area as Area
@@ -38,7 +40,7 @@ main =
 
 type alias Model =
     { data : Data
-    , hinted : Maybe Coordinate.Point
+    , hinted : List Coordinate.Point
     }
 
 
@@ -56,7 +58,7 @@ type alias Data =
 init : ( Model, Cmd Msg )
 init =
   ( { data = Data [] [] []
-    , hinted = Nothing
+    , hinted = []
     }
   , getNumbers
   )
@@ -91,7 +93,7 @@ toDate index =
   Time.hour * 24 * 256 * 40 + Time.hour * 24 * 21 * toFloat index
 
 
-setHint : Maybe Coordinate.Point -> Model -> Model
+setHint : List Coordinate.Point -> Model -> Model
 setHint hinted model =
   { model | hinted = hinted }
 
@@ -102,7 +104,7 @@ setHint hinted model =
 
 type Msg
   = RecieveNumbers ( List Float, List Float, List Float )
-  | Hint (Maybe Coordinate.Point)
+  | Hint (List Coordinate.Point)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -113,9 +115,9 @@ update msg model =
         |> setData numbers
         |> addCmd Cmd.none
 
-    Hint point ->
+    Hint points ->
       model
-        |> setHint point
+        |> setHint points
         |> addCmd Cmd.none
 
 
@@ -140,33 +142,33 @@ view model =
 chart : Model -> Html.Html Msg
 chart model =
   LineChart.viewCustom
-    { y = Axis.default 450 "cash" .y
+    { y = Axis.default 450 "cash ($k)" .y
     , x = Axis.time 1270 "time" .x
     , container =
         Container.custom
           { attributesHtml = []
           , attributesSvg = []
           , size = Container.static
-          , margin = Container.Margin 30 100 60 50
+          , margin = Container.Margin 30 100 60 70
           , id = "line-chart-area"
           }
     , interpolation = Interpolation.monotone
     , intersection = Intersection.default
     , legends = Legends.default
-    , events = Events.hoverOne Hint
+    , events = Events.hoverMany Hint
     , junk =
-        Junk.hoverOne model.hinted
-          [ ( "x", toString << round100 << .x )
-          , ( "y", toString << round100 << .y )
-          ]
+        Junk.hoverMany model.hinted
+          { x = Date.Format.format "%e. %b, %Y" << Date.fromTime << .x
+          , y = toString << round100 << .y
+          }
     , grid = Grid.dots 1 Colors.gray
     , area = Area.stacked 0.5
     , line = Line.default
     , dots = Dots.custom (Dots.empty 5 1)
     }
     [ LineChart.line Colors.pink Dots.diamond "Alice" model.data.alice
-    , LineChart.line Colors.red Dots.circle "Bobby" model.data.bobby
-    , LineChart.line Colors.purple Dots.triangle "Chuck" model.data.chuck
+    , LineChart.line Colors.cyan Dots.circle "Bobby" model.data.bobby
+    , LineChart.line Colors.blue Dots.triangle "Chuck" model.data.chuck
     ]
 
 

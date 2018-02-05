@@ -404,9 +404,24 @@ viewCustom config lines =
       toSystem config dataAllSafe
 
     -- Junk
+    junkLineInfo line =
+       ( Internal.Line.color config.line line []
+       , Internal.Line.label line
+       , Internal.Line.data line
+       )
+
+    getJunk =
+      Internal.Junk.getLayers
+        (List.map junkLineInfo lines)
+        (Internal.Axis.variable config.x)
+        (Internal.Axis.variable config.y)
+
+    addGrid =
+      Internal.Junk.addBelow
+        (Internal.Grid.view system config.x config.y config.grid)
+
     junk =
-      Internal.Junk.getLayers (Internal.Axis.variable config.x) (Internal.Axis.variable config.y) system config.junk
-        |> Internal.Junk.addBelow (Internal.Grid.view system config.x config.y config.grid)
+       getJunk system config.junk |> addGrid
 
     -- View
     viewLines =
