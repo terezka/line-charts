@@ -164,7 +164,7 @@ chart model =
           }
     , x =
         Axis.custom
-          { title = Title.default "time"
+          { title = Title.default "Time"
           , variable = Just << .x
           , pixels = 1270
           , range = Range.padded 20 60

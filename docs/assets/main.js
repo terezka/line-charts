@@ -19403,10 +19403,44 @@ var _user$project$LineChart_Axis_Title$atAxisMax = _user$project$Internal_Axis_T
 var _user$project$LineChart_Axis_Title$atDataMax = _user$project$Internal_Axis_Title$atDataMax;
 var _user$project$LineChart_Axis_Title$default = _user$project$Internal_Axis_Title$default;
 
+var _user$project$Lines$middle = function (r) {
+	return r.min + ((r.max - r.min) / 2);
+};
 var _user$project$Lines$round10 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 10)) / 10;
 };
+var _user$project$Lines$timeTick = function (time) {
+	return _user$project$LineChart_Axis_Tick$custom(
+		{
+			position: time.timestamp,
+			color: _user$project$LineChart_Colors$gray,
+			width: 1,
+			length: 5,
+			grid: false,
+			direction: _user$project$LineChart_Axis_Tick$negative,
+			label: _elm_lang$core$Maybe$Just(
+				A2(
+					_user$project$LineChart_Junk$label,
+					_user$project$LineChart_Colors$black,
+					_user$project$LineChart_Axis_Tick$format(time)))
+		});
+};
+var _user$project$Lines$rainTick = F2(
+	function (i, n) {
+		var label = _elm_lang$core$Native_Utils.eq(i, 0) ? 'bits' : (_elm_lang$core$Native_Utils.eq(i, 1) ? 'some' : 'lots');
+		return _user$project$LineChart_Axis_Tick$custom(
+			{
+				position: n,
+				color: _user$project$LineChart_Colors$gray,
+				width: 1,
+				length: 5,
+				grid: true,
+				direction: _user$project$LineChart_Axis_Tick$negative,
+				label: _elm_lang$core$Maybe$Just(
+					A2(_user$project$LineChart_Junk$label, _user$project$LineChart_Colors$black, label))
+			});
+	});
 var _user$project$Lines$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -19476,19 +19510,52 @@ var _user$project$Lines$chart = function (model) {
 	return A2(
 		_user$project$LineChart$viewCustom,
 		{
-			x: A3(
-				_user$project$LineChart_Axis$time,
-				700,
-				'Time',
-				function (_) {
-					return _.x;
+			y: _user$project$LineChart_Axis$custom(
+				{
+					title: _user$project$LineChart_Axis_Title$default('Rain'),
+					variable: function (_p3) {
+						return _elm_lang$core$Maybe$Just(
+							function (_) {
+								return _.y;
+							}(_p3));
+					},
+					pixels: 450,
+					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
+					axisLine: _user$project$LineChart_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
+					ticks: _user$project$LineChart_Axis_Ticks$custom(
+						F2(
+							function (dataRange, axisRange) {
+								return A2(
+									_elm_lang$core$List$indexedMap,
+									_user$project$Lines$rainTick,
+									{
+										ctor: '::',
+										_0: dataRange.min,
+										_1: {
+											ctor: '::',
+											_0: _user$project$Lines$middle(dataRange),
+											_1: {
+												ctor: '::',
+												_0: dataRange.max,
+												_1: {ctor: '[]'}
+											}
+										}
+									});
+							}))
 				}),
-			y: A3(
-				_user$project$LineChart_Axis$default,
-				450,
-				'Rain',
-				function (_) {
-					return _.y;
+			x: _user$project$LineChart_Axis$custom(
+				{
+					title: _user$project$LineChart_Axis_Title$default('Time'),
+					variable: function (_p4) {
+						return _elm_lang$core$Maybe$Just(
+							function (_) {
+								return _.x;
+							}(_p4));
+					},
+					pixels: 700,
+					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
+					axisLine: _user$project$LineChart_Axis_Line$none,
+					ticks: A2(_user$project$LineChart_Axis_Ticks$timeCustom, 10, _user$project$Lines$timeTick)
 				}),
 			container: _user$project$LineChart_Container$default('line-chart-lines'),
 			interpolation: _user$project$LineChart_Interpolation$default,
@@ -19504,7 +19571,7 @@ var _user$project$Lines$chart = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$teal, _user$project$LineChart_Dots$circle, 'Denmark', model.data.nora),
+			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$circle, 'Denmark', model.data.nora),
 			_1: {
 				ctor: '::',
 				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Sweden', model.data.noah),
@@ -20301,7 +20368,7 @@ var _user$project$Stepped$chart = function (model) {
 				}),
 			x: _user$project$LineChart_Axis$custom(
 				{
-					title: _user$project$LineChart_Axis_Title$default('time'),
+					title: _user$project$LineChart_Axis_Title$default('Time'),
 					variable: function (_p8) {
 						return _elm_lang$core$Maybe$Just(
 							function (_) {
@@ -20635,7 +20702,7 @@ var _user$project$Ticks$chart = function (model) {
 					ctor: '::',
 					_0: A5(
 						_user$project$LineChart$dash,
-						_user$project$LineChart_Colors$purple,
+						_user$project$LineChart_Colors$pink,
 						_user$project$LineChart_Dots$none,
 						'Class',
 						{

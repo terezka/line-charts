@@ -155,7 +155,7 @@ chart model =
     }
     [ LineChart.line Colors.blue Dots.plus "Nora" model.data.nora
     , LineChart.line Colors.cyan Dots.cross "Noah" model.data.noah
-    , LineChart.dash Colors.purple Dots.none "Class" [ 5, 2 ] model.data.nina
+    , LineChart.dash Colors.pink Dots.none "Class" [ 5, 2 ] model.data.nina
     ]
 
 
