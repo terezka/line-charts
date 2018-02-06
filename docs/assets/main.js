@@ -13820,7 +13820,7 @@ var _user$project$Internal_Junk$viewHeader = function (value) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Internal_Junk$containerLook = {
+var _user$project$Internal_Junk$standardStyles = {
 	ctor: '::',
 	_0: {ctor: '_Tuple2', _0: 'padding', _1: '5px'},
 	_1: {
@@ -13845,6 +13845,73 @@ var _user$project$Internal_Junk$containerLook = {
 		}
 	}
 };
+var _user$project$Internal_Junk$hoverAt = F5(
+	function (system, x, y, styles, view) {
+		var yPosition = A2(_user$project$LineChart_Coordinate$toSvgY, system, y);
+		var space = A2(_user$project$Internal_Junk$shouldFlip, system, x) ? -15 : 15;
+		var xPosition = A2(_user$project$LineChart_Coordinate$toSvgX, system, x) + space;
+		var posititonStyles = {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'left',
+				_1: A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(xPosition),
+					'px')
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'top',
+					_1: A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(yPosition),
+						'px')
+				},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+					_1: {
+						ctor: '::',
+						_0: A2(_user$project$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(-100%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(0)'},
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		};
+		var containerStyles = A2(
+			_elm_lang$core$Basics_ops['++'],
+			_user$project$Internal_Junk$standardStyles,
+			A2(_elm_lang$core$Basics_ops['++'], posititonStyles, styles));
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(containerStyles),
+				_1: {ctor: '[]'}
+			},
+			view);
+	});
+var _user$project$Internal_Junk$hover = F3(
+	function (system, x, styles) {
+		var containerStyles = A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: A2(_user$project$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translate(-100%, -50%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translate(0, -50%)'},
+				_1: {ctor: '[]'}
+			},
+			styles);
+		var y = A2(
+			_user$project$Internal_Junk$middle,
+			function (_) {
+				return _.y;
+			},
+			system);
+		return A4(_user$project$Internal_Junk$hoverAt, system, x, y, containerStyles);
+	});
 var _user$project$Internal_Junk$hoverManyHtml = F7(
 	function (system, toX, toY, format, first, hovered, series) {
 		var viewValue = function (_p2) {
@@ -13860,13 +13927,6 @@ var _user$project$Internal_Junk$hoverManyHtml = F7(
 						format.y(hovered));
 				});
 		};
-		var y = A2(
-			_user$project$Internal_Junk$middle,
-			function (_) {
-				return _.y;
-			},
-			system);
-		var yPosition = A2(_user$project$LineChart_Coordinate$toSvgY, system, y);
 		var x = A2(
 			_elm_lang$core$Maybe$withDefault,
 			A2(
@@ -13876,49 +13936,11 @@ var _user$project$Internal_Junk$hoverManyHtml = F7(
 				},
 				system),
 			toX(first));
-		var space = A2(_user$project$Internal_Junk$shouldFlip, system, x) ? -15 : 15;
-		var xPosition = A2(_user$project$LineChart_Coordinate$toSvgX, system, x) + space;
-		var containerStyles = A2(
-			_elm_lang$core$Basics_ops['++'],
-			_user$project$Internal_Junk$containerLook,
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'left',
-					_1: A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(xPosition),
-						'px')
-				},
-				_1: {
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'top',
-						_1: A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(yPosition),
-							'px')
-					},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
-						_1: {
-							ctor: '::',
-							_0: A2(_user$project$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translate(-100%, -50%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translate(0, -50%)'},
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			});
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(containerStyles),
-				_1: {ctor: '[]'}
-			},
+		return A4(
+			_user$project$Internal_Junk$hover,
+			system,
+			x,
+			{ctor: '[]'},
 			{
 				ctor: '::',
 				_0: _user$project$Internal_Junk$viewHeader(
@@ -13945,7 +13967,6 @@ var _user$project$Internal_Junk$hoverOneHtml = F5(
 				},
 				system),
 			toY(hovered));
-		var yPosition = A2(_user$project$LineChart_Coordinate$toSvgY, system, y);
 		var x = A2(
 			_elm_lang$core$Maybe$withDefault,
 			A2(
@@ -13955,49 +13976,12 @@ var _user$project$Internal_Junk$hoverOneHtml = F5(
 				},
 				system),
 			toX(hovered));
-		var space = A2(_user$project$Internal_Junk$shouldFlip, system, x) ? -15 : 15;
-		var xPosition = A2(_user$project$LineChart_Coordinate$toSvgX, system, x) + space;
-		var containerStyles = A2(
-			_elm_lang$core$Basics_ops['++'],
-			_user$project$Internal_Junk$containerLook,
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'left',
-					_1: A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(xPosition),
-						'px')
-				},
-				_1: {
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'top',
-						_1: A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(yPosition),
-							'px')
-					},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
-						_1: {
-							ctor: '::',
-							_0: A2(_user$project$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(-100%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(0)'},
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			});
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(containerStyles),
-				_1: {ctor: '[]'}
-			},
+		return A5(
+			_user$project$Internal_Junk$hoverAt,
+			system,
+			x,
+			y,
+			{ctor: '[]'},
 			A2(_elm_lang$core$List$map, viewValue, properties));
 	});
 var _user$project$Internal_Junk$addBelow = F2(
@@ -14094,6 +14078,8 @@ var _user$project$Internal_Junk$hoverMany = F2(
 		}
 	});
 
+var _user$project$LineChart_Junk$hoverAt = _user$project$Internal_Junk$hoverAt;
+var _user$project$LineChart_Junk$hover = _user$project$Internal_Junk$hover;
 var _user$project$LineChart_Junk$withinChartArea = _user$project$Internal_Svg$withinChartArea;
 var _user$project$LineChart_Junk$label = function (color) {
 	return _user$project$Internal_Svg$label(
@@ -17054,6 +17040,10 @@ var _user$project$Internal_Interpolation$after = F2(
 			}
 		};
 	});
+var _user$project$Internal_Interpolation$fakeLast = F2(
+	function (last0, last1) {
+		return A2(_user$project$Internal_Data$Point, (last1.x + last1.x) - last0.x, last1.y);
+	});
 var _user$project$Internal_Interpolation$stepped = function (sections) {
 	var expand = F2(
 		function (result, section) {
@@ -17062,32 +17052,58 @@ var _user$project$Internal_Interpolation$stepped = function (sections) {
 				var _p0 = section;
 				if (_p0._0.ctor === '::') {
 					if (_p0._0._1.ctor === '::') {
-						var _p1 = _p0._0._1._0;
-						var _v1 = A2(
-							_elm_lang$core$Basics_ops['++'],
-							result,
-							A2(_user$project$Internal_Interpolation$after, _p0._0._0, _p1)),
-							_v2 = {
-							ctor: '_Tuple2',
-							_0: {ctor: '::', _0: _p1, _1: _p0._0._1._1},
-							_1: _p0._1
-						};
-						result = _v1;
-						section = _v2;
-						continue expand;
-					} else {
-						if (_p0._1.ctor === 'Just') {
-							return A2(
+						if (_p0._0._1._1.ctor === '[]') {
+							if (_p0._1.ctor === 'Just') {
+								var _p2 = _p0._0._1._0;
+								var _p1 = _p0._0._0;
+								return A2(
+									_elm_lang$core$Basics_ops['++'],
+									result,
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										A2(_user$project$Internal_Interpolation$after, _p1, _p2),
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											A2(
+												_user$project$Internal_Interpolation$after,
+												_p2,
+												A2(_user$project$Internal_Interpolation$fakeLast, _p1, _p2)),
+											{
+												ctor: '::',
+												_0: A2(_user$project$Internal_Data$Point, _p0._1._0.x, _p2.y),
+												_1: {ctor: '[]'}
+											})));
+							} else {
+								var _p4 = _p0._0._1._0;
+								var _p3 = _p0._0._0;
+								return A2(
+									_elm_lang$core$Basics_ops['++'],
+									result,
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										A2(_user$project$Internal_Interpolation$after, _p3, _p4),
+										A2(
+											_user$project$Internal_Interpolation$after,
+											_p4,
+											A2(_user$project$Internal_Interpolation$fakeLast, _p3, _p4))));
+							}
+						} else {
+							var _p5 = _p0._0._1._0;
+							var _v1 = A2(
 								_elm_lang$core$Basics_ops['++'],
 								result,
-								{
-									ctor: '::',
-									_0: A2(_user$project$Internal_Data$Point, _p0._1._0.x, _p0._0._0.y),
-									_1: {ctor: '[]'}
-								});
-						} else {
-							return result;
+								A2(_user$project$Internal_Interpolation$after, _p0._0._0, _p5)),
+								_v2 = {
+								ctor: '_Tuple2',
+								_0: {ctor: '::', _0: _p5, _1: _p0._0._1._1},
+								_1: _p0._1
+							};
+							result = _v1;
+							section = _v2;
+							continue expand;
 						}
+					} else {
+						return result;
 					}
 				} else {
 					return result;
@@ -17096,14 +17112,14 @@ var _user$project$Internal_Interpolation$stepped = function (sections) {
 		});
 	return A2(
 		_elm_lang$core$List$map,
-		function (_p2) {
+		function (_p6) {
 			return A2(
 				_elm_lang$core$List$map,
 				_user$project$Internal_Path$Line,
 				A2(
 					expand,
 					{ctor: '[]'},
-					_p2));
+					_p6));
 		},
 		sections);
 };
@@ -17155,59 +17171,59 @@ var _user$project$Internal_Interpolation$Previous = function (a) {
 	return {ctor: 'Previous', _0: a};
 };
 var _user$project$Internal_Interpolation$monotonePart = F2(
-	function (points, _p3) {
+	function (points, _p7) {
 		monotonePart:
 		while (true) {
-			var _p4 = _p3;
-			var _p17 = _p4._0;
-			var _p16 = _p4._1;
-			var _p5 = {ctor: '_Tuple2', _0: _p17, _1: points};
+			var _p8 = _p7;
+			var _p21 = _p8._0;
+			var _p20 = _p8._1;
+			var _p9 = {ctor: '_Tuple2', _0: _p21, _1: points};
 			_v4_4:
 			do {
-				if (_p5._0.ctor === 'First') {
-					if ((_p5._1.ctor === '::') && (_p5._1._1.ctor === '::')) {
-						if (_p5._1._1._1.ctor === '::') {
-							var _p8 = _p5._1._1._1._0;
-							var _p7 = _p5._1._1._0;
-							var _p6 = _p5._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p6, _p7, _p8);
-							var t0 = A3(_user$project$Internal_Interpolation$slope2, _p6, _p7, t1);
+				if (_p9._0.ctor === 'First') {
+					if ((_p9._1.ctor === '::') && (_p9._1._1.ctor === '::')) {
+						if (_p9._1._1._1.ctor === '::') {
+							var _p12 = _p9._1._1._1._0;
+							var _p11 = _p9._1._1._0;
+							var _p10 = _p9._1._0;
+							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p10, _p11, _p12);
+							var t0 = A3(_user$project$Internal_Interpolation$slope2, _p10, _p11, t1);
 							var _v5 = {
 								ctor: '::',
-								_0: _p7,
-								_1: {ctor: '::', _0: _p8, _1: _p5._1._1._1._1}
+								_0: _p11,
+								_1: {ctor: '::', _0: _p12, _1: _p9._1._1._1._1}
 							},
 								_v6 = {
 								ctor: '_Tuple2',
 								_0: _user$project$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
-									_p16,
+									_p20,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p6, _p7, t0, t1),
+										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p10, _p11, t0, t1),
 										_1: {ctor: '[]'}
 									})
 							};
 							points = _v5;
-							_p3 = _v6;
+							_p7 = _v6;
 							continue monotonePart;
 						} else {
-							var _p13 = _p5._1._1._0;
-							var _p12 = _p5._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p12, _p13, _p13);
+							var _p17 = _p9._1._1._0;
+							var _p16 = _p9._1._0;
+							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p16, _p17, _p17);
 							return {
 								ctor: '_Tuple2',
 								_0: _user$project$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
-									_p16,
+									_p20,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p12, _p13, t1, t1),
+										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p16, _p17, t1, t1),
 										_1: {
 											ctor: '::',
-											_0: _user$project$Internal_Path$Line(_p13),
+											_0: _user$project$Internal_Path$Line(_p17),
 											_1: {ctor: '[]'}
 										}
 									})
@@ -17217,48 +17233,48 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 						break _v4_4;
 					}
 				} else {
-					if ((_p5._1.ctor === '::') && (_p5._1._1.ctor === '::')) {
-						if (_p5._1._1._1.ctor === '::') {
-							var _p11 = _p5._1._1._1._0;
-							var _p10 = _p5._1._1._0;
-							var _p9 = _p5._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p9, _p10, _p11);
+					if ((_p9._1.ctor === '::') && (_p9._1._1.ctor === '::')) {
+						if (_p9._1._1._1.ctor === '::') {
+							var _p15 = _p9._1._1._1._0;
+							var _p14 = _p9._1._1._0;
+							var _p13 = _p9._1._0;
+							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p13, _p14, _p15);
 							var _v7 = {
 								ctor: '::',
-								_0: _p10,
-								_1: {ctor: '::', _0: _p11, _1: _p5._1._1._1._1}
+								_0: _p14,
+								_1: {ctor: '::', _0: _p15, _1: _p9._1._1._1._1}
 							},
 								_v8 = {
 								ctor: '_Tuple2',
 								_0: _user$project$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
-									_p16,
+									_p20,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p9, _p10, _p5._0._0, t1),
+										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p13, _p14, _p9._0._0, t1),
 										_1: {ctor: '[]'}
 									})
 							};
 							points = _v7;
-							_p3 = _v8;
+							_p7 = _v8;
 							continue monotonePart;
 						} else {
-							var _p15 = _p5._1._1._0;
-							var _p14 = _p5._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p14, _p15, _p15);
+							var _p19 = _p9._1._1._0;
+							var _p18 = _p9._1._0;
+							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p18, _p19, _p19);
 							return {
 								ctor: '_Tuple2',
 								_0: _user$project$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
-									_p16,
+									_p20,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p14, _p15, _p5._0._0, t1),
+										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p18, _p19, _p9._0._0, t1),
 										_1: {
 											ctor: '::',
-											_0: _user$project$Internal_Path$Line(_p15),
+											_0: _user$project$Internal_Path$Line(_p19),
 											_1: {ctor: '[]'}
 										}
 									})
@@ -17269,43 +17285,43 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 					}
 				}
 			} while(false);
-			return {ctor: '_Tuple2', _0: _p17, _1: _p16};
+			return {ctor: '_Tuple2', _0: _p21, _1: _p20};
 		}
 	});
 var _user$project$Internal_Interpolation$monotoneSection = F2(
-	function (points, _p18) {
-		var _p19 = _p18;
-		var _p23 = _p19._0;
-		var _p20 = function () {
-			var _p21 = points;
-			if (_p21.ctor === '::') {
-				var _p22 = _p21._0;
+	function (points, _p22) {
+		var _p23 = _p22;
+		var _p27 = _p23._0;
+		var _p24 = function () {
+			var _p25 = points;
+			if (_p25.ctor === '::') {
+				var _p26 = _p25._0;
 				return A2(
 					_user$project$Internal_Interpolation$monotonePart,
-					{ctor: '::', _0: _p22, _1: _p21._1},
+					{ctor: '::', _0: _p26, _1: _p25._1},
 					{
 						ctor: '_Tuple2',
-						_0: _p23,
+						_0: _p27,
 						_1: {
 							ctor: '::',
-							_0: _user$project$Internal_Path$Line(_p22),
+							_0: _user$project$Internal_Path$Line(_p26),
 							_1: {ctor: '[]'}
 						}
 					});
 			} else {
 				return {
 					ctor: '_Tuple2',
-					_0: _p23,
+					_0: _p27,
 					_1: {ctor: '[]'}
 				};
 			}
 		}();
-		var t0 = _p20._0;
-		var commands = _p20._1;
+		var t0 = _p24._0;
+		var commands = _p24._1;
 		return {
 			ctor: '_Tuple2',
 			_0: t0,
-			_1: {ctor: '::', _0: commands, _1: _p19._1}
+			_1: {ctor: '::', _0: commands, _1: _p23._1}
 		};
 	});
 var _user$project$Internal_Interpolation$First = {ctor: 'First'};
@@ -17324,7 +17340,7 @@ var _user$project$Internal_Interpolation$monotone = function (sections) {
 var _user$project$Internal_Interpolation$toCommands = F2(
 	function (interpolation, data) {
 		var pointsSections = _elm_lang$core$List$map(
-			function (_p24) {
+			function (_p28) {
 				return A2(
 					_elm_lang$core$Tuple$mapSecond,
 					_elm_lang$core$Maybe$map(
@@ -17337,19 +17353,19 @@ var _user$project$Internal_Interpolation$toCommands = F2(
 							function (_) {
 								return _.point;
 							}),
-						_p24));
+						_p28));
 			});
 		var points = _elm_lang$core$List$map(
-			function (_p25) {
+			function (_p29) {
 				return A2(
 					_elm_lang$core$List$map,
 					function (_) {
 						return _.point;
 					},
-					_elm_lang$core$Tuple$first(_p25));
+					_elm_lang$core$Tuple$first(_p29));
 			});
-		var _p26 = interpolation;
-		switch (_p26.ctor) {
+		var _p30 = interpolation;
+		switch (_p30.ctor) {
 			case 'Linear':
 				return _user$project$Internal_Interpolation$linear(
 					points(data));
@@ -19399,7 +19415,7 @@ var _user$project$Selection$viewChart = F2(
 			{
 				y: A3(
 					_user$project$LineChart_Axis$default,
-					420,
+					450,
 					'y',
 					function (_) {
 						return _.y;
@@ -19748,7 +19764,7 @@ var _user$project$Selection$chartZoom = F2(
 				legends: _user$project$LineChart_Legends$none,
 				dots: _user$project$LineChart_Dots$hoverOne(model.hinted),
 				width: 600,
-				margin: A4(_user$project$LineChart_Container$Margin, 30, 25, 30, 70),
+				margin: A4(_user$project$LineChart_Container$Margin, 30, 25, 60, 70),
 				id: 'line-chart-zoom'
 			});
 	});
@@ -19823,7 +19839,7 @@ var _user$project$Selection$chart = function (model) {
 					}
 				}),
 			width: 670,
-			margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 30, 70),
+			margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 60, 70),
 			dots: _user$project$LineChart_Dots$custom(
 				_user$project$LineChart_Dots$full(0)),
 			id: 'line-chart'
@@ -19911,6 +19927,279 @@ var _user$project$Selection$main = _elm_lang$html$Html$program(
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})();
 
+var _user$project$Stepped$round100 = function ($float) {
+	return _elm_lang$core$Basics$toFloat(
+		_elm_lang$core$Basics$round($float * 100)) / 100;
+};
+var _user$project$Stepped$viewHint = function (_p0) {
+	var _p1 = _p0;
+	var style = function (other) {
+		return _elm_lang$html$Html_Attributes$style(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'margin', _1: '3px'},
+				_1: other
+			});
+	};
+	var yString = A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(_p1.y),
+		' lines of code');
+	var xString = A2(
+		_mgold$elm_date_format$Date_Format$format,
+		'%e. %b, %Y',
+		_elm_lang$core$Date$fromTime(_p1.x));
+	return {
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$p,
+			{
+				ctor: '::',
+				_0: style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid black'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '3px'},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(xString),
+				_1: {ctor: '[]'}
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$p,
+				{
+					ctor: '::',
+					_0: style(
+						{ctor: '[]'}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(yString),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		}
+	};
+};
+var _user$project$Stepped$hintStyles = {
+	ctor: '::',
+	_0: {ctor: '_Tuple2', _0: '', _1: ''},
+	_1: {ctor: '[]'}
+};
+var _user$project$Stepped$addCmd = F2(
+	function (cmd, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Stepped$setHint = F2(
+	function (hinted, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{hinted: hinted});
+	});
+var _user$project$Stepped$xInterval = _elm_lang$core$Time$hour * 24;
+var _user$project$Stepped$toDate = function (index) {
+	return (((_elm_lang$core$Time$hour * 24) * 356) * 45) + (_user$project$Stepped$xInterval * _elm_lang$core$Basics$toFloat(index));
+};
+var _user$project$Stepped$toData = function (numbers) {
+	return A2(
+		_elm_lang$core$List$indexedMap,
+		F2(
+			function (i, n) {
+				return A2(
+					_user$project$LineChart_Coordinate$Point,
+					_user$project$Stepped$toDate(i),
+					_elm_lang$core$Basics$toFloat(n));
+			}),
+		numbers);
+};
+var _user$project$Stepped$Model = F2(
+	function (a, b) {
+		return {data: a, hinted: b};
+	});
+var _user$project$Stepped$Data = F3(
+	function (a, b, c) {
+		return {alice: a, bobby: b, chuck: c};
+	});
+var _user$project$Stepped$setData = F2(
+	function (_p2, model) {
+		var _p3 = _p2;
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{
+				data: A3(
+					_user$project$Stepped$Data,
+					_user$project$Stepped$toData(_p3._0),
+					_user$project$Stepped$toData(_p3._1),
+					_user$project$Stepped$toData(_p3._2))
+			});
+	});
+var _user$project$Stepped$update = F2(
+	function (msg, model) {
+		var _p4 = msg;
+		if (_p4.ctor === 'RecieveNumbers') {
+			return A2(
+				_user$project$Stepped$addCmd,
+				_elm_lang$core$Platform_Cmd$none,
+				A2(_user$project$Stepped$setData, _p4._0, model));
+		} else {
+			return A2(
+				_user$project$Stepped$addCmd,
+				_elm_lang$core$Platform_Cmd$none,
+				A2(_user$project$Stepped$setHint, _p4._0, model));
+		}
+	});
+var _user$project$Stepped$Hint = function (a) {
+	return {ctor: 'Hint', _0: a};
+};
+var _user$project$Stepped$chart = function (model) {
+	return A2(
+		_user$project$LineChart$viewCustom,
+		{
+			y: _user$project$LineChart_Axis$custom(
+				{
+					title: _user$project$LineChart_Axis_Title$default('LoC'),
+					variable: function (_p5) {
+						return _elm_lang$core$Maybe$Just(
+							function (_) {
+								return _.y;
+							}(_p5));
+					},
+					pixels: 450,
+					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
+					axisLine: _user$project$LineChart_Axis_Line$full(_user$project$LineChart_Colors$gray),
+					ticks: _user$project$LineChart_Axis_Ticks$float(8)
+				}),
+			x: _user$project$LineChart_Axis$custom(
+				{
+					title: _user$project$LineChart_Axis_Title$default('time'),
+					variable: function (_p6) {
+						return _elm_lang$core$Maybe$Just(
+							function (_) {
+								return _.x;
+							}(_p6));
+					},
+					pixels: 1270,
+					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 60),
+					axisLine: _user$project$LineChart_Axis_Line$full(_user$project$LineChart_Colors$gray),
+					ticks: _user$project$LineChart_Axis_Ticks$time(10)
+				}),
+			container: A5(_user$project$LineChart_Container$spaced, 'line-chart-area', 30, 100, 60, 70),
+			interpolation: _user$project$LineChart_Interpolation$stepped,
+			intersection: _user$project$LineChart_Axis_Intersection$default,
+			legends: _user$project$LineChart_Legends$default,
+			events: _user$project$LineChart_Events$hoverMany(
+				function (_p7) {
+					return _user$project$Stepped$Hint(
+						_elm_lang$core$List$head(_p7));
+				}),
+			junk: function () {
+				var _p8 = model.hinted;
+				if (_p8.ctor === 'Nothing') {
+					return _user$project$LineChart_Junk$default;
+				} else {
+					var _p9 = _p8._0;
+					return _user$project$LineChart_Junk$custom(
+						function (system) {
+							var x = _p9.x + (_user$project$Stepped$xInterval / 2);
+							return {
+								below: {
+									ctor: '::',
+									_0: A3(
+										_user$project$LineChart_Junk$vertical,
+										system,
+										{ctor: '[]'},
+										x),
+									_1: {ctor: '[]'}
+								},
+								above: {ctor: '[]'},
+								html: {
+									ctor: '::',
+									_0: A5(
+										_user$project$LineChart_Junk$hoverAt,
+										system,
+										x,
+										system.y.max,
+										{ctor: '[]'},
+										_user$project$Stepped$viewHint(_p9)),
+									_1: {ctor: '[]'}
+								}
+							};
+						});
+				}
+			}(),
+			grid: _user$project$LineChart_Grid$default,
+			area: _user$project$LineChart_Area$normal(0.5),
+			line: _user$project$LineChart_Line$default,
+			dots: _user$project$LineChart_Dots$custom(
+				A2(_user$project$LineChart_Dots$empty, 5, 1))
+		},
+		{
+			ctor: '::',
+			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$none, 'Alice', model.data.alice),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Stepped$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Stepped$chart(model),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Stepped$RecieveNumbers = function (a) {
+	return {ctor: 'RecieveNumbers', _0: a};
+};
+var _user$project$Stepped$getNumbers = function () {
+	var genNumbers = A2(
+		_elm_lang$core$Random$list,
+		30,
+		A2(_elm_lang$core$Random$int, -70, 100));
+	return A2(
+		_elm_lang$core$Random$generate,
+		_user$project$Stepped$RecieveNumbers,
+		A4(
+			_elm_lang$core$Random$map3,
+			F3(
+				function (v0, v1, v2) {
+					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+				}),
+			genNumbers,
+			genNumbers,
+			genNumbers));
+}();
+var _user$project$Stepped$init = {
+	ctor: '_Tuple2',
+	_0: {
+		data: A3(
+			_user$project$Stepped$Data,
+			{ctor: '[]'},
+			{ctor: '[]'},
+			{ctor: '[]'}),
+		hinted: _elm_lang$core$Maybe$Nothing
+	},
+	_1: _user$project$Stepped$getNumbers
+};
+var _user$project$Stepped$main = _elm_lang$html$Html$program(
+	{
+		init: _user$project$Stepped$init,
+		update: _user$project$Stepped$update,
+		view: _user$project$Stepped$view,
+		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
+	})();
+
 var _user$project$Main$viewTitle = A2(
 	_elm_lang$html$Html$div,
 	{
@@ -19929,7 +20218,7 @@ var _user$project$Main$viewTitle = A2(
 			},
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html$text('line-charts'),
+				_0: _elm_lang$html$Html$text('series'),
 				_1: {ctor: '[]'}
 			}),
 		_1: {
@@ -20026,10 +20315,13 @@ var _user$project$Main$highlight = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return null;
 	});
-var _user$project$Main$Model = F3(
-	function (a, b, c) {
-		return {focused: a, selection: b, area: c};
+var _user$project$Main$Model = F4(
+	function (a, b, c, d) {
+		return {focused: a, selection: b, area: c, stepped: d};
 	});
+var _user$project$Main$SteppedMsg = function (a) {
+	return {ctor: 'SteppedMsg', _0: a};
+};
 var _user$project$Main$AreaMsg = function (a) {
 	return {ctor: 'AreaMsg', _0: a};
 };
@@ -20037,15 +20329,18 @@ var _user$project$Main$SelectionMsg = function (a) {
 	return {ctor: 'SelectionMsg', _0: a};
 };
 var _user$project$Main$init = function () {
-	var _p0 = _user$project$Area$init;
-	var area = _p0._0;
-	var cmdArea = _p0._1;
-	var _p1 = _user$project$Selection$init;
-	var selection = _p1._0;
-	var cmdSelection = _p1._1;
+	var _p0 = _user$project$Stepped$init;
+	var stepped = _p0._0;
+	var cmdStepped = _p0._1;
+	var _p1 = _user$project$Area$init;
+	var area = _p1._0;
+	var cmdArea = _p1._1;
+	var _p2 = _user$project$Selection$init;
+	var selection = _p2._0;
+	var cmdSelection = _p2._1;
 	return {
 		ctor: '_Tuple2',
-		_0: {focused: _elm_lang$core$Maybe$Nothing, selection: selection, area: area},
+		_0: {focused: _elm_lang$core$Maybe$Nothing, selection: selection, area: area, stepped: stepped},
 		_1: _elm_lang$core$Platform_Cmd$batch(
 			{
 				ctor: '::',
@@ -20053,25 +20348,29 @@ var _user$project$Main$init = function () {
 				_1: {
 					ctor: '::',
 					_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$AreaMsg, cmdArea),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SteppedMsg, cmdStepped),
+						_1: {ctor: '[]'}
+					}
 				}
 			})
 	};
 }();
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		switch (_p2.ctor) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
 			case 'Focus':
 				return {
 					ctor: '_Tuple2',
-					_0: A2(_user$project$Main$updateFocused, _p2._0, model),
+					_0: A2(_user$project$Main$updateFocused, _p3._0, model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SelectionMsg':
-				var _p3 = A2(_user$project$Selection$update, _p2._0, model.selection);
-				var selection = _p3._0;
-				var cmd = _p3._1;
+				var _p4 = A2(_user$project$Selection$update, _p3._0, model.selection);
+				var selection = _p4._0;
+				var cmd = _p4._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -20079,16 +20378,27 @@ var _user$project$Main$update = F2(
 						{selection: selection}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SelectionMsg, cmd)
 				};
-			default:
-				var _p4 = A2(_user$project$Area$update, _p2._0, model.area);
-				var area = _p4._0;
-				var cmd = _p4._1;
+			case 'AreaMsg':
+				var _p5 = A2(_user$project$Area$update, _p3._0, model.area);
+				var area = _p5._0;
+				var cmd = _p5._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{area: area}),
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$AreaMsg, cmd)
+				};
+			default:
+				var _p6 = A2(_user$project$Stepped$update, _p3._0, model.stepped);
+				var stepped = _p6._0;
+				var cmd = _p6._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{stepped: stepped}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SteppedMsg, cmd)
 				};
 		}
 	});
@@ -20115,7 +20425,14 @@ var _user$project$Main$view = function (model) {
 						_elm_lang$html$Html$map,
 						_user$project$Main$SelectionMsg,
 						A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Selection$view, model.selection)),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$map,
+							_user$project$Main$SteppedMsg,
+							A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Stepped$view, model.stepped)),
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		});

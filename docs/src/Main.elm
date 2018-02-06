@@ -3,8 +3,9 @@ port module Main exposing (..)
 import Html
 import Html.Attributes
 import Html.Lazy
-import Selection
 import Area
+import Selection
+import Stepped
 
 
 
@@ -15,6 +16,7 @@ type alias Model =
     { focused : Maybe Id
     , selection : Selection.Model
     , area : Area.Model
+    , stepped : Stepped.Model
     }
 
 
@@ -30,14 +32,19 @@ init =
 
     ( area, cmdArea ) =
       Area.init
+
+    ( stepped, cmdStepped ) =
+      Stepped.init
   in
     ( { focused = Nothing
       , selection = selection
       , area = area
+      , stepped = stepped
       }
     , Cmd.batch
         [ Cmd.map SelectionMsg cmdSelection
         , Cmd.map AreaMsg cmdArea
+        , Cmd.map SteppedMsg cmdStepped
         ]
     )
 
@@ -49,6 +56,7 @@ type Msg
   = Focus (Maybe Id)
   | SelectionMsg Selection.Msg
   | AreaMsg Area.Msg
+  | SteppedMsg Stepped.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -77,6 +85,15 @@ update msg model =
         , Cmd.map AreaMsg cmd
         )
 
+    SteppedMsg msg ->
+      let
+        ( stepped, cmd ) =
+          Stepped.update msg model.stepped
+      in
+        ( { model | stepped = stepped }
+        , Cmd.map SteppedMsg cmd
+        )
+
 
 updateFocused : Maybe Id -> Model -> Model
 updateFocused id model =
@@ -96,6 +113,7 @@ view model =
     [ viewTitle
     , Html.map AreaMsg <| Html.Lazy.lazy Area.view model.area
     , Html.map SelectionMsg <| Html.Lazy.lazy Selection.view model.selection
+    , Html.map SteppedMsg <| Html.Lazy.lazy Stepped.view model.stepped
     ]
 
 
@@ -105,7 +123,7 @@ viewTitle =
         [ Html.Attributes.class "view__title__container" ]
         [ Html.h1
             [ Html.Attributes.class "view__title" ]
-            [ Html.text "line-charts" ]
+            [ Html.text "series" ]
         , Html.div
             [ Html.Attributes.class "view__github-link" ]
             [ Html.text "Find it on "
