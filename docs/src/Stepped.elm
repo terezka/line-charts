@@ -223,6 +223,7 @@ viewHint { x, y } =
       [ pStyle
           [ ( "border-bottom", "1px solid black" )
           , ( "padding-bottom", "3px" )
+          , ( "margin-bottom", "5px" )
           ]
       ]
       [ Html.text xString ]

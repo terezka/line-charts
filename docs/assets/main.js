@@ -20161,7 +20161,11 @@ var _user$project$Stepped$viewHint = function (_p0) {
 						_1: {
 							ctor: '::',
 							_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '3px'},
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '5px'},
+								_1: {ctor: '[]'}
+							}
 						}
 					}),
 				_1: {ctor: '[]'}
