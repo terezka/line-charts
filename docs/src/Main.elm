@@ -6,6 +6,7 @@ import Html.Lazy
 import Area
 import Selection
 import Stepped
+import Ticks
 
 
 
@@ -17,6 +18,7 @@ type alias Model =
     , selection : Selection.Model
     , area : Area.Model
     , stepped : Stepped.Model
+    , ticks : Ticks.Model
     }
 
 
@@ -35,16 +37,21 @@ init =
 
     ( stepped, cmdStepped ) =
       Stepped.init
+
+    ( ticks, cmdTicks ) =
+      Ticks.init
   in
     ( { focused = Nothing
       , selection = selection
       , area = area
       , stepped = stepped
+      , ticks = ticks
       }
     , Cmd.batch
         [ Cmd.map SelectionMsg cmdSelection
         , Cmd.map AreaMsg cmdArea
         , Cmd.map SteppedMsg cmdStepped
+        , Cmd.map TicksMsg cmdTicks
         ]
     )
 
@@ -57,6 +64,7 @@ type Msg
   | SelectionMsg Selection.Msg
   | AreaMsg Area.Msg
   | SteppedMsg Stepped.Msg
+  | TicksMsg Ticks.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -94,6 +102,15 @@ update msg model =
         , Cmd.map SteppedMsg cmd
         )
 
+    TicksMsg msg ->
+      let
+        ( ticks, cmd ) =
+          Ticks.update msg model.ticks
+      in
+        ( { model | ticks = ticks }
+        , Cmd.map TicksMsg cmd
+        )
+
 
 updateFocused : Maybe Id -> Model -> Model
 updateFocused id model =
@@ -114,6 +131,7 @@ view model =
     , Html.map AreaMsg <| Html.Lazy.lazy Area.view model.area
     , Html.map SelectionMsg <| Html.Lazy.lazy Selection.view model.selection
     , Html.map SteppedMsg <| Html.Lazy.lazy Stepped.view model.stepped
+    , Html.map TicksMsg <| Html.Lazy.lazy Ticks.view model.ticks
     ]
 
 

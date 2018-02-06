@@ -195,11 +195,6 @@ chart model =
     [ LineChart.line Colors.pink Dots.none "Alice" model.data.alice ]
 
 
-hintStyles : List ( String, String )
-hintStyles =
-  [ ( "", "")]
-
-
 viewHint :  Coordinate.Point -> List (Html.Html msg)
 viewHint { x, y } =
   let
