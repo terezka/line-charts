@@ -175,7 +175,7 @@ viewTitle =
                 [ Html.text "Twitter" ]
             ]
         , Html.p [ Html.Attributes.class "view__tag-line" ]
-            [ Html.text "A opinionated library for plotting lines charts in SVG." ]
+            [ Html.text "A opinionated library for plotting series in SVG." ]
         , Html.p [ Html.Attributes.class "view__tag-line" ]
             [ Html.text "Written in all Elm." ]
         ]

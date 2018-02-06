@@ -45,9 +45,9 @@ type alias Model =
 
 
 type alias Data =
-  { alice : List Coordinate.Point
-  , bobby : List Coordinate.Point
-  , chuck : List Coordinate.Point
+  { nora : List Coordinate.Point
+  , noah : List Coordinate.Point
+  , nina : List Coordinate.Point
   }
 
 
@@ -159,9 +159,9 @@ chart model =
     , line = Line.default
     , dots = Dots.custom (Dots.empty 5 1)
     }
-    [ LineChart.line Colors.pink Dots.diamond "Alice" model.data.alice
-    , LineChart.line Colors.cyan Dots.circle "Bobby" model.data.bobby
-    , LineChart.line Colors.blue Dots.triangle "Chuck" model.data.chuck
+    [ LineChart.line Colors.pink Dots.diamond "Nora" model.data.nora
+    , LineChart.line Colors.cyan Dots.circle "Noah" model.data.noah
+    , LineChart.line Colors.blue Dots.triangle "Nina" model.data.nina
     ]
 
 

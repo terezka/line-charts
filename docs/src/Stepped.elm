@@ -6,6 +6,7 @@ import Time
 import Random
 import Date
 import Date.Format
+import Color.Convert
 import LineChart
 import LineChart.Junk as Junk
 import LineChart.Area as Area
@@ -50,9 +51,9 @@ type alias Model =
 
 
 type alias Data =
-  { alice : List Coordinate.Point
-  , bobby : List Coordinate.Point
-  , chuck : List Coordinate.Point
+  { nora : List Coordinate.Point
+  , noah : List Coordinate.Point
+  , nina : List Coordinate.Point
   }
 
 
@@ -192,27 +193,44 @@ chart model =
     , line = Line.default
     , dots = Dots.custom (Dots.empty 5 1)
     }
-    [ LineChart.line Colors.pink Dots.none "Alice" model.data.alice ]
+    [ LineChart.line Colors.pink Dots.none "Nora" model.data.nora ]
 
 
 viewHint :  Coordinate.Point -> List (Html.Html msg)
 viewHint { x, y } =
   let
-    xString = Date.Format.format "%e. %b, %Y" (Date.fromTime x)
-    yString = toString y ++ " lines of code"
-    style other =
+    xString =
+       Date.Format.format "%e. %b, %Y" (Date.fromTime x)
+
+    pStyle other =
       Html.Attributes.style <| ( "margin", "3px" ) :: other
+
+    ( loCStyle, loC ) =
+        if y == 0 then
+         ( [ ( "color", "black" ) ]
+         , "0"
+         )
+        else if y < 0 then
+         ( [ ( "color", Color.Convert.colorToHex Colors.red ) ]
+         , toString y
+         )
+        else
+         ( [ ( "color", Color.Convert.colorToHex Colors.green ) ]
+         , "+" ++ toString y
+         )
   in
   [ Html.p
-      [ style
+      [ pStyle
           [ ( "border-bottom", "1px solid black" )
           , ( "padding-bottom", "3px" )
           ]
       ]
       [ Html.text xString ]
   , Html.p
-    [ style [] ]
-    [ Html.text yString ]
+    [ pStyle [] ]
+    [ Html.span [ Html.Attributes.style loCStyle ] [ Html.text loC ]
+    , Html.span [] [ Html.text " lines of code" ]
+    ]
   ]
 
 

@@ -19249,7 +19249,7 @@ var _user$project$Area$Model = F2(
 	});
 var _user$project$Area$Data = F3(
 	function (a, b, c) {
-		return {alice: a, bobby: b, chuck: c};
+		return {nora: a, noah: b, nina: c};
 	});
 var _user$project$Area$setData = F2(
 	function (_p0, model) {
@@ -19334,13 +19334,13 @@ var _user$project$Area$chart = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$diamond, 'Alice', model.data.alice),
+			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$diamond, 'Nora', model.data.nora),
 			_1: {
 				ctor: '::',
-				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Bobby', model.data.bobby),
+				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Noah', model.data.noah),
 				_1: {
 					ctor: '::',
-					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$triangle, 'Chuck', model.data.chuck),
+					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$triangle, 'Nina', model.data.nina),
 					_1: {ctor: '[]'}
 				}
 			}
@@ -19439,7 +19439,7 @@ var _user$project$Lines$Model = F2(
 	});
 var _user$project$Lines$Data = F3(
 	function (a, b, c) {
-		return {alice: a, bobby: b, chuck: c};
+		return {nora: a, noah: b, nina: c};
 	});
 var _user$project$Lines$setData = F2(
 	function (_p0, model) {
@@ -19504,13 +19504,13 @@ var _user$project$Lines$chart = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$teal, _user$project$LineChart_Dots$circle, 'Denmark', model.data.alice),
+			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$teal, _user$project$LineChart_Dots$circle, 'Denmark', model.data.nora),
 			_1: {
 				ctor: '::',
-				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Sweden', model.data.bobby),
+				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Sweden', model.data.noah),
 				_1: {
 					ctor: '::',
-					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$circle, 'Norway', model.data.chuck),
+					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$circle, 'Norway', model.data.nina),
 					_1: {ctor: '[]'}
 				}
 			}
@@ -19627,13 +19627,13 @@ var _user$project$Selection$viewChart = F2(
 			},
 			{
 				ctor: '::',
-				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$circle, 'Alice', data.alice),
+				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$circle, 'Nora', data.nora),
 				_1: {
 					ctor: '::',
-					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Bobby', data.bobby),
+					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Noah', data.noah),
 					_1: {
 						ctor: '::',
-						_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$circle, 'Chuck', data.chuck),
+						_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$circle, 'Nina', data.nina),
 						_1: {ctor: '[]'}
 					}
 				}
@@ -19788,7 +19788,7 @@ var _user$project$Selection$Selection = F2(
 	});
 var _user$project$Selection$Data = F3(
 	function (a, b, c) {
-		return {alice: a, bobby: b, chuck: c};
+		return {nora: a, noah: b, nina: c};
 	});
 var _user$project$Selection$setData = F2(
 	function (_p6, model) {
@@ -20097,7 +20097,46 @@ var _user$project$Stepped$round100 = function ($float) {
 };
 var _user$project$Stepped$viewHint = function (_p0) {
 	var _p1 = _p0;
-	var style = function (other) {
+	var _p3 = _p1.y;
+	var _p2 = _elm_lang$core$Native_Utils.eq(_p3, 0) ? {
+		ctor: '_Tuple2',
+		_0: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'color', _1: 'black'},
+			_1: {ctor: '[]'}
+		},
+		_1: '0'
+	} : ((_elm_lang$core$Native_Utils.cmp(_p3, 0) < 0) ? {
+		ctor: '_Tuple2',
+		_0: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'color',
+				_1: _eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$red)
+			},
+			_1: {ctor: '[]'}
+		},
+		_1: _elm_lang$core$Basics$toString(_p3)
+	} : {
+		ctor: '_Tuple2',
+		_0: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'color',
+				_1: _eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$green)
+			},
+			_1: {ctor: '[]'}
+		},
+		_1: A2(
+			_elm_lang$core$Basics_ops['++'],
+			'+',
+			_elm_lang$core$Basics$toString(_p3))
+	});
+	var loCStyle = _p2._0;
+	var loC = _p2._1;
+	var pStyle = function (other) {
 		return _elm_lang$html$Html_Attributes$style(
 			{
 				ctor: '::',
@@ -20105,10 +20144,6 @@ var _user$project$Stepped$viewHint = function (_p0) {
 				_1: other
 			});
 	};
-	var yString = A2(
-		_elm_lang$core$Basics_ops['++'],
-		_elm_lang$core$Basics$toString(_p1.y),
-		' lines of code');
 	var xString = A2(
 		_mgold$elm_date_format$Date_Format$format,
 		'%e. %b, %Y',
@@ -20119,7 +20154,7 @@ var _user$project$Stepped$viewHint = function (_p0) {
 			_elm_lang$html$Html$p,
 			{
 				ctor: '::',
-				_0: style(
+				_0: pStyle(
 					{
 						ctor: '::',
 						_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid black'},
@@ -20142,14 +20177,36 @@ var _user$project$Stepped$viewHint = function (_p0) {
 				_elm_lang$html$Html$p,
 				{
 					ctor: '::',
-					_0: style(
+					_0: pStyle(
 						{ctor: '[]'}),
 					_1: {ctor: '[]'}
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(yString),
-					_1: {ctor: '[]'}
+					_0: A2(
+						_elm_lang$html$Html$span,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(loCStyle),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(loC),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$span,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(' lines of code'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
 				}),
 			_1: {ctor: '[]'}
 		}
@@ -20187,34 +20244,34 @@ var _user$project$Stepped$Model = F2(
 	});
 var _user$project$Stepped$Data = F3(
 	function (a, b, c) {
-		return {alice: a, bobby: b, chuck: c};
+		return {nora: a, noah: b, nina: c};
 	});
 var _user$project$Stepped$setData = F2(
-	function (_p2, model) {
-		var _p3 = _p2;
+	function (_p4, model) {
+		var _p5 = _p4;
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				data: A3(
 					_user$project$Stepped$Data,
-					_user$project$Stepped$toData(_p3._0),
-					_user$project$Stepped$toData(_p3._1),
-					_user$project$Stepped$toData(_p3._2))
+					_user$project$Stepped$toData(_p5._0),
+					_user$project$Stepped$toData(_p5._1),
+					_user$project$Stepped$toData(_p5._2))
 			});
 	});
 var _user$project$Stepped$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		if (_p4.ctor === 'RecieveNumbers') {
+		var _p6 = msg;
+		if (_p6.ctor === 'RecieveNumbers') {
 			return A2(
 				_user$project$Stepped$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Stepped$setData, _p4._0, model));
+				A2(_user$project$Stepped$setData, _p6._0, model));
 		} else {
 			return A2(
 				_user$project$Stepped$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Stepped$setHint, _p4._0, model));
+				A2(_user$project$Stepped$setHint, _p6._0, model));
 		}
 	});
 var _user$project$Stepped$Hint = function (a) {
@@ -20227,11 +20284,11 @@ var _user$project$Stepped$chart = function (model) {
 			y: _user$project$LineChart_Axis$custom(
 				{
 					title: _user$project$LineChart_Axis_Title$default('LoC'),
-					variable: function (_p5) {
+					variable: function (_p7) {
 						return _elm_lang$core$Maybe$Just(
 							function (_) {
 								return _.y;
-							}(_p5));
+							}(_p7));
 					},
 					pixels: 450,
 					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
@@ -20241,11 +20298,11 @@ var _user$project$Stepped$chart = function (model) {
 			x: _user$project$LineChart_Axis$custom(
 				{
 					title: _user$project$LineChart_Axis_Title$default('time'),
-					variable: function (_p6) {
+					variable: function (_p8) {
 						return _elm_lang$core$Maybe$Just(
 							function (_) {
 								return _.x;
-							}(_p6));
+							}(_p8));
 					},
 					pixels: 1270,
 					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 60),
@@ -20257,19 +20314,19 @@ var _user$project$Stepped$chart = function (model) {
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
 			events: _user$project$LineChart_Events$hoverMany(
-				function (_p7) {
+				function (_p9) {
 					return _user$project$Stepped$Hint(
-						_elm_lang$core$List$head(_p7));
+						_elm_lang$core$List$head(_p9));
 				}),
 			junk: function () {
-				var _p8 = model.hinted;
-				if (_p8.ctor === 'Nothing') {
+				var _p10 = model.hinted;
+				if (_p10.ctor === 'Nothing') {
 					return _user$project$LineChart_Junk$default;
 				} else {
-					var _p9 = _p8._0;
+					var _p11 = _p10._0;
 					return _user$project$LineChart_Junk$custom(
 						function (system) {
-							var x = _p9.x + (_user$project$Stepped$xInterval / 2);
+							var x = _p11.x + (_user$project$Stepped$xInterval / 2);
 							return {
 								below: {
 									ctor: '::',
@@ -20289,7 +20346,7 @@ var _user$project$Stepped$chart = function (model) {
 										x,
 										system.y.max,
 										{ctor: '[]'},
-										_user$project$Stepped$viewHint(_p9)),
+										_user$project$Stepped$viewHint(_p11)),
 									_1: {ctor: '[]'}
 								}
 							};
@@ -20304,7 +20361,7 @@ var _user$project$Stepped$chart = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$none, 'Alice', model.data.alice),
+			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$none, 'Nora', model.data.nora),
 			_1: {ctor: '[]'}
 		});
 };
@@ -20513,7 +20570,7 @@ var _user$project$Ticks$Model = F2(
 	});
 var _user$project$Ticks$Data = F3(
 	function (a, b, c) {
-		return {alice: a, bobby: b, chuck: c};
+		return {nora: a, noah: b, nina: c};
 	});
 var _user$project$Ticks$setData = F2(
 	function (_p4, model) {
@@ -20566,10 +20623,10 @@ var _user$project$Ticks$chart = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$plus, 'Alice', model.data.alice),
+			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$plus, 'Nora', model.data.nora),
 			_1: {
 				ctor: '::',
-				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$cross, 'Bobby', model.data.bobby),
+				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$cross, 'Noah', model.data.noah),
 				_1: {
 					ctor: '::',
 					_0: A5(
@@ -20586,7 +20643,7 @@ var _user$project$Ticks$chart = function (model) {
 								_1: {ctor: '[]'}
 							}
 						},
-						model.data.chuck),
+						model.data.nina),
 					_1: {ctor: '[]'}
 				}
 			}
@@ -20723,7 +20780,7 @@ var _user$project$Main$viewTitle = A2(
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text('A opinionated library for plotting lines charts in SVG.'),
+						_0: _elm_lang$html$Html$text('A opinionated library for plotting series in SVG.'),
 						_1: {ctor: '[]'}
 					}),
 				_1: {

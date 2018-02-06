@@ -58,9 +58,9 @@ type alias Selection =
 
 
 type alias Data =
-  { alice : List Coordinate.Point
-  , bobby : List Coordinate.Point
-  , chuck : List Coordinate.Point
+  { nora : List Coordinate.Point
+  , noah : List Coordinate.Point
+  , nina : List Coordinate.Point
   }
 
 
@@ -380,9 +380,9 @@ viewChart data { range, junk, events, legends, dots, width, margin, id } =
     , line = Line.default
     , dots = dots
     }
-    [ LineChart.line Colors.pink Dots.circle "Alice" data.alice
-    , LineChart.line Colors.cyan Dots.circle "Bobby" data.bobby
-    , LineChart.line Colors.blue Dots.circle "Chuck" data.chuck
+    [ LineChart.line Colors.pink Dots.circle "Nora" data.nora
+    , LineChart.line Colors.cyan Dots.circle "Noah" data.noah
+    , LineChart.line Colors.blue Dots.circle "Nina" data.nina
     ]
 
 

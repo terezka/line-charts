@@ -43,9 +43,9 @@ type alias Model =
 
 
 type alias Data =
-  { alice : List Coordinate.Point
-  , bobby : List Coordinate.Point
-  , chuck : List Coordinate.Point
+  { nora : List Coordinate.Point
+  , noah : List Coordinate.Point
+  , nina : List Coordinate.Point
   }
 
 
@@ -158,9 +158,9 @@ chart model =
     , line = Line.hoverOne model.hinted
     , dots = Dots.custom (Dots.disconnected 3 2)
     }
-    [ LineChart.line Colors.teal Dots.circle "Denmark" model.data.alice
-    , LineChart.line Colors.cyan Dots.circle "Sweden" model.data.bobby
-    , LineChart.line Colors.blue Dots.circle "Norway" model.data.chuck
+    [ LineChart.line Colors.teal Dots.circle "Denmark" model.data.nora
+    , LineChart.line Colors.cyan Dots.circle "Sweden" model.data.noah
+    , LineChart.line Colors.blue Dots.circle "Norway" model.data.nina
     ]
 
 
