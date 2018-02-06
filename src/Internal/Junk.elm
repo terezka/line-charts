@@ -77,26 +77,12 @@ hoverOneHtml system toX toY properties hovered =
   let
     x = Maybe.withDefault (middle .x system) (toX hovered)
     y = Maybe.withDefault (middle .y system) (toY hovered)
-    space = if shouldFlip system x then -15 else 15
-    xPosition = Coordinate.toSvgX system x + space
-    yPosition = Coordinate.toSvgY system y
-
-    containerStyles =
-      containerLook ++
-        [ ( "left", toString xPosition ++ "px" )
-        , ( "top", toString yPosition ++ "px" )
-        , ( "position", "absolute" )
-        , if shouldFlip system x
-            then ( "transform", "translateX(-100%)" )
-            else ( "transform", "translateX(0)" )
-        ]
 
     viewValue ( label, value ) =
       viewRow "inherit" label (value hovered)
   in
-  Html.div
-    [ Html.Attributes.style containerStyles ]
-    (List.map viewValue properties)
+  hoverAt system x y [] <|
+    List.map viewValue properties
 
 
 
@@ -137,32 +123,17 @@ hoverManyHtml
 hoverManyHtml system toX toY format first hovered series =
   let
     x = Maybe.withDefault (middle .x system) (toX first)
-    y = middle .y system
-    space = if shouldFlip system x then -15 else 15
-    xPosition = Coordinate.toSvgX system x + space
-    yPosition = Coordinate.toSvgY system y
 
     viewValue ( color, label, data ) =
       Utils.viewMaybe (find hovered data) <| \hovered ->
         viewRow (Color.Convert.colorToHex color) label (format.y hovered)
-
-    containerStyles =
-      containerLook ++
-        [ ( "left", toString xPosition ++ "px" )
-        , ( "top", toString yPosition ++ "px" )
-        , ( "position", "absolute" )
-        , if shouldFlip system x
-            then ( "transform", "translate(-100%, -50%)" )
-            else ( "transform", "translate(0, -50%)" )
-        ]
   in
-  Html.div
-    [ Html.Attributes.style containerStyles ]
-    (viewHeader (format.x first) :: List.map viewValue series)
+  hover system x [] <|
+    viewHeader (format.x first) :: List.map viewValue series
 
 
-containerLook : List ( String, String )
-containerLook =
+standardStyles : List ( String, String )
+standardStyles =
   [ ( "padding", "5px" )
   , ( "min-width", "100px" )
   , ( "background", "rgba(255,255,255,0.8)" )
@@ -190,6 +161,49 @@ viewRow color label value =
   Html.p
     [ Html.Attributes.style [ ( "margin", "3px" ), ( "color", color ) ] ]
     [ Html.text (label ++ ": " ++ value) ]
+
+
+
+-- HOVER GENERAL
+
+
+{-| -}
+hover : Coordinate.System  -> Float -> List ( String, String ) -> List (Html.Html msg) -> Html.Html msg
+hover system x styles =
+  let
+    y = middle .y system
+
+    containerStyles =
+      [ if shouldFlip system x
+          then ( "transform", "translate(-100%, -50%)" )
+          else ( "transform", "translate(0, -50%)" )
+      ]
+      ++ styles
+  in
+  hoverAt system x y containerStyles
+
+
+{-| -}
+hoverAt : Coordinate.System  -> Float -> Float -> List ( String, String ) -> List (Html.Html msg) -> Html.Html msg
+hoverAt system x y styles view =
+  let
+    space = if shouldFlip system x then -15 else 15
+    xPosition = Coordinate.toSvgX system x + space
+    yPosition = Coordinate.toSvgY system y
+
+    posititonStyles =
+      [ ( "left", toString xPosition ++ "px" )
+      , ( "top", toString yPosition ++ "px" )
+      , ( "position", "absolute" )
+      , if shouldFlip system x
+          then ( "transform", "translateX(-100%)" )
+          else ( "transform", "translateX(0)" )
+      ]
+
+    containerStyles =
+      standardStyles ++ posititonStyles ++styles
+  in
+  Html.div [ Html.Attributes.style containerStyles ] view
 
 
 

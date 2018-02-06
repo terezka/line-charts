@@ -5,6 +5,7 @@ module LineChart.Junk exposing
   , rectangle, circle
   , label, labelPlaced
   , withinChartArea
+  , hover, hoverAt
   )
 
 {-|
@@ -46,6 +47,12 @@ _What is an axis-range? See the `Axis.Range` module._
 
 ## Placing
 @docs placed, Transfrom, transform, move, offset
+
+## Hover views
+This is just regular html views! Nothing fancy - you can also make your own!
+Notice that you can override all the styles.
+
+@docs hover, hoverAt
 
 
 -}
@@ -355,3 +362,27 @@ extends outside the chart area.
 withinChartArea : Coordinate.System -> Svg.Attribute msg
 withinChartArea =
   Svg.withinChartArea
+
+
+
+-- HOVER VIEWS
+
+
+{-| Make a hover placed in the middle of the y-axis and at a given x-coordinate.
+
+Pass the hint x-coordinate, your styles and your internal view.
+
+ -}
+hover : Coordinate.System  -> Float -> List ( String, String ) -> List (Html.Html msg) -> Html.Html msg
+hover =
+  Junk.hover
+
+
+{-| Make a hover placed at a given x- and y-coordinate.
+
+Pass the hint x- and y-coordinate, your styles and your internal view.
+
+-}
+hoverAt : Coordinate.System  -> Float -> Float -> List ( String, String ) -> List (Html.Html msg) -> Html.Html msg
+hoverAt =
+  Junk.hoverAt
