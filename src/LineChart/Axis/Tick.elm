@@ -1,14 +1,14 @@
 module LineChart.Axis.Tick exposing
   ( Config, Properties
   , Direction, negative, positive
-  , int, float, long, gridless, opposite
+  , int, float, long, gridless, labelless, opposite
   , time, Time, Unit(..), Interval, format
   , custom
   )
 
 {-|
 
-@docs Config, int, float, time, long, gridless, opposite
+@docs Config, int, float, time, long, gridless, labelless, opposite
 
 # Customiztion
 @docs custom, Properties, Direction, negative, positive
@@ -77,6 +77,12 @@ float =
 gridless : Float -> Config msg
 gridless =
   Tick.gridless
+
+
+{-| -}
+labelless : Float -> Config msg
+labelless =
+  Tick.labelless
 
 
 {-| -}

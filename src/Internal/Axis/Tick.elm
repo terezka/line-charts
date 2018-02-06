@@ -1,6 +1,6 @@
 module Internal.Axis.Tick exposing
   ( Config, Properties, Direction(..), isPositive
-  , custom, int, float, long, gridless, opposite
+  , custom, int, float, long, gridless, labelless, opposite
   , properties
   )
 
@@ -94,6 +94,20 @@ gridless n =
     , grid = False
     , direction = Negative
     , label = Just <| Svg.label "inherit" (toString n)
+    }
+
+
+{-| -}
+labelless : Float -> Config msg
+labelless n =
+  custom
+    { position = n
+    , color = Colors.gray
+    , width = 1
+    , length = 5
+    , grid = True
+    , direction = Negative
+    , label = Nothing
     }
 
 

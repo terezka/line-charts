@@ -69,10 +69,10 @@ init =
 getNumbers : Cmd Msg
 getNumbers =
   let
-    genNumbers =
-      Random.list 10 (Random.float -3 12)
+    genNumbers min max =
+      Random.list 10 (Random.float min max)
   in
-  Random.map3 (,,) genNumbers genNumbers genNumbers
+  Random.map3 (,,) (genNumbers 9 12) (genNumbers 7 10) (genNumbers 2 10)
     |> Random.generate RecieveNumbers
 
 
@@ -142,7 +142,7 @@ chart model =
   LineChart.viewCustom
     { x = xAxisConfig model
     , y = yAxisConfig model
-    , container = Container.spaced "line-chart-ticks" 60 100 60 80
+    , container = Container.spaced "line-chart-ticks" 60 100 60 70
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
@@ -167,7 +167,7 @@ xAxisConfig model =
   Axis.custom
     { title = Title.default "Year"
     , variable = Just << .x
-    , pixels = 620
+    , pixels = 800
     , range = Range.padded 50 20
     , axisLine = AxisLine.rangeFrame Colors.gray
     , ticks = ticksConfig .x formatX model.hinted
@@ -180,7 +180,7 @@ yAxisConfig model =
         toString << round10
   in
   Axis.custom
-    { title = Title.default "Grade avg."
+    { title = Title.atAxisMax 10 0 "Grade avg."
     , variable = Just << .y
     , pixels = 450
     , range = Range.padded 50 20

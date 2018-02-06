@@ -3,6 +3,7 @@ module Lines exposing (Model, init, Msg, update, view)
 import Html
 import Random
 import Time
+import Color.Manipulate as Manipulate
 import LineChart
 import LineChart.Junk as Junk
 import LineChart.Area as Area
@@ -42,15 +43,19 @@ main =
 
 
 type alias Model =
-    { data : Data
+    { data : Data Coordinate.Point
     , hinted : Maybe Coordinate.Point
     }
 
 
-type alias Data =
-  { nora : List Coordinate.Point
-  , noah : List Coordinate.Point
-  , nina : List Coordinate.Point
+type alias Data a =
+  { a : List a
+  , b : List a
+  , c : List a
+  , d : List a
+  , e : List a
+  , f : List a
+  , g : List a
   }
 
 
@@ -60,7 +65,7 @@ type alias Data =
 
 init : ( Model, Cmd Msg )
 init =
-  ( { data = Data [] [] []
+  ( { data = Data [] [] [] [] [] [] []
     , hinted = Nothing
     }
   , getNumbers
@@ -70,20 +75,36 @@ init =
 getNumbers : Cmd Msg
 getNumbers =
   let
-    genNumbers =
-      Random.list 10 (Random.float 50 120)
+    genNumbers min max =
+      Random.list 10 (Random.float min max)
+
+    getFirst =
+      Random.map5 (,,,,)
+        (genNumbers 50 90)
+        (genNumbers 20 60)
+        (genNumbers 30 60)
+        (genNumbers 40 90)
+        (genNumbers 80 100)
+
+    getSecond =
+      Random.map2 (,)
+        (genNumbers 70 90)
+        (genNumbers 40 70)
+
+    together (a,b,c,d,e) (f,g) =
+      Data a b c d e f g
   in
-  Random.map3 (,,) genNumbers genNumbers genNumbers
-    |> Random.generate RecieveNumbers
+  Random.generate RecieveNumbers <|
+    Random.map2 together getFirst getSecond
 
 
 
 -- API
 
 
-setData : ( List Float, List Float, List Float ) -> Model -> Model
-setData ( n1, n2, n3 ) model =
-  { model | data = Data (toData n1) (toData n2) (toData n3) }
+setData : Data Float -> Model -> Model
+setData { a, b, c, d, e, f, g } model =
+  { model | data = Data (toData a) (toData b) (toData c) (toData d) (toData e) (toData f) (toData g) }
 
 
 toData : List Float -> List Coordinate.Point
@@ -98,7 +119,7 @@ toDate index =
 
 xInterval : Time.Time
 xInterval =
-  Time.hour * 24 * 356
+  Time.hour * 24 * 31
 
 
 setHint : Maybe Coordinate.Point -> Model -> Model
@@ -111,7 +132,7 @@ setHint hinted model =
 
 
 type Msg
-  = RecieveNumbers ( List Float, List Float, List Float )
+  = RecieveNumbers (Data Float)
   | Hint (Maybe Coordinate.Point)
 
 
@@ -152,7 +173,7 @@ chart model =
   LineChart.viewCustom
     { y =
         Axis.custom
-          { title = Title.default "Rain"
+          { title = Title.atDataMax -10 -10 "Rain"
           , variable = Just << .y
           , pixels = 450
           , range = Range.padded 20 20
@@ -164,26 +185,44 @@ chart model =
         Axis.custom
           { title = Title.default "Time"
           , variable = Just << .x
-          , pixels = 700
+          , pixels = 1270
           , range = Range.padded 20 20
           , axisLine = AxisLine.none
           , ticks = Ticks.timeCustom 10 timeTick
           }
-    , container = Container.default "line-chart-lines"
-    , interpolation = Interpolation.default
+    , container = Container.spaced "line-chart-lines" 30 180 60 70
+    , interpolation = Interpolation.monotone
     , intersection = Intersection.default
     , legends = Legends.default
     , events = Events.hoverOne Hint
     , junk = Junk.default
     , grid = Grid.default
     , area = Area.default
-    , line = Line.hoverOne model.hinted
-    , dots = Dots.custom (Dots.disconnected 3 2)
+    , line = Line.custom (toLineStyle model.hinted)
+    , dots = Dots.custom (Dots.disconnected 4 2)
     }
-    [ LineChart.line Colors.pink Dots.circle "Denmark" model.data.nora
-    , LineChart.line Colors.cyan Dots.circle "Sweden" model.data.noah
-    , LineChart.line Colors.blue Dots.circle "Norway" model.data.nina
+    [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle "Denmark" model.data.a
+    , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle "Sweden" model.data.b
+    , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle "Iceland" model.data.d
+    , LineChart.line (Manipulate.lighten 0   Colors.blue) Dots.circle "Faroe Islands" model.data.f
+    , LineChart.line (Manipulate.lighten 0   Colors.pink) Dots.circle "Norway" model.data.c
+    , LineChart.line (Manipulate.lighten 0.1 Colors.pink) Dots.circle "Finland" model.data.e
     ]
+
+
+toLineStyle : Maybe Coordinate.Point -> List Coordinate.Point -> Line.Style
+toLineStyle maybeHovered lineData =
+  case maybeHovered of
+    Nothing -> -- No line is hovered
+      Line.style 1 identity
+
+    Just hovered -> -- Some line is hovered
+      if List.any ((==) hovered) lineData then
+        -- It is this one, so make it pop!
+        Line.style 2 identity
+      else
+        -- It is not this one, so hide it a bit
+        Line.style 1 (Manipulate.grayscale)
 
 
 rainTick : Int -> Float -> Tick.Config msg

@@ -147,12 +147,9 @@ view model =
     [ viewTitle
     , Html.map AreaMsg <| Html.Lazy.lazy Area.view model.area
     , Html.map SelectionMsg <| Html.Lazy.lazy Selection.view model.selection
+    , Html.map LinesMsg <| Html.Lazy.lazy Lines.view model.lines
     , Html.map SteppedMsg <| Html.Lazy.lazy Stepped.view model.stepped
-    , Html.div
-        [ Html.Attributes.style [ ( "display", "flex" ) ] ]
-        [ Html.map TicksMsg <| Html.Lazy.lazy Ticks.view model.ticks
-        , Html.map LinesMsg <| Html.Lazy.lazy Lines.view model.lines
-        ]
+    , Html.map TicksMsg <| Html.Lazy.lazy Ticks.view model.ticks
     ]
 
 

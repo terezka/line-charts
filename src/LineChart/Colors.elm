@@ -28,97 +28,97 @@ import Color
 {-| -}
 pink : Color.Color
 pink =
-  Color.rgb 245 105 215
+  Color.rgba 245 105 215 1
 
 
 {-| -}
 pinkLight : Color.Color
 pinkLight =
-  Color.rgb 244 143 177
+  Color.rgba 244 143 177 1
 
 
 {-| -}
 gold : Color.Color
 gold =
-  Color.rgb 205 145 60
+  Color.rgba 205 145 60 1
 
 
 {-| -}
 goldLight : Color.Color
 goldLight =
-  Color.rgb 255 204 128
+  Color.rgba 255 204 128 1
 
 
 {-| -}
 blue : Color.Color
 blue =
-  Color.rgb 3 169 244
+  Color.rgba 3 169 244 1
 
 
 {-| -}
 blueLight : Color.Color
 blueLight =
-  Color.rgb 128 222 234
+  Color.rgba 128 222 234 1
 
 
 {-| -}
 green : Color.Color
 green =
-  Color.rgb 67 160 71
+  Color.rgba 67 160 71 1
 
 
 {-| -}
 greenLight : Color.Color
 greenLight =
-  Color.rgb 197 225 165
+  Color.rgba 197 225 165 1
 
 
 {-| -}
 red : Color.Color
 red =
-  Color.rgb 216 27 96
+  Color.rgba 216 27 96 1
 
 
 {-| -}
 redLight : Color.Color
 redLight =
-  Color.rgb 239 154 154
+  Color.rgba 239 154 154 1
 
 
 {-| -}
 purple : Color.Color
 purple =
-  Color.rgb 156 39 176
+  Color.rgba 156 39 176 1
 
 
 {-| -}
 purpleLight : Color.Color
 purpleLight =
-  Color.rgb 206 147 216
+  Color.rgba 206 147 216 1
 
 
 {-| -}
 cyan : Color.Color
 cyan =
-  Color.rgb 0 229 255
+  Color.rgba 0 229 255 1
 
 
 {-| -}
 cyanLight : Color.Color
 cyanLight =
-  Color.rgb 128 222 234
+  Color.rgba 128 222 234 1
 
 
 {-| -}
 teal : Color.Color
 teal =
-  Color.rgb 29 233 182
+  Color.rgba 29 233 182 1
 
 
 {-| -}
 tealLight : Color.Color
 tealLight =
-  Color.rgb 128 203 196
+  Color.rgba 128 203 196 1
 
 
 

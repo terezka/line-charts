@@ -10394,6 +10394,158 @@ var _eskimoblood$elm_color_extra$Color_Convert$Lab = F3(
 		return {l: a, a: b, b: c};
 	});
 
+var _eskimoblood$elm_color_extra$Color_Manipulate$mixChannel = F3(
+	function (weight, c1, c2) {
+		return _elm_lang$core$Basics$round(
+			(_elm_lang$core$Basics$toFloat(c1) * weight) + (_elm_lang$core$Basics$toFloat(c2) * (1 - weight)));
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$calculateWeight = F3(
+	function (a1, a2, weight) {
+		var w1 = (weight * 2) - 1;
+		var a = a1 - a2;
+		var w2 = _elm_lang$core$Native_Utils.eq(w1 * a, -1) ? w1 : ((w1 + a) / (1 + (w1 * a)));
+		return (w2 + 1) / 2;
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$weightedMix = F3(
+	function (color1, color2, weight) {
+		var c2 = _elm_lang$core$Color$toRgb(color2);
+		var c1 = _elm_lang$core$Color$toRgb(color1);
+		var clampedWeight = A3(_elm_lang$core$Basics$clamp, 0, 1, weight);
+		var w = A3(_eskimoblood$elm_color_extra$Color_Manipulate$calculateWeight, c1.alpha, c2.alpha, clampedWeight);
+		var rMixed = A3(_eskimoblood$elm_color_extra$Color_Manipulate$mixChannel, w, c1.red, c2.red);
+		var gMixed = A3(_eskimoblood$elm_color_extra$Color_Manipulate$mixChannel, w, c1.green, c2.green);
+		var bMixed = A3(_eskimoblood$elm_color_extra$Color_Manipulate$mixChannel, w, c1.blue, c2.blue);
+		var alphaMixed = (c1.alpha * clampedWeight) + (c2.alpha * (1 - clampedWeight));
+		return A4(_elm_lang$core$Color$rgba, rMixed, gMixed, bMixed, alphaMixed);
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$mix = F2(
+	function (c1, c2) {
+		return A3(_eskimoblood$elm_color_extra$Color_Manipulate$weightedMix, c1, c2, 0.5);
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$scale = F3(
+	function (max, scaleAmount, value) {
+		var clampedValue = A3(_elm_lang$core$Basics$clamp, 0, max, value);
+		var clampedScale = A3(_elm_lang$core$Basics$clamp, -1.0, 1.0, scaleAmount);
+		var diff = (_elm_lang$core$Native_Utils.cmp(clampedScale, 0) > 0) ? (max - clampedValue) : clampedValue;
+		return clampedValue + (diff * clampedScale);
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$scaleRgb = F2(
+	function (scaleBy, color) {
+		var rgb = _elm_lang$core$Color$toRgb(color);
+		var _p0 = scaleBy;
+		var rScale = _p0._0;
+		var gScale = _p0._1;
+		var bScale = _p0._2;
+		var aScale = _p0._3;
+		return A4(
+			_elm_lang$core$Color$rgba,
+			_elm_lang$core$Basics$round(
+				A3(
+					_eskimoblood$elm_color_extra$Color_Manipulate$scale,
+					255,
+					rScale,
+					_elm_lang$core$Basics$toFloat(rgb.red))),
+			_elm_lang$core$Basics$round(
+				A3(
+					_eskimoblood$elm_color_extra$Color_Manipulate$scale,
+					255,
+					gScale,
+					_elm_lang$core$Basics$toFloat(rgb.green))),
+			_elm_lang$core$Basics$round(
+				A3(
+					_eskimoblood$elm_color_extra$Color_Manipulate$scale,
+					255,
+					bScale,
+					_elm_lang$core$Basics$toFloat(rgb.blue))),
+			A3(_eskimoblood$elm_color_extra$Color_Manipulate$scale, 1.0, aScale, rgb.alpha));
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$scaleHsl = F2(
+	function (scaleBy, color) {
+		var hsl = _elm_lang$core$Color$toHsl(color);
+		var _p1 = scaleBy;
+		var saturationScale = _p1._0;
+		var lightnessScale = _p1._1;
+		var alphaScale = _p1._2;
+		return A4(
+			_elm_lang$core$Color$hsla,
+			hsl.hue,
+			A3(_eskimoblood$elm_color_extra$Color_Manipulate$scale, 1.0, saturationScale, hsl.saturation),
+			A3(_eskimoblood$elm_color_extra$Color_Manipulate$scale, 1.0, lightnessScale, hsl.lightness),
+			A3(_eskimoblood$elm_color_extra$Color_Manipulate$scale, 1.0, alphaScale, hsl.alpha));
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$rotateHue = F2(
+	function (angle, cl) {
+		var _p2 = _elm_lang$core$Color$toHsl(cl);
+		var hue = _p2.hue;
+		var saturation = _p2.saturation;
+		var lightness = _p2.lightness;
+		var alpha = _p2.alpha;
+		return A4(
+			_elm_lang$core$Color$hsla,
+			hue + _elm_lang$core$Basics$degrees(angle),
+			saturation,
+			lightness,
+			alpha);
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$limit = A2(_elm_lang$core$Basics$clamp, 0, 1);
+var _eskimoblood$elm_color_extra$Color_Manipulate$darken = F2(
+	function (offset, cl) {
+		var _p3 = _elm_lang$core$Color$toHsl(cl);
+		var hue = _p3.hue;
+		var saturation = _p3.saturation;
+		var lightness = _p3.lightness;
+		var alpha = _p3.alpha;
+		return A4(
+			_elm_lang$core$Color$hsla,
+			hue,
+			saturation,
+			_eskimoblood$elm_color_extra$Color_Manipulate$limit(lightness - offset),
+			alpha);
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$lighten = F2(
+	function (offset, cl) {
+		return A2(_eskimoblood$elm_color_extra$Color_Manipulate$darken, 0 - offset, cl);
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$saturate = F2(
+	function (offset, cl) {
+		var _p4 = _elm_lang$core$Color$toHsl(cl);
+		var hue = _p4.hue;
+		var saturation = _p4.saturation;
+		var lightness = _p4.lightness;
+		var alpha = _p4.alpha;
+		return A4(
+			_elm_lang$core$Color$hsla,
+			hue,
+			_eskimoblood$elm_color_extra$Color_Manipulate$limit(saturation + offset),
+			lightness,
+			alpha);
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$desaturate = F2(
+	function (offset, cl) {
+		return A2(_eskimoblood$elm_color_extra$Color_Manipulate$saturate, 0 - offset, cl);
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$grayscale = function (cl) {
+	return A2(_eskimoblood$elm_color_extra$Color_Manipulate$saturate, -1, cl);
+};
+var _eskimoblood$elm_color_extra$Color_Manipulate$fadeIn = F2(
+	function (offset, cl) {
+		var _p5 = _elm_lang$core$Color$toHsl(cl);
+		var hue = _p5.hue;
+		var saturation = _p5.saturation;
+		var lightness = _p5.lightness;
+		var alpha = _p5.alpha;
+		return A4(
+			_elm_lang$core$Color$hsla,
+			hue,
+			saturation,
+			lightness,
+			_eskimoblood$elm_color_extra$Color_Manipulate$limit(alpha + offset));
+	});
+var _eskimoblood$elm_color_extra$Color_Manipulate$fadeOut = F2(
+	function (offset, cl) {
+		return A2(_eskimoblood$elm_color_extra$Color_Manipulate$fadeIn, 0 - offset, cl);
+	});
+
 var _justinmimbs$elm_date_extra$Date_Extra_Facts$msPerSecond = 1000;
 var _justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute = 60 * _justinmimbs$elm_date_extra$Date_Extra_Facts$msPerSecond;
 var _justinmimbs$elm_date_extra$Date_Extra_Facts$msPerHour = 60 * _justinmimbs$elm_date_extra$Date_Extra_Facts$msPerMinute;
@@ -12862,22 +13014,22 @@ var _user$project$LineChart_Colors$grayLightest = A3(_elm_lang$core$Color$rgb, 2
 var _user$project$LineChart_Colors$grayLight = A3(_elm_lang$core$Color$rgb, 211, 211, 211);
 var _user$project$LineChart_Colors$gray = A3(_elm_lang$core$Color$rgb, 163, 163, 163);
 var _user$project$LineChart_Colors$black = A3(_elm_lang$core$Color$rgb, 0, 0, 0);
-var _user$project$LineChart_Colors$tealLight = A3(_elm_lang$core$Color$rgb, 128, 203, 196);
-var _user$project$LineChart_Colors$teal = A3(_elm_lang$core$Color$rgb, 29, 233, 182);
-var _user$project$LineChart_Colors$cyanLight = A3(_elm_lang$core$Color$rgb, 128, 222, 234);
-var _user$project$LineChart_Colors$cyan = A3(_elm_lang$core$Color$rgb, 0, 229, 255);
-var _user$project$LineChart_Colors$purpleLight = A3(_elm_lang$core$Color$rgb, 206, 147, 216);
-var _user$project$LineChart_Colors$purple = A3(_elm_lang$core$Color$rgb, 156, 39, 176);
-var _user$project$LineChart_Colors$redLight = A3(_elm_lang$core$Color$rgb, 239, 154, 154);
-var _user$project$LineChart_Colors$red = A3(_elm_lang$core$Color$rgb, 216, 27, 96);
-var _user$project$LineChart_Colors$greenLight = A3(_elm_lang$core$Color$rgb, 197, 225, 165);
-var _user$project$LineChart_Colors$green = A3(_elm_lang$core$Color$rgb, 67, 160, 71);
-var _user$project$LineChart_Colors$blueLight = A3(_elm_lang$core$Color$rgb, 128, 222, 234);
-var _user$project$LineChart_Colors$blue = A3(_elm_lang$core$Color$rgb, 3, 169, 244);
-var _user$project$LineChart_Colors$goldLight = A3(_elm_lang$core$Color$rgb, 255, 204, 128);
-var _user$project$LineChart_Colors$gold = A3(_elm_lang$core$Color$rgb, 205, 145, 60);
-var _user$project$LineChart_Colors$pinkLight = A3(_elm_lang$core$Color$rgb, 244, 143, 177);
-var _user$project$LineChart_Colors$pink = A3(_elm_lang$core$Color$rgb, 245, 105, 215);
+var _user$project$LineChart_Colors$tealLight = A4(_elm_lang$core$Color$rgba, 128, 203, 196, 1);
+var _user$project$LineChart_Colors$teal = A4(_elm_lang$core$Color$rgba, 29, 233, 182, 1);
+var _user$project$LineChart_Colors$cyanLight = A4(_elm_lang$core$Color$rgba, 128, 222, 234, 1);
+var _user$project$LineChart_Colors$cyan = A4(_elm_lang$core$Color$rgba, 0, 229, 255, 1);
+var _user$project$LineChart_Colors$purpleLight = A4(_elm_lang$core$Color$rgba, 206, 147, 216, 1);
+var _user$project$LineChart_Colors$purple = A4(_elm_lang$core$Color$rgba, 156, 39, 176, 1);
+var _user$project$LineChart_Colors$redLight = A4(_elm_lang$core$Color$rgba, 239, 154, 154, 1);
+var _user$project$LineChart_Colors$red = A4(_elm_lang$core$Color$rgba, 216, 27, 96, 1);
+var _user$project$LineChart_Colors$greenLight = A4(_elm_lang$core$Color$rgba, 197, 225, 165, 1);
+var _user$project$LineChart_Colors$green = A4(_elm_lang$core$Color$rgba, 67, 160, 71, 1);
+var _user$project$LineChart_Colors$blueLight = A4(_elm_lang$core$Color$rgba, 128, 222, 234, 1);
+var _user$project$LineChart_Colors$blue = A4(_elm_lang$core$Color$rgba, 3, 169, 244, 1);
+var _user$project$LineChart_Colors$goldLight = A4(_elm_lang$core$Color$rgba, 255, 204, 128, 1);
+var _user$project$LineChart_Colors$gold = A4(_elm_lang$core$Color$rgba, 205, 145, 60, 1);
+var _user$project$LineChart_Colors$pinkLight = A4(_elm_lang$core$Color$rgba, 244, 143, 177, 1);
+var _user$project$LineChart_Colors$pink = A4(_elm_lang$core$Color$rgba, 245, 105, 215, 1);
 
 var _user$project$Internal_Path$bool = function (bool) {
 	return bool ? '1' : '0';
@@ -14382,6 +14534,10 @@ var _user$project$Internal_Axis_Tick$gridless = function (n) {
 					_elm_lang$core$Basics$toString(n)))
 		});
 };
+var _user$project$Internal_Axis_Tick$labelless = function (n) {
+	return _user$project$Internal_Axis_Tick$custom(
+		{position: n, color: _user$project$LineChart_Colors$gray, width: 1, length: 5, grid: true, direction: _user$project$Internal_Axis_Tick$Negative, label: _elm_lang$core$Maybe$Nothing});
+};
 var _user$project$Internal_Axis_Tick$long = function (n) {
 	return _user$project$Internal_Axis_Tick$custom(
 		{
@@ -14462,6 +14618,7 @@ var _user$project$LineChart_Axis_Tick$positive = _user$project$Internal_Axis_Tic
 var _user$project$LineChart_Axis_Tick$negative = _user$project$Internal_Axis_Tick$Negative;
 var _user$project$LineChart_Axis_Tick$long = _user$project$Internal_Axis_Tick$long;
 var _user$project$LineChart_Axis_Tick$opposite = _user$project$Internal_Axis_Tick$opposite;
+var _user$project$LineChart_Axis_Tick$labelless = _user$project$Internal_Axis_Tick$labelless;
 var _user$project$LineChart_Axis_Tick$gridless = _user$project$Internal_Axis_Tick$gridless;
 var _user$project$LineChart_Axis_Tick$float = _user$project$Internal_Axis_Tick$float;
 var _user$project$LineChart_Axis_Tick$int = _user$project$Internal_Axis_Tick$int;
@@ -17878,7 +18035,7 @@ var _user$project$LineChart_Line$hoverOne = function (hovered) {
 						hovered,
 						_elm_lang$core$Maybe$Just(_p0));
 				},
-				data) ? A2(_user$project$LineChart_Line$style, 2.5, _elm_lang$core$Basics$identity) : A2(_user$project$LineChart_Line$style, 1, _elm_lang$core$Basics$identity);
+				data) ? A2(_user$project$LineChart_Line$style, 3, _elm_lang$core$Basics$identity) : A2(_user$project$LineChart_Line$style, 1, _elm_lang$core$Basics$identity);
 		});
 };
 var _user$project$LineChart_Line$wider = _user$project$Internal_Line$wider;
@@ -19441,6 +19598,21 @@ var _user$project$Lines$rainTick = F2(
 					A2(_user$project$LineChart_Junk$label, _user$project$LineChart_Colors$black, label))
 			});
 	});
+var _user$project$Lines$toLineStyle = F2(
+	function (maybeHovered, lineData) {
+		var _p0 = maybeHovered;
+		if (_p0.ctor === 'Nothing') {
+			return A2(_user$project$LineChart_Line$style, 1, _elm_lang$core$Basics$identity);
+		} else {
+			return A2(
+				_elm_lang$core$List$any,
+				F2(
+					function (x, y) {
+						return _elm_lang$core$Native_Utils.eq(x, y);
+					})(_p0._0),
+				lineData) ? A2(_user$project$LineChart_Line$style, 2, _elm_lang$core$Basics$identity) : A2(_user$project$LineChart_Line$style, 1, _eskimoblood$elm_color_extra$Color_Manipulate$grayscale);
+		}
+	});
 var _user$project$Lines$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -19451,7 +19623,7 @@ var _user$project$Lines$setHint = F2(
 			model,
 			{hinted: hinted});
 	});
-var _user$project$Lines$xInterval = (_elm_lang$core$Time$hour * 24) * 356;
+var _user$project$Lines$xInterval = (_elm_lang$core$Time$hour * 24) * 31;
 var _user$project$Lines$toDate = function (index) {
 	return (((_elm_lang$core$Time$hour * 24) * 356) * 30) + (_user$project$Lines$xInterval * _elm_lang$core$Basics$toFloat(index));
 };
@@ -19471,36 +19643,40 @@ var _user$project$Lines$Model = F2(
 	function (a, b) {
 		return {data: a, hinted: b};
 	});
-var _user$project$Lines$Data = F3(
-	function (a, b, c) {
-		return {nora: a, noah: b, nina: c};
+var _user$project$Lines$Data = F7(
+	function (a, b, c, d, e, f, g) {
+		return {a: a, b: b, c: c, d: d, e: e, f: f, g: g};
 	});
 var _user$project$Lines$setData = F2(
-	function (_p0, model) {
-		var _p1 = _p0;
+	function (_p1, model) {
+		var _p2 = _p1;
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
-				data: A3(
+				data: A7(
 					_user$project$Lines$Data,
-					_user$project$Lines$toData(_p1._0),
-					_user$project$Lines$toData(_p1._1),
-					_user$project$Lines$toData(_p1._2))
+					_user$project$Lines$toData(_p2.a),
+					_user$project$Lines$toData(_p2.b),
+					_user$project$Lines$toData(_p2.c),
+					_user$project$Lines$toData(_p2.d),
+					_user$project$Lines$toData(_p2.e),
+					_user$project$Lines$toData(_p2.f),
+					_user$project$Lines$toData(_p2.g))
 			});
 	});
 var _user$project$Lines$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		if (_p2.ctor === 'RecieveNumbers') {
+		var _p3 = msg;
+		if (_p3.ctor === 'RecieveNumbers') {
 			return A2(
 				_user$project$Lines$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Lines$setData, _p2._0, model));
+				A2(_user$project$Lines$setData, _p3._0, model));
 		} else {
 			return A2(
 				_user$project$Lines$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Lines$setHint, _p2._0, model));
+				A2(_user$project$Lines$setHint, _p3._0, model));
 		}
 	});
 var _user$project$Lines$Hint = function (a) {
@@ -19512,12 +19688,12 @@ var _user$project$Lines$chart = function (model) {
 		{
 			y: _user$project$LineChart_Axis$custom(
 				{
-					title: _user$project$LineChart_Axis_Title$default('Rain'),
-					variable: function (_p3) {
+					title: A3(_user$project$LineChart_Axis_Title$atDataMax, -10, -10, 'Rain'),
+					variable: function (_p4) {
 						return _elm_lang$core$Maybe$Just(
 							function (_) {
 								return _.y;
-							}(_p3));
+							}(_p4));
 					},
 					pixels: 450,
 					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
@@ -19546,39 +19722,82 @@ var _user$project$Lines$chart = function (model) {
 			x: _user$project$LineChart_Axis$custom(
 				{
 					title: _user$project$LineChart_Axis_Title$default('Time'),
-					variable: function (_p4) {
+					variable: function (_p5) {
 						return _elm_lang$core$Maybe$Just(
 							function (_) {
 								return _.x;
-							}(_p4));
+							}(_p5));
 					},
-					pixels: 700,
+					pixels: 1270,
 					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
 					axisLine: _user$project$LineChart_Axis_Line$none,
 					ticks: A2(_user$project$LineChart_Axis_Ticks$timeCustom, 10, _user$project$Lines$timeTick)
 				}),
-			container: _user$project$LineChart_Container$default('line-chart-lines'),
-			interpolation: _user$project$LineChart_Interpolation$default,
+			container: A5(_user$project$LineChart_Container$spaced, 'line-chart-lines', 30, 180, 60, 70),
+			interpolation: _user$project$LineChart_Interpolation$monotone,
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
 			events: _user$project$LineChart_Events$hoverOne(_user$project$Lines$Hint),
 			junk: _user$project$LineChart_Junk$default,
 			grid: _user$project$LineChart_Grid$default,
 			area: _user$project$LineChart_Area$default,
-			line: _user$project$LineChart_Line$hoverOne(model.hinted),
+			line: _user$project$LineChart_Line$custom(
+				_user$project$Lines$toLineStyle(model.hinted)),
 			dots: _user$project$LineChart_Dots$custom(
-				A2(_user$project$LineChart_Dots$disconnected, 3, 2))
+				A2(_user$project$LineChart_Dots$disconnected, 4, 2))
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$circle, 'Denmark', model.data.nora),
+			_0: A4(
+				_user$project$LineChart$line,
+				A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0.2, _user$project$LineChart_Colors$cyan),
+				_user$project$LineChart_Dots$circle,
+				'Denmark',
+				model.data.a),
 			_1: {
 				ctor: '::',
-				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Sweden', model.data.noah),
+				_0: A4(
+					_user$project$LineChart$line,
+					A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0, _user$project$LineChart_Colors$cyan),
+					_user$project$LineChart_Dots$circle,
+					'Sweden',
+					model.data.b),
 				_1: {
 					ctor: '::',
-					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$circle, 'Norway', model.data.nina),
-					_1: {ctor: '[]'}
+					_0: A4(
+						_user$project$LineChart$line,
+						A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0.2, _user$project$LineChart_Colors$blue),
+						_user$project$LineChart_Dots$circle,
+						'Iceland',
+						model.data.d),
+					_1: {
+						ctor: '::',
+						_0: A4(
+							_user$project$LineChart$line,
+							A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0, _user$project$LineChart_Colors$blue),
+							_user$project$LineChart_Dots$circle,
+							'Faroe Islands',
+							model.data.f),
+						_1: {
+							ctor: '::',
+							_0: A4(
+								_user$project$LineChart$line,
+								A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0, _user$project$LineChart_Colors$pink),
+								_user$project$LineChart_Dots$circle,
+								'Norway',
+								model.data.c),
+							_1: {
+								ctor: '::',
+								_0: A4(
+									_user$project$LineChart$line,
+									A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0.1, _user$project$LineChart_Colors$pink),
+									_user$project$LineChart_Dots$circle,
+									'Finland',
+									model.data.e),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
 				}
 			}
 		});
@@ -19597,28 +19816,52 @@ var _user$project$Lines$RecieveNumbers = function (a) {
 	return {ctor: 'RecieveNumbers', _0: a};
 };
 var _user$project$Lines$getNumbers = function () {
-	var genNumbers = A2(
-		_elm_lang$core$Random$list,
-		10,
-		A2(_elm_lang$core$Random$float, 50, 120));
+	var together = F2(
+		function (_p7, _p6) {
+			var _p8 = _p7;
+			var _p9 = _p6;
+			return A7(_user$project$Lines$Data, _p8._0, _p8._1, _p8._2, _p8._3, _p8._4, _p9._0, _p9._1);
+		});
+	var genNumbers = F2(
+		function (min, max) {
+			return A2(
+				_elm_lang$core$Random$list,
+				10,
+				A2(_elm_lang$core$Random$float, min, max));
+		});
+	var getFirst = A6(
+		_elm_lang$core$Random$map5,
+		F5(
+			function (v0, v1, v2, v3, v4) {
+				return {ctor: '_Tuple5', _0: v0, _1: v1, _2: v2, _3: v3, _4: v4};
+			}),
+		A2(genNumbers, 50, 90),
+		A2(genNumbers, 20, 60),
+		A2(genNumbers, 30, 60),
+		A2(genNumbers, 40, 90),
+		A2(genNumbers, 80, 100));
+	var getSecond = A3(
+		_elm_lang$core$Random$map2,
+		F2(
+			function (v0, v1) {
+				return {ctor: '_Tuple2', _0: v0, _1: v1};
+			}),
+		A2(genNumbers, 70, 90),
+		A2(genNumbers, 40, 70));
 	return A2(
 		_elm_lang$core$Random$generate,
 		_user$project$Lines$RecieveNumbers,
-		A4(
-			_elm_lang$core$Random$map3,
-			F3(
-				function (v0, v1, v2) {
-					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
-				}),
-			genNumbers,
-			genNumbers,
-			genNumbers));
+		A3(_elm_lang$core$Random$map2, together, getFirst, getSecond));
 }();
 var _user$project$Lines$init = {
 	ctor: '_Tuple2',
 	_0: {
-		data: A3(
+		data: A7(
 			_user$project$Lines$Data,
+			{ctor: '[]'},
+			{ctor: '[]'},
+			{ctor: '[]'},
+			{ctor: '[]'},
 			{ctor: '[]'},
 			{ctor: '[]'},
 			{ctor: '[]'}),
@@ -20572,7 +20815,7 @@ var _user$project$Ticks$yAxisConfig = function (model) {
 	};
 	return _user$project$LineChart_Axis$custom(
 		{
-			title: _user$project$LineChart_Axis_Title$default('Grade avg.'),
+			title: A3(_user$project$LineChart_Axis_Title$atAxisMax, 10, 0, 'Grade avg.'),
 			variable: function (_p2) {
 				return _elm_lang$core$Maybe$Just(
 					function (_) {
@@ -20604,7 +20847,7 @@ var _user$project$Ticks$xAxisConfig = function (model) {
 						return _.x;
 					}(_p3));
 			},
-			pixels: 620,
+			pixels: 800,
 			range: A2(_user$project$LineChart_Axis_Range$padded, 50, 20),
 			axisLine: _user$project$LineChart_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
 			ticks: A3(
@@ -20680,7 +20923,7 @@ var _user$project$Ticks$chart = function (model) {
 		{
 			x: _user$project$Ticks$xAxisConfig(model),
 			y: _user$project$Ticks$yAxisConfig(model),
-			container: A5(_user$project$LineChart_Container$spaced, 'line-chart-ticks', 60, 100, 60, 80),
+			container: A5(_user$project$LineChart_Container$spaced, 'line-chart-ticks', 60, 100, 60, 70),
 			interpolation: _user$project$LineChart_Interpolation$default,
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
@@ -20734,10 +20977,13 @@ var _user$project$Ticks$RecieveNumbers = function (a) {
 	return {ctor: 'RecieveNumbers', _0: a};
 };
 var _user$project$Ticks$getNumbers = function () {
-	var genNumbers = A2(
-		_elm_lang$core$Random$list,
-		10,
-		A2(_elm_lang$core$Random$float, -3, 12));
+	var genNumbers = F2(
+		function (min, max) {
+			return A2(
+				_elm_lang$core$Random$list,
+				10,
+				A2(_elm_lang$core$Random$float, min, max));
+		});
 	return A2(
 		_elm_lang$core$Random$generate,
 		_user$project$Ticks$RecieveNumbers,
@@ -20747,9 +20993,9 @@ var _user$project$Ticks$getNumbers = function () {
 				function (v0, v1, v2) {
 					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
 				}),
-			genNumbers,
-			genNumbers,
-			genNumbers));
+			A2(genNumbers, 9, 12),
+			A2(genNumbers, 7, 10),
+			A2(genNumbers, 2, 10)));
 }();
 var _user$project$Ticks$init = {
 	ctor: '_Tuple2',
@@ -21042,38 +21288,22 @@ var _user$project$Main$view = function (model) {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$html$Html$map,
-							_user$project$Main$SteppedMsg,
-							A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Stepped$view, model.stepped)),
+							_user$project$Main$LinesMsg,
+							A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Lines$view, model.lines)),
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$style(
-										{
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-											_1: {ctor: '[]'}
-										}),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$map,
-										_user$project$Main$TicksMsg,
-										A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Ticks$view, model.ticks)),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$map,
-											_user$project$Main$LinesMsg,
-											A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Lines$view, model.lines)),
-										_1: {ctor: '[]'}
-									}
-								}),
-							_1: {ctor: '[]'}
+								_elm_lang$html$Html$map,
+								_user$project$Main$SteppedMsg,
+								A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Stepped$view, model.stepped)),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$map,
+									_user$project$Main$TicksMsg,
+									A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Ticks$view, model.ticks)),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
 				}
