@@ -259,7 +259,7 @@ chart model =
           , Events.onWithOptions "mouseleave" (Events.Options True True True) LeaveContainer Events.getData
           ]
     , width = 670
-    , margin = Container.Margin 30 100 30 70
+    , margin = Container.Margin 30 100 60 70
     , dots = Dots.custom (Dots.full 0)
     , id = "line-chart"
     }
@@ -313,7 +313,7 @@ chartZoom model selection =
     , legends = Legends.none
     , dots = Dots.hoverOne model.hinted
     , width = 600
-    , margin = Container.Margin 30 25 30 70
+    , margin = Container.Margin 30 25 60 70
     , id = "line-chart-zoom"
     }
 
@@ -352,7 +352,7 @@ type alias Config =
 viewChart : Data -> Config -> Html.Html Msg
 viewChart data { range, junk, events, legends, dots, width, margin, id } =
   LineChart.viewCustom
-    { y = Axis.default 420 "y" .y
+    { y = Axis.default 450 "y" .y
     , x =
         Axis.custom
           { title = Title.default "x"
