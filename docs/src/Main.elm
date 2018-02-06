@@ -7,6 +7,7 @@ import Area
 import Selection
 import Stepped
 import Ticks
+import Lines
 
 
 
@@ -19,6 +20,7 @@ type alias Model =
     , area : Area.Model
     , stepped : Stepped.Model
     , ticks : Ticks.Model
+    , lines : Lines.Model
     }
 
 
@@ -40,18 +42,23 @@ init =
 
     ( ticks, cmdTicks ) =
       Ticks.init
+
+    ( lines, cmdLines ) =
+      Lines.init
   in
     ( { focused = Nothing
       , selection = selection
       , area = area
       , stepped = stepped
       , ticks = ticks
+      , lines = lines
       }
     , Cmd.batch
         [ Cmd.map SelectionMsg cmdSelection
         , Cmd.map AreaMsg cmdArea
         , Cmd.map SteppedMsg cmdStepped
         , Cmd.map TicksMsg cmdTicks
+        , Cmd.map LinesMsg cmdLines
         ]
     )
 
@@ -65,6 +72,7 @@ type Msg
   | AreaMsg Area.Msg
   | SteppedMsg Stepped.Msg
   | TicksMsg Ticks.Msg
+  | LinesMsg Lines.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -111,6 +119,15 @@ update msg model =
         , Cmd.map TicksMsg cmd
         )
 
+    LinesMsg msg ->
+      let
+        ( lines, cmd ) =
+          Lines.update msg model.lines
+      in
+        ( { model | lines = lines }
+        , Cmd.map LinesMsg cmd
+        )
+
 
 updateFocused : Maybe Id -> Model -> Model
 updateFocused id model =
@@ -131,7 +148,11 @@ view model =
     , Html.map AreaMsg <| Html.Lazy.lazy Area.view model.area
     , Html.map SelectionMsg <| Html.Lazy.lazy Selection.view model.selection
     , Html.map SteppedMsg <| Html.Lazy.lazy Stepped.view model.stepped
-    , Html.map TicksMsg <| Html.Lazy.lazy Ticks.view model.ticks
+    , Html.div
+        [ Html.Attributes.style [ ( "display", "flex" ) ] ]
+        [ Html.map TicksMsg <| Html.Lazy.lazy Ticks.view model.ticks
+        , Html.map LinesMsg <| Html.Lazy.lazy Lines.view model.lines
+        ]
     ]
 
 

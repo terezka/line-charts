@@ -2,7 +2,6 @@ module Ticks exposing (Model, init, Msg, update, view)
 
 import Html
 import Random
-import Color
 import LineChart
 import LineChart.Junk as Junk
 import LineChart.Area as Area
@@ -130,7 +129,8 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [] [ chart model ]
+  Html.div []
+    [ chart model ]
 
 
 
@@ -142,29 +142,20 @@ chart model =
   LineChart.viewCustom
     { x = xAxisConfig model
     , y = yAxisConfig model
-    , container = Container.default "line-chart-ticks"
+    , container = Container.spaced "line-chart-ticks" 60 100 60 80
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
     , events = Events.hoverOne Hint
-    , junk =
-        Junk.custom <| \system ->
-          let middle r = r.min + (r.max - r.min) / 2 in
-          { below = []
-          , above =
-              [ Junk.labelPlaced system (middle system.x) system.y.max 0 -30 "middle" (Color.rgb 120 120 120)
-                  "Note: Danish grades range from -3 to 12!"
-              ]
-          , html  = []
-          }
+    , junk = Junk.default
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
-    , dots = Dots.default
+    , dots = Dots.custom (Dots.disconnected 7 2)
     }
-    [ LineChart.line Colors.pink Dots.plus "Alice" model.data.alice
-    , LineChart.line Colors.purple Dots.diamond "Bobby" model.data.bobby
-    , LineChart.dash Colors.red Dots.none "Class" [ 2, 4 ] model.data.chuck
+    [ LineChart.line Colors.blue Dots.plus "Alice" model.data.alice
+    , LineChart.line Colors.cyan Dots.cross "Bobby" model.data.bobby
+    , LineChart.dash Colors.purple Dots.none "Class" [ 5, 2 ] model.data.chuck
     ]
 
 
@@ -176,7 +167,7 @@ xAxisConfig model =
   Axis.custom
     { title = Title.default "Year"
     , variable = Just << .x
-    , pixels = 700
+    , pixels = 620
     , range = Range.padded 50 20
     , axisLine = AxisLine.rangeFrame Colors.gray
     , ticks = ticksConfig .x formatX model.hinted

@@ -75,7 +75,7 @@ hoverOne : Maybe data -> Config data
 hoverOne hovered =
   custom <| \data ->
     if List.any (Just >> (==) hovered) data then
-      style 2 identity
+      style 2.5 identity
     else
       style 1 identity
 
