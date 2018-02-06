@@ -59,30 +59,43 @@ addBelow below layers =
 
 hoverOne : Maybe data -> List ( String, data -> String ) -> Config data msg
 hoverOne hovered properties =
-  Config <| \_ toX toY system ->
+  Config <| \series toX toY system ->
     { below = []
     , above = []
-    , html  = [ Utils.viewMaybe hovered (hoverOneHtml system toX toY properties) ]
+    , html  = [ Utils.viewMaybe hovered (hoverOneHtml series system toX toY properties) ]
     }
 
 
 hoverOneHtml
-  :  Coordinate.System
+  :  List (Series data)
+  -> Coordinate.System
   -> (data -> Maybe Float)
   -> (data -> Maybe Float)
   -> List ( String, data -> String )
   -> data
   -> Html.Html msg
-hoverOneHtml system toX toY properties hovered =
+hoverOneHtml series system toX toY properties hovered =
   let
     x = Maybe.withDefault (middle .x system) (toX hovered)
     y = Maybe.withDefault (middle .y system) (toY hovered)
+
+    viewHeaderOne =
+      Utils.viewMaybe (findSeries hovered series) <| \( color, label, _ ) ->
+        viewHeader
+          [ viewColorLabel (Color.Convert.colorToHex color) label ]
+
+    viewColorLabel color label =
+      Html.p
+        [ Html.Attributes.style
+            [ ( "margin", "0" ), ( "color", color ) ]
+        ]
+        [ Html.text label ]
 
     viewValue ( label, value ) =
       viewRow "inherit" label (value hovered)
   in
   hoverAt system x y [] <|
-    List.map viewValue properties
+    viewHeaderOne :: List.map viewValue properties
 
 
 
@@ -129,7 +142,7 @@ hoverManyHtml system toX toY format first hovered series =
         viewRow (Color.Convert.colorToHex color) label (format.y hovered)
   in
   hover system x [] <|
-    viewHeader (format.x first) :: List.map viewValue series
+    viewHeader [ Html.text (format.x first) ] :: List.map viewValue series
 
 
 standardStyles : List ( String, String )
@@ -143,8 +156,8 @@ standardStyles =
   ]
 
 
-viewHeader : String -> Html.Html msg
-viewHeader value =
+viewHeader : List (Html.Html msg) -> Html.Html msg
+viewHeader =
   Html.p
     [ Html.Attributes.style
         [ ( "margin-top", "3px" )
@@ -153,7 +166,6 @@ viewHeader value =
         , ( "border-bottom", "1px solid rgb(163, 163, 163)" )
         ]
     ]
-    [ Html.text value ]
 
 
 viewRow : String -> String -> String -> Html.Html msg
@@ -232,3 +244,18 @@ find hovered data =
         Just first
       else
         find rest data
+
+
+findSeries : data -> List (Series data) -> Maybe (Series data)
+findSeries hovered datas =
+  case datas of
+    [] ->
+      Nothing
+
+    ( color, label, data ) :: rest ->
+      case find [ hovered ] data of
+        Just found ->
+          Just ( color, label, data )
+
+        Nothing ->
+          findSeries hovered rest

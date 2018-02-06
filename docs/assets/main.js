@@ -13904,6 +13904,36 @@ var _user$project$Internal_Junk$find = F2(
 			}
 		}
 	});
+var _user$project$Internal_Junk$findSeries = F2(
+	function (hovered, datas) {
+		findSeries:
+		while (true) {
+			var _p2 = datas;
+			if (_p2.ctor === '[]') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				var _p4 = _p2._0._2;
+				var _p3 = A2(
+					_user$project$Internal_Junk$find,
+					{
+						ctor: '::',
+						_0: hovered,
+						_1: {ctor: '[]'}
+					},
+					_p4);
+				if (_p3.ctor === 'Just') {
+					return _elm_lang$core$Maybe$Just(
+						{ctor: '_Tuple3', _0: _p2._0._0, _1: _p2._0._1, _2: _p4});
+				} else {
+					var _v5 = hovered,
+						_v6 = _p2._1;
+					hovered = _v5;
+					datas = _v6;
+					continue findSeries;
+				}
+			}
+		}
+	});
 var _user$project$Internal_Junk$shouldFlip = F2(
 	function (system, x) {
 		return _elm_lang$core$Native_Utils.cmp(x - system.x.min, system.x.max - x) > 0;
@@ -13941,37 +13971,29 @@ var _user$project$Internal_Junk$viewRow = F3(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$Internal_Junk$viewHeader = function (value) {
-	return A2(
-		_elm_lang$html$Html$p,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
+var _user$project$Internal_Junk$viewHeader = _elm_lang$html$Html$p(
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$style(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '3px'},
+				_1: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '3px'},
+					_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '5px'},
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '5px'},
+						_0: {ctor: '_Tuple2', _0: 'padding', _1: '3px'},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'padding', _1: '3px'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid rgb(163, 163, 163)'},
-								_1: {ctor: '[]'}
-							}
+							_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid rgb(163, 163, 163)'},
+							_1: {ctor: '[]'}
 						}
 					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(value),
-			_1: {ctor: '[]'}
-		});
-};
+				}
+			}),
+		_1: {ctor: '[]'}
+	});
 var _user$project$Internal_Junk$standardStyles = {
 	ctor: '::',
 	_0: {ctor: '_Tuple2', _0: 'padding', _1: '5px'},
@@ -14066,16 +14088,16 @@ var _user$project$Internal_Junk$hover = F3(
 	});
 var _user$project$Internal_Junk$hoverManyHtml = F7(
 	function (system, toX, toY, format, first, hovered, series) {
-		var viewValue = function (_p2) {
-			var _p3 = _p2;
+		var viewValue = function (_p5) {
+			var _p6 = _p5;
 			return A2(
 				_user$project$Internal_Utils$viewMaybe,
-				A2(_user$project$Internal_Junk$find, hovered, _p3._2),
+				A2(_user$project$Internal_Junk$find, hovered, _p6._2),
 				function (hovered) {
 					return A3(
 						_user$project$Internal_Junk$viewRow,
-						_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_p3._0),
-						_p3._1,
+						_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_p6._0),
+						_p6._1,
 						format.y(hovered));
 				});
 		};
@@ -14096,20 +14118,64 @@ var _user$project$Internal_Junk$hoverManyHtml = F7(
 			{
 				ctor: '::',
 				_0: _user$project$Internal_Junk$viewHeader(
-					format.x(first)),
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							format.x(first)),
+						_1: {ctor: '[]'}
+					}),
 				_1: A2(_elm_lang$core$List$map, viewValue, series)
 			});
 	});
-var _user$project$Internal_Junk$hoverOneHtml = F5(
-	function (system, toX, toY, properties, hovered) {
-		var viewValue = function (_p4) {
-			var _p5 = _p4;
+var _user$project$Internal_Junk$hoverOneHtml = F6(
+	function (series, system, toX, toY, properties, hovered) {
+		var viewValue = function (_p7) {
+			var _p8 = _p7;
 			return A3(
 				_user$project$Internal_Junk$viewRow,
 				'inherit',
-				_p5._0,
-				_p5._1(hovered));
+				_p8._0,
+				_p8._1(hovered));
 		};
+		var viewColorLabel = F2(
+			function (color, label) {
+				return A2(
+					_elm_lang$html$Html$p,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'color', _1: color},
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(label),
+						_1: {ctor: '[]'}
+					});
+			});
+		var viewHeaderOne = A2(
+			_user$project$Internal_Utils$viewMaybe,
+			A2(_user$project$Internal_Junk$findSeries, hovered, series),
+			function (_p9) {
+				var _p10 = _p9;
+				return _user$project$Internal_Junk$viewHeader(
+					{
+						ctor: '::',
+						_0: A2(
+							viewColorLabel,
+							_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_p10._0),
+							_p10._1),
+						_1: {ctor: '[]'}
+					});
+			});
 		var y = A2(
 			_elm_lang$core$Maybe$withDefault,
 			A2(
@@ -14134,7 +14200,11 @@ var _user$project$Internal_Junk$hoverOneHtml = F5(
 			x,
 			y,
 			{ctor: '[]'},
-			A2(_elm_lang$core$List$map, viewValue, properties));
+			{
+				ctor: '::',
+				_0: viewHeaderOne,
+				_1: A2(_elm_lang$core$List$map, viewValue, properties)
+			});
 	});
 var _user$project$Internal_Junk$addBelow = F2(
 	function (below, layers) {
@@ -14145,9 +14215,9 @@ var _user$project$Internal_Junk$addBelow = F2(
 			});
 	});
 var _user$project$Internal_Junk$getLayers = F5(
-	function (series, toX, toY, system, _p6) {
-		var _p7 = _p6;
-		return A4(_p7._0, series, toX, toY, system);
+	function (series, toX, toY, system, _p11) {
+		var _p12 = _p11;
+		return A4(_p12._0, series, toX, toY, system);
 	});
 var _user$project$Internal_Junk$Layers = F3(
 	function (a, b, c) {
@@ -14162,7 +14232,7 @@ var _user$project$Internal_Junk$Config = function (a) {
 };
 var _user$project$Internal_Junk$none = _user$project$Internal_Junk$Config(
 	F4(
-		function (_p11, _p10, _p9, _p8) {
+		function (_p16, _p15, _p14, _p13) {
 			return A3(
 				_user$project$Internal_Junk$Layers,
 				{ctor: '[]'},
@@ -14172,7 +14242,7 @@ var _user$project$Internal_Junk$none = _user$project$Internal_Junk$Config(
 var _user$project$Internal_Junk$custom = function (func) {
 	return _user$project$Internal_Junk$Config(
 		F3(
-			function (_p14, _p13, _p12) {
+			function (_p19, _p18, _p17) {
 				return func;
 			}));
 };
@@ -14180,7 +14250,7 @@ var _user$project$Internal_Junk$hoverOne = F2(
 	function (hovered, properties) {
 		return _user$project$Internal_Junk$Config(
 			F4(
-				function (_p15, toX, toY, system) {
+				function (series, toX, toY, system) {
 					return {
 						below: {ctor: '[]'},
 						above: {ctor: '[]'},
@@ -14189,7 +14259,7 @@ var _user$project$Internal_Junk$hoverOne = F2(
 							_0: A2(
 								_user$project$Internal_Utils$viewMaybe,
 								hovered,
-								A4(_user$project$Internal_Junk$hoverOneHtml, system, toX, toY, properties)),
+								A5(_user$project$Internal_Junk$hoverOneHtml, series, system, toX, toY, properties)),
 							_1: {ctor: '[]'}
 						}
 					};
@@ -14197,18 +14267,18 @@ var _user$project$Internal_Junk$hoverOne = F2(
 	});
 var _user$project$Internal_Junk$hoverMany = F2(
 	function (hovered, format) {
-		var _p16 = hovered;
-		if (_p16.ctor === '[]') {
+		var _p20 = hovered;
+		if (_p20.ctor === '[]') {
 			return _user$project$Internal_Junk$none;
 		} else {
-			var _p17 = _p16._0;
+			var _p21 = _p20._0;
 			return _user$project$Internal_Junk$Config(
 				F4(
 					function (series, toX, toY, system) {
 						var xValue = A2(
 							_elm_lang$core$Maybe$withDefault,
 							0,
-							toX(_p17));
+							toX(_p21));
 						return {
 							below: {
 								ctor: '::',
@@ -14222,7 +14292,7 @@ var _user$project$Internal_Junk$hoverMany = F2(
 							above: {ctor: '[]'},
 							html: {
 								ctor: '::',
-								_0: A7(_user$project$Internal_Junk$hoverManyHtml, system, toX, toY, format, _p17, hovered, series),
+								_0: A7(_user$project$Internal_Junk$hoverManyHtml, system, toX, toY, format, _p21, hovered, series),
 								_1: {ctor: '[]'}
 							}
 						};
