@@ -167,7 +167,7 @@ viewTitle =
                 [ Html.text "Github" ]
             , Html.text " / "
             , Html.a
-                [ Html.Attributes.href "https://twitter.com/terez_ka" ]
+                [ Html.Attributes.href "https://twitter.com/terezk_a" ]
                 [ Html.text "Twitter" ]
             , Html.text " / "
             , Html.a
