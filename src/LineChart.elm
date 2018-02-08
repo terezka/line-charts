@@ -450,7 +450,7 @@ viewCustom config lines =
 
     attributes =
       List.concat
-        [ Internal.Container.properties config.container |> .attributesSvg
+        [ Internal.Container.properties .attributesSvg config.container
         , Internal.Events.toContainerAttributes dataAll system config.events
         , [ viewBoxAttribute system ]
         ]
@@ -482,7 +482,7 @@ container : Config data msg -> Coordinate.System -> List (Html.Html msg) -> Html
 container config { frame } junkHtml plot  =
   let
     userAttributes =
-      Internal.Container.properties config.container |> .attributesHtml
+      Internal.Container.properties .attributesHtml config.container
 
     sizeStyles =
       Internal.Container.sizeStyles config.container frame.size.width frame.size.height
@@ -619,7 +619,7 @@ setY datum y =
 toSystem : Config data msg -> List (Data.Data data) -> Coordinate.System
 toSystem config data =
   let
-    container = Internal.Container.properties config.container
+    container = Internal.Container.properties identity config.container
     hasArea = Internal.Area.hasArea config.area
     size   = Coordinate.Size (Internal.Axis.pixels config.x) (Internal.Axis.pixels config.y)
     frame  = Coordinate.Frame container.margin size

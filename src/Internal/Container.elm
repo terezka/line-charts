@@ -102,9 +102,9 @@ static =
 
 
 {-| -}
-properties : Config msg -> Properties msg
-properties (Config properties) =
-  properties
+properties : (Properties msg -> a) -> Config msg -> a
+properties f (Config properties) =
+  f properties
 
 
 {-| -}
