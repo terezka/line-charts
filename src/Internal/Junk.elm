@@ -102,15 +102,8 @@ hoverOneHtml series system toX toY properties hovered =
 -- HOVER MANY
 
 
-{-| -}
-type alias HoverManyConfig data =
-  { x : data -> String
-  , y : data -> String
-  }
-
-
-hoverMany : List data -> HoverManyConfig data -> Config data msg
-hoverMany hovered format =
+hoverMany : List data -> (data -> String) -> (data -> String) -> Config data msg
+hoverMany hovered formatX formatY =
   case hovered of
     [] ->
       none
@@ -120,7 +113,7 @@ hoverMany hovered format =
         let xValue = Maybe.withDefault 0 (toX first) in -- TODO Maybe should happen - make it not.
         { below = [ Svg.verticalGrid system [] xValue ]
         , above = []
-        , html  = [ hoverManyHtml system toX toY format first hovered series ]
+        , html  = [ hoverManyHtml system toX toY formatX formatY first hovered series ]
         }
 
 
@@ -128,21 +121,22 @@ hoverManyHtml
   :  Coordinate.System
   -> (data -> Maybe Float)
   -> (data -> Maybe Float)
-  -> HoverManyConfig data
+  -> (data -> String)
+  -> (data -> String)
   -> data
   -> List data
   -> List (Series data)
   -> Html.Html msg
-hoverManyHtml system toX toY format first hovered series =
+hoverManyHtml system toX toY formatX formatY first hovered series =
   let
     x = Maybe.withDefault (middle .x system) (toX first)
 
     viewValue ( color, label, data ) =
       Utils.viewMaybe (find hovered data) <| \hovered ->
-        viewRow (Color.Convert.colorToHex color) label (format.y hovered)
+        viewRow (Color.Convert.colorToHex color) label (formatY hovered)
   in
   hover system x [] <|
-    viewHeader [ Html.text (format.x first) ] :: List.map viewValue series
+    viewHeader [ Html.text (formatX first) ] :: List.map viewValue series
 
 
 standardStyles : List ( String, String )
@@ -213,7 +207,7 @@ hoverAt system x y styles view =
       ]
 
     containerStyles =
-      standardStyles ++ posititonStyles ++styles
+      standardStyles ++ posititonStyles ++ styles
   in
   Html.div [ Html.Attributes.style containerStyles ] view
 

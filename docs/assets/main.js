@@ -14086,8 +14086,8 @@ var _user$project$Internal_Junk$hover = F3(
 			system);
 		return A4(_user$project$Internal_Junk$hoverAt, system, x, y, containerStyles);
 	});
-var _user$project$Internal_Junk$hoverManyHtml = F7(
-	function (system, toX, toY, format, first, hovered, series) {
+var _user$project$Internal_Junk$hoverManyHtml = F8(
+	function (system, toX, toY, formatX, formatY, first, hovered, series) {
 		var viewValue = function (_p5) {
 			var _p6 = _p5;
 			return A2(
@@ -14098,7 +14098,7 @@ var _user$project$Internal_Junk$hoverManyHtml = F7(
 						_user$project$Internal_Junk$viewRow,
 						_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_p6._0),
 						_p6._1,
-						format.y(hovered));
+						formatY(hovered));
 				});
 		};
 		var x = A2(
@@ -14121,7 +14121,7 @@ var _user$project$Internal_Junk$hoverManyHtml = F7(
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(
-							format.x(first)),
+							formatX(first)),
 						_1: {ctor: '[]'}
 					}),
 				_1: A2(_elm_lang$core$List$map, viewValue, series)
@@ -14223,10 +14223,6 @@ var _user$project$Internal_Junk$Layers = F3(
 	function (a, b, c) {
 		return {below: a, above: b, html: c};
 	});
-var _user$project$Internal_Junk$HoverManyConfig = F2(
-	function (a, b) {
-		return {x: a, y: b};
-	});
 var _user$project$Internal_Junk$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
@@ -14265,8 +14261,8 @@ var _user$project$Internal_Junk$hoverOne = F2(
 					};
 				}));
 	});
-var _user$project$Internal_Junk$hoverMany = F2(
-	function (hovered, format) {
+var _user$project$Internal_Junk$hoverMany = F3(
+	function (hovered, formatX, formatY) {
 		var _p20 = hovered;
 		if (_p20.ctor === '[]') {
 			return _user$project$Internal_Junk$none;
@@ -14292,7 +14288,7 @@ var _user$project$Internal_Junk$hoverMany = F2(
 							above: {ctor: '[]'},
 							html: {
 								ctor: '::',
-								_0: A7(_user$project$Internal_Junk$hoverManyHtml, system, toX, toY, format, _p21, hovered, series),
+								_0: A8(_user$project$Internal_Junk$hoverManyHtml, system, toX, toY, formatX, formatY, _p21, hovered, series),
 								_1: {ctor: '[]'}
 							}
 						};
@@ -14436,10 +14432,6 @@ var _user$project$LineChart_Junk$custom = _user$project$Internal_Junk$custom;
 var _user$project$LineChart_Junk$hoverMany = _user$project$Internal_Junk$hoverMany;
 var _user$project$LineChart_Junk$hoverOne = _user$project$Internal_Junk$hoverOne;
 var _user$project$LineChart_Junk$default = _user$project$Internal_Junk$none;
-var _user$project$LineChart_Junk$HoverManyConfig = F2(
-	function (a, b) {
-		return {x: a, y: b};
-	});
 var _user$project$LineChart_Junk$Layers = F3(
 	function (a, b, c) {
 		return {below: a, above: b, html: c};
@@ -19448,6 +19440,22 @@ var _user$project$Area$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
 };
+var _user$project$Area$formatY = function (_p0) {
+	return _elm_lang$core$Basics$toString(
+		_user$project$Area$round100(
+			function (_) {
+				return _.y;
+			}(_p0)));
+};
+var _user$project$Area$formatX = function (_p1) {
+	return A2(
+		_mgold$elm_date_format$Date_Format$format,
+		'%e. %b, %Y',
+		_elm_lang$core$Date$fromTime(
+			function (_) {
+				return _.x;
+			}(_p1)));
+};
 var _user$project$Area$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -19479,31 +19487,31 @@ var _user$project$Area$Data = F3(
 		return {nora: a, noah: b, nina: c};
 	});
 var _user$project$Area$setData = F2(
-	function (_p0, model) {
-		var _p1 = _p0;
+	function (_p2, model) {
+		var _p3 = _p2;
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				data: A3(
 					_user$project$Area$Data,
-					_user$project$Area$toData(_p1._0),
-					_user$project$Area$toData(_p1._1),
-					_user$project$Area$toData(_p1._2))
+					_user$project$Area$toData(_p3._0),
+					_user$project$Area$toData(_p3._1),
+					_user$project$Area$toData(_p3._2))
 			});
 	});
 var _user$project$Area$update = F2(
 	function (msg, model) {
-		var _p2 = msg;
-		if (_p2.ctor === 'RecieveNumbers') {
+		var _p4 = msg;
+		if (_p4.ctor === 'RecieveNumbers') {
 			return A2(
 				_user$project$Area$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Area$setData, _p2._0, model));
+				A2(_user$project$Area$setData, _p4._0, model));
 		} else {
 			return A2(
 				_user$project$Area$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Area$setHint, _p2._0, model));
+				A2(_user$project$Area$setHint, _p4._0, model));
 		}
 	});
 var _user$project$Area$Hint = function (a) {
@@ -19532,27 +19540,7 @@ var _user$project$Area$chart = function (model) {
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
 			events: _user$project$LineChart_Events$hoverMany(_user$project$Area$Hint),
-			junk: A2(
-				_user$project$LineChart_Junk$hoverMany,
-				model.hinted,
-				{
-					x: function (_p3) {
-						return A2(
-							_mgold$elm_date_format$Date_Format$format,
-							'%e. %b, %Y',
-							_elm_lang$core$Date$fromTime(
-								function (_) {
-									return _.x;
-								}(_p3)));
-					},
-					y: function (_p4) {
-						return _elm_lang$core$Basics$toString(
-							_user$project$Area$round100(
-								function (_) {
-									return _.y;
-								}(_p4)));
-					}
-				}),
+			junk: A3(_user$project$LineChart_Junk$hoverMany, model.hinted, _user$project$Area$formatX, _user$project$Area$formatY),
 			grid: A2(_user$project$LineChart_Grid$dots, 1, _user$project$LineChart_Colors$gray),
 			area: _user$project$LineChart_Area$stacked(0.5),
 			line: _user$project$LineChart_Line$default,

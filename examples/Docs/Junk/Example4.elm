@@ -1,10 +1,10 @@
-module Docs.Axis.Example3 exposing (main)
+module Docs.Junk.Example4 exposing (main)
 
-
-import Time
 import Html
+import Time
+import Date
+import Date.Format
 import LineChart
-import LineChart.Colors as Colors
 import LineChart.Junk as Junk
 import LineChart.Area as Area
 import LineChart.Axis as Axis
@@ -22,54 +22,83 @@ import LineChart.Axis.Intersection as Intersection
 
 
 
-main : Html.Html msg
+main : Program Never Model Msg
 main =
+  Html.beginnerProgram
+    { model = init
+    , update = update
+    , view = view
+    }
+
+
+
+-- MODEL
+
+
+type alias Model =
+    { hovered : List Data }
+
+
+init : Model
+init =
+    { hovered = [] }
+
+
+
+-- UPDATE
+
+
+type Msg
+  = Hover (List Data)
+
+
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
+    Hover hovered ->
+      { model | hovered = hovered }
+
+
+
+-- VIEW
+
+
+view : Model -> Html.Html Msg
+view =
   chart
 
 
-chart : Html.Html msg
-chart =
+chart : Model -> Html.Html Msg
+chart model =
   LineChart.viewCustom
-    { x = xAxisConfig
-    , y = Axis.default 400 "Income ($)" .income
+    { y = Axis.default 450 "Weight" .weight
+    , x = Axis.time 700 "Time" .date
     , container = Container.default "line-chart-1"
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
-    , events = Events.default
-    , junk = Junk.default
+    , events = Events.hoverMany Hover
+    , junk =
+        Junk.hoverMany model.hovered formatX formatY
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Colors.blueLight Dots.square "Chuck" chuck
-    , LineChart.line Colors.pinkLight Dots.plus "Alice" alice
-    , LineChart.line Colors.goldLight Dots.diamond "Bobby" bobby
+    [ LineChart.line Colors.pink Dots.triangle "Chuck" chuck
+    , LineChart.line Colors.blue Dots.circle "Bobby" bobby
+    , LineChart.line Colors.cyan Dots.diamond "Alice" alice
     ]
 
 
-xAxisConfig : Axis.Config Data msg
-xAxisConfig =
-  Axis.time 650 "Date" .date
-  -- Change the `dateInterval` function to change the dates!
+formatX : Data -> String
+formatX =
+  .date >> Date.fromTime >> Date.Format.format "%e. %b, %Y"
 
 
-dateInterval : Int -> Time.Time
-dateInterval i =
-  -- 4 * year + toFloat i * 21 * year
-  -- 20 * day + toFloat i * 8 * day
-  4 * Time.hour + toFloat i * 21 * Time.hour
-
-
-day : Time.Time
-day =
-  24 * Time.hour
-
-
-year : Time.Time
-year =
-  356 * day
+formatY : Data -> String
+formatY data =
+  toString data.weight ++ "kg"
 
 
 
@@ -115,3 +144,18 @@ average =
   , Data 25 79.7 1.8  46000 (dateInterval 1)
   , Data 46 85   1.82 70667 (dateInterval 2)
   ]
+
+
+dateInterval : Int -> Time.Time
+dateInterval i =
+  4 * year + toFloat i * 21 * year
+
+
+day : Time.Time
+day =
+  24 * Time.hour
+
+
+year : Time.Time
+year =
+  356 * day

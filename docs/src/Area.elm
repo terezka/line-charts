@@ -149,11 +149,7 @@ chart model =
     , intersection = Intersection.default
     , legends = Legends.default
     , events = Events.hoverMany Hint
-    , junk =
-        Junk.hoverMany model.hinted
-          { x = Date.Format.format "%e. %b, %Y" << Date.fromTime << .x
-          , y = toString << round100 << .y
-          }
+    , junk = Junk.hoverMany model.hinted formatX formatY
     , grid = Grid.dots 1 Colors.gray
     , area = Area.stacked 0.5
     , line = Line.default
@@ -163,6 +159,16 @@ chart model =
     , LineChart.line Colors.cyan Dots.circle "Noah" model.data.noah
     , LineChart.line Colors.blue Dots.triangle "Nina" model.data.nina
     ]
+
+
+formatX : Coordinate.Point -> String
+formatX =
+  .x >> Date.fromTime >> Date.Format.format "%e. %b, %Y"
+
+
+formatY : Coordinate.Point -> String
+formatY =
+  .y >> round100 >> toString
 
 
 

@@ -98,8 +98,8 @@ type alias Config data msg =
 
 {-| Draws the default tooltip.
 
-    junk : Maybe Data -> Junk.Junk msg
-    junk hovered =
+    customJunk : Maybe Data -> Junk.Junk msg
+    customJunk hovered =
       Junk.hoverOne model.hovered
         [ ( "Age", toString << .age )
         , ( "Weight", toString << .weight )
@@ -107,21 +107,36 @@ type alias Config data msg =
 
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Junk/Example1.elm)._
 
+<img alt="Tooltip" width="540" src="https://github.com/terezka/line-charts/blob/master/images/tooltip1.png?raw=true"></src>
+
 -}
 hoverOne : Maybe data -> List ( String, data -> String ) -> Config data msg
 hoverOne =
   Junk.hoverOne
 
 
-{-| -}
-type alias HoverManyConfig data =
-  { x : data -> String
-  , y : data -> String
-  }
+{-| Draws the default tooltip for multiple hovered points.
+
+    customJunk : List Data -> Junk.Junk msg
+    customJunk hovered =
+      Junk.hoverMany model.hovered formatX formatY
+
+    formatX : Data -> String
+    formatX =
+      .date >> Date.fromTime >> Date.Format.format "%e. %b, %Y"
+
+    formatY : Data -> String
+    formatY data =
+      toString data.weight ++ "kg"
 
 
-{-| -}
-hoverMany : List data -> HoverManyConfig data -> Config data msg
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Junk/Example4.elm)._
+
+
+<img alt="Tooltip" width="540" src="https://github.com/terezka/line-charts/blob/master/images/tooltip2.png?raw=true"></src>
+
+-}
+hoverMany : List data -> (data -> String) -> (data -> String) -> Config data msg
 hoverMany =
   Junk.hoverMany
 
@@ -334,7 +349,7 @@ Arguments:
   8. The text.
 
 
-    customJunk : Junk.Config data msg
+    customJunk : Junk.Config Data msg
     customJunk =
       Junk.custom <| \system ->
         { below = []
@@ -368,9 +383,21 @@ withinChartArea =
 -- HOVER VIEWS
 
 
-{-| Make a hover placed in the middle of the y-axis and at a given x-coordinate.
+{-| Make the markup for a hover placed in the middle of the y-axis and at a given x-coordinate.
 
 Pass the hint x-coordinate, your styles and your internal view.
+
+    customJunk : Maybe Data -> Junk.Config Data msg
+    customJunk hovered =
+      Junk.custom <| \system ->
+        { below = []
+        , above = []
+        , html =
+            [ Junk.hover system hovered.x
+                [ ( "border-color", "red" ) ]
+                [ Html.text (toString hovered.y) ]
+            ]
+        }
 
  -}
 hover : Coordinate.System  -> Float -> List ( String, String ) -> List (Html.Html msg) -> Html.Html msg
@@ -378,9 +405,21 @@ hover =
   Junk.hover
 
 
-{-| Make a hover placed at a given x- and y-coordinate.
+{-| Make the markup for a hover placed at a given x- and y-coordinate.
 
 Pass the hint x- and y-coordinate, your styles and your internal view.
+
+    customJunk : Maybe Data -> Junk.Config Data msg
+    customJunk hovered =
+      Junk.custom <| \system ->
+        { below = []
+        , above = []
+        , html =
+            [ Junk.hoverAt system hovered.x system.y.max
+                [ ( "border-color", "red" ) ]
+                [ Html.text (toString hovered.y) ]
+            ]
+        }
 
 -}
 hoverAt : Coordinate.System  -> Float -> Float -> List ( String, String ) -> List (Html.Html msg) -> Html.Html msg
