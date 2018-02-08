@@ -19459,7 +19459,7 @@ var _user$project$Area$setHint = F2(
 			{hinted: hinted});
 	});
 var _user$project$Area$toDate = function (index) {
-	return (((_elm_lang$core$Time$hour * 24) * 356) * 45) + (((_elm_lang$core$Time$hour * 24) * 21) * _elm_lang$core$Basics$toFloat(index));
+	return ((((_elm_lang$core$Time$hour * 24) * 356) * 45) + ((_elm_lang$core$Time$hour * 24) * 30)) + (((_elm_lang$core$Time$hour * 24) * 21) * _elm_lang$core$Basics$toFloat(index));
 };
 var _user$project$Area$toData = function (numbers) {
 	return A2(
@@ -19860,7 +19860,7 @@ var _user$project$Lines$chart = function (model) {
 								ctor: '::',
 								_0: A4(
 									_user$project$LineChart$line,
-									A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0.1, _user$project$LineChart_Colors$pink),
+									A2(_eskimoblood$elm_color_extra$Color_Manipulate$darken, 0.2, _user$project$LineChart_Colors$pink),
 									_user$project$LineChart_Dots$circle,
 									'Finland',
 									model.data.e),
@@ -20537,7 +20537,7 @@ var _user$project$Stepped$viewHint = function (_p0) {
 				_0: pStyle(
 					{
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid black'},
+						_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid rgb(163, 163, 163)'},
 						_1: {
 							ctor: '::',
 							_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '3px'},
@@ -21105,7 +21105,7 @@ var _user$project$Main$viewTitle = A2(
 			},
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html$text('series'),
+				_0: _elm_lang$html$Html$text('line-charts'),
 				_1: {ctor: '[]'}
 			}),
 		_1: {

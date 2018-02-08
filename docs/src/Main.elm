@@ -159,7 +159,7 @@ viewTitle =
         [ Html.Attributes.class "view__title__container" ]
         [ Html.h1
             [ Html.Attributes.class "view__title" ]
-            [ Html.text "series" ]
+            [ Html.text "line-charts" ]
         , Html.div
             [ Html.Attributes.class "view__github-link" ]
             [ Html.text "Find it on "

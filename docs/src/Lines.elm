@@ -206,7 +206,7 @@ chart model =
     , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle "Iceland" model.data.d
     , LineChart.line (Manipulate.lighten 0   Colors.blue) Dots.circle "Faroe Islands" model.data.f
     , LineChart.line (Manipulate.lighten 0   Colors.pink) Dots.circle "Norway" model.data.c
-    , LineChart.line (Manipulate.lighten 0.1 Colors.pink) Dots.circle "Finland" model.data.e
+    , LineChart.line (Manipulate.darken  0.2 Colors.pink) Dots.circle "Finland" model.data.e
     ]
 
 

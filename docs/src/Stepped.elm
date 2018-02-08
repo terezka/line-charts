@@ -221,7 +221,7 @@ viewHint { x, y } =
   in
   [ Html.p
       [ pStyle
-          [ ( "border-bottom", "1px solid black" )
+          [ ( "border-bottom", "1px solid rgb(163, 163, 163)" )
           , ( "padding-bottom", "3px" )
           , ( "margin-bottom", "5px" )
           ]
