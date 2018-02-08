@@ -163,7 +163,7 @@ viewTitle =
         , Html.div
             [ Html.Attributes.class "view__github-link" ]
             [ Html.a
-                [ Html.Attributes.href "https://github.com/terezka/elm-plot" ]
+                [ Html.Attributes.href "https://github.com/terezka/line-charts" ]
                 [ Html.text "Github" ]
             , Html.text " / "
             , Html.a
