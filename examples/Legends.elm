@@ -56,7 +56,7 @@ chart =
     , dots = Dots.default
     }
     [ LineChart.line Colors.gold Dots.triangle "Chuck" chuck
-    , LineChart.line Colors.pink Dots.circle   "Bobby" bob
+    , LineChart.line Colors.pink Dots.circle   "Bobby" bobby
     , LineChart.line Colors.blue Dots.diamond  "Alice" alice
     ]
 
