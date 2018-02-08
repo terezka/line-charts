@@ -162,14 +162,17 @@ viewTitle =
             [ Html.text "line-charts" ]
         , Html.div
             [ Html.Attributes.class "view__github-link" ]
-            [ Html.text "Find it on "
-            , Html.a
+            [ Html.a
                 [ Html.Attributes.href "https://github.com/terezka/elm-plot" ]
                 [ Html.text "Github" ]
             , Html.text " / "
             , Html.a
                 [ Html.Attributes.href "https://twitter.com/terez_ka" ]
                 [ Html.text "Twitter" ]
+            , Html.text " / "
+            , Html.a
+                [ Html.Attributes.href "http://package.elm-lang.org/packages/terezka/line-charts/latest" ]
+                [ Html.text "Docs" ]
             ]
         , Html.p [ Html.Attributes.class "view__tag-line" ]
             [ Html.text "A opinionated library for plotting series in SVG." ]

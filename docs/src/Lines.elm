@@ -194,7 +194,11 @@ chart model =
     , interpolation = Interpolation.monotone
     , intersection = Intersection.default
     , legends = Legends.default
-    , events = Events.hoverOne Hint
+    , events =
+        Events.custom
+          [ Events.onMouseMove Hint Events.getNearest
+          , Events.onMouseLeave (Hint Nothing)
+          ]
     , junk = Junk.default
     , grid = Grid.default
     , area = Area.default

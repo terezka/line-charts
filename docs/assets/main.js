@@ -12875,10 +12875,11 @@ var _user$project$Internal_Container$sizeStyles = F3(
 			return {ctor: '[]'};
 		}
 	});
-var _user$project$Internal_Container$properties = function (_p3) {
-	var _p4 = _p3;
-	return _p4._0;
-};
+var _user$project$Internal_Container$properties = F2(
+	function (f, _p3) {
+		var _p4 = _p3;
+		return f(_p4._0);
+	});
 var _user$project$Internal_Container$Properties = F5(
 	function (a, b, c, d, e) {
 		return {attributesHtml: a, attributesSvg: b, size: c, margin: d, id: e};
@@ -18866,7 +18867,7 @@ var _user$project$LineChart$toSystem = F2(
 		var adjustDomainRange = function (domain) {
 			return hasArea ? _user$project$Internal_Coordinate$ground(domain) : domain;
 		};
-		var container = _user$project$Internal_Container$properties(config.container);
+		var container = A2(_user$project$Internal_Container$properties, _elm_lang$core$Basics$identity, config.container);
 		var frame = A2(_user$project$Internal_Coordinate$Frame, container.margin, size);
 		var system = {
 			frame: frame,
@@ -19192,10 +19193,12 @@ var _user$project$LineChart$container = F4(
 				_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
 				_1: sizeStyles
 			});
-		var userAttributes = function (_) {
-			return _.attributesHtml;
-		}(
-			_user$project$Internal_Container$properties(config.container));
+		var userAttributes = A2(
+			_user$project$Internal_Container$properties,
+			function (_) {
+				return _.attributesHtml;
+			},
+			config.container);
 		return A2(
 			_elm_lang$html$Html$div,
 			{ctor: '::', _0: styles, _1: userAttributes},
@@ -19267,10 +19270,12 @@ var _user$project$LineChart$viewCustom = F2(
 		var attributes = _elm_lang$core$List$concat(
 			{
 				ctor: '::',
-				_0: function (_) {
-					return _.attributesSvg;
-				}(
-					_user$project$Internal_Container$properties(config.container)),
+				_0: A2(
+					_user$project$Internal_Container$properties,
+					function (_) {
+						return _.attributesSvg;
+					},
+					config.container),
 				_1: {
 					ctor: '::',
 					_0: A3(_user$project$Internal_Events$toContainerAttributes, dataAll, system, config.events),
@@ -19791,7 +19796,17 @@ var _user$project$Lines$chart = function (model) {
 			interpolation: _user$project$LineChart_Interpolation$monotone,
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
-			events: _user$project$LineChart_Events$hoverOne(_user$project$Lines$Hint),
+			events: _user$project$LineChart_Events$custom(
+				{
+					ctor: '::',
+					_0: A2(_user$project$LineChart_Events$onMouseMove, _user$project$Lines$Hint, _user$project$LineChart_Events$getNearest),
+					_1: {
+						ctor: '::',
+						_0: _user$project$LineChart_Events$onMouseLeave(
+							_user$project$Lines$Hint(_elm_lang$core$Maybe$Nothing)),
+						_1: {ctor: '[]'}
+					}
+				}),
 			junk: _user$project$LineChart_Junk$default,
 			grid: _user$project$LineChart_Grid$default,
 			area: _user$project$LineChart_Area$default,
@@ -21103,39 +21118,54 @@ var _user$project$Main$viewTitle = A2(
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('Find it on '),
+					_0: A2(
+						_elm_lang$html$Html$a,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$href('https://github.com/terezka/elm-plot'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Github'),
+							_1: {ctor: '[]'}
+						}),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$a,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$href('https://github.com/terezka/elm-plot'),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('Github'),
-								_1: {ctor: '[]'}
-							}),
+						_0: _elm_lang$html$Html$text(' / '),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(' / '),
+							_0: A2(
+								_elm_lang$html$Html$a,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$href('https://twitter.com/terez_ka'),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Twitter'),
+									_1: {ctor: '[]'}
+								}),
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$a,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$href('https://twitter.com/terez_ka'),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('Twitter'),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
+								_0: _elm_lang$html$Html$text(' / '),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$a,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$href('http://package.elm-lang.org/packages/terezka/line-charts/latest'),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Docs'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					}
