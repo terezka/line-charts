@@ -87,7 +87,7 @@ time =
   Axis.time
 
 
-{-| Draws the full length of your axis and adds some ticks at the positions
+{-| Draws the full length of your axis range and adds some ticks at the positions
 specified in the last argument.
 
 Pass the length of your axis in pixels, the title, it's variable and the

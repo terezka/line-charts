@@ -27,7 +27,8 @@ _See full example [here](https://github.com/terezka/line-charts/blob/master/exam
 
 # Custom tick
 
-Now you get to decide how the ticks should look!
+Now you get to decide how the ticks should look. Remember that all formatting of
+the value in the label is done in `Axis.Tick`!
 
     ticksConfig : Ticks.Config msg
     ticksConfig =

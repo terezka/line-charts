@@ -8,7 +8,11 @@ module LineChart.Axis.Tick exposing
 
 {-|
 
-@docs Config, int, float, time, long, gridless, labelless, opposite
+@docs Config, int, float, time
+
+## Special styles
+You can also make your own with `custom`!
+@docs long, gridless, labelless, opposite
 
 # Customiztion
 @docs custom, Properties, Direction, negative, positive
@@ -22,7 +26,7 @@ import Svg exposing (Svg, Attribute)
 import Internal.Axis.Tick as Tick
 import Internal.Svg as Svg
 import Date
-import Date.Extra as Date
+import Date.Extra
 import Date.Format
 import Color
 
@@ -101,7 +105,29 @@ long =
 -- TIME
 
 
-{-| -}
+{-| You can format your tick label differently based on it's unit. This is
+the default formatting. There are lots of different packages to help you out
+with this. I ended up using two different! Maybe one day I'll get around to
+sending a pull request for week formatting in `Date.Format`..
+
+    format : Unit -> Tick.Time -> String
+    format unit tick =
+      let time = tick.timestamp
+          date = Date.fromTime time
+          format1 = Date.Format.format
+          format2 = Date.Extra.toFormattedString
+      in
+      case unit of
+        Millisecond -> time |> toString
+        Second      -> date |> format1 "%S"
+        Minute      -> date |> format1 "%M"
+        Hour        -> date |> format1 "%l%P"
+        Day         -> date |> format1 "%e"
+        Week        -> date |> format2 "'Week' w"
+        Month       -> date |> format1 "%b"
+        Year        -> date |> format1 "%Y"
+
+-}
 type Unit
   = Millisecond
   | Second
@@ -211,7 +237,9 @@ type alias Properties msg =
   }
 
 
-{-| -}
+{-| The direction of the little line. If the tick in question is on the x-axis
+that means that positive means the tick points up, and negative points down.
+-}
 type alias Direction =
   Tick.Direction
 
@@ -266,17 +294,20 @@ custom =
 
 
 formatNorm : Unit -> Float -> String
-formatNorm unit =
-  Date.fromTime >>
-    case unit of
-      Millisecond -> Basics.toString << Date.toTime
-      Second      -> Date.Format.format "%S"
-      Minute      -> Date.Format.format "%M"
-      Hour        -> Date.Format.format "%l%P"
-      Day         -> Date.Format.format "%e"
-      Week        -> Date.toFormattedString "'Week' w"
-      Month       -> Date.Format.format "%b"
-      Year        -> Date.Format.format "%Y"
+formatNorm unit time =
+  let date = Date.fromTime time
+      format1 = Date.Format.format
+      format2 = Date.Extra.toFormattedString
+  in
+  case unit of
+    Millisecond -> time |> toString
+    Second      -> date |> format1 "%S"
+    Minute      -> date |> format1 "%M"
+    Hour        -> date |> format1 "%l%P"
+    Day         -> date |> format1 "%e"
+    Week        -> date |> format2 "'Week' w"
+    Month       -> date |> format1 "%b"
+    Year        -> date |> format1 "%Y"
 
 
 formatBold : Unit -> Float -> String
@@ -288,7 +319,7 @@ formatBold unit =
       Minute      -> Date.Format.format "%M"
       Hour        -> Date.Format.format "%l%P"
       Day         -> Date.Format.format "%a"
-      Week        -> Date.toFormattedString "'Week' w"
+      Week        -> Date.Extra.toFormattedString "'Week' w"
       Month       -> Date.Format.format "%b"
       Year        -> Date.Format.format "%Y"
 

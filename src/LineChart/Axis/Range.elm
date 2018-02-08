@@ -2,13 +2,13 @@ module LineChart.Axis.Range exposing (Config, default, padded, window, custom)
 
 {-|
 
-## What is the axis range?
+## Axis ranges and data ranges
 
 Considering the following data:
 
     data =
-      [ { x = -1, y = -1 }
-      , { x = 5, y = 5 }
+      [ { x = -1, y = -2 }
+      , { x = 5, y = 6 }
       ]
 
 From this we can see that the smallest x is -1 and the largest x is 5. We
@@ -16,7 +16,7 @@ call this the x-data range. By default, the axis range is the same as your
 data range, but we can make it far more complicated than that.
 
 Opposite your data range which is only calculated from  from your data,
-**your axis range can be changed with this module**. For example, you can make
+**your axis range can be edited** with this module. For example, you can make
 it larger than your data range, as illustrated below.
 
 <img alt="Ranges explained" width="610" src="https://github.com/terezka/line-charts/blob/master/images/ranges.png?raw=true"></src>
@@ -95,7 +95,7 @@ respectivily.
 
     rangeConfig : Range.Config
     rangeConfig =
-      Range.window 70 97
+      Range.window -0.5 4.5
 
 
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Range/Example1.elm)._

@@ -90,7 +90,7 @@ toData numbers =
 
 toDate : Int -> Time.Time
 toDate index =
-  Time.hour * 24 * 356 * 45 + Time.hour * 24 * 30 + Time.hour * 24 * 21 * toFloat index
+  Time.hour * 24 * 356 * 45 + Time.hour * 24 * 30 + Time.hour * 1 * toFloat index
 
 
 setHint : List Coordinate.Point -> Model -> Model
@@ -142,7 +142,7 @@ view model =
 chart : Model -> Html.Html Msg
 chart model =
   LineChart.viewCustom
-    { y = Axis.default 450 "cash ($k)" .y
+    { y = Axis.default 450 "velocity" .y
     , x = Axis.time 1270 "time" .x
     , container = Container.spaced "line-chart-area" 30 100 60 70
     , interpolation = Interpolation.monotone
@@ -167,8 +167,9 @@ formatX =
 
 
 formatY : Coordinate.Point -> String
-formatY =
-  .y >> round100 >> toString
+formatY data =
+  let velocity = round100 data.y in
+  toString velocity ++ " m/s"
 
 
 

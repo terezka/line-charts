@@ -385,9 +385,11 @@ _See the full example [here](https://github.com/terezka/line-charts/blob/master/
 ** Speaking of area charts **
 
 Remember that area charts are for data where the area under the curve _matters_.
-Typically, this would be when you have an quantity changing with respect to time.
-In that case, the area under the curve shows how much the quantity changed.
-However if that amount is not significant, it's best to leave it out.
+Typically, this would be when you have a quantity accumulating over time.
+Think profit over time or velocity over time!
+In the case of profit over time, the area under the curve shows the total amount
+of money earned in that time frame. However if that amount is not significant,
+it's best to leave it out.
 
 -}
 viewCustom : Config data msg -> List (Series data) -> Svg.Svg msg

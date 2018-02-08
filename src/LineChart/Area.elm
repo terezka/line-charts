@@ -50,7 +50,7 @@ _See example [here](https://github.com/terezka/line-charts/blob/master/examples/
 **Warning:** Right now, this only works if all your lines have the
 same set of x values and don't have missing data!
 If not, the area will not stack properly.
-It's will be fixed sometime though!
+It will be fixed sometime though!
 -}
 stacked : Float -> Config
 stacked =

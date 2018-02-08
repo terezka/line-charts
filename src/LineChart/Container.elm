@@ -52,6 +52,13 @@ default =
 
 Pass the id and the top, right, bottom, and left margin respectivily.
 
+    customContainer : Container.Config msg
+    customContainer =
+      Container.spaced "line-chart-1" 60 100 60 70
+
+
+_See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Container/Example4.elm)._
+
 -}
 spaced : String -> Float -> Float -> Float -> Float -> Config msg
 spaced =

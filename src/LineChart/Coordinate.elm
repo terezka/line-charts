@@ -25,8 +25,11 @@ width of the chart, not your data.
 
 Since SVG only understand SVG-space coordinates, when we have data-space coordinates
 we need to translate them in order the use them for drawing. For this we need some
-info which I calculate for you which is in the `System` type and with that, we
+info which I calculate for you and is stored in the `System` type. With the `System` we
 can use the translating functions contained in this module.
+
+Furthermore, the `System` holds your axis range minimum and maximum, as well as
+that off your data range. This can be useful info when moving stuff in `Junk`!
 
 **Note:** Most of the functions in `Junk` takes data-space coordinates, so it's
 only when you do you're own crazy junk in pure SVG that you have to worry about
@@ -101,11 +104,12 @@ type alias Size =
 
 {-| The system holds informations about the dimensions of your chart.
 
-  - The `frame` which is information about the size and margins of your chart.
-  - The `x` which is the minimum and maximum of your axis range.
-  - The `y` which is the minimum and maximum of your axis domain.
-  - The `xData` which is the minimum and maximum of your data range.
-  - The `yData` which is the minimum and maximum of your data domain.
+  - **frame** is information about the size and margins of your chart.
+  - **x** is the minimum and maximum of your axis range.
+  - **y** is the minimum and maximum of your axis domain.
+  - **xData** is the minimum and maximum of your data range.
+  - **yData** is the minimum and maximum of your data domain.
+  - **id** is the id of your chart.
 
 This is all the information we need for translating your data coordinates into
 SVG coordinates.

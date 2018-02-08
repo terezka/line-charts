@@ -14646,35 +14646,31 @@ var _user$project$LineChart_Axis_Tick$formatBold = function (unit) {
 			_elm_lang$core$Date$fromTime(_p0));
 	};
 };
-var _user$project$LineChart_Axis_Tick$formatNorm = function (unit) {
-	return function (_p3) {
-		return function () {
-			var _p4 = unit;
-			switch (_p4.ctor) {
-				case 'Millisecond':
-					return function (_p5) {
-						return _elm_lang$core$Basics$toString(
-							_elm_lang$core$Date$toTime(_p5));
-					};
-				case 'Second':
-					return _mgold$elm_date_format$Date_Format$format('%S');
-				case 'Minute':
-					return _mgold$elm_date_format$Date_Format$format('%M');
-				case 'Hour':
-					return _mgold$elm_date_format$Date_Format$format('%l%P');
-				case 'Day':
-					return _mgold$elm_date_format$Date_Format$format('%e');
-				case 'Week':
-					return _justinmimbs$elm_date_extra$Date_Extra$toFormattedString('\'Week\' w');
-				case 'Month':
-					return _mgold$elm_date_format$Date_Format$format('%b');
-				default:
-					return _mgold$elm_date_format$Date_Format$format('%Y');
-			}
-		}()(
-			_elm_lang$core$Date$fromTime(_p3));
-	};
-};
+var _user$project$LineChart_Axis_Tick$formatNorm = F2(
+	function (unit, time) {
+		var format2 = _justinmimbs$elm_date_extra$Date_Extra$toFormattedString;
+		var format1 = _mgold$elm_date_format$Date_Format$format;
+		var date = _elm_lang$core$Date$fromTime(time);
+		var _p3 = unit;
+		switch (_p3.ctor) {
+			case 'Millisecond':
+				return _elm_lang$core$Basics$toString(time);
+			case 'Second':
+				return A2(format1, '%S', date);
+			case 'Minute':
+				return A2(format1, '%M', date);
+			case 'Hour':
+				return A2(format1, '%l%P', date);
+			case 'Day':
+				return A2(format1, '%e', date);
+			case 'Week':
+				return A2(format2, '\'Week\' w', date);
+			case 'Month':
+				return A2(format1, '%b', date);
+			default:
+				return A2(format1, '%Y', date);
+		}
+	});
 var _user$project$LineChart_Axis_Tick$custom = _user$project$Internal_Axis_Tick$custom;
 var _user$project$LineChart_Axis_Tick$positive = _user$project$Internal_Axis_Tick$Positive;
 var _user$project$LineChart_Axis_Tick$negative = _user$project$Internal_Axis_Tick$Negative;
@@ -14704,8 +14700,8 @@ var _user$project$LineChart_Axis_Tick$Hour = {ctor: 'Hour'};
 var _user$project$LineChart_Axis_Tick$Minute = {ctor: 'Minute'};
 var _user$project$LineChart_Axis_Tick$Second = {ctor: 'Second'};
 var _user$project$LineChart_Axis_Tick$nextUnit = function (unit) {
-	var _p6 = unit;
-	switch (_p6.ctor) {
+	var _p4 = unit;
+	switch (_p4.ctor) {
 		case 'Millisecond':
 			return _user$project$LineChart_Axis_Tick$Second;
 		case 'Second':
@@ -14724,21 +14720,21 @@ var _user$project$LineChart_Axis_Tick$nextUnit = function (unit) {
 			return _user$project$LineChart_Axis_Tick$Year;
 	}
 };
-var _user$project$LineChart_Axis_Tick$format = function (_p7) {
-	var _p8 = _p7;
-	var _p11 = _p8.timestamp;
-	var _p10 = _p8.interval;
-	if (_p8.isFirst) {
+var _user$project$LineChart_Axis_Tick$format = function (_p5) {
+	var _p6 = _p5;
+	var _p9 = _p6.timestamp;
+	var _p8 = _p6.interval;
+	if (_p6.isFirst) {
 		return A2(
 			_user$project$LineChart_Axis_Tick$formatBold,
-			_user$project$LineChart_Axis_Tick$nextUnit(_p10.unit),
-			_p11);
+			_user$project$LineChart_Axis_Tick$nextUnit(_p8.unit),
+			_p9);
 	} else {
-		var _p9 = _p8.change;
-		if (_p9.ctor === 'Just') {
-			return A2(_user$project$LineChart_Axis_Tick$formatBold, _p9._0, _p11);
+		var _p7 = _p6.change;
+		if (_p7.ctor === 'Just') {
+			return A2(_user$project$LineChart_Axis_Tick$formatBold, _p7._0, _p9);
 		} else {
-			return A2(_user$project$LineChart_Axis_Tick$formatNorm, _p10.unit, _p11);
+			return A2(_user$project$LineChart_Axis_Tick$formatNorm, _p8.unit, _p9);
 		}
 	}
 };
@@ -19440,21 +19436,21 @@ var _user$project$Area$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
 };
-var _user$project$Area$formatY = function (_p0) {
-	return _elm_lang$core$Basics$toString(
-		_user$project$Area$round100(
-			function (_) {
-				return _.y;
-			}(_p0)));
+var _user$project$Area$formatY = function (data) {
+	var velocity = _user$project$Area$round100(data.y);
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(velocity),
+		' m/s');
 };
-var _user$project$Area$formatX = function (_p1) {
+var _user$project$Area$formatX = function (_p0) {
 	return A2(
 		_mgold$elm_date_format$Date_Format$format,
 		'%e. %b, %Y',
 		_elm_lang$core$Date$fromTime(
 			function (_) {
 				return _.x;
-			}(_p1)));
+			}(_p0)));
 };
 var _user$project$Area$addCmd = F2(
 	function (cmd, model) {
@@ -19467,7 +19463,7 @@ var _user$project$Area$setHint = F2(
 			{hinted: hinted});
 	});
 var _user$project$Area$toDate = function (index) {
-	return ((((_elm_lang$core$Time$hour * 24) * 356) * 45) + ((_elm_lang$core$Time$hour * 24) * 30)) + (((_elm_lang$core$Time$hour * 24) * 21) * _elm_lang$core$Basics$toFloat(index));
+	return ((((_elm_lang$core$Time$hour * 24) * 356) * 45) + ((_elm_lang$core$Time$hour * 24) * 30)) + ((_elm_lang$core$Time$hour * 1) * _elm_lang$core$Basics$toFloat(index));
 };
 var _user$project$Area$toData = function (numbers) {
 	return A2(
@@ -19487,31 +19483,31 @@ var _user$project$Area$Data = F3(
 		return {nora: a, noah: b, nina: c};
 	});
 var _user$project$Area$setData = F2(
-	function (_p2, model) {
-		var _p3 = _p2;
+	function (_p1, model) {
+		var _p2 = _p1;
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				data: A3(
 					_user$project$Area$Data,
-					_user$project$Area$toData(_p3._0),
-					_user$project$Area$toData(_p3._1),
-					_user$project$Area$toData(_p3._2))
+					_user$project$Area$toData(_p2._0),
+					_user$project$Area$toData(_p2._1),
+					_user$project$Area$toData(_p2._2))
 			});
 	});
 var _user$project$Area$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		if (_p4.ctor === 'RecieveNumbers') {
+		var _p3 = msg;
+		if (_p3.ctor === 'RecieveNumbers') {
 			return A2(
 				_user$project$Area$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Area$setData, _p4._0, model));
+				A2(_user$project$Area$setData, _p3._0, model));
 		} else {
 			return A2(
 				_user$project$Area$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Area$setHint, _p4._0, model));
+				A2(_user$project$Area$setHint, _p3._0, model));
 		}
 	});
 var _user$project$Area$Hint = function (a) {
@@ -19524,7 +19520,7 @@ var _user$project$Area$chart = function (model) {
 			y: A3(
 				_user$project$LineChart_Axis$default,
 				450,
-				'cash ($k)',
+				'velocity',
 				function (_) {
 					return _.y;
 				}),
