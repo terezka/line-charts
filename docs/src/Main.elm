@@ -2,7 +2,9 @@ port module Main exposing (..)
 
 import Html
 import Html.Attributes
+import Html.Events
 import Html.Lazy
+import Dict
 import Area
 import Selection
 import Stepped
@@ -15,17 +17,22 @@ import Lines
 
 
 type alias Model =
-    { focused : Maybe Id
-    , selection : Selection.Model
-    , area : Area.Model
-    , stepped : Stepped.Model
-    , ticks : Ticks.Model
-    , lines : Lines.Model
-    }
+  { focused : Id
+  , isSourceOpen : Bool
+  , selection : Selection.Model
+  , area : Area.Model
+  , stepped : Stepped.Model
+  , ticks : Ticks.Model
+  , lines : Lines.Model
+  }
 
 
 type alias Id =
-  String
+  Int
+
+
+
+-- INIT 
 
 
 init : ( Model, Cmd Msg )
@@ -46,7 +53,8 @@ init =
     ( lines, cmdLines ) =
       Lines.init
   in
-    ( { focused = Nothing
+    ( { focused = 1
+      , isSourceOpen = False
       , selection = selection
       , area = area
       , stepped = stepped
@@ -59,6 +67,7 @@ init =
         , Cmd.map SteppedMsg cmdStepped
         , Cmd.map TicksMsg cmdTicks
         , Cmd.map LinesMsg cmdLines
+        , highlight ()
         ]
     )
 
@@ -67,7 +76,8 @@ init =
 
 
 type Msg
-  = Focus (Maybe Id)
+  = Focus Id
+  | CloseSource
   | SelectionMsg Selection.Msg
   | AreaMsg Area.Msg
   | SteppedMsg Stepped.Msg
@@ -79,7 +89,12 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     Focus id ->
-      ( updateFocused id model
+      ( { model | isSourceOpen = True, focused = id }
+      , Cmd.none
+      )
+
+    CloseSource ->
+      ( { model | isSourceOpen = False }
       , Cmd.none
       )
 
@@ -129,13 +144,6 @@ update msg model =
         )
 
 
-updateFocused : Maybe Id -> Model -> Model
-updateFocused id model =
-  if id == model.focused
-    then { model | focused = Nothing }
-    else { model | focused = id }
-
-
 
 -- VIEW
 
@@ -145,11 +153,12 @@ view model =
   Html.div
     [ Html.Attributes.class "view" ]
     [ viewTitle
-    , Html.map AreaMsg <| Html.Lazy.lazy Area.view model.area
-    , Html.map SelectionMsg <| Html.Lazy.lazy Selection.view model.selection
-    , Html.map LinesMsg <| Html.Lazy.lazy Lines.view model.lines
-    , Html.map SteppedMsg <| Html.Lazy.lazy Stepped.view model.stepped
-    , Html.map TicksMsg <| Html.Lazy.lazy Ticks.view model.ticks
+    , viewExample 0 AreaMsg Area.view model.area
+    , viewExample 1 SelectionMsg Selection.view model.selection
+    , viewExample 2 LinesMsg Lines.view model.lines
+    , viewExample 3 SteppedMsg Stepped.view model.stepped
+    , viewExample 4 TicksMsg Ticks.view model.ticks
+    , viewSource model.focused model.isSourceOpen
     ]
 
 
@@ -179,6 +188,55 @@ viewTitle =
         , Html.p [ Html.Attributes.class "view__tag-line" ]
             [ Html.text "Written in all Elm." ]
         ]
+
+
+viewExample : Id -> (msg -> Msg) -> (a -> Html.Html msg) -> a -> Html.Html Msg
+viewExample id toMsg view model =
+  Html.div 
+    [ Html.Attributes.class "view__example__container" ]
+    [ Html.map toMsg <| Html.Lazy.lazy view model
+    , Html.button 
+        [ Html.Events.onClick (Focus id) ] 
+        [ Html.text "see source" ]
+    ]
+
+
+viewSource : Id -> Bool -> Html.Html Msg
+viewSource id isSourceOpen =
+  let 
+    classes =
+      if isSourceOpen then
+        "view__source__container view__source__container--open"
+      else
+        "view__source__container view__source__container--closed"
+
+    viewInnerSource i s =
+      if i ==  id then
+        Html.pre 
+          [ Html.Attributes.class "shown" ] 
+          [ Html.text s ]
+      else
+        Html.pre 
+          [ Html.Attributes.class "hidden" ] 
+          [ Html.text s ]
+
+    viewSources =
+      List.indexedMap viewInnerSource 
+        [ Area.source 
+        , Selection.source
+        , Lines.source
+        , Stepped.source
+        ]
+  in
+  Html.div 
+    [ Html.Attributes.class classes ]
+    [ Html.button 
+        [ Html.Events.onClick CloseSource ] 
+        [ Html.text "[x] close" ] 
+    , Html.div 
+        [ Html.Attributes.class "view__source__inner elm" ]
+        viewSources
+    ]
 
 
 

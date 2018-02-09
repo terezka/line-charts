@@ -19427,6 +19427,7 @@ var _user$project$LineChart$Config = function (a) {
 	};
 };
 
+var _user$project$Area$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hinted : List Coordinate.Point\n    }\n\n\n  type alias Data =\n    { nora : List Coordinate.Point\n    , noah : List Coordinate.Point\n    , nina : List Coordinate.Point\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hinted = []\n      }\n    , getNumbers\n    )\n\n\n  getNumbers : Cmd Msg\n  getNumbers =\n    let\n      genNumbers =\n        Random.list 40 (Random.float 5 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveNumbers\n\n\n\n  -- API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Coordinate.Point\n  toData numbers =\n    List.indexedMap (\\i -> Coordinate.Point (toDate i)) numbers\n\n\n  toDate : Int -> Time.Time\n  toDate index =\n    Time.hour * 24 * 356 * 45 + Time.hour * 24 * 30 + Time.hour * 1 * toFloat index\n\n\n  setHint : List Coordinate.Point -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveNumbers ( List Float, List Float, List Float )\n    | Hint (List Coordinate.Point)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveNumbers numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint points ->\n        model\n          |> setHint points\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div [] [ chart model ]\n\n\n\n  -- CHART\n\n\n  chart : Model -> Html.Html Msg\n  chart model =\n    LineChart.viewCustom\n      { y = Axis.default 450 \"velocity\" .y\n      , x = Axis.time 1270 \"time\" .x\n      , container = Container.spaced \"line-chart-area\" 30 100 60 70\n      , interpolation = Interpolation.monotone\n      , intersection = Intersection.default\n      , legends = Legends.default\n      , events = Events.hoverMany Hint\n      , junk = Junk.hoverMany model.hinted formatX formatY\n      , grid = Grid.dots 1 Colors.gray\n      , area = Area.stacked 0.5\n      , line = Line.default\n      , dots = Dots.custom (Dots.empty 5 1)\n      }\n      [ LineChart.line Colors.pink Dots.diamond \"Nora\" model.data.nora\n      , LineChart.line Colors.cyan Dots.circle \"Noah\" model.data.noah\n      , LineChart.line Colors.blue Dots.triangle \"Nina\" model.data.nina\n      ]\n\n\n  formatX : Coordinate.Point -> String\n  formatX =\n    .x >> Date.fromTime >> Date.Format.format \"%e. %b, %Y\"\n\n\n  formatY : Coordinate.Point -> String\n  formatY data =\n    let velocity = round100 data.y in\n    toString velocity ++ \" m/s\"\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n\n  -- PROGRAM \n\n\n  main : Program Never Model Msg\n  main =\n    Html.program\n      { init = init\n      , update = update\n      , view = view\n      , subscriptions = always Sub.none\n      }\n\n\n  ';
 var _user$project$Area$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
@@ -19609,6 +19610,7 @@ var _user$project$LineChart_Axis_Title$atAxisMax = _user$project$Internal_Axis_T
 var _user$project$LineChart_Axis_Title$atDataMax = _user$project$Internal_Axis_Title$atDataMax;
 var _user$project$LineChart_Axis_Title$default = _user$project$Internal_Axis_Title$default;
 
+var _user$project$Lines$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data Coordinate.Point\n    , hinted : Maybe Coordinate.Point\n    }\n\n\n  type alias Data a =\n    { a : List a\n    , b : List a\n    , c : List a\n    , d : List a\n    , e : List a\n    , f : List a\n    , g : List a\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] [] [] [] [] []\n      , hinted = Nothing\n      }\n    , getNumbers\n    )\n\n\n  getNumbers : Cmd Msg\n  getNumbers =\n    let\n      genNumbers min max =\n        Random.list 10 (Random.float min max)\n\n      getFirst =\n        Random.map5 (,,,,)\n          (genNumbers 50 90)\n          (genNumbers 20 60)\n          (genNumbers 30 60)\n          (genNumbers 40 90)\n          (genNumbers 80 100)\n\n      getSecond =\n        Random.map2 (,)\n          (genNumbers 70 90)\n          (genNumbers 40 70)\n\n      together (a,b,c,d,e) (f,g) =\n        Data a b c d e f g\n    in\n    Random.generate RecieveNumbers <|\n      Random.map2 together getFirst getSecond\n\n\n\n  -- API\n\n\n  setData : Data Float -> Model -> Model\n  setData { a, b, c, d, e, f, g } model =\n    { model | data = Data (toData a) (toData b) (toData c) (toData d) (toData e) (toData f) (toData g) }\n\n\n  toData : List Float -> List Coordinate.Point\n  toData numbers =\n    List.indexedMap (\\i n -> Coordinate.Point (toDate i) n) numbers\n\n\n  toDate : Int -> Time.Time\n  toDate index =\n    Time.hour * 24 * 356 * 30 + xInterval * toFloat index\n\n\n  xInterval : Time.Time\n  xInterval =\n    Time.hour * 24 * 31\n\n\n  setHint : Maybe Coordinate.Point -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveNumbers (Data Float)\n    | Hint (Maybe Coordinate.Point)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveNumbers numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div [] [ chart model ]\n\n\n\n  -- CHART\n\n\n  chart : Model -> Html.Html Msg\n  chart model =\n    LineChart.viewCustom\n      { y =\n          Axis.custom\n            { title = Title.atDataMax -10 -10 \"Rain\"\n            , variable = Just << .y\n            , pixels = 450\n            , range = Range.padded 20 20\n            , axisLine = AxisLine.rangeFrame Colors.gray\n            , ticks = Ticks.custom <| \\dataRange axisRange ->\n                List.indexedMap rainTick [ dataRange.min, middle dataRange, dataRange.max ]\n            }\n      , x =\n          Axis.custom\n            { title = Title.default \"Time\"\n            , variable = Just << .x\n            , pixels = 1270\n            , range = Range.padded 20 20\n            , axisLine = AxisLine.none\n            , ticks = Ticks.timeCustom 10 timeTick\n            }\n      , container = Container.spaced \"line-chart-lines\" 30 180 60 70\n      , interpolation = Interpolation.monotone\n      , intersection = Intersection.default\n      , legends = Legends.default\n      , events =\n          Events.custom\n            [ Events.onMouseMove Hint Events.getNearest\n            , Events.onMouseLeave (Hint Nothing)\n            ]\n      , junk = Junk.default\n      , grid = Grid.default\n      , area = Area.default\n      , line = Line.custom (toLineStyle model.hinted)\n      , dots = Dots.custom (Dots.disconnected 4 2)\n      }\n      [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle \"Denmark\" model.data.a\n      , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle \"Sweden\" model.data.b\n      , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle \"Iceland\" model.data.d\n      , LineChart.line (Manipulate.lighten 0   Colors.blue) Dots.circle \"Faroe Islands\" model.data.f\n      , LineChart.line (Manipulate.lighten 0   Colors.pink) Dots.circle \"Norway\" model.data.c\n      , LineChart.line (Manipulate.darken  0.2 Colors.pink) Dots.circle \"Finland\" model.data.e\n      ]\n\n\n  toLineStyle : Maybe Coordinate.Point -> List Coordinate.Point -> Line.Style\n  toLineStyle maybeHovered lineData =\n    case maybeHovered of\n      Nothing -> -- No line is hovered\n        Line.style 1 identity\n\n      Just hovered -> -- Some line is hovered\n        if List.any ((==) hovered) lineData then\n          -- It is this one, so make it pop!\n          Line.style 2 identity\n        else\n          -- It is not this one, so hide it a bit\n          Line.style 1 (Manipulate.grayscale)\n\n\n  rainTick : Int -> Float -> Tick.Config msg\n  rainTick i n =\n    let\n      label =\n        if i == 0 then \"bits\"\n        else if i == 1 then \"some\"\n        else \"lots\"\n    in\n    Tick.custom\n      { position = n\n      , color = Colors.gray\n      , width = 1\n      , length = 5\n      , grid = True\n      , direction = Tick.negative\n      , label = Just <| Junk.label Colors.black label\n      }\n\n\n  timeTick : Tick.Time -> Tick.Config msg\n  timeTick time =\n    Tick.custom\n      { position = time.timestamp\n      , color = Colors.gray\n      , width = 1\n      , length = 5\n      , grid = False\n      , direction = Tick.negative\n      , label = Just <| Junk.label Colors.black (Tick.format time)\n      }\n\n\n\n  -- UTILS\n\n\n  round10 : Float -> Float\n  round10 float =\n    toFloat (round (float * 10)) / 10\n\n\n  middle : Coordinate.Range -> Float\n  middle r =\n    r.min + (r.max - r.min) / 2\n  ';
 var _user$project$Lines$middle = function (r) {
 	return r.min + ((r.max - r.min) / 2);
 };
@@ -19936,6 +19938,7 @@ var _user$project$Lines$main = _elm_lang$html$Html$program(
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})();
 
+var _user$project$Selection$source = '\n\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hovered : Maybe Float\n    , selection : Maybe Selection\n    , dragging : Bool\n    , hinted : Maybe Coordinate.Point\n    }\n\n\n  type alias Selection =\n    { start : Float\n    , end : Float\n    }\n\n\n  type alias Data =\n    { nora : List Coordinate.Point\n    , noah : List Coordinate.Point\n    , nina : List Coordinate.Point\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hovered = Nothing\n      , selection = Nothing\n      , dragging = False\n      , hinted = Nothing\n      }\n    , getNumbers\n    )\n\n\n  getNumbers : Cmd Msg\n  getNumbers =\n    let\n      genNumbers =\n        Random.list 201 (Random.float 0 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveNumbers\n\n\n\n  -- API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Coordinate.Point\n  toData numbers =\n    List.indexedMap (\\i -> Coordinate.Point (toFloat i)) numbers\n\n\n  setSelection : Maybe Selection -> Model -> Model\n  setSelection selection model =\n    { model | selection = selection }\n\n\n  setDragging : Bool -> Model -> Model\n  setDragging dragging model =\n    { model | dragging = dragging }\n\n\n  setHovered : Maybe Float -> Model -> Model\n  setHovered hovered model =\n    { model | hovered = hovered }\n\n\n  setHint : Maybe Coordinate.Point -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n  getSelectionStart : Float -> Model -> Float\n  getSelectionStart hovered model =\n    case model.selection of\n      Just selection -> selection.start\n      Nothing        -> hovered\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveNumbers ( List Float, List Float, List Float )\n    -- Chart 1\n    | Hold Coordinate.Point\n    | Move Coordinate.Point\n    | Drop Coordinate.Point\n    | LeaveChart Coordinate.Point\n    | LeaveContainer Coordinate.Point\n    -- Chart 2\n    | Hint (Maybe Coordinate.Point)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveNumbers numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hold point ->\n        model\n          |> setSelection Nothing\n          |> setDragging True\n          |> addCmd Cmd.none\n\n      Move point ->\n        if model.dragging then\n          let\n            start = getSelectionStart point.x model\n            newSelection = Selection start point.x\n          in\n          model\n            |> setSelection (Just newSelection)\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n        else\n          model\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n\n      Drop point ->\n        if point.x == getSelectionStart point.x model then\n          model\n            |> setSelection Nothing\n            |> setDragging False\n            |> addCmd Cmd.none\n        else\n          model\n            |> setDragging False\n            |> addCmd Cmd.none\n\n      LeaveChart point ->\n        model\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      LeaveContainer point ->\n        model\n          |> setDragging False\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div\n      [ Html.Attributes.style [ ( \"display\", \"flex\" ) ] ] <|\n      case model.selection of\n        Nothing ->\n          [ selectPlaceholder, chart model ]\n\n        Just selection ->\n          [ chartZoom model selection, chart model ]\n\n\n  selectPlaceholder : Html.Html Msg\n  selectPlaceholder =\n    Html.div\n      [ Html.Attributes.style\n          [ ( \"margin\", \"40px 25px 30px 70px\" )\n          , ( \"width\", \"505px\" )\n          , ( \"height\", \"360px\" )\n          , ( \"background\", \"#b6b6b61a\" )\n          , ( \"text-align\", \"center\" )\n          , ( \"line-height\", \"340px\" )\n          ]\n      ]\n      [ Html.text \"Select a range on the graph to the right!\" ]\n\n\n\n  -- MAIN CHART\n\n\n  chart : Model -> Html.Html Msg\n  chart model =\n    viewChart model.data\n      { range = Range.default\n      , junk = junkConfig model\n      , legends = Legends.default\n      , events =\n          Events.custom\n            [ Events.onWithOptions \"mousedown\" (Events.Options True True False) Hold Events.getData\n            , Events.onWithOptions \"mousemove\" (Events.Options True True False) Move Events.getData\n            , Events.onWithOptions \"mouseup\"   (Events.Options True True True) Drop Events.getData\n            , Events.onWithOptions \"mouseleave\" (Events.Options True True False) LeaveChart Events.getData\n            , Events.onWithOptions \"mouseleave\" (Events.Options True True True) LeaveContainer Events.getData\n            ]\n      , width = 670\n      , margin = Container.Margin 30 100 60 70\n      , dots = Dots.custom (Dots.full 0)\n      , id = \"line-chart\"\n      }\n\n\n  junkConfig : Model -> Junk.Config Coordinate.Point msg\n  junkConfig model =\n    Junk.custom <| \\system ->\n      { below = below system model.selection\n      , above = above system model.hovered\n      , html = []\n      }\n\n\n  below : Coordinate.System -> Maybe Selection -> List (Svg.Svg msg)\n  below system selection =\n    case selection of\n      Just { start, end } ->\n        [ Junk.rectangle system [ Svg.Attributes.fill \"#b6b6b61a\" ]\n            start end system.y.min system.y.max\n        ]\n\n      Nothing ->\n        []\n\n\n  above : Coordinate.System -> Maybe Float -> List (Svg.Svg msg)\n  above system hovered =\n    case hovered of\n      Just hovered ->\n        [ Junk.vertical system [] hovered ]\n\n      Nothing ->\n        []\n\n\n\n  -- ZOOM CHART\n\n\n  chartZoom : Model -> Selection -> Html.Html Msg\n  chartZoom model selection =\n    viewChart model.data\n      { range = xAxisRangeConfig selection\n      , junk =\n          Junk.hoverOne model.hinted\n            [ ( \"x\", toString << round100 << .x )\n            , ( \"y\", toString << round100 << .y )\n            ]\n      , events = Events.hoverOne Hint\n      , legends = Legends.none\n      , dots = Dots.hoverOne model.hinted\n      , width = 600\n      , margin = Container.Margin 30 25 60 70\n      , id = \"line-chart-zoom\"\n      }\n\n\n  xAxisRangeConfig : Selection -> Range.Config\n  xAxisRangeConfig selection =\n    let\n      start =\n        min selection.start selection.end\n\n      end =\n        if selection.start == selection.end\n          then selection.start + 1\n          else max selection.start selection.end\n    in\n    Range.window start end\n\n\n\n\n  -- VIEW CHART\n\n\n  type alias Config =\n    { range : Range.Config\n    , junk : Junk.Config Coordinate.Point Msg\n    , events : Events.Config Coordinate.Point Msg\n    , legends : Legends.Config Coordinate.Point Msg\n    , dots : Dots.Config Coordinate.Point\n    , margin : Container.Margin\n    , width : Int\n    , id : String\n    }\n\n\n  viewChart : Data -> Config -> Html.Html Msg\n  viewChart data { range, junk, events, legends, dots, width, margin, id } =\n    LineChart.viewCustom\n      { y = Axis.default 450 \"y\" .y\n      , x =\n          Axis.custom\n            { title = Title.default \"x\"\n            , variable = Just << .x\n            , pixels = width\n            , range = range\n            , axisLine = AxisLine.rangeFrame Colors.gray\n            , ticks = Ticks.float 5\n            }\n      , container =\n          Container.custom\n            { attributesHtml = [ Html.Attributes.style [ ( \"display\", \"inline-block\" ) ] ]\n            , attributesSvg = []\n            , size = Container.static\n            , margin = margin\n            , id = \"chart-id\"\n            }\n      , interpolation = Interpolation.monotone\n      , intersection = Intersection.default\n      , legends = legends\n      , events = events\n      , junk = junk\n      , grid = Grid.default\n      , area = Area.default\n      , line = Line.default\n      , dots = dots\n      }\n      [ LineChart.line Colors.pink Dots.circle \"Nora\" data.nora\n      , LineChart.line Colors.cyan Dots.circle \"Noah\" data.noah\n      , LineChart.line Colors.blue Dots.circle \"Nina\" data.nina\n      ]\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n  ';
 var _user$project$Selection$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
@@ -20460,6 +20463,7 @@ var _user$project$Selection$main = _elm_lang$html$Html$program(
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})();
 
+var _user$project$Stepped$source = '\n\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hinted : Maybe Coordinate.Point\n    }\n\n\n  type alias Data =\n    { nora : List Coordinate.Point\n    , noah : List Coordinate.Point\n    , nina : List Coordinate.Point\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hinted = Nothing\n      }\n    , getNumbers\n    )\n\n\n  getNumbers : Cmd Msg\n  getNumbers =\n    let\n      genNumbers =\n        Random.list 30 (Random.int -70 100)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveNumbers\n\n\n\n  -- API\n\n\n  setData : ( List Int, List Int, List Int ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Int -> List Coordinate.Point\n  toData numbers =\n    List.indexedMap (\\i n -> Coordinate.Point (toDate i) (toFloat n)) numbers\n\n\n  toDate : Int -> Time.Time\n  toDate index =\n    Time.hour * 24 * 356 * 45 + Time.hour * 24 * toFloat index\n\n\n  setHint : Maybe Coordinate.Point -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveNumbers ( List Int, List Int, List Int )\n    | Hint (Maybe Coordinate.Point)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveNumbers numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div [] [ chart model ]\n\n\n\n  -- CHART\n\n\n  chart : Model -> Html.Html Msg\n  chart model =\n    LineChart.viewCustom\n      { y =\n          Axis.custom\n            { title = Title.default \"LoC\"\n            , variable = Just << .y\n            , pixels = 450\n            , range = Range.padded 20 20\n            , axisLine = AxisLine.full Colors.gray\n            , ticks = Ticks.float 8\n            }\n      , x =\n          Axis.custom\n            { title = Title.default \"Time\"\n            , variable = Just << .x\n            , pixels = 1270\n            , range = Range.padded 20 20\n            , axisLine = AxisLine.full Colors.gray\n            , ticks = Ticks.time 10\n            }\n      , container = Container.spaced \"line-chart-area\" 30 100 60 70\n      , interpolation = Interpolation.stepped\n      , intersection = Intersection.default\n      , legends = Legends.default\n      , events = Events.hoverMany (Hint << List.head)\n      , junk =\n          case model.hinted of\n            Nothing ->\n              Junk.default\n\n            Just hinted ->\n              Junk.custom <| \\system ->\n                { below = [ Junk.vertical system [] hinted.x ]\n                , above = []\n                , html  = [ Junk.hoverAt system hinted.x system.y.max [] (viewHint hinted) ]\n                }\n      , grid = Grid.default\n      , area = Area.normal 0.5\n      , line = Line.default\n      , dots = Dots.custom (Dots.empty 5 1)\n      }\n      [ LineChart.line Colors.pink Dots.circle \"Nora\" model.data.nora ]\n\n\n  viewHint :  Coordinate.Point -> List (Html.Html msg)\n  viewHint { x, y } =\n    let\n      xString =\n         Date.Format.format \"%e. %b, %Y\" (Date.fromTime x)\n\n      pStyle other =\n        Html.Attributes.style <| ( \"margin\", \"3px\" ) :: other\n\n      ( loCStyle, loC ) =\n          if y == 0 then\n           ( [ ( \"color\", \"black\" ) ]\n           , \"0\"\n           )\n          else if y < 0 then\n           ( [ ( \"color\", Color.Convert.colorToHex Colors.red ) ]\n           , toString y\n           )\n          else\n           ( [ ( \"color\", Color.Convert.colorToHex Colors.green ) ]\n           , \"+\" ++ toString y\n           )\n    in\n    [ Html.p\n        [ pStyle\n            [ ( \"border-bottom\", \"1px solid rgb(163, 163, 163)\" )\n            , ( \"padding-bottom\", \"3px\" )\n            , ( \"margin-bottom\", \"5px\" )\n            ]\n        ]\n        [ Html.text xString ]\n    , Html.p\n      [ pStyle [] ]\n      [ Html.span [ Html.Attributes.style loCStyle ] [ Html.text loC ]\n      , Html.span [] [ Html.text \" lines of code\" ]\n      ]\n    ]\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n  ';
 var _user$project$Stepped$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
@@ -21191,22 +21195,14 @@ var _user$project$Main$viewTitle = A2(
 			}
 		}
 	});
-var _user$project$Main$updateFocused = F2(
-	function (id, model) {
-		return _elm_lang$core$Native_Utils.eq(id, model.focused) ? _elm_lang$core$Native_Utils.update(
-			model,
-			{focused: _elm_lang$core$Maybe$Nothing}) : _elm_lang$core$Native_Utils.update(
-			model,
-			{focused: id});
-	});
 var _user$project$Main$highlight = _elm_lang$core$Native_Platform.outgoingPort(
 	'highlight',
 	function (v) {
 		return null;
 	});
-var _user$project$Main$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {focused: a, selection: b, area: c, stepped: d, ticks: e, lines: f};
+var _user$project$Main$Model = F7(
+	function (a, b, c, d, e, f, g) {
+		return {focused: a, isSourceOpen: b, selection: c, area: d, stepped: e, ticks: f, lines: g};
 	});
 var _user$project$Main$LinesMsg = function (a) {
 	return {ctor: 'LinesMsg', _0: a};
@@ -21241,7 +21237,7 @@ var _user$project$Main$init = function () {
 	var cmdSelection = _p4._1;
 	return {
 		ctor: '_Tuple2',
-		_0: {focused: _elm_lang$core$Maybe$Nothing, selection: selection, area: area, stepped: stepped, ticks: ticks, lines: lines},
+		_0: {focused: 1, isSourceOpen: false, selection: selection, area: area, stepped: stepped, ticks: ticks, lines: lines},
 		_1: _elm_lang$core$Platform_Cmd$batch(
 			{
 				ctor: '::',
@@ -21258,7 +21254,12 @@ var _user$project$Main$init = function () {
 							_1: {
 								ctor: '::',
 								_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LinesMsg, cmdLines),
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: _user$project$Main$highlight(
+										{ctor: '_Tuple0'}),
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					}
@@ -21273,7 +21274,17 @@ var _user$project$Main$update = F2(
 			case 'Focus':
 				return {
 					ctor: '_Tuple2',
-					_0: A2(_user$project$Main$updateFocused, _p5._0, model),
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{isSourceOpen: true, focused: _p5._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'CloseSource':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{isSourceOpen: false}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SelectionMsg':
@@ -21333,6 +21344,128 @@ var _user$project$Main$update = F2(
 				};
 		}
 	});
+var _user$project$Main$CloseSource = {ctor: 'CloseSource'};
+var _user$project$Main$viewSource = F2(
+	function (id, isSourceOpen) {
+		var viewInnerSource = F2(
+			function (i, s) {
+				return _elm_lang$core$Native_Utils.eq(i, id) ? A2(
+					_elm_lang$html$Html$pre,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('shown'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(s),
+						_1: {ctor: '[]'}
+					}) : A2(
+					_elm_lang$html$Html$pre,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('hidden'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(s),
+						_1: {ctor: '[]'}
+					});
+			});
+		var viewSources = A2(
+			_elm_lang$core$List$indexedMap,
+			viewInnerSource,
+			{
+				ctor: '::',
+				_0: _user$project$Area$source,
+				_1: {
+					ctor: '::',
+					_0: _user$project$Selection$source,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Lines$source,
+						_1: {
+							ctor: '::',
+							_0: _user$project$Stepped$source,
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+		var classes = isSourceOpen ? 'view__source__container view__source__container--open' : 'view__source__container view__source__container--closed';
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class(classes),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$CloseSource),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('[x] close'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('view__source__inner elm'),
+							_1: {ctor: '[]'}
+						},
+						viewSources),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Main$Focus = function (a) {
+	return {ctor: 'Focus', _0: a};
+};
+var _user$project$Main$viewExample = F4(
+	function (id, toMsg, view, model) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('view__example__container'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$map,
+					toMsg,
+					A2(_elm_lang$html$Html_Lazy$lazy, view, model)),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								_user$project$Main$Focus(id)),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('see source'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -21346,35 +21479,24 @@ var _user$project$Main$view = function (model) {
 			_0: _user$project$Main$viewTitle,
 			_1: {
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$map,
-					_user$project$Main$AreaMsg,
-					A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Area$view, model.area)),
+				_0: A4(_user$project$Main$viewExample, 0, _user$project$Main$AreaMsg, _user$project$Area$view, model.area),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$map,
-						_user$project$Main$SelectionMsg,
-						A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Selection$view, model.selection)),
+					_0: A4(_user$project$Main$viewExample, 1, _user$project$Main$SelectionMsg, _user$project$Selection$view, model.selection),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$map,
-							_user$project$Main$LinesMsg,
-							A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Lines$view, model.lines)),
+						_0: A4(_user$project$Main$viewExample, 2, _user$project$Main$LinesMsg, _user$project$Lines$view, model.lines),
 						_1: {
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$map,
-								_user$project$Main$SteppedMsg,
-								A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Stepped$view, model.stepped)),
+							_0: A4(_user$project$Main$viewExample, 3, _user$project$Main$SteppedMsg, _user$project$Stepped$view, model.stepped),
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$map,
-									_user$project$Main$TicksMsg,
-									A2(_elm_lang$html$Html_Lazy$lazy, _user$project$Ticks$view, model.ticks)),
-								_1: {ctor: '[]'}
+								_0: A4(_user$project$Main$viewExample, 4, _user$project$Main$TicksMsg, _user$project$Ticks$view, model.ticks),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Main$viewSource, model.focused, model.isSourceOpen),
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					}
@@ -21389,9 +21511,6 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none),
 		view: _user$project$Main$view
 	})();
-var _user$project$Main$Focus = function (a) {
-	return {ctor: 'Focus', _0: a};
-};
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};

@@ -18,6 +18,19 @@ a:hover {
 	color: rgb(245, 105, 215);
 }
 
+.hidden {
+	display: none;
+}
+
+button {
+	border: none;
+	background: white;
+	font-family: monospace;
+}
+
+button:hover {
+	color: rgb(245, 105, 215);
+}
 
 
 /* */
@@ -39,4 +52,32 @@ a:hover {
 
 .view__tag-line {
 	max-width: 250px;
+}
+
+.view__source__container {
+	max-width: 100vw;
+	width: 800px;
+	height: 100vh;
+	background: white;
+	position: fixed;
+	top: 0;
+	right: 0;
+	padding: 30px 40px;
+	transition: 0.5s ease-in-out;
+	border-left: 1px solid rgb(163, 163, 163);
+}
+
+.view__source__container--open {
+	transform: translatex(0);
+}
+
+.view__source__container--closed {
+	transform: translatex(100%);
+}
+
+.view__source__inner {
+	margin-top: 30px;
+	height: 85vh;
+	border-top: 1px solid rgb(163, 163, 163);
+	border-bottom: 1px solid rgb(163, 163, 163);
 }

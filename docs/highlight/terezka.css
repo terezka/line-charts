@@ -15,11 +15,15 @@
 .hljs-selector-class,
 .hljs-regexp,
 .hljs-deletion {
-  color: #c82829;
+  color: rgb(0, 229, 255);
 }
 
 /* Tomorrow Orange */
-.hljs-number,
+.hljs-number {
+  color: rgb(156, 39, 176);
+}
+
+/* Tomorrow Orange */
 .hljs-built_in,
 .hljs-builtin-name,
 .hljs-literal,
@@ -27,7 +31,7 @@
 .hljs-params,
 .hljs-meta,
 .hljs-link {
-  color: #ce577f;
+  color: rgb(245, 105, 215);
 }
 
 /* Tomorrow Yellow */
@@ -40,7 +44,7 @@
 .hljs-symbol,
 .hljs-bullet,
 .hljs-addition {
-  color: #8959a8;
+  color: rgb(205, 145, 60);
 }
 
 /* Tomorrow Blue */
@@ -52,13 +56,13 @@
 /* Tomorrow Purple */
 .hljs-keyword,
 .hljs-selector-tag {
-  color: #8959a8;
+  color: rgb(3, 169, 244);
 }
 
 .hljs {
   display: block;
   overflow-x: auto;
-  color: #4d4d4c;
+  color: rgb(100, 100, 100);
 }
 
 .hljs-emphasis {
