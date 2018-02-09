@@ -169,20 +169,10 @@ stepped sections =
   let
     expand result section =
       case section of
-        (a :: b :: [], Just broken) ->
-          result ++ after a b ++ after b (fakeLast a b) ++ [ Point broken.x b.y ]
-
-        (a :: b :: [], Nothing) ->
-          result ++ after a b ++ after b (fakeLast a b)
-
-        (a :: b :: rest, broken) ->
-          expand (result ++ after a b) (b :: rest, broken)
-
-        (last :: [], _) ->
-          result
-
-        ([], _) ->
-          result
+        (a :: b :: rest, broken)  -> expand (result ++ after a b) (b :: rest, broken)
+        (last :: [], Just broken) -> result ++ [ Point broken.x last.y ]
+        (last :: [], Nothing)     -> result
+        ([], _)                   -> result
   in
   List.map (expand [] >> List.map Line) sections
 

@@ -96,12 +96,7 @@ toData numbers =
 
 toDate : Int -> Time.Time
 toDate index =
-  Time.hour * 24 * 356 * 45 + xInterval * toFloat index
-
-
-xInterval : Time.Time
-xInterval =
-  Time.hour * 24
+  Time.hour * 24 * 356 * 45 + Time.hour * 24 * toFloat index
 
 
 setHint : Maybe Coordinate.Point -> Model -> Model
@@ -167,7 +162,7 @@ chart model =
           { title = Title.default "Time"
           , variable = Just << .x
           , pixels = 1270
-          , range = Range.padded 20 60
+          , range = Range.padded 20 20
           , axisLine = AxisLine.full Colors.gray
           , ticks = Ticks.time 10
           }
@@ -183,17 +178,16 @@ chart model =
 
           Just hinted ->
             Junk.custom <| \system ->
-              let x = hinted.x + xInterval / 2 in
-              { below = [ Junk.vertical system [] x ]
+              { below = [ Junk.vertical system [] hinted.x ]
               , above = []
-              , html  = [ Junk.hoverAt system x system.y.max [] (viewHint hinted) ]
+              , html  = [ Junk.hoverAt system hinted.x system.y.max [] (viewHint hinted) ]
               }
     , grid = Grid.default
     , area = Area.normal 0.5
     , line = Line.default
     , dots = Dots.custom (Dots.empty 5 1)
     }
-    [ LineChart.line Colors.pink Dots.none "Nora" model.data.nora ]
+    [ LineChart.line Colors.pink Dots.circle "Nora" model.data.nora ]
 
 
 viewHint :  Coordinate.Point -> List (Html.Html msg)

@@ -5886,6 +5886,205 @@ var _debois$elm_dom$DOM$Rectangle = F4(
 		return {top: a, left: b, width: c, height: d};
 	});
 
+var _elm_lang$core$Color$fmod = F2(
+	function (f, n) {
+		var integer = _elm_lang$core$Basics$floor(f);
+		return (_elm_lang$core$Basics$toFloat(
+			A2(_elm_lang$core$Basics_ops['%'], integer, n)) + f) - _elm_lang$core$Basics$toFloat(integer);
+	});
+var _elm_lang$core$Color$rgbToHsl = F3(
+	function (red, green, blue) {
+		var b = _elm_lang$core$Basics$toFloat(blue) / 255;
+		var g = _elm_lang$core$Basics$toFloat(green) / 255;
+		var r = _elm_lang$core$Basics$toFloat(red) / 255;
+		var cMax = A2(
+			_elm_lang$core$Basics$max,
+			A2(_elm_lang$core$Basics$max, r, g),
+			b);
+		var cMin = A2(
+			_elm_lang$core$Basics$min,
+			A2(_elm_lang$core$Basics$min, r, g),
+			b);
+		var c = cMax - cMin;
+		var lightness = (cMax + cMin) / 2;
+		var saturation = _elm_lang$core$Native_Utils.eq(lightness, 0) ? 0 : (c / (1 - _elm_lang$core$Basics$abs((2 * lightness) - 1)));
+		var hue = _elm_lang$core$Basics$degrees(60) * (_elm_lang$core$Native_Utils.eq(cMax, r) ? A2(_elm_lang$core$Color$fmod, (g - b) / c, 6) : (_elm_lang$core$Native_Utils.eq(cMax, g) ? (((b - r) / c) + 2) : (((r - g) / c) + 4)));
+		return {ctor: '_Tuple3', _0: hue, _1: saturation, _2: lightness};
+	});
+var _elm_lang$core$Color$hslToRgb = F3(
+	function (hue, saturation, lightness) {
+		var normHue = hue / _elm_lang$core$Basics$degrees(60);
+		var chroma = (1 - _elm_lang$core$Basics$abs((2 * lightness) - 1)) * saturation;
+		var x = chroma * (1 - _elm_lang$core$Basics$abs(
+			A2(_elm_lang$core$Color$fmod, normHue, 2) - 1));
+		var _p0 = (_elm_lang$core$Native_Utils.cmp(normHue, 0) < 0) ? {ctor: '_Tuple3', _0: 0, _1: 0, _2: 0} : ((_elm_lang$core$Native_Utils.cmp(normHue, 1) < 0) ? {ctor: '_Tuple3', _0: chroma, _1: x, _2: 0} : ((_elm_lang$core$Native_Utils.cmp(normHue, 2) < 0) ? {ctor: '_Tuple3', _0: x, _1: chroma, _2: 0} : ((_elm_lang$core$Native_Utils.cmp(normHue, 3) < 0) ? {ctor: '_Tuple3', _0: 0, _1: chroma, _2: x} : ((_elm_lang$core$Native_Utils.cmp(normHue, 4) < 0) ? {ctor: '_Tuple3', _0: 0, _1: x, _2: chroma} : ((_elm_lang$core$Native_Utils.cmp(normHue, 5) < 0) ? {ctor: '_Tuple3', _0: x, _1: 0, _2: chroma} : ((_elm_lang$core$Native_Utils.cmp(normHue, 6) < 0) ? {ctor: '_Tuple3', _0: chroma, _1: 0, _2: x} : {ctor: '_Tuple3', _0: 0, _1: 0, _2: 0}))))));
+		var r = _p0._0;
+		var g = _p0._1;
+		var b = _p0._2;
+		var m = lightness - (chroma / 2);
+		return {ctor: '_Tuple3', _0: r + m, _1: g + m, _2: b + m};
+	});
+var _elm_lang$core$Color$toRgb = function (color) {
+	var _p1 = color;
+	if (_p1.ctor === 'RGBA') {
+		return {red: _p1._0, green: _p1._1, blue: _p1._2, alpha: _p1._3};
+	} else {
+		var _p2 = A3(_elm_lang$core$Color$hslToRgb, _p1._0, _p1._1, _p1._2);
+		var r = _p2._0;
+		var g = _p2._1;
+		var b = _p2._2;
+		return {
+			red: _elm_lang$core$Basics$round(255 * r),
+			green: _elm_lang$core$Basics$round(255 * g),
+			blue: _elm_lang$core$Basics$round(255 * b),
+			alpha: _p1._3
+		};
+	}
+};
+var _elm_lang$core$Color$toHsl = function (color) {
+	var _p3 = color;
+	if (_p3.ctor === 'HSLA') {
+		return {hue: _p3._0, saturation: _p3._1, lightness: _p3._2, alpha: _p3._3};
+	} else {
+		var _p4 = A3(_elm_lang$core$Color$rgbToHsl, _p3._0, _p3._1, _p3._2);
+		var h = _p4._0;
+		var s = _p4._1;
+		var l = _p4._2;
+		return {hue: h, saturation: s, lightness: l, alpha: _p3._3};
+	}
+};
+var _elm_lang$core$Color$HSLA = F4(
+	function (a, b, c, d) {
+		return {ctor: 'HSLA', _0: a, _1: b, _2: c, _3: d};
+	});
+var _elm_lang$core$Color$hsla = F4(
+	function (hue, saturation, lightness, alpha) {
+		return A4(
+			_elm_lang$core$Color$HSLA,
+			hue - _elm_lang$core$Basics$turns(
+				_elm_lang$core$Basics$toFloat(
+					_elm_lang$core$Basics$floor(hue / (2 * _elm_lang$core$Basics$pi)))),
+			saturation,
+			lightness,
+			alpha);
+	});
+var _elm_lang$core$Color$hsl = F3(
+	function (hue, saturation, lightness) {
+		return A4(_elm_lang$core$Color$hsla, hue, saturation, lightness, 1);
+	});
+var _elm_lang$core$Color$complement = function (color) {
+	var _p5 = color;
+	if (_p5.ctor === 'HSLA') {
+		return A4(
+			_elm_lang$core$Color$hsla,
+			_p5._0 + _elm_lang$core$Basics$degrees(180),
+			_p5._1,
+			_p5._2,
+			_p5._3);
+	} else {
+		var _p6 = A3(_elm_lang$core$Color$rgbToHsl, _p5._0, _p5._1, _p5._2);
+		var h = _p6._0;
+		var s = _p6._1;
+		var l = _p6._2;
+		return A4(
+			_elm_lang$core$Color$hsla,
+			h + _elm_lang$core$Basics$degrees(180),
+			s,
+			l,
+			_p5._3);
+	}
+};
+var _elm_lang$core$Color$grayscale = function (p) {
+	return A4(_elm_lang$core$Color$HSLA, 0, 0, 1 - p, 1);
+};
+var _elm_lang$core$Color$greyscale = function (p) {
+	return A4(_elm_lang$core$Color$HSLA, 0, 0, 1 - p, 1);
+};
+var _elm_lang$core$Color$RGBA = F4(
+	function (a, b, c, d) {
+		return {ctor: 'RGBA', _0: a, _1: b, _2: c, _3: d};
+	});
+var _elm_lang$core$Color$rgba = _elm_lang$core$Color$RGBA;
+var _elm_lang$core$Color$rgb = F3(
+	function (r, g, b) {
+		return A4(_elm_lang$core$Color$RGBA, r, g, b, 1);
+	});
+var _elm_lang$core$Color$lightRed = A4(_elm_lang$core$Color$RGBA, 239, 41, 41, 1);
+var _elm_lang$core$Color$red = A4(_elm_lang$core$Color$RGBA, 204, 0, 0, 1);
+var _elm_lang$core$Color$darkRed = A4(_elm_lang$core$Color$RGBA, 164, 0, 0, 1);
+var _elm_lang$core$Color$lightOrange = A4(_elm_lang$core$Color$RGBA, 252, 175, 62, 1);
+var _elm_lang$core$Color$orange = A4(_elm_lang$core$Color$RGBA, 245, 121, 0, 1);
+var _elm_lang$core$Color$darkOrange = A4(_elm_lang$core$Color$RGBA, 206, 92, 0, 1);
+var _elm_lang$core$Color$lightYellow = A4(_elm_lang$core$Color$RGBA, 255, 233, 79, 1);
+var _elm_lang$core$Color$yellow = A4(_elm_lang$core$Color$RGBA, 237, 212, 0, 1);
+var _elm_lang$core$Color$darkYellow = A4(_elm_lang$core$Color$RGBA, 196, 160, 0, 1);
+var _elm_lang$core$Color$lightGreen = A4(_elm_lang$core$Color$RGBA, 138, 226, 52, 1);
+var _elm_lang$core$Color$green = A4(_elm_lang$core$Color$RGBA, 115, 210, 22, 1);
+var _elm_lang$core$Color$darkGreen = A4(_elm_lang$core$Color$RGBA, 78, 154, 6, 1);
+var _elm_lang$core$Color$lightBlue = A4(_elm_lang$core$Color$RGBA, 114, 159, 207, 1);
+var _elm_lang$core$Color$blue = A4(_elm_lang$core$Color$RGBA, 52, 101, 164, 1);
+var _elm_lang$core$Color$darkBlue = A4(_elm_lang$core$Color$RGBA, 32, 74, 135, 1);
+var _elm_lang$core$Color$lightPurple = A4(_elm_lang$core$Color$RGBA, 173, 127, 168, 1);
+var _elm_lang$core$Color$purple = A4(_elm_lang$core$Color$RGBA, 117, 80, 123, 1);
+var _elm_lang$core$Color$darkPurple = A4(_elm_lang$core$Color$RGBA, 92, 53, 102, 1);
+var _elm_lang$core$Color$lightBrown = A4(_elm_lang$core$Color$RGBA, 233, 185, 110, 1);
+var _elm_lang$core$Color$brown = A4(_elm_lang$core$Color$RGBA, 193, 125, 17, 1);
+var _elm_lang$core$Color$darkBrown = A4(_elm_lang$core$Color$RGBA, 143, 89, 2, 1);
+var _elm_lang$core$Color$black = A4(_elm_lang$core$Color$RGBA, 0, 0, 0, 1);
+var _elm_lang$core$Color$white = A4(_elm_lang$core$Color$RGBA, 255, 255, 255, 1);
+var _elm_lang$core$Color$lightGrey = A4(_elm_lang$core$Color$RGBA, 238, 238, 236, 1);
+var _elm_lang$core$Color$grey = A4(_elm_lang$core$Color$RGBA, 211, 215, 207, 1);
+var _elm_lang$core$Color$darkGrey = A4(_elm_lang$core$Color$RGBA, 186, 189, 182, 1);
+var _elm_lang$core$Color$lightGray = A4(_elm_lang$core$Color$RGBA, 238, 238, 236, 1);
+var _elm_lang$core$Color$gray = A4(_elm_lang$core$Color$RGBA, 211, 215, 207, 1);
+var _elm_lang$core$Color$darkGray = A4(_elm_lang$core$Color$RGBA, 186, 189, 182, 1);
+var _elm_lang$core$Color$lightCharcoal = A4(_elm_lang$core$Color$RGBA, 136, 138, 133, 1);
+var _elm_lang$core$Color$charcoal = A4(_elm_lang$core$Color$RGBA, 85, 87, 83, 1);
+var _elm_lang$core$Color$darkCharcoal = A4(_elm_lang$core$Color$RGBA, 46, 52, 54, 1);
+var _elm_lang$core$Color$Radial = F5(
+	function (a, b, c, d, e) {
+		return {ctor: 'Radial', _0: a, _1: b, _2: c, _3: d, _4: e};
+	});
+var _elm_lang$core$Color$radial = _elm_lang$core$Color$Radial;
+var _elm_lang$core$Color$Linear = F3(
+	function (a, b, c) {
+		return {ctor: 'Linear', _0: a, _1: b, _2: c};
+	});
+var _elm_lang$core$Color$linear = _elm_lang$core$Color$Linear;
+
+//import Result //
+
+var _elm_lang$core$Native_Date = function() {
+
+function fromString(str)
+{
+	var date = new Date(str);
+	return isNaN(date.getTime())
+		? _elm_lang$core$Result$Err('Unable to parse \'' + str + '\' as a date. Dates must be in the ISO 8601 format.')
+		: _elm_lang$core$Result$Ok(date);
+}
+
+var dayTable = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+var monthTable =
+	['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+	 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+
+return {
+	fromString: fromString,
+	year: function(d) { return d.getFullYear(); },
+	month: function(d) { return { ctor: monthTable[d.getMonth()] }; },
+	day: function(d) { return d.getDate(); },
+	hour: function(d) { return d.getHours(); },
+	minute: function(d) { return d.getMinutes(); },
+	second: function(d) { return d.getSeconds(); },
+	millisecond: function(d) { return d.getMilliseconds(); },
+	toTime: function(d) { return d.getTime(); },
+	fromTime: function(t) { return new Date(t); },
+	dayOfWeek: function(d) { return { ctor: dayTable[d.getDay()] }; }
+};
+
+}();
 var _elm_lang$core$Task$onError = _elm_lang$core$Native_Scheduler.onError;
 var _elm_lang$core$Task$andThen = _elm_lang$core$Native_Scheduler.andThen;
 var _elm_lang$core$Task$spawnCmd = F2(
@@ -6298,205 +6497,6 @@ var _elm_lang$core$Time$subMap = F2(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Time'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Time$init, onEffects: _elm_lang$core$Time$onEffects, onSelfMsg: _elm_lang$core$Time$onSelfMsg, tag: 'sub', subMap: _elm_lang$core$Time$subMap};
 
-var _elm_lang$core$Color$fmod = F2(
-	function (f, n) {
-		var integer = _elm_lang$core$Basics$floor(f);
-		return (_elm_lang$core$Basics$toFloat(
-			A2(_elm_lang$core$Basics_ops['%'], integer, n)) + f) - _elm_lang$core$Basics$toFloat(integer);
-	});
-var _elm_lang$core$Color$rgbToHsl = F3(
-	function (red, green, blue) {
-		var b = _elm_lang$core$Basics$toFloat(blue) / 255;
-		var g = _elm_lang$core$Basics$toFloat(green) / 255;
-		var r = _elm_lang$core$Basics$toFloat(red) / 255;
-		var cMax = A2(
-			_elm_lang$core$Basics$max,
-			A2(_elm_lang$core$Basics$max, r, g),
-			b);
-		var cMin = A2(
-			_elm_lang$core$Basics$min,
-			A2(_elm_lang$core$Basics$min, r, g),
-			b);
-		var c = cMax - cMin;
-		var lightness = (cMax + cMin) / 2;
-		var saturation = _elm_lang$core$Native_Utils.eq(lightness, 0) ? 0 : (c / (1 - _elm_lang$core$Basics$abs((2 * lightness) - 1)));
-		var hue = _elm_lang$core$Basics$degrees(60) * (_elm_lang$core$Native_Utils.eq(cMax, r) ? A2(_elm_lang$core$Color$fmod, (g - b) / c, 6) : (_elm_lang$core$Native_Utils.eq(cMax, g) ? (((b - r) / c) + 2) : (((r - g) / c) + 4)));
-		return {ctor: '_Tuple3', _0: hue, _1: saturation, _2: lightness};
-	});
-var _elm_lang$core$Color$hslToRgb = F3(
-	function (hue, saturation, lightness) {
-		var normHue = hue / _elm_lang$core$Basics$degrees(60);
-		var chroma = (1 - _elm_lang$core$Basics$abs((2 * lightness) - 1)) * saturation;
-		var x = chroma * (1 - _elm_lang$core$Basics$abs(
-			A2(_elm_lang$core$Color$fmod, normHue, 2) - 1));
-		var _p0 = (_elm_lang$core$Native_Utils.cmp(normHue, 0) < 0) ? {ctor: '_Tuple3', _0: 0, _1: 0, _2: 0} : ((_elm_lang$core$Native_Utils.cmp(normHue, 1) < 0) ? {ctor: '_Tuple3', _0: chroma, _1: x, _2: 0} : ((_elm_lang$core$Native_Utils.cmp(normHue, 2) < 0) ? {ctor: '_Tuple3', _0: x, _1: chroma, _2: 0} : ((_elm_lang$core$Native_Utils.cmp(normHue, 3) < 0) ? {ctor: '_Tuple3', _0: 0, _1: chroma, _2: x} : ((_elm_lang$core$Native_Utils.cmp(normHue, 4) < 0) ? {ctor: '_Tuple3', _0: 0, _1: x, _2: chroma} : ((_elm_lang$core$Native_Utils.cmp(normHue, 5) < 0) ? {ctor: '_Tuple3', _0: x, _1: 0, _2: chroma} : ((_elm_lang$core$Native_Utils.cmp(normHue, 6) < 0) ? {ctor: '_Tuple3', _0: chroma, _1: 0, _2: x} : {ctor: '_Tuple3', _0: 0, _1: 0, _2: 0}))))));
-		var r = _p0._0;
-		var g = _p0._1;
-		var b = _p0._2;
-		var m = lightness - (chroma / 2);
-		return {ctor: '_Tuple3', _0: r + m, _1: g + m, _2: b + m};
-	});
-var _elm_lang$core$Color$toRgb = function (color) {
-	var _p1 = color;
-	if (_p1.ctor === 'RGBA') {
-		return {red: _p1._0, green: _p1._1, blue: _p1._2, alpha: _p1._3};
-	} else {
-		var _p2 = A3(_elm_lang$core$Color$hslToRgb, _p1._0, _p1._1, _p1._2);
-		var r = _p2._0;
-		var g = _p2._1;
-		var b = _p2._2;
-		return {
-			red: _elm_lang$core$Basics$round(255 * r),
-			green: _elm_lang$core$Basics$round(255 * g),
-			blue: _elm_lang$core$Basics$round(255 * b),
-			alpha: _p1._3
-		};
-	}
-};
-var _elm_lang$core$Color$toHsl = function (color) {
-	var _p3 = color;
-	if (_p3.ctor === 'HSLA') {
-		return {hue: _p3._0, saturation: _p3._1, lightness: _p3._2, alpha: _p3._3};
-	} else {
-		var _p4 = A3(_elm_lang$core$Color$rgbToHsl, _p3._0, _p3._1, _p3._2);
-		var h = _p4._0;
-		var s = _p4._1;
-		var l = _p4._2;
-		return {hue: h, saturation: s, lightness: l, alpha: _p3._3};
-	}
-};
-var _elm_lang$core$Color$HSLA = F4(
-	function (a, b, c, d) {
-		return {ctor: 'HSLA', _0: a, _1: b, _2: c, _3: d};
-	});
-var _elm_lang$core$Color$hsla = F4(
-	function (hue, saturation, lightness, alpha) {
-		return A4(
-			_elm_lang$core$Color$HSLA,
-			hue - _elm_lang$core$Basics$turns(
-				_elm_lang$core$Basics$toFloat(
-					_elm_lang$core$Basics$floor(hue / (2 * _elm_lang$core$Basics$pi)))),
-			saturation,
-			lightness,
-			alpha);
-	});
-var _elm_lang$core$Color$hsl = F3(
-	function (hue, saturation, lightness) {
-		return A4(_elm_lang$core$Color$hsla, hue, saturation, lightness, 1);
-	});
-var _elm_lang$core$Color$complement = function (color) {
-	var _p5 = color;
-	if (_p5.ctor === 'HSLA') {
-		return A4(
-			_elm_lang$core$Color$hsla,
-			_p5._0 + _elm_lang$core$Basics$degrees(180),
-			_p5._1,
-			_p5._2,
-			_p5._3);
-	} else {
-		var _p6 = A3(_elm_lang$core$Color$rgbToHsl, _p5._0, _p5._1, _p5._2);
-		var h = _p6._0;
-		var s = _p6._1;
-		var l = _p6._2;
-		return A4(
-			_elm_lang$core$Color$hsla,
-			h + _elm_lang$core$Basics$degrees(180),
-			s,
-			l,
-			_p5._3);
-	}
-};
-var _elm_lang$core$Color$grayscale = function (p) {
-	return A4(_elm_lang$core$Color$HSLA, 0, 0, 1 - p, 1);
-};
-var _elm_lang$core$Color$greyscale = function (p) {
-	return A4(_elm_lang$core$Color$HSLA, 0, 0, 1 - p, 1);
-};
-var _elm_lang$core$Color$RGBA = F4(
-	function (a, b, c, d) {
-		return {ctor: 'RGBA', _0: a, _1: b, _2: c, _3: d};
-	});
-var _elm_lang$core$Color$rgba = _elm_lang$core$Color$RGBA;
-var _elm_lang$core$Color$rgb = F3(
-	function (r, g, b) {
-		return A4(_elm_lang$core$Color$RGBA, r, g, b, 1);
-	});
-var _elm_lang$core$Color$lightRed = A4(_elm_lang$core$Color$RGBA, 239, 41, 41, 1);
-var _elm_lang$core$Color$red = A4(_elm_lang$core$Color$RGBA, 204, 0, 0, 1);
-var _elm_lang$core$Color$darkRed = A4(_elm_lang$core$Color$RGBA, 164, 0, 0, 1);
-var _elm_lang$core$Color$lightOrange = A4(_elm_lang$core$Color$RGBA, 252, 175, 62, 1);
-var _elm_lang$core$Color$orange = A4(_elm_lang$core$Color$RGBA, 245, 121, 0, 1);
-var _elm_lang$core$Color$darkOrange = A4(_elm_lang$core$Color$RGBA, 206, 92, 0, 1);
-var _elm_lang$core$Color$lightYellow = A4(_elm_lang$core$Color$RGBA, 255, 233, 79, 1);
-var _elm_lang$core$Color$yellow = A4(_elm_lang$core$Color$RGBA, 237, 212, 0, 1);
-var _elm_lang$core$Color$darkYellow = A4(_elm_lang$core$Color$RGBA, 196, 160, 0, 1);
-var _elm_lang$core$Color$lightGreen = A4(_elm_lang$core$Color$RGBA, 138, 226, 52, 1);
-var _elm_lang$core$Color$green = A4(_elm_lang$core$Color$RGBA, 115, 210, 22, 1);
-var _elm_lang$core$Color$darkGreen = A4(_elm_lang$core$Color$RGBA, 78, 154, 6, 1);
-var _elm_lang$core$Color$lightBlue = A4(_elm_lang$core$Color$RGBA, 114, 159, 207, 1);
-var _elm_lang$core$Color$blue = A4(_elm_lang$core$Color$RGBA, 52, 101, 164, 1);
-var _elm_lang$core$Color$darkBlue = A4(_elm_lang$core$Color$RGBA, 32, 74, 135, 1);
-var _elm_lang$core$Color$lightPurple = A4(_elm_lang$core$Color$RGBA, 173, 127, 168, 1);
-var _elm_lang$core$Color$purple = A4(_elm_lang$core$Color$RGBA, 117, 80, 123, 1);
-var _elm_lang$core$Color$darkPurple = A4(_elm_lang$core$Color$RGBA, 92, 53, 102, 1);
-var _elm_lang$core$Color$lightBrown = A4(_elm_lang$core$Color$RGBA, 233, 185, 110, 1);
-var _elm_lang$core$Color$brown = A4(_elm_lang$core$Color$RGBA, 193, 125, 17, 1);
-var _elm_lang$core$Color$darkBrown = A4(_elm_lang$core$Color$RGBA, 143, 89, 2, 1);
-var _elm_lang$core$Color$black = A4(_elm_lang$core$Color$RGBA, 0, 0, 0, 1);
-var _elm_lang$core$Color$white = A4(_elm_lang$core$Color$RGBA, 255, 255, 255, 1);
-var _elm_lang$core$Color$lightGrey = A4(_elm_lang$core$Color$RGBA, 238, 238, 236, 1);
-var _elm_lang$core$Color$grey = A4(_elm_lang$core$Color$RGBA, 211, 215, 207, 1);
-var _elm_lang$core$Color$darkGrey = A4(_elm_lang$core$Color$RGBA, 186, 189, 182, 1);
-var _elm_lang$core$Color$lightGray = A4(_elm_lang$core$Color$RGBA, 238, 238, 236, 1);
-var _elm_lang$core$Color$gray = A4(_elm_lang$core$Color$RGBA, 211, 215, 207, 1);
-var _elm_lang$core$Color$darkGray = A4(_elm_lang$core$Color$RGBA, 186, 189, 182, 1);
-var _elm_lang$core$Color$lightCharcoal = A4(_elm_lang$core$Color$RGBA, 136, 138, 133, 1);
-var _elm_lang$core$Color$charcoal = A4(_elm_lang$core$Color$RGBA, 85, 87, 83, 1);
-var _elm_lang$core$Color$darkCharcoal = A4(_elm_lang$core$Color$RGBA, 46, 52, 54, 1);
-var _elm_lang$core$Color$Radial = F5(
-	function (a, b, c, d, e) {
-		return {ctor: 'Radial', _0: a, _1: b, _2: c, _3: d, _4: e};
-	});
-var _elm_lang$core$Color$radial = _elm_lang$core$Color$Radial;
-var _elm_lang$core$Color$Linear = F3(
-	function (a, b, c) {
-		return {ctor: 'Linear', _0: a, _1: b, _2: c};
-	});
-var _elm_lang$core$Color$linear = _elm_lang$core$Color$Linear;
-
-//import Result //
-
-var _elm_lang$core$Native_Date = function() {
-
-function fromString(str)
-{
-	var date = new Date(str);
-	return isNaN(date.getTime())
-		? _elm_lang$core$Result$Err('Unable to parse \'' + str + '\' as a date. Dates must be in the ISO 8601 format.')
-		: _elm_lang$core$Result$Ok(date);
-}
-
-var dayTable = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-var monthTable =
-	['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-	 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-
-return {
-	fromString: fromString,
-	year: function(d) { return d.getFullYear(); },
-	month: function(d) { return { ctor: monthTable[d.getMonth()] }; },
-	day: function(d) { return d.getDate(); },
-	hour: function(d) { return d.getHours(); },
-	minute: function(d) { return d.getMinutes(); },
-	second: function(d) { return d.getSeconds(); },
-	millisecond: function(d) { return d.getMilliseconds(); },
-	toTime: function(d) { return d.getTime(); },
-	fromTime: function(t) { return new Date(t); },
-	dayOfWeek: function(d) { return { ctor: dayTable[d.getDay()] }; }
-};
-
-}();
 var _elm_lang$core$Date$millisecond = _elm_lang$core$Native_Date.millisecond;
 var _elm_lang$core$Date$second = _elm_lang$core$Native_Date.second;
 var _elm_lang$core$Date$minute = _elm_lang$core$Native_Date.minute;
@@ -12202,6 +12202,22 @@ var _justinmimbs$elm_date_extra$Date_Extra$equalBy = F3(
 var _justinmimbs$elm_date_extra$Date_Extra$Second = {ctor: 'Second'};
 var _justinmimbs$elm_date_extra$Date_Extra$Millisecond = {ctor: 'Millisecond'};
 
+var _mgold$elm_date_format$Date_Local$brazilian = {
+	date: {
+		months: {jan: 'Janeiro', feb: 'Fevereiro', mar: 'Março', apr: 'Abril', may: 'Maio', jun: 'Junho', jul: 'Julho', aug: 'Agosto', sep: 'Setembro', oct: 'Outubro', nov: 'Novembro', dec: 'Dezembro'},
+		monthsAbbrev: {jan: 'Jan', feb: 'Fev', mar: 'Mar', apr: 'Abr', may: 'Mai', jun: 'Jun', jul: 'Jul', aug: 'Ago', sep: 'Set', oct: 'Out', nov: 'Nov', dec: 'Dez'},
+		wdays: {mon: 'Segunda-feira', tue: 'Terça-feira', wed: 'Quarta-feira', thu: 'Quinta-feira', fri: 'Sexta-feira', sat: 'Sábado', sun: 'Domingo'},
+		wdaysAbbrev: {mon: 'Seg', tue: 'Ter', wed: 'Qua', thu: 'Qui', fri: 'Sex', sat: 'Sáb', sun: 'Dom'},
+		defaultFormat: _elm_lang$core$Maybe$Just('%e de %B de %Y')
+	},
+	time: {
+		am: 'am',
+		pm: 'pm',
+		defaultFormat: _elm_lang$core$Maybe$Just('%k:%M')
+	},
+	timeZones: _elm_lang$core$Maybe$Nothing,
+	defaultFormat: _elm_lang$core$Maybe$Nothing
+};
 var _mgold$elm_date_format$Date_Local$french = {
 	date: {
 		months: {jan: 'Janvier', feb: 'Février', mar: 'Mars', apr: 'Avril', may: 'Mai', jun: 'Juin', jul: 'Juillet', aug: 'Août', sep: 'Septembre', oct: 'Octobre', nov: 'Novembre', dec: 'Décembre'},
@@ -17268,58 +17284,32 @@ var _user$project$Internal_Interpolation$stepped = function (sections) {
 				var _p0 = section;
 				if (_p0._0.ctor === '::') {
 					if (_p0._0._1.ctor === '::') {
-						if (_p0._0._1._1.ctor === '[]') {
-							if (_p0._1.ctor === 'Just') {
-								var _p2 = _p0._0._1._0;
-								var _p1 = _p0._0._0;
-								return A2(
-									_elm_lang$core$Basics_ops['++'],
-									result,
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										A2(_user$project$Internal_Interpolation$after, _p1, _p2),
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											A2(
-												_user$project$Internal_Interpolation$after,
-												_p2,
-												A2(_user$project$Internal_Interpolation$fakeLast, _p1, _p2)),
-											{
-												ctor: '::',
-												_0: A2(_user$project$Internal_Data$Point, _p0._1._0.x, _p2.y),
-												_1: {ctor: '[]'}
-											})));
-							} else {
-								var _p4 = _p0._0._1._0;
-								var _p3 = _p0._0._0;
-								return A2(
-									_elm_lang$core$Basics_ops['++'],
-									result,
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										A2(_user$project$Internal_Interpolation$after, _p3, _p4),
-										A2(
-											_user$project$Internal_Interpolation$after,
-											_p4,
-											A2(_user$project$Internal_Interpolation$fakeLast, _p3, _p4))));
-							}
-						} else {
-							var _p5 = _p0._0._1._0;
-							var _v1 = A2(
+						var _p1 = _p0._0._1._0;
+						var _v1 = A2(
+							_elm_lang$core$Basics_ops['++'],
+							result,
+							A2(_user$project$Internal_Interpolation$after, _p0._0._0, _p1)),
+							_v2 = {
+							ctor: '_Tuple2',
+							_0: {ctor: '::', _0: _p1, _1: _p0._0._1._1},
+							_1: _p0._1
+						};
+						result = _v1;
+						section = _v2;
+						continue expand;
+					} else {
+						if (_p0._1.ctor === 'Just') {
+							return A2(
 								_elm_lang$core$Basics_ops['++'],
 								result,
-								A2(_user$project$Internal_Interpolation$after, _p0._0._0, _p5)),
-								_v2 = {
-								ctor: '_Tuple2',
-								_0: {ctor: '::', _0: _p5, _1: _p0._0._1._1},
-								_1: _p0._1
-							};
-							result = _v1;
-							section = _v2;
-							continue expand;
+								{
+									ctor: '::',
+									_0: A2(_user$project$Internal_Data$Point, _p0._1._0.x, _p0._0._0.y),
+									_1: {ctor: '[]'}
+								});
+						} else {
+							return result;
 						}
-					} else {
-						return result;
 					}
 				} else {
 					return result;
@@ -17328,14 +17318,14 @@ var _user$project$Internal_Interpolation$stepped = function (sections) {
 		});
 	return A2(
 		_elm_lang$core$List$map,
-		function (_p6) {
+		function (_p2) {
 			return A2(
 				_elm_lang$core$List$map,
 				_user$project$Internal_Path$Line,
 				A2(
 					expand,
 					{ctor: '[]'},
-					_p6));
+					_p2));
 		},
 		sections);
 };
@@ -17387,59 +17377,59 @@ var _user$project$Internal_Interpolation$Previous = function (a) {
 	return {ctor: 'Previous', _0: a};
 };
 var _user$project$Internal_Interpolation$monotonePart = F2(
-	function (points, _p7) {
+	function (points, _p3) {
 		monotonePart:
 		while (true) {
-			var _p8 = _p7;
-			var _p21 = _p8._0;
-			var _p20 = _p8._1;
-			var _p9 = {ctor: '_Tuple2', _0: _p21, _1: points};
+			var _p4 = _p3;
+			var _p17 = _p4._0;
+			var _p16 = _p4._1;
+			var _p5 = {ctor: '_Tuple2', _0: _p17, _1: points};
 			_v4_4:
 			do {
-				if (_p9._0.ctor === 'First') {
-					if ((_p9._1.ctor === '::') && (_p9._1._1.ctor === '::')) {
-						if (_p9._1._1._1.ctor === '::') {
-							var _p12 = _p9._1._1._1._0;
-							var _p11 = _p9._1._1._0;
-							var _p10 = _p9._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p10, _p11, _p12);
-							var t0 = A3(_user$project$Internal_Interpolation$slope2, _p10, _p11, t1);
+				if (_p5._0.ctor === 'First') {
+					if ((_p5._1.ctor === '::') && (_p5._1._1.ctor === '::')) {
+						if (_p5._1._1._1.ctor === '::') {
+							var _p8 = _p5._1._1._1._0;
+							var _p7 = _p5._1._1._0;
+							var _p6 = _p5._1._0;
+							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p6, _p7, _p8);
+							var t0 = A3(_user$project$Internal_Interpolation$slope2, _p6, _p7, t1);
 							var _v5 = {
 								ctor: '::',
-								_0: _p11,
-								_1: {ctor: '::', _0: _p12, _1: _p9._1._1._1._1}
+								_0: _p7,
+								_1: {ctor: '::', _0: _p8, _1: _p5._1._1._1._1}
 							},
 								_v6 = {
 								ctor: '_Tuple2',
 								_0: _user$project$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
-									_p20,
+									_p16,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p10, _p11, t0, t1),
+										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p6, _p7, t0, t1),
 										_1: {ctor: '[]'}
 									})
 							};
 							points = _v5;
-							_p7 = _v6;
+							_p3 = _v6;
 							continue monotonePart;
 						} else {
-							var _p17 = _p9._1._1._0;
-							var _p16 = _p9._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p16, _p17, _p17);
+							var _p13 = _p5._1._1._0;
+							var _p12 = _p5._1._0;
+							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p12, _p13, _p13);
 							return {
 								ctor: '_Tuple2',
 								_0: _user$project$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
-									_p20,
+									_p16,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p16, _p17, t1, t1),
+										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p12, _p13, t1, t1),
 										_1: {
 											ctor: '::',
-											_0: _user$project$Internal_Path$Line(_p17),
+											_0: _user$project$Internal_Path$Line(_p13),
 											_1: {ctor: '[]'}
 										}
 									})
@@ -17449,48 +17439,48 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 						break _v4_4;
 					}
 				} else {
-					if ((_p9._1.ctor === '::') && (_p9._1._1.ctor === '::')) {
-						if (_p9._1._1._1.ctor === '::') {
-							var _p15 = _p9._1._1._1._0;
-							var _p14 = _p9._1._1._0;
-							var _p13 = _p9._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p13, _p14, _p15);
+					if ((_p5._1.ctor === '::') && (_p5._1._1.ctor === '::')) {
+						if (_p5._1._1._1.ctor === '::') {
+							var _p11 = _p5._1._1._1._0;
+							var _p10 = _p5._1._1._0;
+							var _p9 = _p5._1._0;
+							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p9, _p10, _p11);
 							var _v7 = {
 								ctor: '::',
-								_0: _p14,
-								_1: {ctor: '::', _0: _p15, _1: _p9._1._1._1._1}
+								_0: _p10,
+								_1: {ctor: '::', _0: _p11, _1: _p5._1._1._1._1}
 							},
 								_v8 = {
 								ctor: '_Tuple2',
 								_0: _user$project$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
-									_p20,
+									_p16,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p13, _p14, _p9._0._0, t1),
+										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p9, _p10, _p5._0._0, t1),
 										_1: {ctor: '[]'}
 									})
 							};
 							points = _v7;
-							_p7 = _v8;
+							_p3 = _v8;
 							continue monotonePart;
 						} else {
-							var _p19 = _p9._1._1._0;
-							var _p18 = _p9._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p18, _p19, _p19);
+							var _p15 = _p5._1._1._0;
+							var _p14 = _p5._1._0;
+							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p14, _p15, _p15);
 							return {
 								ctor: '_Tuple2',
 								_0: _user$project$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
-									_p20,
+									_p16,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p18, _p19, _p9._0._0, t1),
+										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p14, _p15, _p5._0._0, t1),
 										_1: {
 											ctor: '::',
-											_0: _user$project$Internal_Path$Line(_p19),
+											_0: _user$project$Internal_Path$Line(_p15),
 											_1: {ctor: '[]'}
 										}
 									})
@@ -17501,43 +17491,43 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 					}
 				}
 			} while(false);
-			return {ctor: '_Tuple2', _0: _p21, _1: _p20};
+			return {ctor: '_Tuple2', _0: _p17, _1: _p16};
 		}
 	});
 var _user$project$Internal_Interpolation$monotoneSection = F2(
-	function (points, _p22) {
-		var _p23 = _p22;
-		var _p27 = _p23._0;
-		var _p24 = function () {
-			var _p25 = points;
-			if (_p25.ctor === '::') {
-				var _p26 = _p25._0;
+	function (points, _p18) {
+		var _p19 = _p18;
+		var _p23 = _p19._0;
+		var _p20 = function () {
+			var _p21 = points;
+			if (_p21.ctor === '::') {
+				var _p22 = _p21._0;
 				return A2(
 					_user$project$Internal_Interpolation$monotonePart,
-					{ctor: '::', _0: _p26, _1: _p25._1},
+					{ctor: '::', _0: _p22, _1: _p21._1},
 					{
 						ctor: '_Tuple2',
-						_0: _p27,
+						_0: _p23,
 						_1: {
 							ctor: '::',
-							_0: _user$project$Internal_Path$Line(_p26),
+							_0: _user$project$Internal_Path$Line(_p22),
 							_1: {ctor: '[]'}
 						}
 					});
 			} else {
 				return {
 					ctor: '_Tuple2',
-					_0: _p27,
+					_0: _p23,
 					_1: {ctor: '[]'}
 				};
 			}
 		}();
-		var t0 = _p24._0;
-		var commands = _p24._1;
+		var t0 = _p20._0;
+		var commands = _p20._1;
 		return {
 			ctor: '_Tuple2',
 			_0: t0,
-			_1: {ctor: '::', _0: commands, _1: _p23._1}
+			_1: {ctor: '::', _0: commands, _1: _p19._1}
 		};
 	});
 var _user$project$Internal_Interpolation$First = {ctor: 'First'};
@@ -17556,7 +17546,7 @@ var _user$project$Internal_Interpolation$monotone = function (sections) {
 var _user$project$Internal_Interpolation$toCommands = F2(
 	function (interpolation, data) {
 		var pointsSections = _elm_lang$core$List$map(
-			function (_p28) {
+			function (_p24) {
 				return A2(
 					_elm_lang$core$Tuple$mapSecond,
 					_elm_lang$core$Maybe$map(
@@ -17569,19 +17559,19 @@ var _user$project$Internal_Interpolation$toCommands = F2(
 							function (_) {
 								return _.point;
 							}),
-						_p28));
+						_p24));
 			});
 		var points = _elm_lang$core$List$map(
-			function (_p29) {
+			function (_p25) {
 				return A2(
 					_elm_lang$core$List$map,
 					function (_) {
 						return _.point;
 					},
-					_elm_lang$core$Tuple$first(_p29));
+					_elm_lang$core$Tuple$first(_p25));
 			});
-		var _p30 = interpolation;
-		switch (_p30.ctor) {
+		var _p26 = interpolation;
+		switch (_p26.ctor) {
 			case 'Linear':
 				return _user$project$Internal_Interpolation$linear(
 					points(data));
@@ -20605,9 +20595,8 @@ var _user$project$Stepped$setHint = F2(
 			model,
 			{hinted: hinted});
 	});
-var _user$project$Stepped$xInterval = _elm_lang$core$Time$hour * 24;
 var _user$project$Stepped$toDate = function (index) {
-	return (((_elm_lang$core$Time$hour * 24) * 356) * 45) + (_user$project$Stepped$xInterval * _elm_lang$core$Basics$toFloat(index));
+	return (((_elm_lang$core$Time$hour * 24) * 356) * 45) + ((_elm_lang$core$Time$hour * 24) * _elm_lang$core$Basics$toFloat(index));
 };
 var _user$project$Stepped$toData = function (numbers) {
 	return A2(
@@ -20688,7 +20677,7 @@ var _user$project$Stepped$chart = function (model) {
 							}(_p8));
 					},
 					pixels: 1270,
-					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 60),
+					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
 					axisLine: _user$project$LineChart_Axis_Line$full(_user$project$LineChart_Colors$gray),
 					ticks: _user$project$LineChart_Axis_Ticks$time(10)
 				}),
@@ -20709,7 +20698,6 @@ var _user$project$Stepped$chart = function (model) {
 					var _p11 = _p10._0;
 					return _user$project$LineChart_Junk$custom(
 						function (system) {
-							var x = _p11.x + (_user$project$Stepped$xInterval / 2);
 							return {
 								below: {
 									ctor: '::',
@@ -20717,7 +20705,7 @@ var _user$project$Stepped$chart = function (model) {
 										_user$project$LineChart_Junk$vertical,
 										system,
 										{ctor: '[]'},
-										x),
+										_p11.x),
 									_1: {ctor: '[]'}
 								},
 								above: {ctor: '[]'},
@@ -20726,7 +20714,7 @@ var _user$project$Stepped$chart = function (model) {
 									_0: A5(
 										_user$project$LineChart_Junk$hoverAt,
 										system,
-										x,
+										_p11.x,
 										system.y.max,
 										{ctor: '[]'},
 										_user$project$Stepped$viewHint(_p11)),
@@ -20744,7 +20732,7 @@ var _user$project$Stepped$chart = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$none, 'Nora', model.data.nora),
+			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$circle, 'Nora', model.data.nora),
 			_1: {ctor: '[]'}
 		});
 };
@@ -21122,7 +21110,7 @@ var _user$project$Main$viewTitle = A2(
 						_elm_lang$html$Html$a,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$href('https://github.com/terezka/elm-plot'),
+							_0: _elm_lang$html$Html_Attributes$href('https://github.com/terezka/line-charts'),
 							_1: {ctor: '[]'}
 						},
 						{
@@ -21139,7 +21127,7 @@ var _user$project$Main$viewTitle = A2(
 								_elm_lang$html$Html$a,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$href('https://twitter.com/terez_ka'),
+									_0: _elm_lang$html$Html_Attributes$href('https://twitter.com/terezk_a'),
 									_1: {ctor: '[]'}
 								},
 								{
