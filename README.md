@@ -1,23 +1,17 @@
 # Line Charts
 
-A opinionated library for plotting lines graphs in SVG. [See demo.](https://terezka.github.io/line-charts/)
+A opinionated library for plotting lines charts in SVG. Written in all Elm. See [demo.](https://terezka.github.io/line-charts/)
 
 ## Development
 
 ### Setup
 
 ```shell
-elm package install
-elm reactor
+$ elm package install
+$ elm reactor
 ```
 
 and open [examples](https://localhost:8000/examples).
-
-### Compile the Docs
-
-```shell
-elm live docs/src/Main.elm --output=docs/assets/main.js
-```
 
 ### Tests
 
@@ -26,5 +20,11 @@ For further information on elm-test check the documentation.
 All required dependencies are downloaded and installed when initially running the command.
 
 ```shell
-elm test
+$ elm test
+```
+
+### Compile the Docs
+
+```shell
+$ elm live docs/src/Main.elm --output=docs/assets/main.js
 ```
