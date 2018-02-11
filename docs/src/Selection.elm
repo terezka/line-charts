@@ -245,7 +245,7 @@ viewPlaceholder =
     [ Html.Attributes.style
         [ ( "margin", "40px 25px 30px 70px" )
         , ( "width", "505px" )
-        , ( "height", "360px" )
+        , ( "height", "380px" )
         , ( "background", "#4646461a" )
         , ( "text-align", "center" )
         , ( "line-height", "340px" )
@@ -266,7 +266,7 @@ viewChartMain model =
     , legends = Legends.default
     , events = events
     , width = 670
-    , margin = Container.Margin 30 100 60 70
+    , margin = Container.Margin 30 100 30 70
     , dots = Dots.custom (Dots.full 0)
     , id = "line-chart"
     }
@@ -346,7 +346,7 @@ viewChartZoom model selection =
     , legends = Legends.none
     , dots = Dots.hoverOne model.hinted
     , width = 600
-    , margin = Container.Margin 30 25 60 70
+    , margin = Container.Margin 30 25 30 70
     , id = "line-chart-zoom"
     }
 
@@ -434,7 +434,6 @@ round100 float =
 source : String 
 source =
   """
-
   -- MODEL
 
 
@@ -448,8 +447,8 @@ source =
 
 
   type alias Selection =
-    { start : Float
-    , end : Float
+    { xStart : Float
+    , xEnd : Float
     }
 
 
@@ -487,7 +486,7 @@ source =
 
 
 
-  -- API
+  -- MODEL API
 
 
   setData : ( List Float, List Float, List Float ) -> Model -> Model
@@ -523,7 +522,7 @@ source =
   getSelectionXStart : Float -> Model -> Float
   getSelectionXStart hovered model =
     case model.selection of
-      Just selection -> selection.start
+      Just selection -> selection.xStart
       Nothing        -> hovered
 
 
@@ -533,13 +532,13 @@ source =
 
   type Msg
     = RecieveNumbers ( List Float, List Float, List Float )
-    -- Chart 1
+    -- Chart Main
     | Hold Coordinate.Point
     | Move Coordinate.Point
     | Drop Coordinate.Point
     | LeaveChart Coordinate.Point
     | LeaveContainer Coordinate.Point
-    -- Chart 2
+    -- Chart Zoom
     | Hint (Maybe Coordinate.Point)
 
 
@@ -611,15 +610,29 @@ source =
 
   view : Model -> Html.Html Msg
   view model =
-    Html.div
-      [ Html.Attributes.style [ ( "display", "flex" ) ] ] <|
-      case model.selection of
-        Nothing ->
-          [ viewPlaceholder, chart model ]
+    let 
+      style =
+        [ ( "display", "flex" ) ]
 
-        Just selection ->
-          [ viewChartZoom model selection, chart model ]
+      content =
+        case model.selection of
+          Nothing ->
+            [ viewPlaceholder
+            , viewChartMain model 
+            ]
 
+          Just selection ->
+            if selection.xStart == selection.xEnd then
+              [ viewPlaceholder
+              , viewChartMain model 
+              ]
+            else 
+              [ viewChartZoom model selection
+              , viewChartMain model 
+              ]
+    in
+    Html.div [ Html.Attributes.style style ] content
+      
 
   viewPlaceholder : Html.Html Msg
   viewPlaceholder =
@@ -628,7 +641,7 @@ source =
           [ ( "margin", "40px 25px 30px 70px" )
           , ( "width", "505px" )
           , ( "height", "360px" )
-          , ( "background", "#b6b6b61a" )
+          , ( "background", "#4646461a" )
           , ( "text-align", "center" )
           , ( "line-height", "340px" )
           ]
@@ -640,25 +653,36 @@ source =
   -- MAIN CHART
 
 
-  chart : Model -> Html.Html Msg
-  chart model =
+  viewChartMain : Model -> Html.Html Msg
+  viewChartMain model =
     viewChart model.data
       { range = Range.default
       , junk = junkConfig model
       , legends = Legends.default
-      , events =
-          Events.custom
-            [ Events.onWithOptions "mousedown" (Events.Options True True False) Hold Events.getData
-            , Events.onWithOptions "mousemove" (Events.Options True True False) Move Events.getData
-            , Events.onWithOptions "mouseup"   (Events.Options True True True) Drop Events.getData
-            , Events.onWithOptions "mouseleave" (Events.Options True True False) LeaveChart Events.getData
-            , Events.onWithOptions "mouseleave" (Events.Options True True True) LeaveContainer Events.getData
-            ]
+      , events = events
       , width = 670
       , margin = Container.Margin 30 100 60 70
       , dots = Dots.custom (Dots.full 0)
       , id = "line-chart"
       }
+
+
+  events : Events.Config Coordinate.Point Msg
+  events =
+    let
+      options bool =
+        { stopPropagation = True
+        , preventDefault = True
+        , catchOutsideChart = bool
+        }
+    in
+    Events.custom
+      [ Events.onWithOptions "mousedown"  (options False) Hold           Events.getData
+      , Events.onWithOptions "mousemove"  (options False) Move           Events.getData
+      , Events.onWithOptions "mouseup"    (options True)  Drop           Events.getData
+      , Events.onWithOptions "mouseleave" (options False) LeaveChart     Events.getData
+      , Events.onWithOptions "mouseleave" (options True)  LeaveContainer Events.getData
+      ]
 
 
   junkConfig : Model -> Junk.Config Coordinate.Point msg
@@ -673,10 +697,18 @@ source =
   below : Coordinate.System -> Maybe Selection -> List (Svg.Svg msg)
   below system selection =
     case selection of
-      Just { start, end } ->
-        [ Junk.rectangle system [ Svg.Attributes.fill "#b6b6b61a" ]
-            start end system.y.min system.y.max
-        ]
+      Just { xStart, xEnd } ->
+        let 
+          attributes =
+            [ Svg.Attributes.fill "#4646461a" ]
+
+          ( yStart, yEnd ) =
+            ( system.y.min, system.y.max )
+
+          viewSelection =
+            Junk.rectangle system attributes xStart xEnd yStart yEnd
+        in
+        [ viewSelection ]
 
       Nothing ->
         []
@@ -717,15 +749,13 @@ source =
   xAxisRangeConfig : Selection -> Range.Config
   xAxisRangeConfig selection =
     let
-      start =
-        min selection.start selection.end
+      xStart =
+        min selection.xStart selection.xEnd
 
-      end =
-        if selection.start == selection.end
-          then selection.start + 1
-          else max selection.start selection.end
+      xEnd =
+        max selection.xStart selection.xEnd
     in
-    Range.window start end
+    Range.window xStart xEnd
 
 
 

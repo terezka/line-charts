@@ -194,12 +194,12 @@ hoverAt : Coordinate.System  -> Float -> Float -> List ( String, String ) -> Lis
 hoverAt system x y styles view =
   let
     space = if shouldFlip system x then -15 else 15
-    xPosition = Coordinate.toSvgX system x + space
-    yPosition = Coordinate.toSvgY system y
+    xPercentage = (Coordinate.toSvgX system x + space) * 100 / system.frame.size.width
+    yPercentage = (Coordinate.toSvgY system y)  * 100 / system.frame.size.height
 
     posititonStyles =
-      [ ( "left", toString xPosition ++ "px" )
-      , ( "top", toString yPosition ++ "px" )
+      [ ( "left", toString xPercentage ++ "%" )
+      , ( "top", toString yPercentage ++ "%" )
       , ( "position", "absolute" )
       , if shouldFlip system x
           then ( "transform", "translateX(-100%)" )

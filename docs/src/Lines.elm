@@ -190,7 +190,14 @@ chart model =
           , axisLine = AxisLine.none
           , ticks = Ticks.timeCustom 10 timeTick
           }
-    , container = Container.spaced "line-chart-lines" 30 180 60 70
+    , container =
+        Container.custom
+          { attributesHtml = []
+          , attributesSvg = []
+          , size = Container.relative
+          , margin = Container.Margin 30 180 30 70
+          , id = "line-chart-lines"
+          }
     , interpolation = Interpolation.monotone
     , intersection = Intersection.default
     , legends = Legends.default

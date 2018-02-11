@@ -54,6 +54,35 @@ button:hover {
 	max-width: 250px;
 }
 
+.view__body {
+	max-width: 1270px;
+}
+
+.view__example__container {
+	margin-bottom: 20px;
+}
+
+.view__example__container--full {
+	width: 100%;
+}
+
+.view__example__container--three-quarters {
+	width: 75%;
+}
+
+.view__example__toggle-source {
+	opacity: 0;
+	pointer-events: none;
+	padding-left: 5px
+	padding-bottom: 5px
+}
+
+.view__example__container:hover .view__example__toggle-source {
+	opacity: 1;
+	pointer-events: auto;
+	cursor: pointer;
+}
+
 .view__source__container {
 	max-width: 100vw;
 	width: 800px;
@@ -64,6 +93,7 @@ button:hover {
 	right: 0;
 	padding: 30px 40px;
 	transition: 0.5s ease-in-out;
+	pointer-events: auto;
 	border-left: 1px solid rgb(163, 163, 163);
 }
 
@@ -78,6 +108,4 @@ button:hover {
 .view__source__inner {
 	margin-top: 30px;
 	height: 85vh;
-	border-top: 1px solid rgb(163, 163, 163);
-	border-bottom: 1px solid rgb(163, 163, 163);
 }

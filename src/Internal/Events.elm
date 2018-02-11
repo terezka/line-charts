@@ -325,8 +325,30 @@ withinRadiusX system radius searched dot =
 toJsonDecoder : List (Data.Data data) -> System -> Decoder data msg -> Json.Decoder msg
 toJsonDecoder data system (Decoder decoder) =
   let
-    handle mouseX mouseY { left, top } =
-      decoder data system <| Point (mouseX - left) (mouseY - top)
+    handle mouseX mouseY { left, top, height, width } =
+      let 
+        widthPercent = width / system.frame.size.width
+        heightPercent = height / system.frame.size.height
+
+        newSize = 
+          { width = width
+          , height = height 
+          }
+
+        newMargin = 
+          { top = system.frame.margin.top * heightPercent
+          , right = system.frame.margin.right * widthPercent
+          , bottom = system.frame.margin.bottom * heightPercent
+          , left = system.frame.margin.left * widthPercent
+          }
+
+        newSystem = 
+          { system | frame = { size = newSize, margin = newMargin } }
+
+        x = (mouseX - left)
+        y = (mouseY - top)
+      in
+      decoder data newSystem <| Point x y
   in
   Json.map3 handle
     (Json.field "pageX" Json.float) -- TODO

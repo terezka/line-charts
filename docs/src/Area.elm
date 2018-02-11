@@ -144,7 +144,14 @@ chart model =
   LineChart.viewCustom
     { y = Axis.default 450 "velocity" .y
     , x = Axis.time 1270 "time" .x
-    , container = Container.spaced "line-chart-area" 30 100 60 70
+    , container = 
+        Container.custom
+          { attributesHtml = []
+          , attributesSvg = []
+          , size = Container.relative
+          , margin = Container.Margin 30 100 30 70
+          , id = "line-chart-area"
+          }
     , interpolation = Interpolation.monotone
     , intersection = Intersection.default
     , legends = Legends.default

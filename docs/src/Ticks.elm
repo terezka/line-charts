@@ -142,7 +142,14 @@ chart model =
   LineChart.viewCustom
     { x = xAxisConfig model
     , y = yAxisConfig model
-    , container = Container.spaced "line-chart-ticks" 60 100 60 70
+    , container =
+        Container.custom
+          { attributesHtml = []
+          , attributesSvg = []
+          , size = Container.relative
+          , margin = Container.Margin 60 100 30 70
+          , id = "line-chart-ticks"
+          }
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default

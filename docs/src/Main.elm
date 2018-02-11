@@ -53,7 +53,7 @@ init =
     ( lines, cmdLines ) =
       Lines.init
   in
-    ( { focused = 1
+    ( { focused = 0
       , isSourceOpen = False
       , selection = selection
       , area = area
@@ -89,13 +89,24 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     Focus id ->
-      ( { model | isSourceOpen = True, focused = id }
-      , Cmd.none
+      let
+        isSourceOpen =
+          if model.isSourceOpen && model.focused == id then
+            False
+          else if model.focused /= id then
+            True
+          else
+            not model.isSourceOpen
+      in
+      ( { model | isSourceOpen = isSourceOpen
+        , focused = id 
+        }
+      , setBodyScroll isSourceOpen
       )
 
     CloseSource ->
       ( { model | isSourceOpen = False }
-      , Cmd.none
+      , setBodyScroll False
       )
 
     SelectionMsg msg ->
@@ -153,11 +164,14 @@ view model =
   Html.div
     [ Html.Attributes.class "view" ]
     [ viewTitle
-    , viewExample 0 AreaMsg Area.view model.area
-    , viewExample 1 SelectionMsg Selection.view model.selection
-    , viewExample 2 LinesMsg Lines.view model.lines
-    , viewExample 3 SteppedMsg Stepped.view model.stepped
-    , viewExample 4 TicksMsg Ticks.view model.ticks
+    , Html.div 
+        [ Html.Attributes.class "view__body" ]
+        [ Html.Lazy.lazy (viewExample 0 "full" AreaMsg Area.view) model.area
+        , Html.Lazy.lazy (viewExample 1 "full" SelectionMsg Selection.view) model.selection
+        , Html.Lazy.lazy (viewExample 2 "full" LinesMsg Lines.view) model.lines
+        , Html.Lazy.lazy (viewExample 3 "full" SteppedMsg Stepped.view) model.stepped
+        , Html.Lazy.lazy (viewExample 4 "three-quarters" TicksMsg Ticks.view) model.ticks
+        ]
     , viewSource model.focused model.isSourceOpen
     ]
 
@@ -183,20 +197,27 @@ viewTitle =
                 [ Html.Attributes.href "http://package.elm-lang.org/packages/terezka/line-charts/latest" ]
                 [ Html.text "Docs" ]
             ]
-        , Html.p [ Html.Attributes.class "view__tag-line" ]
+        , Html.p 
+            [ Html.Attributes.class "view__tag-line" ]
             [ Html.text "A opinionated library for plotting series in SVG." ]
         , Html.p [ Html.Attributes.class "view__tag-line" ]
             [ Html.text "Written in all Elm." ]
         ]
 
 
-viewExample : Id -> (msg -> Msg) -> (a -> Html.Html msg) -> a -> Html.Html Msg
-viewExample id toMsg view model =
+viewExample : Id -> String -> (msg -> Msg) -> (a -> Html.Html msg) -> a -> Html.Html Msg
+viewExample id modifier toMsg view model =
+  let
+    class =
+      "view__example__container view__example__container--" ++ modifier
+  in
   Html.div 
-    [ Html.Attributes.class "view__example__container" ]
-    [ Html.map toMsg <| Html.Lazy.lazy view model
+    [ Html.Attributes.class class ]
+    [ Html.map toMsg (view model)
     , Html.button 
-        [ Html.Events.onClick (Focus id) ] 
+        [ Html.Attributes.class "view__example__toggle-source"
+        , Html.Events.onClick (Focus id) 
+        ] 
         [ Html.text "see source" ]
     ]
 
@@ -244,6 +265,7 @@ viewSource id isSourceOpen =
 
 
 port highlight : () -> Cmd msg
+port setBodyScroll : Bool -> Cmd msg
 
 
 

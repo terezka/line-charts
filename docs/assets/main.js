@@ -14038,9 +14038,9 @@ var _user$project$Internal_Junk$standardStyles = {
 };
 var _user$project$Internal_Junk$hoverAt = F5(
 	function (system, x, y, styles, view) {
-		var yPosition = A2(_user$project$LineChart_Coordinate$toSvgY, system, y);
+		var yPercentage = (A2(_user$project$LineChart_Coordinate$toSvgY, system, y) * 100) / system.frame.size.height;
 		var space = A2(_user$project$Internal_Junk$shouldFlip, system, x) ? -15 : 15;
-		var xPosition = A2(_user$project$LineChart_Coordinate$toSvgX, system, x) + space;
+		var xPercentage = ((A2(_user$project$LineChart_Coordinate$toSvgX, system, x) + space) * 100) / system.frame.size.width;
 		var posititonStyles = {
 			ctor: '::',
 			_0: {
@@ -14048,8 +14048,8 @@ var _user$project$Internal_Junk$hoverAt = F5(
 				_0: 'left',
 				_1: A2(
 					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(xPosition),
-					'px')
+					_elm_lang$core$Basics$toString(xPercentage),
+					'%')
 			},
 			_1: {
 				ctor: '::',
@@ -14058,8 +14058,8 @@ var _user$project$Internal_Junk$hoverAt = F5(
 					_0: 'top',
 					_1: A2(
 						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(yPosition),
-						'px')
+						_elm_lang$core$Basics$toString(yPercentage),
+						'%')
 				},
 				_1: {
 					ctor: '::',
@@ -18109,11 +18109,24 @@ var _user$project$Internal_Events$toJsonDecoder = F3(
 		var handle = F3(
 			function (mouseX, mouseY, _p3) {
 				var _p4 = _p3;
+				var _p6 = _p4.width;
+				var _p5 = _p4.height;
+				var y = mouseY - _p4.top;
+				var x = mouseX - _p4.left;
+				var newSize = {width: _p6, height: _p5};
+				var heightPercent = _p5 / system.frame.size.height;
+				var widthPercent = _p6 / system.frame.size.width;
+				var newMargin = {top: system.frame.margin.top * heightPercent, right: system.frame.margin.right * widthPercent, bottom: system.frame.margin.bottom * heightPercent, left: system.frame.margin.left * widthPercent};
+				var newSystem = _elm_lang$core$Native_Utils.update(
+					system,
+					{
+						frame: {size: newSize, margin: newMargin}
+					});
 				return A3(
 					_p2._0,
 					data,
-					system,
-					A2(_user$project$LineChart_Coordinate$Point, mouseX - _p4.left, mouseY - _p4.top));
+					newSystem,
+					A2(_user$project$LineChart_Coordinate$Point, x, y));
 			});
 		return A4(
 			_elm_lang$core$Json_Decode$map3,
@@ -18158,11 +18171,11 @@ var _user$project$Internal_Events$getNearestXHelp = F3(
 		var distanceX_ = A2(_user$project$Internal_Events$distanceX, system, searched);
 		var getClosest = F2(
 			function (point, allClosest) {
-				var _p5 = _elm_lang$core$List$head(allClosest);
-				if (_p5.ctor === 'Just') {
-					var _p6 = _p5._0;
-					return _elm_lang$core$Native_Utils.eq(_p6.point.x, point.point.x) ? {ctor: '::', _0: point, _1: allClosest} : ((_elm_lang$core$Native_Utils.cmp(
-						distanceX_(_p6.point),
+				var _p7 = _elm_lang$core$List$head(allClosest);
+				if (_p7.ctor === 'Just') {
+					var _p8 = _p7._0;
+					return _elm_lang$core$Native_Utils.eq(_p8.point.x, point.point.x) ? {ctor: '::', _0: point, _1: allClosest} : ((_elm_lang$core$Native_Utils.cmp(
+						distanceX_(_p8.point),
 						distanceX_(point.point)) > 0) ? {
 						ctor: '::',
 						_0: point,
@@ -18202,24 +18215,24 @@ var _user$project$Internal_Events$getNearestHelp = F3(
 			_elm_lang$core$List$foldl(getClosest));
 	});
 var _user$project$Internal_Events$toContainerAttributes = F3(
-	function (data, system, _p7) {
-		var _p8 = _p7;
-		var order = function (_p9) {
-			var _p10 = _p9;
-			return _p10._0 ? _elm_lang$core$Maybe$Just(
-				A2(_p10._1, data, system)) : _elm_lang$core$Maybe$Nothing;
+	function (data, system, _p9) {
+		var _p10 = _p9;
+		var order = function (_p11) {
+			var _p12 = _p11;
+			return _p12._0 ? _elm_lang$core$Maybe$Just(
+				A2(_p12._1, data, system)) : _elm_lang$core$Maybe$Nothing;
 		};
-		return A2(_elm_lang$core$List$filterMap, order, _p8._0);
+		return A2(_elm_lang$core$List$filterMap, order, _p10._0);
 	});
 var _user$project$Internal_Events$toChartAttributes = F3(
-	function (data, system, _p11) {
-		var _p12 = _p11;
-		var order = function (_p13) {
-			var _p14 = _p13;
-			return _p14._0 ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(
-				A2(_p14._1, data, system));
+	function (data, system, _p13) {
+		var _p14 = _p13;
+		var order = function (_p15) {
+			var _p16 = _p15;
+			return _p16._0 ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(
+				A2(_p16._1, data, system));
 		};
-		return A2(_elm_lang$core$List$filterMap, order, _p12._0);
+		return A2(_elm_lang$core$List$filterMap, order, _p14._0);
 	});
 var _user$project$Internal_Events$Options = F3(
 	function (a, b, c) {
@@ -18240,7 +18253,7 @@ var _user$project$Internal_Events$onMouseLeave = function (msg) {
 		_user$project$Internal_Events$Event,
 		false,
 		F2(
-			function (_p16, _p15) {
+			function (_p18, _p17) {
 				return A2(
 					_elm_lang$svg$Svg_Events$on,
 					'mouseleave',
@@ -18301,7 +18314,7 @@ var _user$project$Internal_Events$getWithinX = function (radius) {
 		F3(
 			function (points, system, searchedSvg) {
 				var searched = A2(_user$project$LineChart_Coordinate$toData, system, searchedSvg);
-				var keepIfEligible = function (_p17) {
+				var keepIfEligible = function (_p19) {
 					return A4(
 						_user$project$Internal_Events$withinRadiusX,
 						system,
@@ -18309,7 +18322,7 @@ var _user$project$Internal_Events$getWithinX = function (radius) {
 						searched,
 						function (_) {
 							return _.point;
-						}(_p17));
+						}(_p19));
 				};
 				return A2(
 					_elm_lang$core$List$map,
@@ -18323,13 +18336,13 @@ var _user$project$Internal_Events$getWithinX = function (radius) {
 			}));
 };
 var _user$project$Internal_Events$map = F2(
-	function (f, _p18) {
-		var _p19 = _p18;
+	function (f, _p20) {
+		var _p21 = _p20;
 		return _user$project$Internal_Events$Decoder(
 			F3(
 				function (ps, s, p) {
 					return f(
-						A3(_p19._0, ps, s, p));
+						A3(_p21._0, ps, s, p));
 				}));
 	});
 var _user$project$Internal_Events$on = F3(
@@ -18413,31 +18426,31 @@ var _user$project$Internal_Events$onWithOptions = F4(
 				}));
 	});
 var _user$project$Internal_Events$map2 = F3(
-	function (f, _p21, _p20) {
-		var _p22 = _p21;
-		var _p23 = _p20;
+	function (f, _p23, _p22) {
+		var _p24 = _p23;
+		var _p25 = _p22;
 		return _user$project$Internal_Events$Decoder(
 			F3(
 				function (ps, s, p) {
 					return A2(
 						f,
-						A3(_p22._0, ps, s, p),
-						A3(_p23._0, ps, s, p));
+						A3(_p24._0, ps, s, p),
+						A3(_p25._0, ps, s, p));
 				}));
 	});
 var _user$project$Internal_Events$map3 = F4(
-	function (f, _p26, _p25, _p24) {
-		var _p27 = _p26;
-		var _p28 = _p25;
-		var _p29 = _p24;
+	function (f, _p28, _p27, _p26) {
+		var _p29 = _p28;
+		var _p30 = _p27;
+		var _p31 = _p26;
 		return _user$project$Internal_Events$Decoder(
 			F3(
 				function (ps, s, p) {
 					return A3(
 						f,
-						A3(_p27._0, ps, s, p),
-						A3(_p28._0, ps, s, p),
-						A3(_p29._0, ps, s, p));
+						A3(_p29._0, ps, s, p),
+						A3(_p30._0, ps, s, p),
+						A3(_p31._0, ps, s, p));
 				}));
 	});
 
@@ -19527,7 +19540,14 @@ var _user$project$Area$chart = function (model) {
 				function (_) {
 					return _.x;
 				}),
-			container: A5(_user$project$LineChart_Container$spaced, 'line-chart-area', 30, 100, 60, 70),
+			container: _user$project$LineChart_Container$custom(
+				{
+					attributesHtml: {ctor: '[]'},
+					attributesSvg: {ctor: '[]'},
+					size: _user$project$LineChart_Container$relative,
+					margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 30, 70),
+					id: 'line-chart-area'
+				}),
 			interpolation: _user$project$LineChart_Interpolation$monotone,
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
@@ -19784,7 +19804,14 @@ var _user$project$Lines$chart = function (model) {
 					axisLine: _user$project$LineChart_Axis_Line$none,
 					ticks: A2(_user$project$LineChart_Axis_Ticks$timeCustom, 10, _user$project$Lines$timeTick)
 				}),
-			container: A5(_user$project$LineChart_Container$spaced, 'line-chart-lines', 30, 180, 60, 70),
+			container: _user$project$LineChart_Container$custom(
+				{
+					attributesHtml: {ctor: '[]'},
+					attributesSvg: {ctor: '[]'},
+					size: _user$project$LineChart_Container$relative,
+					margin: A4(_user$project$LineChart_Container$Margin, 30, 180, 30, 70),
+					id: 'line-chart-lines'
+				}),
 			interpolation: _user$project$LineChart_Interpolation$monotone,
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
@@ -19938,7 +19965,7 @@ var _user$project$Lines$main = _elm_lang$html$Html$program(
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})();
 
-var _user$project$Selection$source = '\n\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hovered : Maybe Float\n    , selection : Maybe Selection\n    , dragging : Bool\n    , hinted : Maybe Coordinate.Point\n    }\n\n\n  type alias Selection =\n    { start : Float\n    , end : Float\n    }\n\n\n  type alias Data =\n    { nora : List Coordinate.Point\n    , noah : List Coordinate.Point\n    , nina : List Coordinate.Point\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hovered = Nothing\n      , selection = Nothing\n      , dragging = False\n      , hinted = Nothing\n      }\n    , getNumbers\n    )\n\n\n  getNumbers : Cmd Msg\n  getNumbers =\n    let\n      genNumbers =\n        Random.list 201 (Random.float 0 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveNumbers\n\n\n\n  -- API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Coordinate.Point\n  toData numbers =\n    List.indexedMap (\\i -> Coordinate.Point (toFloat i)) numbers\n\n\n  setSelection : Maybe Selection -> Model -> Model\n  setSelection selection model =\n    { model | selection = selection }\n\n\n  setDragging : Bool -> Model -> Model\n  setDragging dragging model =\n    { model | dragging = dragging }\n\n\n  setHovered : Maybe Float -> Model -> Model\n  setHovered hovered model =\n    { model | hovered = hovered }\n\n\n  setHint : Maybe Coordinate.Point -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n  getSelectionXStart : Float -> Model -> Float\n  getSelectionXStart hovered model =\n    case model.selection of\n      Just selection -> selection.start\n      Nothing        -> hovered\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveNumbers ( List Float, List Float, List Float )\n    -- Chart 1\n    | Hold Coordinate.Point\n    | Move Coordinate.Point\n    | Drop Coordinate.Point\n    | LeaveChart Coordinate.Point\n    | LeaveContainer Coordinate.Point\n    -- Chart 2\n    | Hint (Maybe Coordinate.Point)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveNumbers numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hold point ->\n        model\n          |> setSelection Nothing\n          |> setDragging True\n          |> addCmd Cmd.none\n\n      Move point ->\n        if model.dragging then\n          let\n            start = getSelectionXStart point.x model\n            newSelection = Selection start point.x\n          in\n          model\n            |> setSelection (Just newSelection)\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n        else\n          model\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n\n      Drop point ->\n        if point.x == getSelectionXStart point.x model then\n          model\n            |> setSelection Nothing\n            |> setDragging False\n            |> addCmd Cmd.none\n        else\n          model\n            |> setDragging False\n            |> addCmd Cmd.none\n\n      LeaveChart point ->\n        model\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      LeaveContainer point ->\n        model\n          |> setDragging False\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div\n      [ Html.Attributes.style [ ( \"display\", \"flex\" ) ] ] <|\n      case model.selection of\n        Nothing ->\n          [ viewPlaceholder, chart model ]\n\n        Just selection ->\n          [ viewChartZoom model selection, chart model ]\n\n\n  viewPlaceholder : Html.Html Msg\n  viewPlaceholder =\n    Html.div\n      [ Html.Attributes.style\n          [ ( \"margin\", \"40px 25px 30px 70px\" )\n          , ( \"width\", \"505px\" )\n          , ( \"height\", \"360px\" )\n          , ( \"background\", \"#b6b6b61a\" )\n          , ( \"text-align\", \"center\" )\n          , ( \"line-height\", \"340px\" )\n          ]\n      ]\n      [ Html.text \"Select a range on the graph to the right!\" ]\n\n\n\n  -- MAIN CHART\n\n\n  chart : Model -> Html.Html Msg\n  chart model =\n    viewChart model.data\n      { range = Range.default\n      , junk = junkConfig model\n      , legends = Legends.default\n      , events =\n          Events.custom\n            [ Events.onWithOptions \"mousedown\" (Events.Options True True False) Hold Events.getData\n            , Events.onWithOptions \"mousemove\" (Events.Options True True False) Move Events.getData\n            , Events.onWithOptions \"mouseup\"   (Events.Options True True True) Drop Events.getData\n            , Events.onWithOptions \"mouseleave\" (Events.Options True True False) LeaveChart Events.getData\n            , Events.onWithOptions \"mouseleave\" (Events.Options True True True) LeaveContainer Events.getData\n            ]\n      , width = 670\n      , margin = Container.Margin 30 100 60 70\n      , dots = Dots.custom (Dots.full 0)\n      , id = \"line-chart\"\n      }\n\n\n  junkConfig : Model -> Junk.Config Coordinate.Point msg\n  junkConfig model =\n    Junk.custom <| \\system ->\n      { below = below system model.selection\n      , above = above system model.hovered\n      , html = []\n      }\n\n\n  below : Coordinate.System -> Maybe Selection -> List (Svg.Svg msg)\n  below system selection =\n    case selection of\n      Just { start, end } ->\n        [ Junk.rectangle system [ Svg.Attributes.fill \"#b6b6b61a\" ]\n            start end system.y.min system.y.max\n        ]\n\n      Nothing ->\n        []\n\n\n  above : Coordinate.System -> Maybe Float -> List (Svg.Svg msg)\n  above system hovered =\n    case hovered of\n      Just hovered ->\n        [ Junk.vertical system [] hovered ]\n\n      Nothing ->\n        []\n\n\n\n  -- ZOOM CHART\n\n\n  viewChartZoom : Model -> Selection -> Html.Html Msg\n  viewChartZoom model selection =\n    viewChart model.data\n      { range = xAxisRangeConfig selection\n      , junk =\n          Junk.hoverOne model.hinted\n            [ ( \"x\", toString << round100 << .x )\n            , ( \"y\", toString << round100 << .y )\n            ]\n      , events = Events.hoverOne Hint\n      , legends = Legends.none\n      , dots = Dots.hoverOne model.hinted\n      , width = 600\n      , margin = Container.Margin 30 25 60 70\n      , id = \"line-chart-zoom\"\n      }\n\n\n  xAxisRangeConfig : Selection -> Range.Config\n  xAxisRangeConfig selection =\n    let\n      start =\n        min selection.start selection.end\n\n      end =\n        if selection.start == selection.end\n          then selection.start + 1\n          else max selection.start selection.end\n    in\n    Range.window start end\n\n\n\n\n  -- VIEW CHART\n\n\n  type alias Config =\n    { range : Range.Config\n    , junk : Junk.Config Coordinate.Point Msg\n    , events : Events.Config Coordinate.Point Msg\n    , legends : Legends.Config Coordinate.Point Msg\n    , dots : Dots.Config Coordinate.Point\n    , margin : Container.Margin\n    , width : Int\n    , id : String\n    }\n\n\n  viewChart : Data -> Config -> Html.Html Msg\n  viewChart data { range, junk, events, legends, dots, width, margin, id } =\n    LineChart.viewCustom\n      { y = Axis.default 450 \"y\" .y\n      , x =\n          Axis.custom\n            { title = Title.default \"x\"\n            , variable = Just << .x\n            , pixels = width\n            , range = range\n            , axisLine = AxisLine.rangeFrame Colors.gray\n            , ticks = Ticks.float 5\n            }\n      , container =\n          Container.custom\n            { attributesHtml = [ Html.Attributes.style [ ( \"display\", \"inline-block\" ) ] ]\n            , attributesSvg = []\n            , size = Container.static\n            , margin = margin\n            , id = \"chart-id\"\n            }\n      , interpolation = Interpolation.monotone\n      , intersection = Intersection.default\n      , legends = legends\n      , events = events\n      , junk = junk\n      , grid = Grid.default\n      , area = Area.default\n      , line = Line.default\n      , dots = dots\n      }\n      [ LineChart.line Colors.pink Dots.circle \"Nora\" data.nora\n      , LineChart.line Colors.cyan Dots.circle \"Noah\" data.noah\n      , LineChart.line Colors.blue Dots.circle \"Nina\" data.nina\n      ]\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n  ';
+var _user$project$Selection$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hovered : Maybe Float\n    , selection : Maybe Selection\n    , dragging : Bool\n    , hinted : Maybe Coordinate.Point\n    }\n\n\n  type alias Selection =\n    { xStart : Float\n    , xEnd : Float\n    }\n\n\n  type alias Data =\n    { nora : List Coordinate.Point\n    , noah : List Coordinate.Point\n    , nina : List Coordinate.Point\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hovered = Nothing\n      , selection = Nothing\n      , dragging = False\n      , hinted = Nothing\n      }\n    , getNumbers\n    )\n\n\n  getNumbers : Cmd Msg\n  getNumbers =\n    let\n      genNumbers =\n        Random.list 201 (Random.float 0 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveNumbers\n\n\n\n  -- MODEL API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Coordinate.Point\n  toData numbers =\n    List.indexedMap (\\i -> Coordinate.Point (toFloat i)) numbers\n\n\n  setSelection : Maybe Selection -> Model -> Model\n  setSelection selection model =\n    { model | selection = selection }\n\n\n  setDragging : Bool -> Model -> Model\n  setDragging dragging model =\n    { model | dragging = dragging }\n\n\n  setHovered : Maybe Float -> Model -> Model\n  setHovered hovered model =\n    { model | hovered = hovered }\n\n\n  setHint : Maybe Coordinate.Point -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n  getSelectionXStart : Float -> Model -> Float\n  getSelectionXStart hovered model =\n    case model.selection of\n      Just selection -> selection.xStart\n      Nothing        -> hovered\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveNumbers ( List Float, List Float, List Float )\n    -- Chart Main\n    | Hold Coordinate.Point\n    | Move Coordinate.Point\n    | Drop Coordinate.Point\n    | LeaveChart Coordinate.Point\n    | LeaveContainer Coordinate.Point\n    -- Chart Zoom\n    | Hint (Maybe Coordinate.Point)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveNumbers numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hold point ->\n        model\n          |> setSelection Nothing\n          |> setDragging True\n          |> addCmd Cmd.none\n\n      Move point ->\n        if model.dragging then\n          let\n            start = getSelectionXStart point.x model\n            newSelection = Selection start point.x\n          in\n          model\n            |> setSelection (Just newSelection)\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n        else\n          model\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n\n      Drop point ->\n        if point.x == getSelectionXStart point.x model then\n          model\n            |> setSelection Nothing\n            |> setDragging False\n            |> addCmd Cmd.none\n        else\n          model\n            |> setDragging False\n            |> addCmd Cmd.none\n\n      LeaveChart point ->\n        model\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      LeaveContainer point ->\n        model\n          |> setDragging False\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    let \n      style =\n        [ ( \"display\", \"flex\" ) ]\n\n      content =\n        case model.selection of\n          Nothing ->\n            [ viewPlaceholder\n            , viewChartMain model \n            ]\n\n          Just selection ->\n            if selection.xStart == selection.xEnd then\n              [ viewPlaceholder\n              , viewChartMain model \n              ]\n            else \n              [ viewChartZoom model selection\n              , viewChartMain model \n              ]\n    in\n    Html.div [ Html.Attributes.style style ] content\n      \n\n  viewPlaceholder : Html.Html Msg\n  viewPlaceholder =\n    Html.div\n      [ Html.Attributes.style\n          [ ( \"margin\", \"40px 25px 30px 70px\" )\n          , ( \"width\", \"505px\" )\n          , ( \"height\", \"360px\" )\n          , ( \"background\", \"#4646461a\" )\n          , ( \"text-align\", \"center\" )\n          , ( \"line-height\", \"340px\" )\n          ]\n      ]\n      [ Html.text \"Select a range on the graph to the right!\" ]\n\n\n\n  -- MAIN CHART\n\n\n  viewChartMain : Model -> Html.Html Msg\n  viewChartMain model =\n    viewChart model.data\n      { range = Range.default\n      , junk = junkConfig model\n      , legends = Legends.default\n      , events = events\n      , width = 670\n      , margin = Container.Margin 30 100 60 70\n      , dots = Dots.custom (Dots.full 0)\n      , id = \"line-chart\"\n      }\n\n\n  events : Events.Config Coordinate.Point Msg\n  events =\n    let\n      options bool =\n        { stopPropagation = True\n        , preventDefault = True\n        , catchOutsideChart = bool\n        }\n    in\n    Events.custom\n      [ Events.onWithOptions \"mousedown\"  (options False) Hold           Events.getData\n      , Events.onWithOptions \"mousemove\"  (options False) Move           Events.getData\n      , Events.onWithOptions \"mouseup\"    (options True)  Drop           Events.getData\n      , Events.onWithOptions \"mouseleave\" (options False) LeaveChart     Events.getData\n      , Events.onWithOptions \"mouseleave\" (options True)  LeaveContainer Events.getData\n      ]\n\n\n  junkConfig : Model -> Junk.Config Coordinate.Point msg\n  junkConfig model =\n    Junk.custom <| \\system ->\n      { below = below system model.selection\n      , above = above system model.hovered\n      , html = []\n      }\n\n\n  below : Coordinate.System -> Maybe Selection -> List (Svg.Svg msg)\n  below system selection =\n    case selection of\n      Just { xStart, xEnd } ->\n        let \n          attributes =\n            [ Svg.Attributes.fill \"#4646461a\" ]\n\n          ( yStart, yEnd ) =\n            ( system.y.min, system.y.max )\n\n          viewSelection =\n            Junk.rectangle system attributes xStart xEnd yStart yEnd\n        in\n        [ viewSelection ]\n\n      Nothing ->\n        []\n\n\n  above : Coordinate.System -> Maybe Float -> List (Svg.Svg msg)\n  above system hovered =\n    case hovered of\n      Just hovered ->\n        [ Junk.vertical system [] hovered ]\n\n      Nothing ->\n        []\n\n\n\n  -- ZOOM CHART\n\n\n  viewChartZoom : Model -> Selection -> Html.Html Msg\n  viewChartZoom model selection =\n    viewChart model.data\n      { range = xAxisRangeConfig selection\n      , junk =\n          Junk.hoverOne model.hinted\n            [ ( \"x\", toString << round100 << .x )\n            , ( \"y\", toString << round100 << .y )\n            ]\n      , events = Events.hoverOne Hint\n      , legends = Legends.none\n      , dots = Dots.hoverOne model.hinted\n      , width = 600\n      , margin = Container.Margin 30 25 60 70\n      , id = \"line-chart-zoom\"\n      }\n\n\n  xAxisRangeConfig : Selection -> Range.Config\n  xAxisRangeConfig selection =\n    let\n      xStart =\n        min selection.xStart selection.xEnd\n\n      xEnd =\n        max selection.xStart selection.xEnd\n    in\n    Range.window xStart xEnd\n\n\n\n\n  -- VIEW CHART\n\n\n  type alias Config =\n    { range : Range.Config\n    , junk : Junk.Config Coordinate.Point Msg\n    , events : Events.Config Coordinate.Point Msg\n    , legends : Legends.Config Coordinate.Point Msg\n    , dots : Dots.Config Coordinate.Point\n    , margin : Container.Margin\n    , width : Int\n    , id : String\n    }\n\n\n  viewChart : Data -> Config -> Html.Html Msg\n  viewChart data { range, junk, events, legends, dots, width, margin, id } =\n    LineChart.viewCustom\n      { y = Axis.default 450 \"y\" .y\n      , x =\n          Axis.custom\n            { title = Title.default \"x\"\n            , variable = Just << .x\n            , pixels = width\n            , range = range\n            , axisLine = AxisLine.rangeFrame Colors.gray\n            , ticks = Ticks.float 5\n            }\n      , container =\n          Container.custom\n            { attributesHtml = [ Html.Attributes.style [ ( \"display\", \"inline-block\" ) ] ]\n            , attributesSvg = []\n            , size = Container.static\n            , margin = margin\n            , id = \"chart-id\"\n            }\n      , interpolation = Interpolation.monotone\n      , intersection = Intersection.default\n      , legends = legends\n      , events = events\n      , junk = junk\n      , grid = Grid.default\n      , area = Area.default\n      , line = Line.default\n      , dots = dots\n      }\n      [ LineChart.line Colors.pink Dots.circle \"Nora\" data.nora\n      , LineChart.line Colors.cyan Dots.circle \"Noah\" data.noah\n      , LineChart.line Colors.blue Dots.circle \"Nina\" data.nina\n      ]\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n  ';
 var _user$project$Selection$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
@@ -20078,7 +20105,7 @@ var _user$project$Selection$viewPlaceholder = A2(
 					_0: {ctor: '_Tuple2', _0: 'width', _1: '505px'},
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'height', _1: '360px'},
+						_0: {ctor: '_Tuple2', _0: 'height', _1: '380px'},
 						_1: {
 							ctor: '::',
 							_0: {ctor: '_Tuple2', _0: 'background', _1: '#4646461a'},
@@ -20298,7 +20325,7 @@ var _user$project$Selection$viewChartZoom = F2(
 				legends: _user$project$LineChart_Legends$none,
 				dots: _user$project$LineChart_Dots$hoverOne(model.hinted),
 				width: 600,
-				margin: A4(_user$project$LineChart_Container$Margin, 30, 25, 60, 70),
+				margin: A4(_user$project$LineChart_Container$Margin, 30, 25, 30, 70),
 				id: 'line-chart-zoom'
 			});
 	});
@@ -20379,7 +20406,7 @@ var _user$project$Selection$viewChartMain = function (model) {
 			legends: _user$project$LineChart_Legends$default,
 			events: _user$project$Selection$events,
 			width: 670,
-			margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 60, 70),
+			margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 30, 70),
 			dots: _user$project$LineChart_Dots$custom(
 				_user$project$LineChart_Dots$full(0)),
 			id: 'line-chart'
@@ -20482,127 +20509,6 @@ var _user$project$Stepped$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
 };
-var _user$project$Stepped$viewHint = function (_p0) {
-	var _p1 = _p0;
-	var _p3 = _p1.y;
-	var _p2 = _elm_lang$core$Native_Utils.eq(_p3, 0) ? {
-		ctor: '_Tuple2',
-		_0: {
-			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'color', _1: 'black'},
-			_1: {ctor: '[]'}
-		},
-		_1: '0'
-	} : ((_elm_lang$core$Native_Utils.cmp(_p3, 0) < 0) ? {
-		ctor: '_Tuple2',
-		_0: {
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'color',
-				_1: _eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$red)
-			},
-			_1: {ctor: '[]'}
-		},
-		_1: _elm_lang$core$Basics$toString(_p3)
-	} : {
-		ctor: '_Tuple2',
-		_0: {
-			ctor: '::',
-			_0: {
-				ctor: '_Tuple2',
-				_0: 'color',
-				_1: _eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$green)
-			},
-			_1: {ctor: '[]'}
-		},
-		_1: A2(
-			_elm_lang$core$Basics_ops['++'],
-			'+',
-			_elm_lang$core$Basics$toString(_p3))
-	});
-	var loCStyle = _p2._0;
-	var loC = _p2._1;
-	var pStyle = function (other) {
-		return _elm_lang$html$Html_Attributes$style(
-			{
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'margin', _1: '3px'},
-				_1: other
-			});
-	};
-	var xString = A2(
-		_mgold$elm_date_format$Date_Format$format,
-		'%e. %b, %Y',
-		_elm_lang$core$Date$fromTime(_p1.x));
-	return {
-		ctor: '::',
-		_0: A2(
-			_elm_lang$html$Html$p,
-			{
-				ctor: '::',
-				_0: pStyle(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px solid rgb(163, 163, 163)'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '3px'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '5px'},
-								_1: {ctor: '[]'}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(xString),
-				_1: {ctor: '[]'}
-			}),
-		_1: {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$p,
-				{
-					ctor: '::',
-					_0: pStyle(
-						{ctor: '[]'}),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$span,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(loCStyle),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(loC),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$span,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(' lines of code'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {ctor: '[]'}
-		}
-	};
-};
 var _user$project$Stepped$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -20613,57 +20519,160 @@ var _user$project$Stepped$setHint = F2(
 			model,
 			{hinted: hinted});
 	});
-var _user$project$Stepped$toDate = function (index) {
-	return (((_elm_lang$core$Time$hour * 24) * 356) * 45) + ((_elm_lang$core$Time$hour * 24) * _elm_lang$core$Basics$toFloat(index));
-};
-var _user$project$Stepped$toData = function (numbers) {
-	return A2(
-		_elm_lang$core$List$indexedMap,
-		F2(
-			function (i, n) {
-				return A2(
-					_user$project$LineChart_Coordinate$Point,
-					_user$project$Stepped$toDate(i),
-					_elm_lang$core$Basics$toFloat(n));
-			}),
-		numbers);
-};
+var _user$project$Stepped$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		return A2(
+			_user$project$Stepped$addCmd,
+			_elm_lang$core$Platform_Cmd$none,
+			A2(_user$project$Stepped$setHint, _p0._0, model));
+	});
 var _user$project$Stepped$Model = F2(
 	function (a, b) {
 		return {data: a, hinted: b};
 	});
-var _user$project$Stepped$Data = F3(
-	function (a, b, c) {
-		return {nora: a, noah: b, nina: c};
+var _user$project$Stepped$Data = F2(
+	function (a, b) {
+		return {year: a, price: b};
 	});
-var _user$project$Stepped$setData = F2(
-	function (_p4, model) {
-		var _p5 = _p4;
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{
-				data: A3(
-					_user$project$Stepped$Data,
-					_user$project$Stepped$toData(_p5._0),
-					_user$project$Stepped$toData(_p5._1),
-					_user$project$Stepped$toData(_p5._2))
-			});
-	});
-var _user$project$Stepped$update = F2(
-	function (msg, model) {
-		var _p6 = msg;
-		if (_p6.ctor === 'RecieveNumbers') {
-			return A2(
-				_user$project$Stepped$addCmd,
-				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Stepped$setData, _p6._0, model));
-		} else {
-			return A2(
-				_user$project$Stepped$addCmd,
-				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Stepped$setHint, _p6._0, model));
+var _user$project$Stepped$initData = {
+	ctor: '::',
+	_0: A2(_user$project$Stepped$Data, 1980, 0.12),
+	_1: {
+		ctor: '::',
+		_0: A2(_user$project$Stepped$Data, 1981, 0.14),
+		_1: {
+			ctor: '::',
+			_0: A2(_user$project$Stepped$Data, 1982, 0.155),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$Stepped$Data, 1983, 0.16),
+				_1: {
+					ctor: '::',
+					_0: A2(_user$project$Stepped$Data, 1984, 0.17),
+					_1: {
+						ctor: '::',
+						_0: A2(_user$project$Stepped$Data, 1985, 0.17),
+						_1: {
+							ctor: '::',
+							_0: A2(_user$project$Stepped$Data, 1986, 0.18),
+							_1: {
+								ctor: '::',
+								_0: A2(_user$project$Stepped$Data, 1987, 0.18),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Stepped$Data, 1988, 0.19),
+									_1: {
+										ctor: '::',
+										_0: A2(_user$project$Stepped$Data, 1989, 0.2),
+										_1: {
+											ctor: '::',
+											_0: A2(_user$project$Stepped$Data, 1990, 0.22),
+											_1: {
+												ctor: '::',
+												_0: A2(_user$project$Stepped$Data, 1991, 0.24),
+												_1: {
+													ctor: '::',
+													_0: A2(_user$project$Stepped$Data, 1992, 0.24),
+													_1: {
+														ctor: '::',
+														_0: A2(_user$project$Stepped$Data, 1993, 0.25),
+														_1: {
+															ctor: '::',
+															_0: A2(_user$project$Stepped$Data, 1994, 0.25),
+															_1: {
+																ctor: '::',
+																_0: A2(_user$project$Stepped$Data, 1995, 0.25),
+																_1: {
+																	ctor: '::',
+																	_0: A2(_user$project$Stepped$Data, 1996, 0.26),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(_user$project$Stepped$Data, 1997, 0.26),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(_user$project$Stepped$Data, 1998, 0.26),
+																			_1: {
+																				ctor: '::',
+																				_0: A2(_user$project$Stepped$Data, 1999, 0.26),
+																				_1: {
+																					ctor: '::',
+																					_0: A2(_user$project$Stepped$Data, 2000, 0.27),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(_user$project$Stepped$Data, 2001, 0.27),
+																						_1: {
+																							ctor: '::',
+																							_0: A2(_user$project$Stepped$Data, 2002, 0.27),
+																							_1: {
+																								ctor: '::',
+																								_0: A2(_user$project$Stepped$Data, 2003, 0.28),
+																								_1: {
+																									ctor: '::',
+																									_0: A2(_user$project$Stepped$Data, 2004, 0.28),
+																									_1: {
+																										ctor: '::',
+																										_0: A2(_user$project$Stepped$Data, 2005, 0.3),
+																										_1: {
+																											ctor: '::',
+																											_0: A2(_user$project$Stepped$Data, 2006, 0.32),
+																											_1: {
+																												ctor: '::',
+																												_0: A2(_user$project$Stepped$Data, 2007, 0.34),
+																												_1: {
+																													ctor: '::',
+																													_0: A2(_user$project$Stepped$Data, 2008, 0.36),
+																													_1: {
+																														ctor: '::',
+																														_0: A2(_user$project$Stepped$Data, 2009, 0.39),
+																														_1: {
+																															ctor: '::',
+																															_0: A2(_user$project$Stepped$Data, 2010, 0.41),
+																															_1: {
+																																ctor: '::',
+																																_0: A2(_user$project$Stepped$Data, 2011, 0.46),
+																																_1: {
+																																	ctor: '::',
+																																	_0: A2(_user$project$Stepped$Data, 2012, 0.6),
+																																	_1: {ctor: '[]'}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
-	});
+	}
+};
+var _user$project$Stepped$init = {
+	ctor: '_Tuple2',
+	_0: {data: _user$project$Stepped$initData, hinted: _elm_lang$core$Maybe$Nothing},
+	_1: _elm_lang$core$Platform_Cmd$none
+};
 var _user$project$Stepped$Hint = function (a) {
 	return {ctor: 'Hint', _0: a};
 };
@@ -20673,84 +20682,97 @@ var _user$project$Stepped$chart = function (model) {
 		{
 			y: _user$project$LineChart_Axis$custom(
 				{
-					title: _user$project$LineChart_Axis_Title$default('LoC'),
-					variable: function (_p7) {
+					title: _user$project$LineChart_Axis_Title$default('price (£)'),
+					variable: function (_p1) {
 						return _elm_lang$core$Maybe$Just(
 							function (_) {
-								return _.y;
-							}(_p7));
+								return _.price;
+							}(_p1));
 					},
 					pixels: 450,
 					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
 					axisLine: _user$project$LineChart_Axis_Line$full(_user$project$LineChart_Colors$gray),
-					ticks: _user$project$LineChart_Axis_Ticks$float(8)
+					ticks: _user$project$LineChart_Axis_Ticks$float(5)
 				}),
-			x: _user$project$LineChart_Axis$custom(
+			x: function () {
+				var toDate = function (year) {
+					return A7(_justinmimbs$elm_date_extra$Date_Extra$fromParts, year, _elm_lang$core$Date$Jan, 1, 0, 0, 0, 0);
+				};
+				return _user$project$LineChart_Axis$custom(
+					{
+						title: _user$project$LineChart_Axis_Title$default('Year'),
+						variable: function (_p2) {
+							return _elm_lang$core$Maybe$Just(
+								_elm_lang$core$Date$toTime(
+									toDate(
+										function (_) {
+											return _.year;
+										}(_p2))));
+						},
+						pixels: 1270,
+						range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
+						axisLine: _user$project$LineChart_Axis_Line$full(_user$project$LineChart_Colors$gray),
+						ticks: _user$project$LineChart_Axis_Ticks$time(10)
+					});
+			}(),
+			container: _user$project$LineChart_Container$custom(
 				{
-					title: _user$project$LineChart_Axis_Title$default('Time'),
-					variable: function (_p8) {
-						return _elm_lang$core$Maybe$Just(
-							function (_) {
-								return _.x;
-							}(_p8));
-					},
-					pixels: 1270,
-					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
-					axisLine: _user$project$LineChart_Axis_Line$full(_user$project$LineChart_Colors$gray),
-					ticks: _user$project$LineChart_Axis_Ticks$time(10)
+					attributesHtml: {ctor: '[]'},
+					attributesSvg: {ctor: '[]'},
+					size: _user$project$LineChart_Container$relative,
+					margin: A4(_user$project$LineChart_Container$Margin, 30, 140, 30, 70),
+					id: 'line-chart-stepped'
 				}),
-			container: A5(_user$project$LineChart_Container$spaced, 'line-chart-area', 30, 100, 60, 70),
 			interpolation: _user$project$LineChart_Interpolation$stepped,
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
-			events: _user$project$LineChart_Events$hoverMany(
-				function (_p9) {
-					return _user$project$Stepped$Hint(
-						_elm_lang$core$List$head(_p9));
+			events: _user$project$LineChart_Events$hoverOne(_user$project$Stepped$Hint),
+			junk: A2(
+				_user$project$LineChart_Junk$hoverOne,
+				model.hinted,
+				{
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'year',
+						_1: function (datum) {
+							return _elm_lang$core$Basics$toString(datum.year);
+						}
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'price',
+							_1: function (datum) {
+								return A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(datum.price),
+									'£');
+							}
+						},
+						_1: {ctor: '[]'}
+					}
 				}),
-			junk: function () {
-				var _p10 = model.hinted;
-				if (_p10.ctor === 'Nothing') {
-					return _user$project$LineChart_Junk$default;
-				} else {
-					var _p11 = _p10._0;
-					return _user$project$LineChart_Junk$custom(
-						function (system) {
-							return {
-								below: {
-									ctor: '::',
-									_0: A3(
-										_user$project$LineChart_Junk$vertical,
-										system,
-										{ctor: '[]'},
-										_p11.x),
-									_1: {ctor: '[]'}
-								},
-								above: {ctor: '[]'},
-								html: {
-									ctor: '::',
-									_0: A5(
-										_user$project$LineChart_Junk$hoverAt,
-										system,
-										_p11.x,
-										system.y.max,
-										{ctor: '[]'},
-										_user$project$Stepped$viewHint(_p11)),
-									_1: {ctor: '[]'}
-								}
-							};
-						});
-				}
-			}(),
 			grid: _user$project$LineChart_Grid$default,
-			area: _user$project$LineChart_Area$normal(0.5),
+			area: _user$project$LineChart_Area$default,
 			line: _user$project$LineChart_Line$default,
-			dots: _user$project$LineChart_Dots$custom(
-				A2(_user$project$LineChart_Dots$empty, 5, 1))
+			dots: function () {
+				var styleIndividual = function (datum) {
+					return _elm_lang$core$Native_Utils.eq(
+						_elm_lang$core$Maybe$Just(datum),
+						model.hinted) ? _user$project$LineChart_Dots$full(5) : A2(_user$project$LineChart_Dots$empty, 5, 1);
+				};
+				var styleLegend = function (_p3) {
+					return A2(_user$project$LineChart_Dots$empty, 5, 1);
+				};
+				return _user$project$LineChart_Dots$customAny(
+					{legend: styleLegend, individual: styleIndividual});
+			}()
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$circle, 'Nora', model.data.nora),
+			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$circle, 'UK stamp', model.data),
 			_1: {ctor: '[]'}
 		});
 };
@@ -20763,39 +20785,6 @@ var _user$project$Stepped$view = function (model) {
 			_0: _user$project$Stepped$chart(model),
 			_1: {ctor: '[]'}
 		});
-};
-var _user$project$Stepped$RecieveNumbers = function (a) {
-	return {ctor: 'RecieveNumbers', _0: a};
-};
-var _user$project$Stepped$getNumbers = function () {
-	var genNumbers = A2(
-		_elm_lang$core$Random$list,
-		30,
-		A2(_elm_lang$core$Random$int, -70, 100));
-	return A2(
-		_elm_lang$core$Random$generate,
-		_user$project$Stepped$RecieveNumbers,
-		A4(
-			_elm_lang$core$Random$map3,
-			F3(
-				function (v0, v1, v2) {
-					return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
-				}),
-			genNumbers,
-			genNumbers,
-			genNumbers));
-}();
-var _user$project$Stepped$init = {
-	ctor: '_Tuple2',
-	_0: {
-		data: A3(
-			_user$project$Stepped$Data,
-			{ctor: '[]'},
-			{ctor: '[]'},
-			{ctor: '[]'}),
-		hinted: _elm_lang$core$Maybe$Nothing
-	},
-	_1: _user$project$Stepped$getNumbers
 };
 var _user$project$Stepped$main = _elm_lang$html$Html$program(
 	{
@@ -20998,7 +20987,14 @@ var _user$project$Ticks$chart = function (model) {
 		{
 			x: _user$project$Ticks$xAxisConfig(model),
 			y: _user$project$Ticks$yAxisConfig(model),
-			container: A5(_user$project$LineChart_Container$spaced, 'line-chart-ticks', 60, 100, 60, 70),
+			container: _user$project$LineChart_Container$custom(
+				{
+					attributesHtml: {ctor: '[]'},
+					attributesSvg: {ctor: '[]'},
+					size: _user$project$LineChart_Container$relative,
+					margin: A4(_user$project$LineChart_Container$Margin, 60, 100, 30, 70),
+					id: 'line-chart-ticks'
+				}),
 			interpolation: _user$project$LineChart_Interpolation$default,
 			intersection: _user$project$LineChart_Axis_Intersection$default,
 			legends: _user$project$LineChart_Legends$default,
@@ -21214,6 +21210,11 @@ var _user$project$Main$highlight = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return null;
 	});
+var _user$project$Main$setBodyScroll = _elm_lang$core$Native_Platform.outgoingPort(
+	'setBodyScroll',
+	function (v) {
+		return v;
+	});
 var _user$project$Main$Model = F7(
 	function (a, b, c, d, e, f, g) {
 		return {focused: a, isSourceOpen: b, selection: c, area: d, stepped: e, ticks: f, lines: g};
@@ -21251,7 +21252,7 @@ var _user$project$Main$init = function () {
 	var cmdSelection = _p4._1;
 	return {
 		ctor: '_Tuple2',
-		_0: {focused: 1, isSourceOpen: false, selection: selection, area: area, stepped: stepped, ticks: ticks, lines: lines},
+		_0: {focused: 0, isSourceOpen: false, selection: selection, area: area, stepped: stepped, ticks: ticks, lines: lines},
 		_1: _elm_lang$core$Platform_Cmd$batch(
 			{
 				ctor: '::',
@@ -21286,12 +21287,14 @@ var _user$project$Main$update = F2(
 		var _p5 = msg;
 		switch (_p5.ctor) {
 			case 'Focus':
+				var _p6 = _p5._0;
+				var isSourceOpen = (model.isSourceOpen && _elm_lang$core$Native_Utils.eq(model.focused, _p6)) ? false : ((!_elm_lang$core$Native_Utils.eq(model.focused, _p6)) ? true : (!model.isSourceOpen));
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{isSourceOpen: true, focused: _p5._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
+						{isSourceOpen: isSourceOpen, focused: _p6}),
+					_1: _user$project$Main$setBodyScroll(isSourceOpen)
 				};
 			case 'CloseSource':
 				return {
@@ -21299,12 +21302,12 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{isSourceOpen: false}),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_1: _user$project$Main$setBodyScroll(false)
 				};
 			case 'SelectionMsg':
-				var _p6 = A2(_user$project$Selection$update, _p5._0, model.selection);
-				var selection = _p6._0;
-				var cmd = _p6._1;
+				var _p7 = A2(_user$project$Selection$update, _p5._0, model.selection);
+				var selection = _p7._0;
+				var cmd = _p7._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -21313,9 +21316,9 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SelectionMsg, cmd)
 				};
 			case 'AreaMsg':
-				var _p7 = A2(_user$project$Area$update, _p5._0, model.area);
-				var area = _p7._0;
-				var cmd = _p7._1;
+				var _p8 = A2(_user$project$Area$update, _p5._0, model.area);
+				var area = _p8._0;
+				var cmd = _p8._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -21324,9 +21327,9 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$AreaMsg, cmd)
 				};
 			case 'SteppedMsg':
-				var _p8 = A2(_user$project$Stepped$update, _p5._0, model.stepped);
-				var stepped = _p8._0;
-				var cmd = _p8._1;
+				var _p9 = A2(_user$project$Stepped$update, _p5._0, model.stepped);
+				var stepped = _p9._0;
+				var cmd = _p9._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -21335,9 +21338,9 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SteppedMsg, cmd)
 				};
 			case 'TicksMsg':
-				var _p9 = A2(_user$project$Ticks$update, _p5._0, model.ticks);
-				var ticks = _p9._0;
-				var cmd = _p9._1;
+				var _p10 = A2(_user$project$Ticks$update, _p5._0, model.ticks);
+				var ticks = _p10._0;
+				var cmd = _p10._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -21346,9 +21349,9 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$TicksMsg, cmd)
 				};
 			default:
-				var _p10 = A2(_user$project$Lines$update, _p5._0, model.lines);
-				var lines = _p10._0;
-				var cmd = _p10._1;
+				var _p11 = A2(_user$project$Lines$update, _p5._0, model.lines);
+				var lines = _p11._0;
+				var cmd = _p11._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -21446,13 +21449,14 @@ var _user$project$Main$viewSource = F2(
 var _user$project$Main$Focus = function (a) {
 	return {ctor: 'Focus', _0: a};
 };
-var _user$project$Main$viewExample = F4(
-	function (id, toMsg, view, model) {
+var _user$project$Main$viewExample = F5(
+	function (id, modifier, toMsg, view, model) {
+		var $class = A2(_elm_lang$core$Basics_ops['++'], 'view__example__container view__example__container--', modifier);
 		return A2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('view__example__container'),
+				_0: _elm_lang$html$Html_Attributes$class($class),
 				_1: {ctor: '[]'}
 			},
 			{
@@ -21460,16 +21464,20 @@ var _user$project$Main$viewExample = F4(
 				_0: A2(
 					_elm_lang$html$Html$map,
 					toMsg,
-					A2(_elm_lang$html$Html_Lazy$lazy, view, model)),
+					view(model)),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html$button,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								_user$project$Main$Focus(id)),
-							_1: {ctor: '[]'}
+							_0: _elm_lang$html$Html_Attributes$class('view__example__toggle-source'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(
+									_user$project$Main$Focus(id)),
+								_1: {ctor: '[]'}
+							}
 						},
 						{
 							ctor: '::',
@@ -21493,27 +21501,53 @@ var _user$project$Main$view = function (model) {
 			_0: _user$project$Main$viewTitle,
 			_1: {
 				ctor: '::',
-				_0: A4(_user$project$Main$viewExample, 0, _user$project$Main$AreaMsg, _user$project$Area$view, model.area),
-				_1: {
-					ctor: '::',
-					_0: A4(_user$project$Main$viewExample, 1, _user$project$Main$SelectionMsg, _user$project$Selection$view, model.selection),
-					_1: {
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
 						ctor: '::',
-						_0: A4(_user$project$Main$viewExample, 2, _user$project$Main$LinesMsg, _user$project$Lines$view, model.lines),
+						_0: _elm_lang$html$Html_Attributes$class('view__body'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html_Lazy$lazy,
+							A4(_user$project$Main$viewExample, 0, 'full', _user$project$Main$AreaMsg, _user$project$Area$view),
+							model.area),
 						_1: {
 							ctor: '::',
-							_0: A4(_user$project$Main$viewExample, 3, _user$project$Main$SteppedMsg, _user$project$Stepped$view, model.stepped),
+							_0: A2(
+								_elm_lang$html$Html_Lazy$lazy,
+								A4(_user$project$Main$viewExample, 1, 'full', _user$project$Main$SelectionMsg, _user$project$Selection$view),
+								model.selection),
 							_1: {
 								ctor: '::',
-								_0: A4(_user$project$Main$viewExample, 4, _user$project$Main$TicksMsg, _user$project$Ticks$view, model.ticks),
+								_0: A2(
+									_elm_lang$html$Html_Lazy$lazy,
+									A4(_user$project$Main$viewExample, 2, 'full', _user$project$Main$LinesMsg, _user$project$Lines$view),
+									model.lines),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Main$viewSource, model.focused, model.isSourceOpen),
-									_1: {ctor: '[]'}
+									_0: A2(
+										_elm_lang$html$Html_Lazy$lazy,
+										A4(_user$project$Main$viewExample, 3, 'full', _user$project$Main$SteppedMsg, _user$project$Stepped$view),
+										model.stepped),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html_Lazy$lazy,
+											A4(_user$project$Main$viewExample, 4, 'three-quarters', _user$project$Main$TicksMsg, _user$project$Ticks$view),
+											model.ticks),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
-					}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(_user$project$Main$viewSource, model.focused, model.isSourceOpen),
+					_1: {ctor: '[]'}
 				}
 			}
 		});
