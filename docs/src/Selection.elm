@@ -52,8 +52,8 @@ type alias Model =
 
 
 type alias Selection =
-  { start : Float
-  , end : Float
+  { xStart : Float
+  , xEnd : Float
   }
 
 
@@ -91,7 +91,7 @@ getNumbers =
 
 
 
--- API
+-- MODEL API
 
 
 setData : ( List Float, List Float, List Float ) -> Model -> Model
@@ -124,10 +124,10 @@ setHint hinted model =
   { model | hinted = hinted }
 
 
-getSelectionStart : Float -> Model -> Float
-getSelectionStart hovered model =
+getSelectionXStart : Float -> Model -> Float
+getSelectionXStart hovered model =
   case model.selection of
-    Just selection -> selection.start
+    Just selection -> selection.xStart
     Nothing        -> hovered
 
 
@@ -137,13 +137,13 @@ getSelectionStart hovered model =
 
 type Msg
   = RecieveNumbers ( List Float, List Float, List Float )
-  -- Chart 1
+  -- Chart Main
   | Hold Coordinate.Point
   | Move Coordinate.Point
   | Drop Coordinate.Point
   | LeaveChart Coordinate.Point
   | LeaveContainer Coordinate.Point
-  -- Chart 2
+  -- Chart Zoom
   | Hint (Maybe Coordinate.Point)
 
 
@@ -164,7 +164,7 @@ update msg model =
     Move point ->
       if model.dragging then
         let
-          start = getSelectionStart point.x model
+          start = getSelectionXStart point.x model
           newSelection = Selection start point.x
         in
         model
@@ -177,7 +177,7 @@ update msg model =
           |> addCmd Cmd.none
 
     Drop point ->
-      if point.x == getSelectionStart point.x model then
+      if point.x == getSelectionXStart point.x model then
         model
           |> setSelection Nothing
           |> setDragging False
@@ -215,24 +215,38 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div
-    [ Html.Attributes.style [ ( "display", "flex" ) ] ] <|
-    case model.selection of
-      Nothing ->
-        [ selectPlaceholder, chart model ]
+  let 
+    style =
+      [ ( "display", "flex" ) ]
 
-      Just selection ->
-        [ chartZoom model selection, chart model ]
+    content =
+      case model.selection of
+        Nothing ->
+          [ viewPlaceholder
+          , viewChartMain model 
+          ]
 
+        Just selection ->
+          if selection.xStart == selection.xEnd then
+            [ viewPlaceholder
+            , viewChartMain model 
+            ]
+          else 
+            [ viewChartZoom model selection
+            , viewChartMain model 
+            ]
+  in
+  Html.div [ Html.Attributes.style style ] content
+    
 
-selectPlaceholder : Html.Html Msg
-selectPlaceholder =
+viewPlaceholder : Html.Html Msg
+viewPlaceholder =
   Html.div
     [ Html.Attributes.style
         [ ( "margin", "40px 25px 30px 70px" )
         , ( "width", "505px" )
         , ( "height", "360px" )
-        , ( "background", "#b6b6b61a" )
+        , ( "background", "#4646461a" )
         , ( "text-align", "center" )
         , ( "line-height", "340px" )
         ]
@@ -244,25 +258,36 @@ selectPlaceholder =
 -- MAIN CHART
 
 
-chart : Model -> Html.Html Msg
-chart model =
+viewChartMain : Model -> Html.Html Msg
+viewChartMain model =
   viewChart model.data
     { range = Range.default
     , junk = junkConfig model
     , legends = Legends.default
-    , events =
-        Events.custom
-          [ Events.onWithOptions "mousedown" (Events.Options True True False) Hold Events.getData
-          , Events.onWithOptions "mousemove" (Events.Options True True False) Move Events.getData
-          , Events.onWithOptions "mouseup"   (Events.Options True True True) Drop Events.getData
-          , Events.onWithOptions "mouseleave" (Events.Options True True False) LeaveChart Events.getData
-          , Events.onWithOptions "mouseleave" (Events.Options True True True) LeaveContainer Events.getData
-          ]
+    , events = events
     , width = 670
     , margin = Container.Margin 30 100 60 70
     , dots = Dots.custom (Dots.full 0)
     , id = "line-chart"
     }
+
+
+events : Events.Config Coordinate.Point Msg
+events =
+  let
+    options bool =
+      { stopPropagation = True
+      , preventDefault = True
+      , catchOutsideChart = bool
+      }
+  in
+  Events.custom
+    [ Events.onWithOptions "mousedown"  (options False) Hold           Events.getData
+    , Events.onWithOptions "mousemove"  (options False) Move           Events.getData
+    , Events.onWithOptions "mouseup"    (options True)  Drop           Events.getData
+    , Events.onWithOptions "mouseleave" (options False) LeaveChart     Events.getData
+    , Events.onWithOptions "mouseleave" (options True)  LeaveContainer Events.getData
+    ]
 
 
 junkConfig : Model -> Junk.Config Coordinate.Point msg
@@ -277,10 +302,18 @@ junkConfig model =
 below : Coordinate.System -> Maybe Selection -> List (Svg.Svg msg)
 below system selection =
   case selection of
-    Just { start, end } ->
-      [ Junk.rectangle system [ Svg.Attributes.fill "#b6b6b61a" ]
-          start end system.y.min system.y.max
-      ]
+    Just { xStart, xEnd } ->
+      let 
+        attributes =
+          [ Svg.Attributes.fill "#4646461a" ]
+
+        ( yStart, yEnd ) =
+          ( system.y.min, system.y.max )
+
+        viewSelection =
+          Junk.rectangle system attributes xStart xEnd yStart yEnd
+      in
+      [ viewSelection ]
 
     Nothing ->
       []
@@ -300,8 +333,8 @@ above system hovered =
 -- ZOOM CHART
 
 
-chartZoom : Model -> Selection -> Html.Html Msg
-chartZoom model selection =
+viewChartZoom : Model -> Selection -> Html.Html Msg
+viewChartZoom model selection =
   viewChart model.data
     { range = xAxisRangeConfig selection
     , junk =
@@ -321,15 +354,13 @@ chartZoom model selection =
 xAxisRangeConfig : Selection -> Range.Config
 xAxisRangeConfig selection =
   let
-    start =
-      min selection.start selection.end
+    xStart =
+      min selection.xStart selection.xEnd
 
-    end =
-      if selection.start == selection.end
-        then selection.start + 1
-        else max selection.start selection.end
+    xEnd =
+      max selection.xStart selection.xEnd
   in
-  Range.window start end
+  Range.window xStart xEnd
 
 
 
@@ -489,8 +520,8 @@ source =
     { model | hinted = hinted }
 
 
-  getSelectionStart : Float -> Model -> Float
-  getSelectionStart hovered model =
+  getSelectionXStart : Float -> Model -> Float
+  getSelectionXStart hovered model =
     case model.selection of
       Just selection -> selection.start
       Nothing        -> hovered
@@ -529,7 +560,7 @@ source =
       Move point ->
         if model.dragging then
           let
-            start = getSelectionStart point.x model
+            start = getSelectionXStart point.x model
             newSelection = Selection start point.x
           in
           model
@@ -542,7 +573,7 @@ source =
             |> addCmd Cmd.none
 
       Drop point ->
-        if point.x == getSelectionStart point.x model then
+        if point.x == getSelectionXStart point.x model then
           model
             |> setSelection Nothing
             |> setDragging False
@@ -584,14 +615,14 @@ source =
       [ Html.Attributes.style [ ( "display", "flex" ) ] ] <|
       case model.selection of
         Nothing ->
-          [ selectPlaceholder, chart model ]
+          [ viewPlaceholder, chart model ]
 
         Just selection ->
-          [ chartZoom model selection, chart model ]
+          [ viewChartZoom model selection, chart model ]
 
 
-  selectPlaceholder : Html.Html Msg
-  selectPlaceholder =
+  viewPlaceholder : Html.Html Msg
+  viewPlaceholder =
     Html.div
       [ Html.Attributes.style
           [ ( "margin", "40px 25px 30px 70px" )
@@ -665,8 +696,8 @@ source =
   -- ZOOM CHART
 
 
-  chartZoom : Model -> Selection -> Html.Html Msg
-  chartZoom model selection =
+  viewChartZoom : Model -> Selection -> Html.Html Msg
+  viewChartZoom model selection =
     viewChart model.data
       { range = xAxisRangeConfig selection
       , junk =
