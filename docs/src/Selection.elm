@@ -236,47 +236,21 @@ view model =
 viewPlaceholder : Html.Html Msg
 viewPlaceholder =
   Html.div
-    [ Html.Attributes.style
-        [ ( "width", "42.5%" )
-        , ( "height", "0%" )
-        , ( "margin-left", "5.5%" )
-        , ( "margin-top", "3%" )
-        , ( "margin-right", "2%" )
-        , ( "padding-bottom", "28.2222%" )
-        , ( "display", "inline-block" )
-        , ( "vertical-align", "top" )
-        , ( "position", "relative" )
-        ]
-    ]
+    [ Html.Attributes.class "view__selection__placeholder" ]
     [ viewInnerPlaceholder ]
 
 
 viewInnerPlaceholder : Html.Html Msg
 viewInnerPlaceholder =
   Html.div
-    [ Html.Attributes.style
-        [ ( "width", "100%" )
-        , ( "height", "100%" )
-        , ( "background", "#4646461a" )
-        , ( "text-align", "center" )
-        , ( "position", "absolute" )
-        , ( "top", "50" )
-        ]
-    ]
+    [ Html.Attributes.class "view__selection__placeholder__inner" ]
     [ viewPlaceholderText ]
 
 
 viewPlaceholderText : Html.Html Msg
 viewPlaceholderText =
   Html.div
-    [ Html.Attributes.style
-        [ ( "text-align", "center" )
-        , ( "position", "absolute" )
-        , ( "top", "50%" )
-        , ( "width", "100%" )
-        , ( "padding", "0 10%" )
-        ]
-    ]
+    [ Html.Attributes.class "view__selection__placeholder__inner__text" ]
     [ Html.text "Select a range on the graph to the right!" ]
 
 

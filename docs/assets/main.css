@@ -113,6 +113,40 @@ button:hover {
 
 /* */
 
+
+.view__selection__placeholder {
+	width: 42.5%;
+    height: 0%;
+    margin-left: 5.5%;
+    margin-top: 3%;
+    margin-right: 2%;
+    padding-bottom: 28.2222%;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+.view__selection__placeholder__inner {
+	width: 100%;
+    height: 100%;
+    background: #4646461a;
+    text-align: center;
+    position: absolute;
+    top: 50;
+}
+
+.view__selection__placeholder__inner__text {
+	text-align: center;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    padding: 0 10%;
+	transform: translateY(-50%);
+}
+
+
+/* */
+
 @media (max-width: 1500px) {
 	body {
 		font-size: 12px;

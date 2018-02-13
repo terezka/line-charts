@@ -20104,28 +20104,7 @@ var _user$project$Selection$viewPlaceholderText = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$style(
-			{
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'top', _1: '50%'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'padding', _1: '0 10%'},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}),
+		_0: _elm_lang$html$Html_Attributes$class('view__selection__placeholder__inner__text'),
 		_1: {ctor: '[]'}
 	},
 	{
@@ -20137,32 +20116,7 @@ var _user$project$Selection$viewInnerPlaceholder = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$style(
-			{
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'background', _1: '#4646461a'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'top', _1: '50'},
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}
-			}),
+		_0: _elm_lang$html$Html_Attributes$class('view__selection__placeholder__inner'),
 		_1: {ctor: '[]'}
 	},
 	{
@@ -20174,44 +20128,7 @@ var _user$project$Selection$viewPlaceholder = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
-		_0: _elm_lang$html$Html_Attributes$style(
-			{
-				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'width', _1: '42.5%'},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'height', _1: '0%'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '5.5%'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '3%'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '2%'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '28.2222%'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'vertical-align', _1: 'top'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}),
+		_0: _elm_lang$html$Html_Attributes$class('view__selection__placeholder'),
 		_1: {ctor: '[]'}
 	},
 	{
