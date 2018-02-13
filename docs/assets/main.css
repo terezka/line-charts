@@ -164,3 +164,14 @@ button:hover {
 		width: 100%;
 	}
 }
+
+@media (max-width: 800px) {
+
+	.view__example__container:nth-child(2) {
+		display: none;
+	}
+
+	.view__example__container div {
+		pointer-events: none;
+	}
+}
