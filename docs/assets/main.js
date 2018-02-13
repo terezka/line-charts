@@ -18399,9 +18399,25 @@ var _user$project$Internal_Events$hoverOne = function (msg) {
 				_user$project$Internal_Events$getWithin(30)),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Internal_Events$onMouseLeave(
-					msg(_elm_lang$core$Maybe$Nothing)),
-				_1: {ctor: '[]'}
+				_0: A3(
+					_user$project$Internal_Events$on,
+					'touchstart',
+					msg,
+					_user$project$Internal_Events$getWithin(30)),
+				_1: {
+					ctor: '::',
+					_0: A3(
+						_user$project$Internal_Events$on,
+						'touchmove',
+						msg,
+						_user$project$Internal_Events$getWithin(30)),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Internal_Events$onMouseLeave(
+							msg(_elm_lang$core$Maybe$Nothing)),
+						_1: {ctor: '[]'}
+					}
+				}
 			}
 		});
 };
