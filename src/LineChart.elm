@@ -113,7 +113,7 @@ So if we had more complex data structures, like a human with an `age`, `weight`,
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example2.elm)._
 
 
-** Use any function as the variable **
+** Use any function to determine inputs **
 
 Rather than using data like `.weight` directly, you can make a
 function like `bmi human = human.weight / human.height ^ 2` and create a
@@ -320,35 +320,35 @@ dash =
 Use with `viewCustom`.
 
   - **x**: Customizes your horizontal axis.</br>
-    _See `LineChart.Axis` for more information and examples._
+    _See [`LineChart.Axis`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Axis) for more information and examples._
 
   - **y**: Customizes your vertical axis.</br>
-    _See `LineChart.Axis` for more information and examples._
+    _See [`LineChart.Axis`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Axis) for more information and examples._
 
   - **intersection**: Determines where your axes meet.</br>
-    _See `LineChart.Axis.Intersection` for more information and examples._
+    _See [`LineChart.Axis.Intersection`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Axis-Intersection) for more information and examples._
 
   - **interpolation**: Customizes the curve of your LineChart.</br>
-    _See `LineChart.Interpolation` for more information and examples._
+    _See [`LineChart.Interpolation`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Interpolation) for more information and examples._
 
   - **container**: Customizes the container of your chart.</br>
-    _See `LineChart.Container` for more information and examples._
+    _See [`LineChart.Container`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Container) for more information and examples._
 
   - **legends**: Customizes your chart's legends.</br>
-    _See `LineChart.Legends` for more information and examples._
+    _See [`LineChart.Legends`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Legends) for more information and examples._
 
   - **events**: Customizes your chart's events, allowing you to easily
     make your chart interactive (adding tooltips, selection states etc.).</br>
-    _See `LineChart.Events` for more information and examples._
+    _See [`LineChart.Events`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Events) for more information and examples._
 
   - **grid**: Customizes the style of your grid.</br>
-    _See `LineChart.Grid` for more information and examples._
+    _See [`LineChart.Grid`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Grid) for more information and examples._
 
   - **area**: Customizes the area under your line.</br>
-    _See `LineChart.Area` for more information and examples._
+    _See [`LineChart.Area`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Area) for more information and examples._
 
   - **line**: Customizes your lines' width and color.</br>
-    _See `LineChart.Line` for more information and examples._
+    _See [`LineChart.Line`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart-Line) for more information and examples._
 
   - **dots**: Customizes your dots' size and style.</br>
     _See `LineChart.Dots` for more information and examples._
@@ -357,7 +357,7 @@ Use with `viewCustom`.
     [Edward Tufte's concept of "chart junk"](https://en.wikipedia.org/wiki/Chartjunk).
     Here you are finally allowed set your creativity loose and add whatever
     SVG or HTML fun you can imagine.</br>
-    _See `LineChart.Junk` for more information and examples._
+    _See [`LineChart.Junk`](http://package.elm-lang.org/packages/terezka/line-charts/latest/LineChart.Junk) for more information and examples._
 
 
 ** Example configuration **
