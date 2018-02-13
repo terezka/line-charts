@@ -17,7 +17,7 @@ chart =
   LineChart.view .age .height
     [ LineChart.line Colors.purple Dots.cross "Alice" alice
     , LineChart.line Colors.blue Dots.square "Bobby" bobby
-    , LineChart.line Colors.green Dots.circle "Chuck" chuck
+    , LineChart.line Colors.cyan Dots.circle "Chuck" chuck
     ]
 
 

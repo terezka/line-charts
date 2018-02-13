@@ -70,6 +70,7 @@ import Color
       LineChart.view1 .x .y
         [ Point 0 2, Point 5 5, Point 10 10 ]
 
+
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example1.elm)._
 
 
@@ -82,7 +83,7 @@ So if we had more complex data structures, like a human with an `age`, `weight`,
     chart : Html msg
     chart =
       LineChart.view1 .age .weight
-        [ Human  4 24 0.94 0
+        [ Human  4 24 0.94     0
         , Human 25 75 1.73 25000
         , Human 43 83 1.75 40000
         ]
@@ -159,15 +160,15 @@ view3 toX toY dataset1 dataset2 dataset3 =
 
 ** Show any amount of lines **
 
-Try changing the color, the dot, or the title of a line, or see
-the `line` function for more information.
+If you want to change the color, the dot, or the title of a line, then see
+the `line` function.
 
     chart : Html msg
     chart =
       LineChart.view .age .height
         [ LineChart.line Colors.purple Dots.cross "Alice" alice
         , LineChart.line Colors.blue Dots.square "Bobby" bobby
-        , LineChart.line Colors.green Dots.circle "Chuck" chuck
+        , LineChart.line Colors.cyan Dots.circle "Chuck" chuck
         ]
 
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example5.elm)._
@@ -180,7 +181,28 @@ view toX toY =
   viewCustom (defaultConfig toX toY)
 
 
-{-| -}
+{-| This is the type holds the visual configuration representing 
+a _series_ of data.
+
+Definition of _series_:
+> a number of events, objects, or people of a similar or related kind coming one after another.
+
+** Examples of customizations **
+
+See the `line` and `dash` functions for more information!
+
+
+    solidLine : LineChart.Series Human
+    solidLine =
+      LineChart.line Colors.purple Dots.cross "Alice" alice
+
+
+    dashedLine : LineChart.Series Human
+    dashedLine =
+      LineChart.dash Colors.purpleLight Dots.none "Average" [ 4, 2 ] average
+
+
+-}
 type alias Series data =
   Internal.Line.Series data
 
@@ -206,8 +228,6 @@ _See the full example [here](https://github.com/terezka/line-charts/blob/master/
 
 The string title will show up in the legends. If you are interested in
 customizing your legends, dot size or line width, check out `viewCustom`.
-For now though, I'd recommend you stick to `view` and get your lines and
-data right first, and then stepping up the complexity.
 
  -}
 line : Color.Color -> Dots.Shape -> String -> List data -> Series data
@@ -220,8 +240,8 @@ line =
 ** Customize a dashed line **
 
 Works just like `line`, except it takes another argument which is an array of
-floats describing your dashing pattern. I'd recommend just typing in
-random numbers and see what happends, but alternativelly you can see the SVG `stroke-dasharray`
+floats describing your dashing pattern. I recommend typing in random numbers and seeing what 
+happens, but you alternativelly you can see the SVG `stroke-dasharray`
 [documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
 for examples of patterns.
 
@@ -231,11 +251,16 @@ for examples of patterns.
         [ LineChart.line Colors.pinkLight Dots.plus "Alice" alice
         , LineChart.line Colors.goldLight Dots.diamond "Bobby" bobby
         , LineChart.line Colors.blueLight Dots.square "Chuck" chuck
-        , LineChart.dash Colors.purpleLight Dots.none "Average" [ 4, 2 ] average
-        --                                                      ^^^^^^^^
+        , dashedLine
         ]
 
-    -- Try passing different numbers!
+    dashedLine : LineChart.Series Human
+    dashedLine =
+      LineChart.dash Colors.purpleLight Dots.none "Average" [ 4, 2 ] average
+      --                                                    ^^^^^^^^
+      -- (Scroll to the left to see the pattern!)
+      -- Try passing different numbers!
+
 
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example7.elm)._
 
@@ -388,8 +413,9 @@ Remember that area charts are for data where the area under the curve _matters_.
 Typically, this would be when you have a quantity accumulating over time.
 Think profit over time or velocity over time!
 In the case of profit over time, the area under the curve shows the total amount
-of money earned in that time frame. However if that amount is not significant,
-it's best to leave it out.
+of money earned in that time frame.<br/>
+If the that total amount is not important for the relationship you're 
+trying to visualize, it's best to leave it out!
 
 -}
 viewCustom : Config data msg -> List (Series data) -> Svg.Svg msg

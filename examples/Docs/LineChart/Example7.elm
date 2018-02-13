@@ -18,10 +18,20 @@ chart =
     [ LineChart.line Colors.pinkLight Dots.plus "Alice" alice
     , LineChart.line Colors.goldLight Dots.diamond "Bobby" bobby
     , LineChart.line Colors.blueLight Dots.square "Chuck" chuck
-    , LineChart.dash Colors.purpleLight Dots.none "Average" [ 4, 2 ] average
-    --                                                      ^^^^^^^^
-    -- Try passing different numbers!
+    , dashedLine
     ]
+
+dashedLine : LineChart.Series Data
+dashedLine =
+  let
+    pattern = [ 4, 2 ]
+    --        ^^^^^^^^
+    --        (scroll to the left to see where it's used!)
+    --        Try passing different numbers!
+  in
+  LineChart.dash Colors.purpleLight Dots.none "Average" pattern average
+
+
 
 
 
