@@ -66,7 +66,7 @@ button:hover {
 	width: 100%;
 }
 
-.view__example__container--half{
+.view__example__container--half {
 	width: 50%;
 }
 
@@ -108,4 +108,25 @@ button:hover {
 .view__source__inner {
 	margin-top: 30px;
 	height: 85vh;
+}
+
+
+/* */
+
+@media (max-width: 1500px) {
+	body {
+		font-size: 12px;
+	}
+
+	.view {
+		margin: 240px 20px 200px 20px
+	}
+
+	.view__title__container {
+		position: absolute;
+	}
+
+	.view__example__container {
+		width: 100%;
+	}
 }
