@@ -6,6 +6,23 @@ module LineChart exposing
 
 {-|
 
+## Table of contents
+
+### Quick start
+> [view1](#view1) for visualizing a single data series.</br>
+> [view2](#view2) for visualizing two data series.</br>
+> [view3](#view3) for visualizing three data series.</br>
+
+### Customizing lines
+> [view](#view) for visualizing *any* amount of data series.</br>
+> [line](#line) for configuring color, dot etc. of a line representing a data series.</br>
+> [dash](#dash) for configuring color, dot etc. of a *dashed* line representing a data series.</br>
+
+### Customizing everything
+> [viewCustom](#viewCustom) for configuring any other aspect of the chart (axis, area, etc.).</br>
+
+
+
 # Quick start
 @docs view1, view2, view3
 
