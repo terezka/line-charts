@@ -215,7 +215,7 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [] <|
+  Debug.log "renderd" <| Html.div [] <|
     case model.selection of
       Nothing ->
         [ viewPlaceholder

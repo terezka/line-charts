@@ -12925,7 +12925,16 @@ var _user$project$Internal_Container$static = _user$project$Internal_Container$S
 var _user$project$Internal_Container$default = function (id) {
 	return _user$project$Internal_Container$custom(
 		{
-			attributesHtml: {ctor: '[]'},
+			attributesHtml: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'font-family', _1: 'monospace'},
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
 			attributesSvg: {ctor: '[]'},
 			size: _user$project$Internal_Container$static,
 			margin: A4(_user$project$Internal_Container$Margin, 60, 140, 60, 80),
@@ -20437,41 +20446,44 @@ var _user$project$Selection$viewChartMain = function (model) {
 };
 var _user$project$Selection$view = function (model) {
 	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		function () {
-			var _p14 = model.selection;
-			if (_p14.ctor === 'Nothing') {
-				return {
-					ctor: '::',
-					_0: _user$project$Selection$viewPlaceholder,
-					_1: {
+		_elm_lang$core$Debug$log,
+		'renderd',
+		A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			function () {
+				var _p14 = model.selection;
+				if (_p14.ctor === 'Nothing') {
+					return {
 						ctor: '::',
-						_0: _user$project$Selection$viewChartMain(model),
-						_1: {ctor: '[]'}
-					}
-				};
-			} else {
-				var _p15 = _p14._0;
-				return _elm_lang$core$Native_Utils.eq(_p15.xStart, _p15.xEnd) ? {
-					ctor: '::',
-					_0: _user$project$Selection$viewPlaceholder,
-					_1: {
+						_0: _user$project$Selection$viewPlaceholder,
+						_1: {
+							ctor: '::',
+							_0: _user$project$Selection$viewChartMain(model),
+							_1: {ctor: '[]'}
+						}
+					};
+				} else {
+					var _p15 = _p14._0;
+					return _elm_lang$core$Native_Utils.eq(_p15.xStart, _p15.xEnd) ? {
 						ctor: '::',
-						_0: _user$project$Selection$viewChartMain(model),
-						_1: {ctor: '[]'}
-					}
-				} : {
-					ctor: '::',
-					_0: A2(_user$project$Selection$viewChartZoom, model, _p15),
-					_1: {
+						_0: _user$project$Selection$viewPlaceholder,
+						_1: {
+							ctor: '::',
+							_0: _user$project$Selection$viewChartMain(model),
+							_1: {ctor: '[]'}
+						}
+					} : {
 						ctor: '::',
-						_0: _user$project$Selection$viewChartMain(model),
-						_1: {ctor: '[]'}
-					}
-				};
-			}
-		}());
+						_0: A2(_user$project$Selection$viewChartZoom, model, _p15),
+						_1: {
+							ctor: '::',
+							_0: _user$project$Selection$viewChartMain(model),
+							_1: {ctor: '[]'}
+						}
+					};
+				}
+			}()));
 };
 var _user$project$Selection$RecieveNumbers = function (a) {
 	return {ctor: 'RecieveNumbers', _0: a};
@@ -21477,7 +21489,7 @@ var _user$project$Main$viewExample = F5(
 				_0: A2(
 					_elm_lang$html$Html$map,
 					toMsg,
-					view(model)),
+					A2(_elm_lang$html$Html_Lazy$lazy, view, model)),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -21523,34 +21535,19 @@ var _user$project$Main$view = function (model) {
 					},
 					{
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html_Lazy$lazy,
-							A4(_user$project$Main$viewExample, 0, 'full', _user$project$Main$AreaMsg, _user$project$Area$view),
-							model.area),
+						_0: A5(_user$project$Main$viewExample, 0, 'full', _user$project$Main$AreaMsg, _user$project$Area$view, model.area),
 						_1: {
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html_Lazy$lazy,
-								A4(_user$project$Main$viewExample, 1, 'full', _user$project$Main$SelectionMsg, _user$project$Selection$view),
-								model.selection),
+							_0: A5(_user$project$Main$viewExample, 1, 'full', _user$project$Main$SelectionMsg, _user$project$Selection$view, model.selection),
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html_Lazy$lazy,
-									A4(_user$project$Main$viewExample, 2, 'full', _user$project$Main$LinesMsg, _user$project$Lines$view),
-									model.lines),
+								_0: A5(_user$project$Main$viewExample, 2, 'full', _user$project$Main$LinesMsg, _user$project$Lines$view, model.lines),
 								_1: {
 									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html_Lazy$lazy,
-										A4(_user$project$Main$viewExample, 3, 'full', _user$project$Main$SteppedMsg, _user$project$Stepped$view),
-										model.stepped),
+									_0: A5(_user$project$Main$viewExample, 3, 'full', _user$project$Main$SteppedMsg, _user$project$Stepped$view, model.stepped),
 									_1: {
 										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html_Lazy$lazy,
-											A4(_user$project$Main$viewExample, 4, 'half', _user$project$Main$TicksMsg, _user$project$Ticks$view),
-											model.ticks),
+										_0: A5(_user$project$Main$viewExample, 4, 'half', _user$project$Main$TicksMsg, _user$project$Ticks$view, model.ticks),
 										_1: {ctor: '[]'}
 									}
 								}

@@ -166,11 +166,11 @@ view model =
     [ viewTitle
     , Html.div 
         [ Html.Attributes.class "view__body" ]
-        [ Html.Lazy.lazy (viewExample 0 "full" AreaMsg Area.view) model.area
-        , Html.Lazy.lazy (viewExample 1 "full" SelectionMsg Selection.view) model.selection
-        , Html.Lazy.lazy (viewExample 2 "full" LinesMsg Lines.view) model.lines
-        , Html.Lazy.lazy (viewExample 3 "full" SteppedMsg Stepped.view) model.stepped
-        , Html.Lazy.lazy (viewExample 4 "half" TicksMsg Ticks.view) model.ticks
+        [ viewExample 0 "full" AreaMsg Area.view model.area
+        , viewExample 1 "full" SelectionMsg Selection.view model.selection
+        , viewExample 2 "full" LinesMsg Lines.view model.lines
+        , viewExample 3 "full" SteppedMsg Stepped.view model.stepped
+        , viewExample 4 "half" TicksMsg Ticks.view model.ticks
         ]
     , viewSource model.focused model.isSourceOpen
     ]
@@ -213,7 +213,7 @@ viewExample id modifier toMsg view model =
   in
   Html.div 
     [ Html.Attributes.class class ]
-    [ Html.map toMsg (view model)
+    [ Html.map toMsg (Html.Lazy.lazy view model)
     , Html.button 
         [ Html.Attributes.class "view__example__toggle-source"
         , Html.Events.onClick (Focus id) 
