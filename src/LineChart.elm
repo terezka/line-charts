@@ -91,6 +91,8 @@ So if we had more complex data structures, like a human with an `age`, `weight`,
     -- Try changing .weight to .height
 
 
+<img alt="Chart Result" width="540" src="https://github.com/terezka/line-charts/blob/master/images/linechart1.png?raw=true"></src>
+
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example2.elm)._
 
 
@@ -124,7 +126,11 @@ to their age. Here's how you could plot it.
     chart =
       LineChart.view2 .age .weight alice chuck
 
+
+<img alt="Chart Result" width="540" src="https://github.com/terezka/line-charts/blob/master/images/linechart2.png?raw=true"></src>
+
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example3.elm)._
+
 
 -}
 view2 : (data -> Float) -> (data -> Float) -> List data -> List data -> Svg.Svg msg
@@ -141,6 +147,9 @@ It works just like `view1` and `view2`.
     chart : Html msg
     chart =
       LineChart.view3 .age .weight alice bob chuck
+
+
+<img alt="Chart Result" width="540" src="https://github.com/terezka/line-charts/blob/master/images/linechart3.png?raw=true"></src>
 
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example4.elm)._
 
@@ -171,7 +180,11 @@ the `line` function.
         , LineChart.line Colors.cyan Dots.circle "Chuck" chuck
         ]
 
+
+<img alt="Chart Result" width="540" src="https://github.com/terezka/line-charts/blob/master/images/linechart4.png?raw=true"></src>
+
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example5.elm)._
+
 
 See `viewCustom` for all other customizations.
 
@@ -221,6 +234,8 @@ Try changing the color or explore all the available dot shapes from `LineChart.D
         , LineChart.line Colors.blueLight Dots.square "Chuck" chuck
         ]
 
+<img alt="Chart Result" width="540" src="https://github.com/terezka/line-charts/blob/master/images/linechart7.png?raw=true"></src>
+
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example6.elm)._
 
 
@@ -261,8 +276,10 @@ for examples of patterns.
       -- (Scroll to the left to see the pattern!)
       -- Try passing different numbers!
 
+<img alt="Chart Result" width="540" src="https://github.com/terezka/line-charts/blob/master/images/linechart5.png?raw=true"></src>
 
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example7.elm)._
+
 
 ** When should I use a dashed line? **
 
@@ -403,6 +420,8 @@ The example below makes the line chart an area chart.
       , dots = Dots.default
       }
 
+
+<img alt="Chart Result" width="540" src="https://github.com/terezka/line-charts/blob/master/images/linechart6.png?raw=true"></src>
 
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/LineChart/Example9.elm)._
 
