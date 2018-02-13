@@ -19973,6 +19973,19 @@ var _user$project$Selection$round100 = function ($float) {
 var _user$project$Selection$viewChart = F2(
 	function (data, _p0) {
 		var _p1 = _p0;
+		var containerStyles = {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'width', _1: '50%'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+					_1: {ctor: '[]'}
+				}
+			}
+		};
 		return A2(
 			_user$project$LineChart$viewCustom,
 			{
@@ -20001,12 +20014,7 @@ var _user$project$Selection$viewChart = F2(
 					{
 						attributesHtml: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
-									_1: {ctor: '[]'}
-								}),
+							_0: _elm_lang$html$Html_Attributes$style(containerStyles),
 							_1: {ctor: '[]'}
 						},
 						attributesSvg: {ctor: '[]'},
@@ -20092,29 +20100,62 @@ var _user$project$Selection$junkConfig = function (model) {
 			};
 		});
 };
-var _user$project$Selection$viewPlaceholder = A2(
+var _user$project$Selection$viewPlaceholderText = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
 		_0: _elm_lang$html$Html_Attributes$style(
 			{
 				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 'margin', _1: '40px 25px 30px 70px'},
+				_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
 				_1: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'width', _1: '505px'},
+					_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'height', _1: '380px'},
+						_0: {ctor: '_Tuple2', _0: 'top', _1: '50%'},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'background', _1: '#4646461a'},
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+								_0: {ctor: '_Tuple2', _0: 'padding', _1: '0 10%'},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('Select a range on the graph to the right!'),
+		_1: {ctor: '[]'}
+	});
+var _user$project$Selection$viewInnerPlaceholder = A2(
+	_elm_lang$html$Html$div,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$style(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'background', _1: '#4646461a'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'line-height', _1: '340px'},
+									_0: {ctor: '_Tuple2', _0: 'top', _1: '50'},
 									_1: {ctor: '[]'}
 								}
 							}
@@ -20126,7 +20167,56 @@ var _user$project$Selection$viewPlaceholder = A2(
 	},
 	{
 		ctor: '::',
-		_0: _elm_lang$html$Html$text('Select a range on the graph to the right!'),
+		_0: _user$project$Selection$viewPlaceholderText,
+		_1: {ctor: '[]'}
+	});
+var _user$project$Selection$viewPlaceholder = A2(
+	_elm_lang$html$Html$div,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$style(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'width', _1: '42.5%'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'height', _1: '0%'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '5.5%'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '3%'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '2%'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '28.2222%'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'vertical-align', _1: 'top'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: _user$project$Selection$viewInnerPlaceholder,
 		_1: {ctor: '[]'}
 	});
 var _user$project$Selection$addCmd = F2(
@@ -20324,8 +20414,8 @@ var _user$project$Selection$viewChartZoom = F2(
 				events: _user$project$LineChart_Events$hoverOne(_user$project$Selection$Hint),
 				legends: _user$project$LineChart_Legends$none,
 				dots: _user$project$LineChart_Dots$hoverOne(model.hinted),
-				width: 600,
-				margin: A4(_user$project$LineChart_Container$Margin, 30, 25, 30, 70),
+				width: 670,
+				margin: A4(_user$project$LineChart_Container$Margin, 30, 25, 30, 75),
 				id: 'line-chart-zoom'
 			});
 	});
@@ -20413,52 +20503,42 @@ var _user$project$Selection$viewChartMain = function (model) {
 		});
 };
 var _user$project$Selection$view = function (model) {
-	var content = function () {
-		var _p14 = model.selection;
-		if (_p14.ctor === 'Nothing') {
-			return {
-				ctor: '::',
-				_0: _user$project$Selection$viewPlaceholder,
-				_1: {
-					ctor: '::',
-					_0: _user$project$Selection$viewChartMain(model),
-					_1: {ctor: '[]'}
-				}
-			};
-		} else {
-			var _p15 = _p14._0;
-			return _elm_lang$core$Native_Utils.eq(_p15.xStart, _p15.xEnd) ? {
-				ctor: '::',
-				_0: _user$project$Selection$viewPlaceholder,
-				_1: {
-					ctor: '::',
-					_0: _user$project$Selection$viewChartMain(model),
-					_1: {ctor: '[]'}
-				}
-			} : {
-				ctor: '::',
-				_0: A2(_user$project$Selection$viewChartZoom, model, _p15),
-				_1: {
-					ctor: '::',
-					_0: _user$project$Selection$viewChartMain(model),
-					_1: {ctor: '[]'}
-				}
-			};
-		}
-	}();
-	var style = {
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-		_1: {ctor: '[]'}
-	};
 	return A2(
 		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(style),
-			_1: {ctor: '[]'}
-		},
-		content);
+		{ctor: '[]'},
+		function () {
+			var _p14 = model.selection;
+			if (_p14.ctor === 'Nothing') {
+				return {
+					ctor: '::',
+					_0: _user$project$Selection$viewPlaceholder,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Selection$viewChartMain(model),
+						_1: {ctor: '[]'}
+					}
+				};
+			} else {
+				var _p15 = _p14._0;
+				return _elm_lang$core$Native_Utils.eq(_p15.xStart, _p15.xEnd) ? {
+					ctor: '::',
+					_0: _user$project$Selection$viewPlaceholder,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Selection$viewChartMain(model),
+						_1: {ctor: '[]'}
+					}
+				} : {
+					ctor: '::',
+					_0: A2(_user$project$Selection$viewChartZoom, model, _p15),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Selection$viewChartMain(model),
+						_1: {ctor: '[]'}
+					}
+				};
+			}
+		}());
 };
 var _user$project$Selection$RecieveNumbers = function (a) {
 	return {ctor: 'RecieveNumbers', _0: a};
@@ -21536,7 +21616,7 @@ var _user$project$Main$view = function (model) {
 										ctor: '::',
 										_0: A2(
 											_elm_lang$html$Html_Lazy$lazy,
-											A4(_user$project$Main$viewExample, 4, 'three-quarters', _user$project$Main$TicksMsg, _user$project$Ticks$view),
+											A4(_user$project$Main$viewExample, 4, 'half', _user$project$Main$TicksMsg, _user$project$Ticks$view),
 											model.ticks),
 										_1: {ctor: '[]'}
 									}

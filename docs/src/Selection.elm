@@ -215,40 +215,66 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  let 
-    style =
-      [ ( "display", "flex" ) ]
+  Html.div [] <|
+    case model.selection of
+      Nothing ->
+        [ viewPlaceholder
+        , viewChartMain model 
+        ]
 
-    content =
-      case model.selection of
-        Nothing ->
+      Just selection ->
+        if selection.xStart == selection.xEnd then
           [ viewPlaceholder
           , viewChartMain model 
           ]
-
-        Just selection ->
-          if selection.xStart == selection.xEnd then
-            [ viewPlaceholder
-            , viewChartMain model 
-            ]
-          else 
-            [ viewChartZoom model selection
-            , viewChartMain model 
-            ]
-  in
-  Html.div [ Html.Attributes.style style ] content
+        else 
+          [ viewChartZoom model selection
+          , viewChartMain model 
+          ]
     
 
 viewPlaceholder : Html.Html Msg
 viewPlaceholder =
   Html.div
     [ Html.Attributes.style
-        [ ( "margin", "40px 25px 30px 70px" )
-        , ( "width", "505px" )
-        , ( "height", "380px" )
+        [ ( "width", "42.5%" )
+        , ( "height", "0%" )
+        , ( "margin-left", "5.5%" )
+        , ( "margin-top", "3%" )
+        , ( "margin-right", "2%" )
+        , ( "padding-bottom", "28.2222%" )
+        , ( "display", "inline-block" )
+        , ( "vertical-align", "top" )
+        , ( "position", "relative" )
+        ]
+    ]
+    [ viewInnerPlaceholder ]
+
+
+viewInnerPlaceholder : Html.Html Msg
+viewInnerPlaceholder =
+  Html.div
+    [ Html.Attributes.style
+        [ ( "width", "100%" )
+        , ( "height", "100%" )
         , ( "background", "#4646461a" )
         , ( "text-align", "center" )
-        , ( "line-height", "340px" )
+        , ( "position", "absolute" )
+        , ( "top", "50" )
+        ]
+    ]
+    [ viewPlaceholderText ]
+
+
+viewPlaceholderText : Html.Html Msg
+viewPlaceholderText =
+  Html.div
+    [ Html.Attributes.style
+        [ ( "text-align", "center" )
+        , ( "position", "absolute" )
+        , ( "top", "50%" )
+        , ( "width", "100%" )
+        , ( "padding", "0 10%" )
         ]
     ]
     [ Html.text "Select a range on the graph to the right!" ]
@@ -345,8 +371,8 @@ viewChartZoom model selection =
     , events = Events.hoverOne Hint
     , legends = Legends.none
     , dots = Dots.hoverOne model.hinted
-    , width = 600
-    , margin = Container.Margin 30 25 30 70
+    , width = 670
+    , margin = Container.Margin 30 25 30 75
     , id = "line-chart-zoom"
     }
 
@@ -382,6 +408,13 @@ type alias Config =
 
 viewChart : Data -> Config -> Html.Html Msg
 viewChart data { range, junk, events, legends, dots, width, margin, id } =
+  let
+    containerStyles =
+      [ ( "display", "inline-block" )
+      , ( "width", "50%" ) 
+      , ( "height", "100%" ) 
+      ]
+  in
   LineChart.viewCustom
     { y = Axis.default 450 "y" .y
     , x =
@@ -395,7 +428,7 @@ viewChart data { range, junk, events, legends, dots, width, margin, id } =
           }
     , container =
         Container.custom
-          { attributesHtml = [ Html.Attributes.style [ ( "display", "inline-block" ) ] ]
+          { attributesHtml = [ Html.Attributes.style containerStyles ]
           , attributesSvg = []
           , size = Container.static
           , margin = margin

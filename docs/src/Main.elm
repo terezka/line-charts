@@ -170,7 +170,7 @@ view model =
         , Html.Lazy.lazy (viewExample 1 "full" SelectionMsg Selection.view) model.selection
         , Html.Lazy.lazy (viewExample 2 "full" LinesMsg Lines.view) model.lines
         , Html.Lazy.lazy (viewExample 3 "full" SteppedMsg Stepped.view) model.stepped
-        , Html.Lazy.lazy (viewExample 4 "three-quarters" TicksMsg Ticks.view) model.ticks
+        , Html.Lazy.lazy (viewExample 4 "half" TicksMsg Ticks.view) model.ticks
         ]
     , viewSource model.focused model.isSourceOpen
     ]

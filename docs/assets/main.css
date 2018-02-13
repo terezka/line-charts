@@ -66,8 +66,8 @@ button:hover {
 	width: 100%;
 }
 
-.view__example__container--three-quarters {
-	width: 75%;
+.view__example__container--half{
+	width: 50%;
 }
 
 .view__example__toggle-source {
