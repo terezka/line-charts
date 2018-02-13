@@ -18403,14 +18403,14 @@ var _user$project$Internal_Events$hoverOne = function (msg) {
 					_user$project$Internal_Events$on,
 					'touchstart',
 					msg,
-					_user$project$Internal_Events$getWithin(30)),
+					_user$project$Internal_Events$getWithin(100)),
 				_1: {
 					ctor: '::',
 					_0: A3(
 						_user$project$Internal_Events$on,
 						'touchmove',
 						msg,
-						_user$project$Internal_Events$getWithin(30)),
+						_user$project$Internal_Events$getWithin(100)),
 					_1: {
 						ctor: '::',
 						_0: _user$project$Internal_Events$onMouseLeave(

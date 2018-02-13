@@ -46,8 +46,8 @@ hoverOne : (Maybe data -> msg) -> Config data msg
 hoverOne msg =
   custom
     [ onMouseMove msg (getWithin 30)
-    , on "touchstart" msg (getWithin 30)
-    , on "touchmove" msg (getWithin 30)
+    , on "touchstart" msg (getWithin 100)
+    , on "touchmove" msg (getWithin 100)
     , onMouseLeave (msg Nothing)
     ]
 
