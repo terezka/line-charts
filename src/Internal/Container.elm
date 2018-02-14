@@ -9,6 +9,7 @@ module Internal.Container exposing
 
 import Svg
 import Html
+import Html.Attributes
 
 
 
@@ -46,7 +47,7 @@ type alias Margin =
 default : String -> Config msg
 default id =
   custom
-    { attributesHtml = []
+    { attributesHtml = [ Html.Attributes.style [ ("font-family", "monospace")]]
     , attributesSvg = []
     , size = static
     , margin = Margin 60 140 60 80

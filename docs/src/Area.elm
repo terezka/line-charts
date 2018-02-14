@@ -40,14 +40,20 @@ main =
 
 type alias Model =
   { data : Data
-  , hinted : List Coordinate.Point
+  , hinted : List Datum
   }
 
 
 type alias Data =
-  { nora : List Coordinate.Point
-  , noah : List Coordinate.Point
-  , nina : List Coordinate.Point
+  { nora : List Datum
+  , noah : List Datum
+  , nina : List Datum
+  }
+
+
+type alias Datum =
+  { time : Time.Time
+  , velocity : Float
   }
 
 
@@ -60,12 +66,12 @@ init =
   ( { data = Data [] [] []
     , hinted = []
     }
-  , getNumbers
+  , genVelocities
   )
 
 
-getNumbers : Cmd Msg
-getNumbers =
+genVelocities : Cmd Msg
+genVelocities =
   let
     genNumbers =
       Random.list 40 (Random.float 5 20)
@@ -83,17 +89,23 @@ setData ( n1, n2, n3 ) model =
   { model | data = Data (toData n1) (toData n2) (toData n3) }
 
 
-toData : List Float -> List Coordinate.Point
+toData : List Float -> List Datum
 toData numbers =
-  List.indexedMap (\i -> Coordinate.Point (toDate i)) numbers
+  let 
+    toDatum index velocity = 
+      Datum (indexToTime index) velocity 
+  in
+  List.indexedMap toDatum numbers
 
 
-toDate : Int -> Time.Time
-toDate index =
-  Time.hour * 24 * 356 * 45 + Time.hour * 24 * 30 + Time.hour * 1 * toFloat index
+indexToTime : Int -> Time.Time
+indexToTime index =
+  Time.hour * 24 * 356 * 45 + -- 45 years
+  Time.hour * 24 * 30 + -- a month
+  Time.hour * 1 * toFloat index -- hours from first datum
 
 
-setHint : List Coordinate.Point -> Model -> Model
+setHint : List Datum -> Model -> Model
 setHint hinted model =
   { model | hinted = hinted }
 
@@ -104,7 +116,7 @@ setHint hinted model =
 
 type Msg
   = RecieveNumbers ( List Float, List Float, List Float )
-  | Hint (List Coordinate.Point)
+  | Hint (List Datum)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -132,51 +144,55 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [] [ chart model ]
-
-
-
--- CHART
-
-
-chart : Model -> Html.Html Msg
-chart model =
-  LineChart.viewCustom
-    { y = Axis.default 450 "velocity" .y
-    , x = Axis.time 1270 "time" .x
-    , container = 
-        Container.custom
-          { attributesHtml = []
-          , attributesSvg = []
-          , size = Container.relative
-          , margin = Container.Margin 30 100 30 70
-          , id = "line-chart-area"
-          }
-    , interpolation = Interpolation.monotone
-    , intersection = Intersection.default
-    , legends = Legends.default
-    , events = Events.hoverMany Hint
-    , junk = Junk.hoverMany model.hinted formatX formatY
-    , grid = Grid.dots 1 Colors.gray
-    , area = Area.stacked 0.5
-    , line = Line.default
-    , dots = Dots.custom (Dots.empty 5 1)
-    }
-    [ LineChart.line Colors.pink Dots.diamond "Nora" model.data.nora
-    , LineChart.line Colors.cyan Dots.circle "Noah" model.data.noah
-    , LineChart.line Colors.blue Dots.triangle "Nina" model.data.nina
+  Html.div [] 
+    [ LineChart.viewCustom (chartConfig model) 
+        [ LineChart.line Colors.pink Dots.diamond  "Nora" model.data.nora
+        , LineChart.line Colors.cyan Dots.circle   "Noah" model.data.noah
+        , LineChart.line Colors.blue Dots.triangle "Nina" model.data.nina
+        ]
     ]
 
 
-formatX : Coordinate.Point -> String
-formatX =
-  .x >> Date.fromTime >> Date.Format.format "%e. %b, %Y"
+
+-- CHART CONFIG
 
 
-formatY : Coordinate.Point -> String
-formatY data =
-  let velocity = round100 data.y in
-  toString velocity ++ " m/s"
+chartConfig : Model -> LineChart.Config Datum Msg
+chartConfig model =
+  { y = Axis.default 450 "velocity" .velocity
+  , x = Axis.time 1270 "time" .time
+  , container = containerConfig
+  , interpolation = Interpolation.monotone
+  , intersection = Intersection.default
+  , legends = Legends.default
+  , events = Events.hoverMany Hint
+  , junk = Junk.hoverMany model.hinted formatX formatY
+  , grid = Grid.dots 1 Colors.gray
+  , area = Area.stacked 0.5
+  , line = Line.default
+  , dots = Dots.custom (Dots.empty 5 1)
+  }
+
+
+containerConfig : Container.Config Msg
+containerConfig =
+  Container.custom
+    { attributesHtml = []
+    , attributesSvg = []
+    , size = Container.relative
+    , margin = Container.Margin 30 100 30 70
+    , id = "line-chart-area"
+    }
+
+
+formatX : Datum -> String
+formatX datum =
+  Date.Format.format "%e. %b, %Y" (Date.fromTime datum.time)
+
+
+formatY : Datum -> String
+formatY datum =
+  toString (round100 datum.velocity) ++ " m/s"
 
 
 
@@ -200,14 +216,20 @@ source =
 
   type alias Model =
     { data : Data
-    , hinted : List Coordinate.Point
+    , hinted : List Datum
     }
 
 
   type alias Data =
-    { nora : List Coordinate.Point
-    , noah : List Coordinate.Point
-    , nina : List Coordinate.Point
+    { nora : List Datum
+    , noah : List Datum
+    , nina : List Datum
+    }
+
+
+  type alias Datum =
+    { time : Time.Time
+    , velocity : Float
     }
 
 
@@ -220,12 +242,12 @@ source =
     ( { data = Data [] [] []
       , hinted = []
       }
-    , getNumbers
+    , genVelocities
     )
 
 
-  getNumbers : Cmd Msg
-  getNumbers =
+  genVelocities : Cmd Msg
+  genVelocities =
     let
       genNumbers =
         Random.list 40 (Random.float 5 20)
@@ -243,17 +265,23 @@ source =
     { model | data = Data (toData n1) (toData n2) (toData n3) }
 
 
-  toData : List Float -> List Coordinate.Point
+  toData : List Float -> List Datum
   toData numbers =
-    List.indexedMap (\\i -> Coordinate.Point (toDate i)) numbers
+    let 
+      toDatum index velocity = 
+        Datum (indexToTime index) velocity 
+    in
+    List.indexedMap toDatum numbers
 
 
-  toDate : Int -> Time.Time
-  toDate index =
-    Time.hour * 24 * 356 * 45 + Time.hour * 24 * 30 + Time.hour * 1 * toFloat index
+  indexToTime : Int -> Time.Time
+  indexToTime index =
+    Time.hour * 24 * 356 * 45 + -- 45 years
+    Time.hour * 24 * 30 + -- a month
+    Time.hour * 1 * toFloat index -- hours from first datum
 
 
-  setHint : List Coordinate.Point -> Model -> Model
+  setHint : List Datum -> Model -> Model
   setHint hinted model =
     { model | hinted = hinted }
 
@@ -264,7 +292,7 @@ source =
 
   type Msg
     = RecieveNumbers ( List Float, List Float, List Float )
-    | Hint (List Coordinate.Point)
+    | Hint (List Datum)
 
 
   update : Msg -> Model -> ( Model, Cmd Msg )
@@ -292,44 +320,55 @@ source =
 
   view : Model -> Html.Html Msg
   view model =
-    Html.div [] [ chart model ]
-
-
-
-  -- CHART
-
-
-  chart : Model -> Html.Html Msg
-  chart model =
-    LineChart.viewCustom
-      { y = Axis.default 450 "velocity" .y
-      , x = Axis.time 1270 "time" .x
-      , container = Container.spaced "line-chart-area" 30 100 60 70
-      , interpolation = Interpolation.monotone
-      , intersection = Intersection.default
-      , legends = Legends.default
-      , events = Events.hoverMany Hint
-      , junk = Junk.hoverMany model.hinted formatX formatY
-      , grid = Grid.dots 1 Colors.gray
-      , area = Area.stacked 0.5
-      , line = Line.default
-      , dots = Dots.custom (Dots.empty 5 1)
-      }
-      [ LineChart.line Colors.pink Dots.diamond "Nora" model.data.nora
-      , LineChart.line Colors.cyan Dots.circle "Noah" model.data.noah
-      , LineChart.line Colors.blue Dots.triangle "Nina" model.data.nina
+    Html.div [] 
+      [ LineChart.viewCustom (chartConfig model) 
+          [ LineChart.line Colors.pink Dots.diamond  "Nora" model.data.nora
+          , LineChart.line Colors.cyan Dots.circle   "Noah" model.data.noah
+          , LineChart.line Colors.blue Dots.triangle "Nina" model.data.nina
+          ]
       ]
 
 
-  formatX : Coordinate.Point -> String
-  formatX =
-    .x >> Date.fromTime >> Date.Format.format "%e. %b, %Y"
+
+  -- CHART CONFIG
 
 
-  formatY : Coordinate.Point -> String
-  formatY data =
-    let velocity = round100 data.y in
-    toString velocity ++ " m/s"
+  chartConfig : Model -> LineChart.Config Datum Msg
+  chartConfig model =
+    { y = Axis.default 450 "velocity" .velocity
+    , x = Axis.time 1270 "time" .time
+    , container = containerConfig
+    , interpolation = Interpolation.monotone
+    , intersection = Intersection.default
+    , legends = Legends.default
+    , events = Events.hoverMany Hint
+    , junk = Junk.hoverMany model.hinted formatX formatY
+    , grid = Grid.dots 1 Colors.gray
+    , area = Area.stacked 0.5
+    , line = Line.default
+    , dots = Dots.custom (Dots.empty 5 1)
+    }
+
+
+  containerConfig : Container.Config Msg
+  containerConfig =
+    Container.custom
+      { attributesHtml = []
+      , attributesSvg = []
+      , size = Container.relative
+      , margin = Container.Margin 30 100 30 70
+      , id = "line-chart-area"
+      }
+
+
+  formatX : Datum -> String
+  formatX datum =
+    Date.Format.format "%e. %b, %Y" (Date.fromTime datum.time)
+
+
+  formatY : Datum -> String
+  formatY datum =
+    toString (round100 datum.velocity) ++ " m/s"
 
 
 
@@ -339,6 +378,7 @@ source =
   round100 : Float -> Float
   round100 float =
     toFloat (round (float * 100)) / 100
+
 
 
 

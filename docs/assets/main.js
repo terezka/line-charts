@@ -19465,27 +19465,32 @@ var _user$project$LineChart$Config = function (a) {
 	};
 };
 
-var _user$project$Area$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hinted : List Coordinate.Point\n    }\n\n\n  type alias Data =\n    { nora : List Coordinate.Point\n    , noah : List Coordinate.Point\n    , nina : List Coordinate.Point\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hinted = []\n      }\n    , getNumbers\n    )\n\n\n  getNumbers : Cmd Msg\n  getNumbers =\n    let\n      genNumbers =\n        Random.list 40 (Random.float 5 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveNumbers\n\n\n\n  -- API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Coordinate.Point\n  toData numbers =\n    List.indexedMap (\\i -> Coordinate.Point (toDate i)) numbers\n\n\n  toDate : Int -> Time.Time\n  toDate index =\n    Time.hour * 24 * 356 * 45 + Time.hour * 24 * 30 + Time.hour * 1 * toFloat index\n\n\n  setHint : List Coordinate.Point -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveNumbers ( List Float, List Float, List Float )\n    | Hint (List Coordinate.Point)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveNumbers numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint points ->\n        model\n          |> setHint points\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div [] [ chart model ]\n\n\n\n  -- CHART\n\n\n  chart : Model -> Html.Html Msg\n  chart model =\n    LineChart.viewCustom\n      { y = Axis.default 450 \"velocity\" .y\n      , x = Axis.time 1270 \"time\" .x\n      , container = Container.spaced \"line-chart-area\" 30 100 60 70\n      , interpolation = Interpolation.monotone\n      , intersection = Intersection.default\n      , legends = Legends.default\n      , events = Events.hoverMany Hint\n      , junk = Junk.hoverMany model.hinted formatX formatY\n      , grid = Grid.dots 1 Colors.gray\n      , area = Area.stacked 0.5\n      , line = Line.default\n      , dots = Dots.custom (Dots.empty 5 1)\n      }\n      [ LineChart.line Colors.pink Dots.diamond \"Nora\" model.data.nora\n      , LineChart.line Colors.cyan Dots.circle \"Noah\" model.data.noah\n      , LineChart.line Colors.blue Dots.triangle \"Nina\" model.data.nina\n      ]\n\n\n  formatX : Coordinate.Point -> String\n  formatX =\n    .x >> Date.fromTime >> Date.Format.format \"%e. %b, %Y\"\n\n\n  formatY : Coordinate.Point -> String\n  formatY data =\n    let velocity = round100 data.y in\n    toString velocity ++ \" m/s\"\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n\n  -- PROGRAM \n\n\n  main : Program Never Model Msg\n  main =\n    Html.program\n      { init = init\n      , update = update\n      , view = view\n      , subscriptions = always Sub.none\n      }\n\n\n  ';
+var _user$project$Area$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hinted : List Datum\n    }\n\n\n  type alias Data =\n    { nora : List Datum\n    , noah : List Datum\n    , nina : List Datum\n    }\n\n\n  type alias Datum =\n    { time : Time.Time\n    , velocity : Float\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hinted = []\n      }\n    , genVelocities\n    )\n\n\n  genVelocities : Cmd Msg\n  genVelocities =\n    let\n      genNumbers =\n        Random.list 40 (Random.float 5 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveNumbers\n\n\n\n  -- API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Datum\n  toData numbers =\n    let \n      toDatum index velocity = \n        Datum (indexToTime index) velocity \n    in\n    List.indexedMap toDatum numbers\n\n\n  indexToTime : Int -> Time.Time\n  indexToTime index =\n    Time.hour * 24 * 356 * 45 + -- 45 years\n    Time.hour * 24 * 30 + -- a month\n    Time.hour * 1 * toFloat index -- hours from first datum\n\n\n  setHint : List Datum -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveNumbers ( List Float, List Float, List Float )\n    | Hint (List Datum)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveNumbers numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint points ->\n        model\n          |> setHint points\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div [] \n      [ LineChart.viewCustom (chartConfig model) \n          [ LineChart.line Colors.pink Dots.diamond  \"Nora\" model.data.nora\n          , LineChart.line Colors.cyan Dots.circle   \"Noah\" model.data.noah\n          , LineChart.line Colors.blue Dots.triangle \"Nina\" model.data.nina\n          ]\n      ]\n\n\n\n  -- CHART CONFIG\n\n\n  chartConfig : Model -> LineChart.Config Datum Msg\n  chartConfig model =\n    { y = Axis.default 450 \"velocity\" .velocity\n    , x = Axis.time 1270 \"time\" .time\n    , container = containerConfig\n    , interpolation = Interpolation.monotone\n    , intersection = Intersection.default\n    , legends = Legends.default\n    , events = Events.hoverMany Hint\n    , junk = Junk.hoverMany model.hinted formatX formatY\n    , grid = Grid.dots 1 Colors.gray\n    , area = Area.stacked 0.5\n    , line = Line.default\n    , dots = Dots.custom (Dots.empty 5 1)\n    }\n\n\n  containerConfig : Container.Config Msg\n  containerConfig =\n    Container.custom\n      { attributesHtml = []\n      , attributesSvg = []\n      , size = Container.relative\n      , margin = Container.Margin 30 100 30 70\n      , id = \"line-chart-area\"\n      }\n\n\n  formatX : Datum -> String\n  formatX datum =\n    Date.Format.format \"%e. %b, %Y\" (Date.fromTime datum.time)\n\n\n  formatY : Datum -> String\n  formatY datum =\n    toString (round100 datum.velocity) ++ \" m/s\"\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n\n\n  -- PROGRAM \n\n\n  main : Program Never Model Msg\n  main =\n    Html.program\n      { init = init\n      , update = update\n      , view = view\n      , subscriptions = always Sub.none\n      }\n\n\n  ';
 var _user$project$Area$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
 };
-var _user$project$Area$formatY = function (data) {
-	var velocity = _user$project$Area$round100(data.y);
+var _user$project$Area$formatY = function (datum) {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
-		_elm_lang$core$Basics$toString(velocity),
+		_elm_lang$core$Basics$toString(
+			_user$project$Area$round100(datum.velocity)),
 		' m/s');
 };
-var _user$project$Area$formatX = function (_p0) {
+var _user$project$Area$formatX = function (datum) {
 	return A2(
 		_mgold$elm_date_format$Date_Format$format,
 		'%e. %b, %Y',
-		_elm_lang$core$Date$fromTime(
-			function (_) {
-				return _.x;
-			}(_p0)));
+		_elm_lang$core$Date$fromTime(datum.time));
 };
+var _user$project$Area$containerConfig = _user$project$LineChart_Container$custom(
+	{
+		attributesHtml: {ctor: '[]'},
+		attributesSvg: {ctor: '[]'},
+		size: _user$project$LineChart_Container$relative,
+		margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 30, 70),
+		id: 'line-chart-area'
+	});
 var _user$project$Area$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -19496,17 +19501,8 @@ var _user$project$Area$setHint = F2(
 			model,
 			{hinted: hinted});
 	});
-var _user$project$Area$toDate = function (index) {
+var _user$project$Area$indexToTime = function (index) {
 	return ((((_elm_lang$core$Time$hour * 24) * 356) * 45) + ((_elm_lang$core$Time$hour * 24) * 30)) + ((_elm_lang$core$Time$hour * 1) * _elm_lang$core$Basics$toFloat(index));
-};
-var _user$project$Area$toData = function (numbers) {
-	return A2(
-		_elm_lang$core$List$indexedMap,
-		function (i) {
-			return _user$project$LineChart_Coordinate$Point(
-				_user$project$Area$toDate(i));
-		},
-		numbers);
 };
 var _user$project$Area$Model = F2(
 	function (a, b) {
@@ -19516,87 +19512,79 @@ var _user$project$Area$Data = F3(
 	function (a, b, c) {
 		return {nora: a, noah: b, nina: c};
 	});
+var _user$project$Area$Datum = F2(
+	function (a, b) {
+		return {time: a, velocity: b};
+	});
+var _user$project$Area$toData = function (numbers) {
+	var toDatum = F2(
+		function (index, velocity) {
+			return A2(
+				_user$project$Area$Datum,
+				_user$project$Area$indexToTime(index),
+				velocity);
+		});
+	return A2(_elm_lang$core$List$indexedMap, toDatum, numbers);
+};
 var _user$project$Area$setData = F2(
-	function (_p1, model) {
-		var _p2 = _p1;
+	function (_p0, model) {
+		var _p1 = _p0;
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				data: A3(
 					_user$project$Area$Data,
-					_user$project$Area$toData(_p2._0),
-					_user$project$Area$toData(_p2._1),
-					_user$project$Area$toData(_p2._2))
+					_user$project$Area$toData(_p1._0),
+					_user$project$Area$toData(_p1._1),
+					_user$project$Area$toData(_p1._2))
 			});
 	});
 var _user$project$Area$update = F2(
 	function (msg, model) {
-		var _p3 = msg;
-		if (_p3.ctor === 'RecieveNumbers') {
+		var _p2 = msg;
+		if (_p2.ctor === 'RecieveNumbers') {
 			return A2(
 				_user$project$Area$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Area$setData, _p3._0, model));
+				A2(_user$project$Area$setData, _p2._0, model));
 		} else {
 			return A2(
 				_user$project$Area$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Area$setHint, _p3._0, model));
+				A2(_user$project$Area$setHint, _p2._0, model));
 		}
 	});
 var _user$project$Area$Hint = function (a) {
 	return {ctor: 'Hint', _0: a};
 };
-var _user$project$Area$chart = function (model) {
-	return A2(
-		_user$project$LineChart$viewCustom,
-		{
-			y: A3(
-				_user$project$LineChart_Axis$default,
-				450,
-				'velocity',
-				function (_) {
-					return _.y;
-				}),
-			x: A3(
-				_user$project$LineChart_Axis$time,
-				1270,
-				'time',
-				function (_) {
-					return _.x;
-				}),
-			container: _user$project$LineChart_Container$custom(
-				{
-					attributesHtml: {ctor: '[]'},
-					attributesSvg: {ctor: '[]'},
-					size: _user$project$LineChart_Container$relative,
-					margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 30, 70),
-					id: 'line-chart-area'
-				}),
-			interpolation: _user$project$LineChart_Interpolation$monotone,
-			intersection: _user$project$LineChart_Axis_Intersection$default,
-			legends: _user$project$LineChart_Legends$default,
-			events: _user$project$LineChart_Events$hoverMany(_user$project$Area$Hint),
-			junk: A3(_user$project$LineChart_Junk$hoverMany, model.hinted, _user$project$Area$formatX, _user$project$Area$formatY),
-			grid: A2(_user$project$LineChart_Grid$dots, 1, _user$project$LineChart_Colors$gray),
-			area: _user$project$LineChart_Area$stacked(0.5),
-			line: _user$project$LineChart_Line$default,
-			dots: _user$project$LineChart_Dots$custom(
-				A2(_user$project$LineChart_Dots$empty, 5, 1))
-		},
-		{
-			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$diamond, 'Nora', model.data.nora),
-			_1: {
-				ctor: '::',
-				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Noah', model.data.noah),
-				_1: {
-					ctor: '::',
-					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$triangle, 'Nina', model.data.nina),
-					_1: {ctor: '[]'}
-				}
-			}
-		});
+var _user$project$Area$chartConfig = function (model) {
+	return {
+		y: A3(
+			_user$project$LineChart_Axis$default,
+			450,
+			'velocity',
+			function (_) {
+				return _.velocity;
+			}),
+		x: A3(
+			_user$project$LineChart_Axis$time,
+			1270,
+			'time',
+			function (_) {
+				return _.time;
+			}),
+		container: _user$project$Area$containerConfig,
+		interpolation: _user$project$LineChart_Interpolation$monotone,
+		intersection: _user$project$LineChart_Axis_Intersection$default,
+		legends: _user$project$LineChart_Legends$default,
+		events: _user$project$LineChart_Events$hoverMany(_user$project$Area$Hint),
+		junk: A3(_user$project$LineChart_Junk$hoverMany, model.hinted, _user$project$Area$formatX, _user$project$Area$formatY),
+		grid: A2(_user$project$LineChart_Grid$dots, 1, _user$project$LineChart_Colors$gray),
+		area: _user$project$LineChart_Area$stacked(0.5),
+		line: _user$project$LineChart_Line$default,
+		dots: _user$project$LineChart_Dots$custom(
+			A2(_user$project$LineChart_Dots$empty, 5, 1))
+	};
 };
 var _user$project$Area$view = function (model) {
 	return A2(
@@ -19604,14 +19592,29 @@ var _user$project$Area$view = function (model) {
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _user$project$Area$chart(model),
+			_0: A2(
+				_user$project$LineChart$viewCustom,
+				_user$project$Area$chartConfig(model),
+				{
+					ctor: '::',
+					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$diamond, 'Nora', model.data.nora),
+					_1: {
+						ctor: '::',
+						_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Noah', model.data.noah),
+						_1: {
+							ctor: '::',
+							_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$triangle, 'Nina', model.data.nina),
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
 			_1: {ctor: '[]'}
 		});
 };
 var _user$project$Area$RecieveNumbers = function (a) {
 	return {ctor: 'RecieveNumbers', _0: a};
 };
-var _user$project$Area$getNumbers = function () {
+var _user$project$Area$genVelocities = function () {
 	var genNumbers = A2(
 		_elm_lang$core$Random$list,
 		40,
@@ -19639,7 +19642,7 @@ var _user$project$Area$init = {
 			{ctor: '[]'}),
 		hinted: {ctor: '[]'}
 	},
-	_1: _user$project$Area$getNumbers
+	_1: _user$project$Area$genVelocities
 };
 var _user$project$Area$main = _elm_lang$html$Html$program(
 	{
