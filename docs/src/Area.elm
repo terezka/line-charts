@@ -3,6 +3,7 @@ module Area exposing (Model, init, Msg, update, view, source)
 import Html
 import Time
 import Random
+import Random.Pipeline
 import Date
 import Date.Format
 import LineChart
@@ -21,17 +22,6 @@ import LineChart.Container as Container
 import LineChart.Coordinate as Coordinate
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
-
-
-
-main : Program Never Model Msg
-main =
-  Html.program
-    { init = init
-    , update = update
-    , view = view
-    , subscriptions = always Sub.none
-    }
 
 
 
@@ -66,43 +56,17 @@ init =
   ( { data = Data [] [] []
     , hinted = []
     }
-  , genVelocities
+  , generateData
   )
-
-
-genVelocities : Cmd Msg
-genVelocities =
-  let
-    genNumbers =
-      Random.list 40 (Random.float 5 20)
-  in
-  Random.map3 (,,) genNumbers genNumbers genNumbers
-    |> Random.generate RecieveNumbers
 
 
 
 -- API
 
 
-setData : ( List Float, List Float, List Float ) -> Model -> Model
-setData ( n1, n2, n3 ) model =
-  { model | data = Data (toData n1) (toData n2) (toData n3) }
-
-
-toData : List Float -> List Datum
-toData numbers =
-  let 
-    toDatum index velocity = 
-      Datum (indexToTime index) velocity 
-  in
-  List.indexedMap toDatum numbers
-
-
-indexToTime : Int -> Time.Time
-indexToTime index =
-  Time.hour * 24 * 356 * 45 + -- 45 years
-  Time.hour * 24 * 30 + -- a month
-  Time.hour * 1 * toFloat index -- hours from first datum
+setData : Data -> Model -> Model
+setData data model =
+  { model | data = data }
 
 
 setHint : List Datum -> Model -> Model
@@ -115,16 +79,16 @@ setHint hinted model =
 
 
 type Msg
-  = RecieveNumbers ( List Float, List Float, List Float )
+  = RecieveData Data
   | Hint (List Datum)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveNumbers numbers ->
+    RecieveData data ->
       model
-        |> setData numbers
+        |> setData data
         |> addCmd Cmd.none
 
     Hint points ->
@@ -205,6 +169,56 @@ round100 float =
 
 
 
+-- GENERATE DATA
+
+
+generateData : Cmd Msg
+generateData =
+  let
+    genNumbers =
+      Random.list 40 (Random.float 5 20)
+
+    compile a b c =
+      Data (toData a) (toData b) (toData c)
+  in
+  Random.Pipeline.generate compile
+    |> Random.Pipeline.with genNumbers
+    |> Random.Pipeline.with genNumbers
+    |> Random.Pipeline.with genNumbers
+    |> Random.Pipeline.send RecieveData
+
+
+toData : List Float -> List Datum
+toData numbers =
+  let 
+    toDatum index velocity = 
+      Datum (indexToTime index) velocity 
+  in
+  List.indexedMap toDatum numbers
+
+
+indexToTime : Int -> Time.Time
+indexToTime index =
+  Time.hour * 24 * 365 * 45 + -- 45 years
+  Time.hour * 24 * 30 + -- a month
+  Time.hour * 1 * toFloat index -- hours from first datum
+
+
+
+-- PROGRAM 
+
+
+main : Program Never Model Msg
+main =
+  Html.program
+    { init = init
+    , update = update
+    , view = view
+    , subscriptions = always Sub.none
+    }
+
+
+
 -- SOURCE 
 
 
@@ -242,18 +256,18 @@ source =
     ( { data = Data [] [] []
       , hinted = []
       }
-    , genVelocities
+    , generateData
     )
 
 
-  genVelocities : Cmd Msg
-  genVelocities =
+  generateData : Cmd Msg
+  generateData =
     let
       genNumbers =
         Random.list 40 (Random.float 5 20)
     in
     Random.map3 (,,) genNumbers genNumbers genNumbers
-      |> Random.generate RecieveNumbers
+      |> Random.generate RecieveData
 
 
 
@@ -291,14 +305,14 @@ source =
 
 
   type Msg
-    = RecieveNumbers ( List Float, List Float, List Float )
+    = RecieveData ( List Float, List Float, List Float )
     | Hint (List Datum)
 
 
   update : Msg -> Model -> ( Model, Cmd Msg )
   update msg model =
     case msg of
-      RecieveNumbers numbers ->
+      RecieveData numbers ->
         model
           |> setData numbers
           |> addCmd Cmd.none

@@ -4,7 +4,11 @@ import Html
 import Html.Attributes
 import Svg
 import Svg.Attributes
+import Time
+import Date
+import Date.Format
 import Random
+import Random.Pipeline
 import LineChart
 import LineChart.Junk as Junk
 import LineChart.Area as Area
@@ -47,7 +51,7 @@ type alias Model =
   , hovered : Maybe Float
   , selection : Maybe Selection
   , dragging : Bool
-  , hinted : Maybe Coordinate.Point
+  , hinted : Maybe Datum
   }
 
 
@@ -58,11 +62,16 @@ type alias Selection =
 
 
 type alias Data =
-  { nora : List Coordinate.Point
-  , noah : List Coordinate.Point
-  , nina : List Coordinate.Point
+  { sanJose : List Datum
+  , sanDiego : List Datum
+  , sanFransisco : List Datum
   }
 
+
+type alias Datum =
+  { time : Time.Time
+  , displacement : Float 
+  }
 
 
 -- INIT
@@ -76,32 +85,49 @@ init =
     , dragging = False
     , hinted = Nothing
     }
-  , getNumbers
+  , generateData
   )
 
 
-getNumbers : Cmd Msg
-getNumbers =
+generateData : Cmd Msg
+generateData =
   let
-    genNumbers =
-      Random.list 201 (Random.float 0 20)
+    genNumbers min max =
+      Random.list 201 (Random.float min max)
+
+    compile a b c =
+      Data (toData a) (toData b) (toData c)
   in
-  Random.map3 (,,) genNumbers genNumbers genNumbers
-    |> Random.generate RecieveNumbers
+  Random.Pipeline.generate compile
+    |> Random.Pipeline.with (genNumbers -10 10)
+    |> Random.Pipeline.with (genNumbers -7 7)
+    |> Random.Pipeline.with (genNumbers -8 8)
+    |> Random.Pipeline.send RecieveData
+
+
+toData : List Float -> List Datum
+toData numbers =
+  let 
+    toDatum index displacement = 
+      Datum (indexToTime index) displacement 
+  in
+  List.indexedMap toDatum numbers
+
+
+indexToTime : Int -> Time.Time
+indexToTime index =
+  Time.hour * 24 * 365 * 45 + -- 45 years
+  Time.hour * 24 * 30 + -- a month
+  Time.minute * 15 * toFloat index -- hours from first datum
 
 
 
 -- MODEL API
 
 
-setData : ( List Float, List Float, List Float ) -> Model -> Model
-setData ( n1, n2, n3 ) model =
-  { model | data = Data (toData n1) (toData n2) (toData n3) }
-
-
-toData : List Float -> List Coordinate.Point
-toData numbers =
-  List.indexedMap (\i -> Coordinate.Point (toFloat i)) numbers
+setData : Data -> Model -> Model
+setData data model =
+  { model | data = data }
 
 
 setSelection : Maybe Selection -> Model -> Model
@@ -119,7 +145,7 @@ setHovered hovered model =
   { model | hovered = hovered }
 
 
-setHint : Maybe Coordinate.Point -> Model -> Model
+setHint : Maybe Datum -> Model -> Model
 setHint hinted model =
   { model | hinted = hinted }
 
@@ -136,7 +162,7 @@ getSelectionXStart hovered model =
 
 
 type Msg
-  = RecieveNumbers ( List Float, List Float, List Float )
+  = RecieveData Data
   -- Chart Main
   | Hold Coordinate.Point
   | Move Coordinate.Point
@@ -144,15 +170,15 @@ type Msg
   | LeaveChart Coordinate.Point
   | LeaveContainer Coordinate.Point
   -- Chart Zoom
-  | Hint (Maybe Coordinate.Point)
+  | Hint (Maybe Datum)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveNumbers numbers ->
+    RecieveData data ->
       model
-        |> setData numbers
+        |> setData data
         |> addCmd Cmd.none
 
     Hold point ->
@@ -198,9 +224,9 @@ update msg model =
         |> setHovered Nothing
         |> addCmd Cmd.none
 
-    Hint point ->
+    Hint datum ->
       model
-        |> setHint point
+        |> setHint datum
         |> addCmd Cmd.none
 
 
@@ -215,7 +241,7 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Debug.log "renderd" <| Html.div [] <|
+  Html.div [] <|
     case model.selection of
       Nothing ->
         [ viewPlaceholder
@@ -266,13 +292,13 @@ viewChartMain model =
     , legends = Legends.default
     , events = events
     , width = 670
-    , margin = Container.Margin 30 100 30 70
+    , margin = Container.Margin 30 165 30 70
     , dots = Dots.custom (Dots.full 0)
-    , id = "line-chart"
+    , id = "line-chart-selection-main"
     }
 
 
-events : Events.Config Coordinate.Point Msg
+events : Events.Config Datum Msg
 events =
   let
     options bool =
@@ -290,7 +316,7 @@ events =
     ]
 
 
-junkConfig : Model -> Junk.Config Coordinate.Point msg
+junkConfig : Model -> Junk.Config Datum msg
 junkConfig model =
   Junk.custom <| \system ->
     { below = below system model.selection
@@ -323,10 +349,17 @@ above : Coordinate.System -> Maybe Float -> List (Svg.Svg msg)
 above system hovered =
   case hovered of
     Just hovered ->
-      [ Junk.vertical system [] hovered ]
+      [ Junk.vertical system [] hovered 
+      , title system
+      ]
 
     Nothing ->
-      []
+      [ title system ]
+
+
+title : Coordinate.System -> Svg.Svg msg 
+title system =
+  Junk.labelAt system system.x.max system.y.max 20 -5 "start" Colors.black "Earthquake in"
 
 
 
@@ -339,14 +372,14 @@ viewChartZoom model selection =
     { range = xAxisRangeConfig selection
     , junk =
         Junk.hoverOne model.hinted
-          [ ( "x", toString << round100 << .x )
-          , ( "y", toString << round100 << .y )
+          [ ( "time", formatX )
+          , ( "displacement", formatY )
           ]
     , events = Events.hoverOne Hint
     , legends = Legends.none
     , dots = Dots.hoverOne model.hinted
     , width = 670
-    , margin = Container.Margin 30 25 30 75
+    , margin = Container.Margin 30 60 30 75
     , id = "line-chart-zoom"
     }
 
@@ -363,6 +396,16 @@ xAxisRangeConfig selection =
   Range.window xStart xEnd
 
 
+formatX : Datum -> String
+formatX datum =
+  Date.Format.format "%l:%M%P, %e. %b, %Y" (Date.fromTime datum.time)
+
+
+formatY : Datum -> String
+formatY datum =
+  toString (round100 datum.displacement)
+
+
 
 
 -- VIEW CHART
@@ -370,10 +413,10 @@ xAxisRangeConfig selection =
 
 type alias Config =
   { range : Range.Config
-  , junk : Junk.Config Coordinate.Point Msg
-  , events : Events.Config Coordinate.Point Msg
-  , legends : Legends.Config Coordinate.Point Msg
-  , dots : Dots.Config Coordinate.Point
+  , junk : Junk.Config Datum Msg
+  , events : Events.Config Datum Msg
+  , legends : Legends.Config Datum Msg
+  , dots : Dots.Config Datum
   , margin : Container.Margin
   , width : Int
   , id : String
@@ -390,15 +433,23 @@ viewChart data { range, junk, events, legends, dots, width, margin, id } =
       ]
   in
   LineChart.viewCustom
-    { y = Axis.default 450 "y" .y
+    { y =
+        Axis.custom
+          { title = Title.atAxisMax 10 0 "displ."
+          , variable = Just << .displacement
+          , pixels = 450
+          , range = Range.padded 20 20
+          , axisLine = AxisLine.rangeFrame Colors.gray
+          , ticks = Ticks.float 5
+          }
     , x =
         Axis.custom
-          { title = Title.default "x"
-          , variable = Just << .x
+          { title = Title.default "time"
+          , variable = Just << .time
           , pixels = width
           , range = range
           , axisLine = AxisLine.rangeFrame Colors.gray
-          , ticks = Ticks.float 5
+          , ticks = Ticks.time 5
           }
     , container =
         Container.custom
@@ -406,7 +457,7 @@ viewChart data { range, junk, events, legends, dots, width, margin, id } =
           , attributesSvg = []
           , size = Container.static
           , margin = margin
-          , id = "chart-id"
+          , id = id
           }
     , interpolation = Interpolation.monotone
     , intersection = Intersection.default
@@ -418,9 +469,9 @@ viewChart data { range, junk, events, legends, dots, width, margin, id } =
     , line = Line.default
     , dots = dots
     }
-    [ LineChart.line Colors.pink Dots.circle "Nora" data.nora
-    , LineChart.line Colors.cyan Dots.circle "Noah" data.noah
-    , LineChart.line Colors.blue Dots.circle "Nina" data.nina
+    [ LineChart.line Colors.pink Dots.circle "San Jose" data.sanJose
+    , LineChart.line Colors.cyan Dots.circle "San Fransisco" data.sanFransisco
+    , LineChart.line Colors.blue Dots.circle "San Diego" data.sanDiego
     ]
 
 
@@ -449,7 +500,7 @@ source =
     , hovered : Maybe Float
     , selection : Maybe Selection
     , dragging : Bool
-    , hinted : Maybe Coordinate.Point
+    , hinted : Maybe Datum
     }
 
 
@@ -460,9 +511,9 @@ source =
 
 
   type alias Data =
-    { nora : List Coordinate.Point
-    , noah : List Coordinate.Point
-    , nina : List Coordinate.Point
+    { nora : List Datum
+    , noah : List Datum
+    , nina : List Datum
     }
 
 
@@ -478,18 +529,18 @@ source =
       , dragging = False
       , hinted = Nothing
       }
-    , getNumbers
+    , generateData
     )
 
 
-  getNumbers : Cmd Msg
-  getNumbers =
+  generateData : Cmd Msg
+  generateData =
     let
       genNumbers =
         Random.list 201 (Random.float 0 20)
     in
     Random.map3 (,,) genNumbers genNumbers genNumbers
-      |> Random.generate RecieveNumbers
+      |> Random.generate RecieveData
 
 
 
@@ -501,9 +552,9 @@ source =
     { model | data = Data (toData n1) (toData n2) (toData n3) }
 
 
-  toData : List Float -> List Coordinate.Point
+  toData : List Float -> List Datum
   toData numbers =
-    List.indexedMap (\\i -> Coordinate.Point (toFloat i)) numbers
+    List.indexedMap (\\i -> Datum (toFloat i)) numbers
 
 
   setSelection : Maybe Selection -> Model -> Model
@@ -521,7 +572,7 @@ source =
     { model | hovered = hovered }
 
 
-  setHint : Maybe Coordinate.Point -> Model -> Model
+  setHint : Maybe Datum -> Model -> Model
   setHint hinted model =
     { model | hinted = hinted }
 
@@ -538,21 +589,21 @@ source =
 
 
   type Msg
-    = RecieveNumbers ( List Float, List Float, List Float )
+    = RecieveData ( List Float, List Float, List Float )
     -- Chart Main
-    | Hold Coordinate.Point
-    | Move Coordinate.Point
-    | Drop Coordinate.Point
-    | LeaveChart Coordinate.Point
-    | LeaveContainer Coordinate.Point
+    | Hold Datum
+    | Move Datum
+    | Drop Datum
+    | LeaveChart Datum
+    | LeaveContainer Datum
     -- Chart Zoom
-    | Hint (Maybe Coordinate.Point)
+    | Hint (Maybe Datum)
 
 
   update : Msg -> Model -> ( Model, Cmd Msg )
   update msg model =
     case msg of
-      RecieveNumbers numbers ->
+      RecieveData numbers ->
         model
           |> setData numbers
           |> addCmd Cmd.none
@@ -674,7 +725,7 @@ source =
       }
 
 
-  events : Events.Config Coordinate.Point Msg
+  events : Events.Config Datum Msg
   events =
     let
       options bool =
@@ -692,7 +743,7 @@ source =
       ]
 
 
-  junkConfig : Model -> Junk.Config Coordinate.Point msg
+  junkConfig : Model -> Junk.Config Datum msg
   junkConfig model =
     Junk.custom <| \\system ->
       { below = below system model.selection
@@ -772,10 +823,10 @@ source =
 
   type alias Config =
     { range : Range.Config
-    , junk : Junk.Config Coordinate.Point Msg
-    , events : Events.Config Coordinate.Point Msg
-    , legends : Legends.Config Coordinate.Point Msg
-    , dots : Dots.Config Coordinate.Point
+    , junk : Junk.Config Datum Msg
+    , events : Events.Config Datum Msg
+    , legends : Legends.Config Datum Msg
+    , dots : Dots.Config Datum
     , margin : Container.Margin
     , width : Int
     , id : String

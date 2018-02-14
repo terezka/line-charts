@@ -3,7 +3,7 @@ module LineChart.Junk exposing
   , Transfrom, transform, move, offset, placed
   , vertical, horizontal, verticalCustom, horizontalCustom
   , rectangle, circle
-  , label, labelPlaced
+  , label, labelAt
   , withinChartArea
   , hover, hoverAt
   )
@@ -43,7 +43,7 @@ _What is an axis-range? See the `Axis.Range` module._
 @docs rectangle, circle
 
 ## Label
-@docs label, labelPlaced
+@docs label, labelAt
 
 ## Placing
 @docs placed, Transfrom, transform, move, offset
@@ -354,16 +354,16 @@ Arguments:
       Junk.custom <| \system ->
         { below = []
         , above =
-            [ Junk.labelPlaced system 2  1.5 0 -10 "middle" Color.black "← axis range →"
-            , Junk.labelPlaced system 2 -1.5 0  18 "middle" Color.black "← data range →"
+            [ Junk.labelAt system 2  1.5 0 -10 "middle" Colors.black "← axis range →"
+            , Junk.labelAt system 2 -1.5 0  18 "middle" Colors.black "← data range →"
             -- Try changing the numbers!
             ]
         , html = []
         }
 
 -}
-labelPlaced : Coordinate.System -> Float -> Float -> Float -> Float -> String -> Color.Color -> String -> Svg.Svg msg
-labelPlaced system x y xo yo anchor color text =
+labelAt : Coordinate.System -> Float -> Float -> Float -> Float -> String -> Color.Color -> String -> Svg.Svg msg
+labelAt system x y xo yo anchor color text =
   Svg.g
     [ transform [ move system x y, offset xo yo ]
     , Attributes.style <| "text-anchor: " ++ anchor ++ ";"

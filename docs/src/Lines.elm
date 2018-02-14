@@ -1,7 +1,9 @@
 module Lines exposing (Model, init, Msg, update, view, source)
 
 import Html
+import Svg
 import Random
+import Random.Pipeline
 import Time
 import Color.Manipulate as Manipulate
 import LineChart
@@ -28,34 +30,28 @@ import LineChart.Axis.Intersection as Intersection
 
 
 
-main : Program Never Model Msg
-main =
-  Html.program
-    { init = init
-    , update = update
-    , view = view
-    , subscriptions = always Sub.none
-    }
-
-
-
 -- MODEL
 
 
 type alias Model =
-  { data : Data Coordinate.Point
-  , hinted : Maybe Coordinate.Point
+  { data : Data
+  , hinted : Maybe Datum
   }
 
 
-type alias Data a =
-  { a : List a
-  , b : List a
-  , c : List a
-  , d : List a
-  , e : List a
-  , f : List a
-  , g : List a
+type alias Data =
+  { denmark : List Datum
+  , sweden : List Datum
+  , iceland : List Datum
+  , greenland : List Datum
+  , norway : List Datum
+  , finland : List Datum
+  }
+
+
+type alias Datum =
+  { time : Time.Time
+  , rain : Float
   }
 
 
@@ -65,64 +61,23 @@ type alias Data a =
 
 init : ( Model, Cmd Msg )
 init =
-  ( { data = Data [] [] [] [] [] [] []
+  ( { data = Data [] [] [] [] [] []
     , hinted = Nothing
     }
-  , getNumbers
+  , generateData
   )
-
-
-getNumbers : Cmd Msg
-getNumbers =
-  let
-    genNumbers min max =
-      Random.list 10 (Random.float min max)
-
-    getFirst =
-      Random.map5 (,,,,)
-        (genNumbers 50 90)
-        (genNumbers 20 60)
-        (genNumbers 30 60)
-        (genNumbers 40 90)
-        (genNumbers 80 100)
-
-    getSecond =
-      Random.map2 (,)
-        (genNumbers 70 90)
-        (genNumbers 40 70)
-
-    together (a,b,c,d,e) (f,g) =
-      Data a b c d e f g
-  in
-  Random.generate RecieveNumbers <|
-    Random.map2 together getFirst getSecond
 
 
 
 -- API
 
 
-setData : Data Float -> Model -> Model
-setData { a, b, c, d, e, f, g } model =
-  { model | data = Data (toData a) (toData b) (toData c) (toData d) (toData e) (toData f) (toData g) }
+setData : Data -> Model -> Model
+setData data model =
+  { model | data = data }
 
 
-toData : List Float -> List Coordinate.Point
-toData numbers =
-  List.indexedMap (\i n -> Coordinate.Point (toDate i) n) numbers
-
-
-toDate : Int -> Time.Time
-toDate index =
-  Time.hour * 24 * 356 * 30 + xInterval * toFloat index
-
-
-xInterval : Time.Time
-xInterval =
-  Time.hour * 24 * 31
-
-
-setHint : Maybe Coordinate.Point -> Model -> Model
+setHint : Maybe Datum -> Model -> Model
 setHint hinted model =
   { model | hinted = hinted }
 
@@ -132,14 +87,14 @@ setHint hinted model =
 
 
 type Msg
-  = RecieveNumbers (Data Float)
-  | Hint (Maybe Coordinate.Point)
+  = RecieveData Data
+  | Hint (Maybe Datum)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveNumbers numbers ->
+    RecieveData numbers ->
       model
         |> setData numbers
         |> addCmd Cmd.none
@@ -161,102 +116,91 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [] [ chart model ]
-
-
-
--- CHART
-
-
-chart : Model -> Html.Html Msg
-chart model =
-  LineChart.viewCustom
-    { y =
-        Axis.custom
-          { title = Title.atDataMax -10 -10 "Rain"
-          , variable = Just << .y
-          , pixels = 450
-          , range = Range.padded 20 20
-          , axisLine = AxisLine.rangeFrame Colors.gray
-          , ticks = Ticks.custom <| \dataRange axisRange ->
-              List.indexedMap rainTick [ dataRange.min, middle dataRange, dataRange.max ]
-          }
-    , x =
-        Axis.custom
-          { title = Title.default "Time"
-          , variable = Just << .x
-          , pixels = 1270
-          , range = Range.padded 20 20
-          , axisLine = AxisLine.none
-          , ticks = Ticks.timeCustom 10 timeTick
-          }
-    , container =
-        Container.custom
-          { attributesHtml = []
-          , attributesSvg = []
-          , size = Container.relative
-          , margin = Container.Margin 30 180 30 70
-          , id = "line-chart-lines"
-          }
-    , interpolation = Interpolation.monotone
-    , intersection = Intersection.default
-    , legends = Legends.default
-    , events =
-        Events.custom
-          [ Events.onMouseMove Hint Events.getNearest
-          , Events.onMouseLeave (Hint Nothing)
-          ]
-    , junk = Junk.default
-    , grid = Grid.default
-    , area = Area.default
-    , line = Line.custom (toLineStyle model.hinted)
-    , dots = Dots.custom (Dots.disconnected 4 2)
-    }
-    [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle "Denmark" model.data.a
-    , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle "Sweden" model.data.b
-    , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle "Iceland" model.data.d
-    , LineChart.line (Manipulate.lighten 0   Colors.blue) Dots.circle "Faroe Islands" model.data.f
-    , LineChart.line (Manipulate.lighten 0   Colors.pink) Dots.circle "Norway" model.data.c
-    , LineChart.line (Manipulate.darken  0.2 Colors.pink) Dots.circle "Finland" model.data.e
+  Html.div [] 
+    [ LineChart.viewCustom (chartConfig model) 
+        [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle "Denmark"   model.data.denmark
+        , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle "Sweden"    model.data.sweden
+        , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle "Iceland"   model.data.iceland
+        , LineChart.line (Manipulate.lighten 0   Colors.blue) Dots.circle "Greenland" model.data.greenland
+        , LineChart.line (Manipulate.lighten 0   Colors.pink) Dots.circle "Norway"    model.data.norway
+        , LineChart.line (Manipulate.darken  0.2 Colors.pink) Dots.circle "Finland"   model.data.finland
+        ]
     ]
 
 
-toLineStyle : Maybe Coordinate.Point -> List Coordinate.Point -> Line.Style
-toLineStyle maybeHovered lineData =
-  case maybeHovered of
-    Nothing -> -- No line is hovered
-      Line.style 1 identity
 
-    Just hovered -> -- Some line is hovered
-      if List.any ((==) hovered) lineData then
-        -- It is this one, so make it pop!
-        Line.style 2 identity
-      else
-        -- It is not this one, so hide it a bit
-        Line.style 1 (Manipulate.grayscale)
+-- CHART CONFIG
 
 
-rainTick : Int -> Float -> Tick.Config msg
-rainTick i n =
-  let
-    label =
-      if i == 0 then "bits"
-      else if i == 1 then "some"
-      else "lots"
-  in
+chartConfig : Model -> LineChart.Config Datum Msg
+chartConfig model =
+  { y = yAxisConfig
+  , x = xAxisConfig
+  , container = containerConfig
+  , interpolation = Interpolation.monotone
+  , intersection = Intersection.default
+  , legends = Legends.default
+  , events = eventsConfig
+  , junk = Junk.default
+  , grid = Grid.default
+  , area = Area.default
+  , line = lineConfig model.hinted
+  , dots = Dots.custom (Dots.disconnected 4 2)
+  }
+    
+
+
+-- CHART CONFIG / AXES  
+
+
+yAxisConfig : Axis.Config Datum Msg
+yAxisConfig =
+  Axis.custom
+    { title = Title.atDataMax -10 -10 "Rain"
+    , variable = Just << .rain
+    , pixels = 450
+    , range = Range.padded 20 20
+    , axisLine = AxisLine.rangeFrame Colors.gray
+    , ticks = Ticks.custom <| \dataRange axisRange ->
+        [ tickRain ( dataRange.min, "bits" )
+        , tickRain ( middle dataRange, "some" )
+        , tickRain ( dataRange.max, "lots" )
+        ]
+    }
+
+
+xAxisConfig : Axis.Config Datum Msg
+xAxisConfig =
+  Axis.custom
+    { title = Title.default "Time"
+    , variable = Just << .time
+    , pixels = 1270
+    , range = Range.padded 20 20
+    , axisLine = AxisLine.none
+    , ticks = Ticks.timeCustom 10 tickTime
+    }
+
+
+
+-- CHART CONFIG / AXES / TICKS
+
+
+tickRain : ( Float, String ) -> Tick.Config msg
+tickRain ( value, label ) =
   Tick.custom
-    { position = n
+    { position = value
     , color = Colors.gray
     , width = 1
     , length = 5
     , grid = True
     , direction = Tick.negative
-    , label = Just <| Junk.label Colors.black label
+    , label = Just (tickLabel label)
     }
 
 
-timeTick : Tick.Time -> Tick.Config msg
-timeTick time =
+tickTime : Tick.Time -> Tick.Config msg
+tickTime time =
+  let label = Tick.format time in
   Tick.custom
     { position = time.timestamp
     , color = Colors.gray
@@ -264,8 +208,62 @@ timeTick time =
     , length = 5
     , grid = False
     , direction = Tick.negative
-    , label = Just <| Junk.label Colors.black (Tick.format time)
+    , label = Just (tickLabel label)
     }
+
+
+tickLabel : String -> Svg.Svg msg 
+tickLabel =
+  Junk.label Colors.black
+
+
+
+-- CHART CONFIG / CONTIANER  
+
+
+containerConfig : Container.Config Msg 
+containerConfig =
+  Container.custom
+    { attributesHtml = []
+    , attributesSvg = []
+    , size = Container.relative
+    , margin = Container.Margin 30 180 30 70
+    , id = "line-chart-lines"
+    }
+
+
+
+-- CHART CONFIG / EVENTS  
+
+
+eventsConfig : Events.Config Datum Msg 
+eventsConfig =
+  Events.custom
+    [ Events.onMouseMove Hint Events.getNearest
+    , Events.onMouseLeave (Hint Nothing)
+    ]
+
+
+
+-- CHART CONFIG / LINE
+
+
+lineConfig : Maybe Datum -> Line.Config Datum
+lineConfig maybeHovered =
+  Line.custom (toLineStyle maybeHovered)
+
+
+toLineStyle : Maybe Datum -> List Datum -> Line.Style
+toLineStyle maybeHovered lineData =
+  case maybeHovered of
+    Nothing ->
+      Line.style 1 identity
+
+    Just hovered ->
+      if List.any ((==) hovered) lineData then
+        Line.style 2 identity
+      else
+        Line.style 1 (Manipulate.grayscale)
 
 
 
@@ -283,6 +281,63 @@ middle r =
 
 
 
+-- GENERATE DATA
+
+
+generateData : Cmd Msg
+generateData =
+  let
+    genNumbers min max =
+      Random.list 10 (Random.float min max)
+
+    compile a b c d e f =
+      Data (toData a) (toData b) (toData c) (toData d) (toData e) (toData f)
+  in
+  Random.Pipeline.generate compile
+    |> Random.Pipeline.with (genNumbers 50 90)
+    |> Random.Pipeline.with (genNumbers 20 60)
+    |> Random.Pipeline.with (genNumbers 30 60)
+    |> Random.Pipeline.with (genNumbers 40 90)
+    |> Random.Pipeline.with (genNumbers 80 100)
+    |> Random.Pipeline.with (genNumbers 70 90)
+    |> Random.Pipeline.send RecieveData
+
+
+toData : List Float -> List Datum
+toData numbers =
+  let 
+    toDatum index rain = 
+      Datum (indexToTime index) rain 
+  in
+  List.indexedMap toDatum numbers
+
+
+indexToTime : Int -> Time.Time
+indexToTime index =
+  Time.hour * 24 * 365 * 30 + xInterval * toFloat index
+
+
+xInterval : Time.Time
+xInterval =
+  Time.hour * 24 * 31
+
+
+
+-- PROGRAM 
+
+
+main : Program Never Model Msg
+main =
+  Html.program
+    { init = init
+    , update = update
+    , view = view
+    , subscriptions = always Sub.none
+    }
+
+
+
+
 -- SOURCE
 
 
@@ -293,19 +348,24 @@ source =
 
 
   type alias Model =
-    { data : Data Coordinate.Point
-    , hinted : Maybe Coordinate.Point
+    { data : Data
+    , hinted : Maybe Datum
     }
 
 
-  type alias Data a =
-    { a : List a
-    , b : List a
-    , c : List a
-    , d : List a
-    , e : List a
-    , f : List a
-    , g : List a
+  type alias Data =
+    { denmark : List Datum
+    , sweden : List Datum
+    , iceland : List Datum
+    , greenland : List Datum
+    , norway : List Datum
+    , finland : List Datum
+    }
+
+
+  type alias Datum =
+    { time : Time.Time
+    , rain : Float
     }
 
 
@@ -315,64 +375,23 @@ source =
 
   init : ( Model, Cmd Msg )
   init =
-    ( { data = Data [] [] [] [] [] [] []
+    ( { data = Data [] [] [] [] [] []
       , hinted = Nothing
       }
-    , getNumbers
+    , generateData
     )
-
-
-  getNumbers : Cmd Msg
-  getNumbers =
-    let
-      genNumbers min max =
-        Random.list 10 (Random.float min max)
-
-      getFirst =
-        Random.map5 (,,,,)
-          (genNumbers 50 90)
-          (genNumbers 20 60)
-          (genNumbers 30 60)
-          (genNumbers 40 90)
-          (genNumbers 80 100)
-
-      getSecond =
-        Random.map2 (,)
-          (genNumbers 70 90)
-          (genNumbers 40 70)
-
-      together (a,b,c,d,e) (f,g) =
-        Data a b c d e f g
-    in
-    Random.generate RecieveNumbers <|
-      Random.map2 together getFirst getSecond
 
 
 
   -- API
 
 
-  setData : Data Float -> Model -> Model
-  setData { a, b, c, d, e, f, g } model =
-    { model | data = Data (toData a) (toData b) (toData c) (toData d) (toData e) (toData f) (toData g) }
+  setData : Data -> Model -> Model
+  setData data model =
+    { model | data = data }
 
 
-  toData : List Float -> List Coordinate.Point
-  toData numbers =
-    List.indexedMap (\\i n -> Coordinate.Point (toDate i) n) numbers
-
-
-  toDate : Int -> Time.Time
-  toDate index =
-    Time.hour * 24 * 356 * 30 + xInterval * toFloat index
-
-
-  xInterval : Time.Time
-  xInterval =
-    Time.hour * 24 * 31
-
-
-  setHint : Maybe Coordinate.Point -> Model -> Model
+  setHint : Maybe Datum -> Model -> Model
   setHint hinted model =
     { model | hinted = hinted }
 
@@ -382,14 +401,14 @@ source =
 
 
   type Msg
-    = RecieveNumbers (Data Float)
-    | Hint (Maybe Coordinate.Point)
+    = RecieveData Data
+    | Hint (Maybe Datum)
 
 
   update : Msg -> Model -> ( Model, Cmd Msg )
   update msg model =
     case msg of
-      RecieveNumbers numbers ->
+      RecieveData numbers ->
         model
           |> setData numbers
           |> addCmd Cmd.none
@@ -411,95 +430,91 @@ source =
 
   view : Model -> Html.Html Msg
   view model =
-    Html.div [] [ chart model ]
-
-
-
-  -- CHART
-
-
-  chart : Model -> Html.Html Msg
-  chart model =
-    LineChart.viewCustom
-      { y =
-          Axis.custom
-            { title = Title.atDataMax -10 -10 "Rain"
-            , variable = Just << .y
-            , pixels = 450
-            , range = Range.padded 20 20
-            , axisLine = AxisLine.rangeFrame Colors.gray
-            , ticks = Ticks.custom <| \\dataRange axisRange ->
-                List.indexedMap rainTick [ dataRange.min, middle dataRange, dataRange.max ]
-            }
-      , x =
-          Axis.custom
-            { title = Title.default "Time"
-            , variable = Just << .x
-            , pixels = 1270
-            , range = Range.padded 20 20
-            , axisLine = AxisLine.none
-            , ticks = Ticks.timeCustom 10 timeTick
-            }
-      , container = Container.spaced "line-chart-lines" 30 180 60 70
-      , interpolation = Interpolation.monotone
-      , intersection = Intersection.default
-      , legends = Legends.default
-      , events =
-          Events.custom
-            [ Events.onMouseMove Hint Events.getNearest
-            , Events.onMouseLeave (Hint Nothing)
-            ]
-      , junk = Junk.default
-      , grid = Grid.default
-      , area = Area.default
-      , line = Line.custom (toLineStyle model.hinted)
-      , dots = Dots.custom (Dots.disconnected 4 2)
-      }
-      [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle "Denmark" model.data.a
-      , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle "Sweden" model.data.b
-      , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle "Iceland" model.data.d
-      , LineChart.line (Manipulate.lighten 0   Colors.blue) Dots.circle "Faroe Islands" model.data.f
-      , LineChart.line (Manipulate.lighten 0   Colors.pink) Dots.circle "Norway" model.data.c
-      , LineChart.line (Manipulate.darken  0.2 Colors.pink) Dots.circle "Finland" model.data.e
+    Html.div [] 
+      [ LineChart.viewCustom (chartConfig model) 
+          [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle "Denmark"   model.data.denmark
+          , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle "Sweden"    model.data.sweden
+          , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle "Iceland"   model.data.iceland
+          , LineChart.line (Manipulate.lighten 0   Colors.blue) Dots.circle "Greenland" model.data.greenland
+          , LineChart.line (Manipulate.lighten 0   Colors.pink) Dots.circle "Norway"    model.data.norway
+          , LineChart.line (Manipulate.darken  0.2 Colors.pink) Dots.circle "Finland"   model.data.finland
+          ]
       ]
 
 
-  toLineStyle : Maybe Coordinate.Point -> List Coordinate.Point -> Line.Style
-  toLineStyle maybeHovered lineData =
-    case maybeHovered of
-      Nothing -> -- No line is hovered
-        Line.style 1 identity
 
-      Just hovered -> -- Some line is hovered
-        if List.any ((==) hovered) lineData then
-          -- It is this one, so make it pop!
-          Line.style 2 identity
-        else
-          -- It is not this one, so hide it a bit
-          Line.style 1 (Manipulate.grayscale)
+  -- CHART CONFIG
 
 
-  rainTick : Int -> Float -> Tick.Config msg
-  rainTick i n =
-    let
-      label =
-        if i == 0 then "bits"
-        else if i == 1 then "some"
-        else "lots"
-    in
+  chartConfig : Model -> LineChart.Config Datum Msg
+  chartConfig model =
+    { y = yAxisConfig
+    , x = xAxisConfig
+    , container = containerConfig
+    , interpolation = Interpolation.monotone
+    , intersection = Intersection.default
+    , legends = Legends.default
+    , events = eventsConfig
+    , junk = Junk.default
+    , grid = Grid.default
+    , area = Area.default
+    , line = lineConfig model.hinted
+    , dots = Dots.custom (Dots.disconnected 4 2)
+    }
+      
+
+
+  -- CHART CONFIG / AXES  
+
+
+  yAxisConfig : Axis.Config Datum Msg
+  yAxisConfig =
+    Axis.custom
+      { title = Title.atDataMax -10 -10 "Rain"
+      , variable = Just << .rain
+      , pixels = 450
+      , range = Range.padded 20 20
+      , axisLine = AxisLine.rangeFrame Colors.gray
+      , ticks = Ticks.custom <| \\dataRange axisRange ->
+          [ tickRain ( dataRange.min, "bits" )
+          , tickRain ( middle dataRange, "some" )
+          , tickRain ( dataRange.max, "lots" )
+          ]
+      }
+
+
+  xAxisConfig : Axis.Config Datum Msg
+  xAxisConfig =
+    Axis.custom
+      { title = Title.default "Time"
+      , variable = Just << .time
+      , pixels = 1270
+      , range = Range.padded 20 20
+      , axisLine = AxisLine.none
+      , ticks = Ticks.timeCustom 10 tickTime
+      }
+
+
+
+  -- CHART CONFIG / AXES / TICKS
+
+
+  tickRain : ( Float, String ) -> Tick.Config msg
+  tickRain ( value, label ) =
     Tick.custom
-      { position = n
+      { position = value
       , color = Colors.gray
       , width = 1
       , length = 5
       , grid = True
       , direction = Tick.negative
-      , label = Just <| Junk.label Colors.black label
+      , label = Just (tickLabel label)
       }
 
 
-  timeTick : Tick.Time -> Tick.Config msg
-  timeTick time =
+  tickTime : Tick.Time -> Tick.Config msg
+  tickTime time =
+    let label = Tick.format time in
     Tick.custom
       { position = time.timestamp
       , color = Colors.gray
@@ -507,8 +522,62 @@ source =
       , length = 5
       , grid = False
       , direction = Tick.negative
-      , label = Just <| Junk.label Colors.black (Tick.format time)
+      , label = Just (tickLabel label)
       }
+
+
+  tickLabel : String -> Svg.Svg msg 
+  tickLabel =
+    Junk.label Colors.black
+
+
+
+  -- CHART CONFIG / CONTIANER  
+
+
+  containerConfig : Container.Config Msg 
+  containerConfig =
+    Container.custom
+      { attributesHtml = []
+      , attributesSvg = []
+      , size = Container.relative
+      , margin = Container.Margin 30 180 30 70
+      , id = "line-chart-lines"
+      }
+
+
+
+  -- CHART CONFIG / EVENTS  
+
+
+  eventsConfig : Events.Config Datum Msg 
+  eventsConfig =
+    Events.custom
+      [ Events.onMouseMove Hint Events.getNearest
+      , Events.onMouseLeave (Hint Nothing)
+      ]
+
+
+
+  -- CHART CONFIG / LINE
+
+
+  lineConfig : Maybe Datum -> Line.Config Datum
+  lineConfig maybeHovered =
+    Line.custom (toLineStyle maybeHovered)
+
+
+  toLineStyle : Maybe Datum -> List Datum -> Line.Style
+  toLineStyle maybeHovered lineData =
+    case maybeHovered of
+      Nothing ->
+        Line.style 1 identity
+
+      Just hovered ->
+        if List.any ((==) hovered) lineData then
+          Line.style 2 identity
+        else
+          Line.style 1 (Manipulate.grayscale)
 
 
 
@@ -523,4 +592,61 @@ source =
   middle : Coordinate.Range -> Float
   middle r =
     r.min + (r.max - r.min) / 2
+
+
+
+  -- GENERATE DATA
+
+
+  generateData : Cmd Msg
+  generateData =
+    let
+      genNumbers min max =
+        Random.list 10 (Random.float min max)
+
+      compile a b c d e f =
+        Data (toData a) (toData b) (toData c) (toData d) (toData e) (toData f)
+    in
+    Random.Pipeline.generate compile
+      |> Random.Pipeline.with (genNumbers 50 90)
+      |> Random.Pipeline.with (genNumbers 20 60)
+      |> Random.Pipeline.with (genNumbers 30 60)
+      |> Random.Pipeline.with (genNumbers 40 90)
+      |> Random.Pipeline.with (genNumbers 80 100)
+      |> Random.Pipeline.with (genNumbers 70 90)
+      |> Random.Pipeline.send RecieveData
+
+
+  toData : List Float -> List Datum
+  toData numbers =
+    let 
+      toDatum index rain = 
+        Datum (indexToTime index) rain 
+    in
+    List.indexedMap toDatum numbers
+
+
+  indexToTime : Int -> Time.Time
+  indexToTime index =
+    Time.hour * 24 * 365 * 30 + xInterval * toFloat index
+
+
+  xInterval : Time.Time
+  xInterval =
+    Time.hour * 24 * 31
+
+
+
+  -- PROGRAM 
+
+
+  main : Program Never Model Msg
+  main =
+    Html.program
+      { init = init
+      , update = update
+      , view = view
+      , subscriptions = always Sub.none
+      }
+
   """

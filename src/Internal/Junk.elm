@@ -87,7 +87,9 @@ hoverOneHtml series system toX toY properties hovered =
     viewColorLabel color label =
       Html.p
         [ Html.Attributes.style
-            [ ( "margin", "0" ), ( "color", color ) ]
+            [ ( "margin", "0" )
+            , ( "color", color ) 
+            ]
         ]
         [ Html.text label ]
 
@@ -200,6 +202,7 @@ hoverAt system x y styles view =
     posititonStyles =
       [ ( "left", toString xPercentage ++ "%" )
       , ( "top", toString yPercentage ++ "%" )
+      , ( "margin-right", "-400px" )
       , ( "position", "absolute" )
       , if shouldFlip system x
           then ( "transform", "translateX(-100%)" )
