@@ -32,7 +32,7 @@ type alias Id =
 
 
 
--- INIT 
+-- INIT
 
 
 init : ( Model, Cmd Msg )
@@ -99,7 +99,7 @@ update msg model =
             not model.isSourceOpen
       in
       ( { model | isSourceOpen = isSourceOpen
-        , focused = id 
+        , focused = id
         }
       , setBodyScroll isSourceOpen
       )
@@ -164,13 +164,13 @@ view model =
   Html.div
     [ Html.Attributes.class "view" ]
     [ viewTitle
-    , Html.div 
+    , Html.div
         [ Html.Attributes.class "view__body" ]
         [ viewExample 0 "full" AreaMsg Area.view model.area
         , viewExample 1 "full" SelectionMsg Selection.view model.selection
         , viewExample 2 "full" LinesMsg Lines.view model.lines
         , viewExample 3 "full" SteppedMsg Stepped.view model.stepped
-        , viewExample 4 "half" TicksMsg Ticks.view model.ticks
+        -- , viewExample 4 "half" TicksMsg Ticks.view model.ticks
         ]
     , viewSource model.focused model.isSourceOpen
     ]
@@ -197,7 +197,7 @@ viewTitle =
                 [ Html.Attributes.href "http://package.elm-lang.org/packages/terezka/line-charts/latest" ]
                 [ Html.text "Docs" ]
             ]
-        , Html.p 
+        , Html.p
             [ Html.Attributes.class "view__tag-line" ]
             [ Html.text "A opinionated library for plotting series in SVG." ]
         , Html.p [ Html.Attributes.class "view__tag-line" ]
@@ -211,20 +211,20 @@ viewExample id modifier toMsg view model =
     class =
       "view__example__container view__example__container--" ++ modifier
   in
-  Html.div 
+  Html.div
     [ Html.Attributes.class class ]
     [ Html.map toMsg (Html.Lazy.lazy view model)
-    , Html.button 
+    , Html.button
         [ Html.Attributes.class "view__example__toggle-source"
-        , Html.Events.onClick (Focus id) 
-        ] 
+        , Html.Events.onClick (Focus id)
+        ]
         [ Html.text "see source" ]
     ]
 
 
 viewSource : Id -> Bool -> Html.Html Msg
 viewSource id isSourceOpen =
-  let 
+  let
     classes =
       if isSourceOpen then
         "view__source__container view__source__container--open"
@@ -233,28 +233,28 @@ viewSource id isSourceOpen =
 
     viewInnerSource i s =
       if i ==  id then
-        Html.pre 
-          [ Html.Attributes.class "shown" ] 
+        Html.pre
+          [ Html.Attributes.class "shown" ]
           [ Html.text s ]
       else
-        Html.pre 
-          [ Html.Attributes.class "hidden" ] 
+        Html.pre
+          [ Html.Attributes.class "hidden" ]
           [ Html.text s ]
 
     viewSources =
-      List.indexedMap viewInnerSource 
-        [ Area.source 
+      List.indexedMap viewInnerSource
+        [ Area.source
         , Selection.source
         , Lines.source
         , Stepped.source
         ]
   in
-  Html.div 
+  Html.div
     [ Html.Attributes.class classes ]
-    [ Html.button 
-        [ Html.Events.onClick CloseSource ] 
-        [ Html.text "[x] close" ] 
-    , Html.div 
+    [ Html.button
+        [ Html.Events.onClick CloseSource ]
+        [ Html.text "[x] close" ]
+    , Html.div
         [ Html.Attributes.class "view__source__inner elm" ]
         viewSources
     ]

@@ -70,7 +70,7 @@ type alias Data =
 
 type alias Datum =
   { time : Time.Time
-  , displacement : Float 
+  , displacement : Float
   }
 
 
@@ -107,9 +107,9 @@ generateData =
 
 toData : List Float -> List Datum
 toData numbers =
-  let 
-    toDatum index displacement = 
-      Datum (indexToTime index) displacement 
+  let
+    toDatum index displacement =
+      Datum (indexToTime index) displacement
   in
   List.indexedMap toDatum numbers
 
@@ -245,19 +245,19 @@ view model =
     case model.selection of
       Nothing ->
         [ viewPlaceholder
-        , viewChartMain model 
+        , viewChartMain model
         ]
 
       Just selection ->
         if selection.xStart == selection.xEnd then
           [ viewPlaceholder
-          , viewChartMain model 
+          , viewChartMain model
           ]
-        else 
+        else
           [ viewChartZoom model selection
-          , viewChartMain model 
+          , viewChartMain model
           ]
-    
+
 
 viewPlaceholder : Html.Html Msg
 viewPlaceholder =
@@ -277,7 +277,7 @@ viewPlaceholderText : Html.Html Msg
 viewPlaceholderText =
   Html.div
     [ Html.Attributes.class "view__selection__placeholder__inner__text" ]
-    [ Html.text "Select a range on the graph to the right!" ]
+    [ Html.text "Select a range on the chart to the right!" ]
 
 
 
@@ -329,7 +329,7 @@ below : Coordinate.System -> Maybe Selection -> List (Svg.Svg msg)
 below system selection =
   case selection of
     Just { xStart, xEnd } ->
-      let 
+      let
         attributes =
           [ Svg.Attributes.fill "#4646461a" ]
 
@@ -349,7 +349,7 @@ above : Coordinate.System -> Maybe Float -> List (Svg.Svg msg)
 above system hovered =
   case hovered of
     Just hovered ->
-      [ Junk.vertical system [] hovered 
+      [ Junk.vertical system [] hovered
       , title system
       ]
 
@@ -357,7 +357,7 @@ above system hovered =
       [ title system ]
 
 
-title : Coordinate.System -> Svg.Svg msg 
+title : Coordinate.System -> Svg.Svg msg
 title system =
   Junk.labelAt system system.x.max system.y.max 20 -5 "start" Colors.black "Earthquake in"
 
@@ -428,8 +428,8 @@ viewChart data { range, junk, events, legends, dots, width, margin, id } =
   let
     containerStyles =
       [ ( "display", "inline-block" )
-      , ( "width", "50%" ) 
-      , ( "height", "100%" ) 
+      , ( "width", "50%" )
+      , ( "height", "100%" )
       ]
   in
   LineChart.viewCustom
@@ -486,10 +486,10 @@ round100 float =
 
 
 
--- SOURCE 
+-- SOURCE
 
 
-source : String 
+source : String
 source =
   """
   -- MODEL
@@ -668,7 +668,7 @@ source =
 
   view : Model -> Html.Html Msg
   view model =
-    let 
+    let
       style =
         [ ( "display", "flex" ) ]
 
@@ -676,21 +676,21 @@ source =
         case model.selection of
           Nothing ->
             [ viewPlaceholder
-            , viewChartMain model 
+            , viewChartMain model
             ]
 
           Just selection ->
             if selection.xStart == selection.xEnd then
               [ viewPlaceholder
-              , viewChartMain model 
+              , viewChartMain model
               ]
-            else 
+            else
               [ viewChartZoom model selection
-              , viewChartMain model 
+              , viewChartMain model
               ]
     in
     Html.div [ Html.Attributes.style style ] content
-      
+
 
   viewPlaceholder : Html.Html Msg
   viewPlaceholder =
@@ -756,7 +756,7 @@ source =
   below system selection =
     case selection of
       Just { xStart, xEnd } ->
-        let 
+        let
           attributes =
             [ Svg.Attributes.fill "#4646461a" ]
 

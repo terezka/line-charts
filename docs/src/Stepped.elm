@@ -70,11 +70,11 @@ init =
   )
 
 
-initData : List Data 
+initData : List Data
 initData =
   [ Data 1980 0.12
   , Data 1981 0.14
-  , Data 1982 0.155 
+  , Data 1982 0.155
   , Data 1983 0.16
   , Data 1984 0.17
   , Data 1985 0.17
@@ -159,15 +159,15 @@ chart model =
         Axis.custom
           { title = Title.default "price (£)"
           , variable = Just << .price
-          , pixels = 450
+          , pixels = 380
           , range = Range.padded 20 20
           , axisLine = AxisLine.full Colors.gray
           , ticks = Ticks.float 5
           }
     , x =
-        let 
+        let
           toDate year =
-            Date.Extra.fromParts year Date.Jan 01 0 0 0 0 
+            Date.Extra.fromParts year Date.Jan 01 0 0 0 0
         in
         Axis.custom
           { title = Title.default "Year"
@@ -190,13 +190,13 @@ chart model =
     , legends = Legends.default
     , events = Events.hoverOne Hint
     , junk = Junk.hoverOne model.hinted
-        [ ( "year", \datum -> toString datum.year ) 
-        , ( "price", \datum -> toString datum.price ++ "£" ) 
+        [ ( "year", \datum -> toString datum.year )
+        , ( "price", \datum -> toString datum.price ++ "£" )
         ]
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
-    , dots = 
+    , dots =
         let
           styleLegend _ =
             Dots.empty 5 1
@@ -204,7 +204,7 @@ chart model =
           styleIndividual datum =
             if Just datum == model.hinted
               then Dots.full 5
-              else Dots.empty 5 1 
+              else Dots.empty 5 1
         in
         Dots.customAny
           { legend = styleLegend
@@ -225,7 +225,7 @@ round100 float =
 
 
 
--- SOURCE 
+-- SOURCE
 
 
 source : String
