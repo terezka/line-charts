@@ -435,7 +435,7 @@ viewChart data { range, junk, events, legends, dots, width, margin, id } =
   LineChart.viewCustom
     { y =
         Axis.custom
-          { title = Title.atAxisMax 10 0 "displ."
+          { title = Title.atAxisMax 10 0 "displacement"
           , variable = Just << .displacement
           , pixels = 450
           , range = Range.padded 20 20
