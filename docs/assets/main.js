@@ -20043,7 +20043,7 @@ var _user$project$Selection$viewChart = F2(
 			{
 				y: _user$project$LineChart_Axis$custom(
 					{
-						title: A3(_user$project$LineChart_Axis_Title$atAxisMax, 10, 0, 'displacement'),
+						title: A3(_user$project$LineChart_Axis_Title$atAxisMax, 50, 0, 'displacement'),
 						variable: function (_p2) {
 							return _elm_lang$core$Maybe$Just(
 								function (_) {
