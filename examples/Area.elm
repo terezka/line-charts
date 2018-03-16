@@ -8,6 +8,7 @@ import LineChart.Dots as Dots
 import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
+import LineChart.Color as Colors
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
@@ -18,7 +19,6 @@ import LineChart.Events as Events
 import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
-import Color
 import Color
 
 
@@ -49,9 +49,9 @@ chart =
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.green Dots.triangle "Chuck" chuck
+    [ LineChart.line Color.pink Dots.triangle "Chuck" chuck
     , LineChart.line Color.blue Dots.circle "Bobby" bobby
-    , LineChart.line Color.red Dots.diamond "Alice" alice
+    , LineChart.line Color.cyan Dots.diamond "Alice" alice
     ]
 
 

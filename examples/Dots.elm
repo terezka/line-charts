@@ -7,6 +7,7 @@ import LineChart
 import LineChart.Dots as Dots
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Container as Container
+import LineChart.Colors as Colors
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
 import LineChart.Axis as Axis
@@ -49,9 +50,9 @@ chart =
         customConfig
         -- For making the dots change based on whether it's hovered, see Events.elm!
     }
-    [ LineChart.line Color.red Dots.diamond "Alice" alice
-    , LineChart.line Color.blue Dots.circle "Bobby" bobby
-    , LineChart.line Color.green Dots.triangle "Chuck" chuck
+    [ LineChart.line Colors.gold Dots.diamond "Alice" alice
+    , LineChart.line Colors.red Dots.circle "Bobby" bobby
+    , LineChart.line Colors.teal Dots.triangle "Chuck" chuck
     ]
 
 

@@ -8,7 +8,7 @@ module LineChart.Colors exposing
 
 <img alt="Colors!" width="610" src="https://github.com/terezka/line-charts/blob/master/images/colors.png?raw=true"></src>
 
-@docs pink, blue, gold, red, green, cyan, teal, purple
+@docs pink, blue, gold, red, green, cyan, teal, purple, rust, strongBlue
 
 ## Light
 @docs pinkLight, blueLight, goldLight, redLight, greenLight, cyanLight, tealLight, purpleLight
@@ -86,6 +86,12 @@ redLight =
 
 
 {-| -}
+rust : Color.Color
+rust =
+  Color.rgb 205 102 51 1
+
+
+{-| -}
 purple : Color.Color
 purple =
   Color.rgba 156 39 176 1
@@ -119,6 +125,14 @@ teal =
 tealLight : Color.Color
 tealLight =
   Color.rgba 128 203 196 1
+
+
+{-| -}
+strongBlue : Color.Color
+strongBlue =
+  Color.rgba 89 51 204 1
+
+
 
 
 
