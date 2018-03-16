@@ -33,7 +33,7 @@ chart =
   LineChart.viewCustom
     { y = Axis.default 450 "Weight" .weight
     , x = Axis.default 700 "Age" .age
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation =
         -- Try out these different configs!
         -- Interpolation.linear

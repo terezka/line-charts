@@ -42,7 +42,7 @@ chart =
   LineChart.viewCustom
     { y = Axis.picky 500 "y" .y []
     , x = customAxis
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
@@ -70,7 +70,7 @@ customAxis =
     , ticks =
         Ticks.custom <| \dataRange axisRange ->
           List.map (customTick Tick.negative) [ dataRange.min, dataRange.max ] ++
-          List.map (customTick Tick.positive) [ axisRange.min, axisRange.max ]
+          List.map (customTick Tick.negative) [ axisRange.min, axisRange.max ]
     }
 
 
@@ -93,8 +93,8 @@ customJunk =
   Junk.custom <| \system ->
     { below = []
     , above =
-        [ Junk.labelPlaced system 2  1.5 0 -10 "middle" Color.black "← axis range →"
-        , Junk.labelPlaced system 2 -1.5 0  18 "middle" Color.black "← data range →"
+        [ Junk.labelAt system 2  1.5 0 -10 "middle" Color.black "← axis range →"
+        , Junk.labelAt system 2 -1.5 0  18 "middle" Color.black "← data range →"
         , rangeLine system  1.5 system.x.min system.x.max
         , rangeLine system -1.5 system.xData.min system.xData.max
         ]

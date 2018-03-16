@@ -35,7 +35,7 @@ chart =
   LineChart.viewCustom
     { y = Axis.picky 500 "y" .y [ 0, 3 ]
     , x = Axis.picky 700 "x" .x [ 0, 3 ]
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
@@ -54,10 +54,10 @@ customJunk : Coordinate.System -> Junk.Layers msg
 customJunk system =
   let
     dataLabel point =
-      Junk.labelPlaced system point.x point.y 12  5 "start"
+      Junk.labelAt system point.x point.y 12  5 "start"
 
     svgLabel point =
-      Junk.labelPlaced system point.x point.y 12 25 "start"
+      Junk.labelAt system point.x point.y 12 25 "start"
 
     circle point =
       Junk.circle system 3 Colors.cyan point.x point.y

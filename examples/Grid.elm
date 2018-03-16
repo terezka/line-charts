@@ -31,7 +31,7 @@ chart =
   LineChart.viewCustom
     { y = Axis.default 500 "Weight" .weight
     , x = Axis.default 650 "Age" .age
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default

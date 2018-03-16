@@ -1,6 +1,6 @@
 module Internal.Container exposing
   ( Config, Properties, Size, Margin
-  , default, spaced, responsive, custom
+  , default, spaced, styled, responsive, custom
   , relative, static
   , properties, sizeStyles
   )
@@ -46,13 +46,7 @@ type alias Margin =
 {-| -}
 default : String -> Config msg
 default id =
-  custom
-    { attributesHtml = [ Html.Attributes.style [ ("font-family", "monospace")]]
-    , attributesSvg = []
-    , size = static
-    , margin = Margin 60 140 60 80
-    , id = id
-    }
+  styled id []
 
 
 {-| -}
@@ -66,6 +60,17 @@ spaced id top right bottom left =
     , id = id
     }
 
+
+{-| -}
+styled : String -> List ( String, String ) -> Config msg
+styled id styles =
+  custom
+    { attributesHtml = [ Html.Attributes.style styles ]
+    , attributesSvg = []
+    , size = static
+    , margin = Margin 60 140 60 80
+    , id = id
+    }
 
 
 {-| -}

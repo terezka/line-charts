@@ -37,7 +37,7 @@ chart =
   LineChart.viewCustom
     { y = Axis.picky 500 "y" .y []
     , x = Axis.picky 700 "x" .x []
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
@@ -57,8 +57,8 @@ customJunk =
   Junk.custom <| \system ->
     { below = [ rectangle system ]
     , above =
-        [ Junk.labelPlaced system 2   1.5 0 0 "middle" Color.black "chart area"
-        , Junk.labelPlaced system 6.25 1.5 0 0 "middle" Color.black "not chart area"
+        [ Junk.labelAt system 1   1.5 0 0 "middle" Color.black "chart area"
+        , Junk.labelAt system 6.25 1.5 0 0 "middle" Color.black "not chart area"
         ]
     , html = []
     }

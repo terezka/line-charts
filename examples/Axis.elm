@@ -7,9 +7,8 @@ import Svg
 import Svg.Attributes as SvgA
 import LineChart
 import LineChart.Dots as Dots
-import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
-import LineChart.Dots as Dots
+import LineChart.Colors as Colors
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
@@ -47,7 +46,7 @@ chart =
         -- Axis.full 700 "Age" .age
         -- Axis.time 700 "Date" .date
         -- customAxis
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
@@ -58,9 +57,9 @@ chart =
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.green Dots.triangle "Chuck" chuck
-    , LineChart.line Color.blue Dots.circle "Bobby" bobby
-    , LineChart.line Color.red Dots.diamond "Alice" alice
+    [ LineChart.line Colors.rust Dots.triangle "Chuck" chuck
+    , LineChart.line Colors.strongBlue Dots.circle "Bobby" bobby
+    , LineChart.line Colors.purple Dots.diamond "Alice" alice
     ]
 
 

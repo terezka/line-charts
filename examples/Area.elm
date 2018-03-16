@@ -8,7 +8,7 @@ import LineChart.Dots as Dots
 import LineChart as LineChart
 import LineChart.Junk as Junk exposing (..)
 import LineChart.Dots as Dots
-import LineChart.Color as Colors
+import LineChart.Colors as Colors
 import LineChart.Container as Container
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
@@ -34,7 +34,7 @@ chart =
   LineChart.viewCustom
     { y = Axis.default 450 "Weight" .weight
     , x = Axis.default 700 "Age" .age
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
@@ -49,9 +49,9 @@ chart =
     , line = Line.default
     , dots = Dots.default
     }
-    [ LineChart.line Color.pink Dots.triangle "Chuck" chuck
-    , LineChart.line Color.blue Dots.circle "Bobby" bobby
-    , LineChart.line Color.cyan Dots.diamond "Alice" alice
+    [ LineChart.line Colors.pink Dots.triangle "Chuck" chuck
+    , LineChart.line Colors.blue Dots.circle "Bobby" bobby
+    , LineChart.line Colors.cyan Dots.diamond "Alice" alice
     ]
 
 

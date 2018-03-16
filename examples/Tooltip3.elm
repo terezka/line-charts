@@ -73,16 +73,13 @@ chart model =
   LineChart.viewCustom
     { y = Axis.default 450 "Weight" .weight
     , x = Axis.default 700 "Age" .age
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
     , intersection = Intersection.default
     , legends = Legends.default
     , events = Events.hoverMany Hover
     , junk =
-        Junk.hoverMany model.hovered
-          { x = \data -> "age:" ++ toString data.age
-          , y = toString
-          }
+        Junk.hoverMany model.hovered formatX formatY
     , grid = Grid.default
     , area = Area.default
     , line = Line.default
@@ -92,6 +89,16 @@ chart model =
     , LineChart.line Colors.cyan Dots.circle "Bobby" bobby
     , LineChart.line Colors.purple Dots.diamond "Alice" alice
     ]
+
+
+formatX : Info -> String
+formatX info =
+  "Age: " ++ toString info.age
+
+
+formatY : Info -> String
+formatY info =
+  toString info.weight ++ " kg"
 
 
 

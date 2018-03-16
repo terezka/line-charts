@@ -90,7 +90,7 @@ chart model =
   LineChart.viewCustom
     { y =  Axis.default 450 "y" .y
     , x = Axis.default 1700 "x" .x
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
     , intersection = Intersection.custom .min .min
     , legends = Legends.default

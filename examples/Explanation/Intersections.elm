@@ -36,7 +36,7 @@ chart =
   LineChart.viewCustom
     { y = Axis.picky 500 "y" .y [ -1, 0, 1, 2, 3 ]
     , x = Axis.picky 700 "x" .x [ -1, 0 ,1, 2, 3]
-    , container = Container.default "line-chart-1"
+    , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
     , intersection = Intersection.at 1 1
     , legends = Legends.default

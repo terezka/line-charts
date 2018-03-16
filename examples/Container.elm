@@ -36,7 +36,7 @@ chart =
     , x = Axis.default 700 "Age" .age
     , container =
         -- Try out these different configs!
-        -- Container.default "line-chart-1"
+        -- Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
         -- Container.responsive "line-chart-1" -- Try resizing the window!
         Container.custom
             { attributesHtml = []

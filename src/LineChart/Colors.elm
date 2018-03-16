@@ -1,5 +1,5 @@
 module LineChart.Colors exposing
-  ( pink, blue, gold, red, green, cyan, teal, purple
+  ( pink, blue, gold, red, green, cyan, teal, purple, rust, strongBlue
   , pinkLight, blueLight, goldLight, redLight, greenLight, cyanLight, tealLight, purpleLight
   , black, gray, grayLight, grayLightest, transparent
   )
@@ -88,7 +88,7 @@ redLight =
 {-| -}
 rust : Color.Color
 rust =
-  Color.rgb 205 102 51 1
+  Color.rgba 205 102 51 1
 
 
 {-| -}

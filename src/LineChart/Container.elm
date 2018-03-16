@@ -1,12 +1,12 @@
 module LineChart.Container exposing
   ( Config, Properties, Size, Margin
-  , default, spaced, responsive, custom
+  , default, spaced, styled, responsive, custom
   , relative, static
   )
 
 {-|
 
-@docs Config, default, spaced, responsive
+@docs Config, default, spaced, styled, responsive
 
 # Customization
 @docs custom, Properties, Margin
@@ -48,7 +48,7 @@ default =
   Container.default
 
 
-{-| The default container configuration, but just decide the margins.
+{-| The default container configuration, but you decide the margins.
 
 Pass the id and the top, right, bottom, and left margin respectivily.
 
@@ -63,6 +63,24 @@ _See the full example [here](https://github.com/terezka/line-charts/blob/master/
 spaced : String -> Float -> Float -> Float -> Float -> Config msg
 spaced =
   Container.spaced
+
+
+{-| The default container configuration, but you can add some extra styles.
+
+Pass the id and styles in form of tupels of strings.
+
+    customContainer : Container.Config msg
+    customContainer =
+      Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
+
+Ok, so we have `spaced` if we want to set the margins and `styled` if
+we want to set the styles; but what if I want to set the margins AND the
+styles? If so, use `custom`!
+
+-}
+styled : String -> List ( String, String ) -> Config msg
+styled =
+  Container.styled
 
 
 {-| Makes the chart take the size of your container.
