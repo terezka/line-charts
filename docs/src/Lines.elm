@@ -116,8 +116,8 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [] 
-    [ LineChart.viewCustom (chartConfig model) 
+  Html.div []
+    [ LineChart.viewCustom (chartConfig model)
         [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle "Denmark"   model.data.denmark
         , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle "Sweden"    model.data.sweden
         , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle "Iceland"   model.data.iceland
@@ -147,10 +147,10 @@ chartConfig model =
   , line = lineConfig model.hinted
   , dots = Dots.custom (Dots.disconnected 4 2)
   }
-    
 
 
--- CHART CONFIG / AXES  
+
+-- CHART CONFIG / AXES
 
 
 yAxisConfig : Axis.Config Datum Msg
@@ -212,16 +212,16 @@ tickTime time =
     }
 
 
-tickLabel : String -> Svg.Svg msg 
+tickLabel : String -> Svg.Svg msg
 tickLabel =
   Junk.label Colors.black
 
 
 
--- CHART CONFIG / CONTIANER  
+-- CHART CONFIG / CONTIANER
 
 
-containerConfig : Container.Config Msg 
+containerConfig : Container.Config Msg
 containerConfig =
   Container.custom
     { attributesHtml = []
@@ -233,10 +233,10 @@ containerConfig =
 
 
 
--- CHART CONFIG / EVENTS  
+-- CHART CONFIG / EVENTS
 
 
-eventsConfig : Events.Config Datum Msg 
+eventsConfig : Events.Config Datum Msg
 eventsConfig =
   Events.custom
     [ Events.onMouseMove Hint Events.getNearest
@@ -305,9 +305,9 @@ generateData =
 
 toData : List Float -> List Datum
 toData numbers =
-  let 
-    toDatum index rain = 
-      Datum (indexToTime index) rain 
+  let
+    toDatum index rain =
+      Datum (indexToTime index) rain
   in
   List.indexedMap toDatum numbers
 
@@ -323,7 +323,7 @@ xInterval =
 
 
 
--- PROGRAM 
+-- PROGRAM
 
 
 main : Program Never Model Msg
@@ -341,7 +341,7 @@ main =
 -- SOURCE
 
 
-source : String 
+source : String
 source =
   """
   -- MODEL
@@ -430,8 +430,8 @@ source =
 
   view : Model -> Html.Html Msg
   view model =
-    Html.div [] 
-      [ LineChart.viewCustom (chartConfig model) 
+    Html.div []
+      [ LineChart.viewCustom (chartConfig model)
           [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle "Denmark"   model.data.denmark
           , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle "Sweden"    model.data.sweden
           , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle "Iceland"   model.data.iceland
@@ -461,10 +461,10 @@ source =
     , line = lineConfig model.hinted
     , dots = Dots.custom (Dots.disconnected 4 2)
     }
-      
 
 
-  -- CHART CONFIG / AXES  
+
+  -- CHART CONFIG / AXES
 
 
   yAxisConfig : Axis.Config Datum Msg
@@ -526,16 +526,16 @@ source =
       }
 
 
-  tickLabel : String -> Svg.Svg msg 
+  tickLabel : String -> Svg.Svg msg
   tickLabel =
     Junk.label Colors.black
 
 
 
-  -- CHART CONFIG / CONTIANER  
+  -- CHART CONFIG / CONTIANER
 
 
-  containerConfig : Container.Config Msg 
+  containerConfig : Container.Config Msg
   containerConfig =
     Container.custom
       { attributesHtml = []
@@ -547,10 +547,10 @@ source =
 
 
 
-  -- CHART CONFIG / EVENTS  
+  -- CHART CONFIG / EVENTS
 
 
-  eventsConfig : Events.Config Datum Msg 
+  eventsConfig : Events.Config Datum Msg
   eventsConfig =
     Events.custom
       [ Events.onMouseMove Hint Events.getNearest
@@ -619,9 +619,9 @@ source =
 
   toData : List Float -> List Datum
   toData numbers =
-    let 
-      toDatum index rain = 
-        Datum (indexToTime index) rain 
+    let
+      toDatum index rain =
+        Datum (indexToTime index) rain
     in
     List.indexedMap toDatum numbers
 
@@ -637,7 +637,7 @@ source =
 
 
 
-  -- PROGRAM 
+  -- PROGRAM
 
 
   main : Program Never Model Msg

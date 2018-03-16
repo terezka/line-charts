@@ -108,8 +108,8 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [] 
-    [ LineChart.viewCustom (chartConfig model) 
+  Html.div []
+    [ LineChart.viewCustom (chartConfig model)
         [ LineChart.line Colors.pink Dots.diamond  "Nora" model.data.nora
         , LineChart.line Colors.cyan Dots.circle   "Noah" model.data.noah
         , LineChart.line Colors.blue Dots.triangle "Nina" model.data.nina
@@ -190,9 +190,9 @@ generateData =
 
 toData : List Float -> List Datum
 toData numbers =
-  let 
-    toDatum index velocity = 
-      Datum (indexToTime index) velocity 
+  let
+    toDatum index velocity =
+      Datum (indexToTime index) velocity
   in
   List.indexedMap toDatum numbers
 
@@ -205,7 +205,7 @@ indexToTime index =
 
 
 
--- PROGRAM 
+-- PROGRAM
 
 
 main : Program Never Model Msg
@@ -219,10 +219,10 @@ main =
 
 
 
--- SOURCE 
+-- SOURCE
 
 
-source : String 
+source : String
 source =
   """
   -- MODEL
@@ -281,9 +281,9 @@ source =
 
   toData : List Float -> List Datum
   toData numbers =
-    let 
-      toDatum index velocity = 
-        Datum (indexToTime index) velocity 
+    let
+      toDatum index velocity =
+        Datum (indexToTime index) velocity
     in
     List.indexedMap toDatum numbers
 
@@ -334,8 +334,8 @@ source =
 
   view : Model -> Html.Html Msg
   view model =
-    Html.div [] 
-      [ LineChart.viewCustom (chartConfig model) 
+    Html.div []
+      [ LineChart.viewCustom (chartConfig model)
           [ LineChart.line Colors.pink Dots.diamond  "Nora" model.data.nora
           , LineChart.line Colors.cyan Dots.circle   "Noah" model.data.noah
           , LineChart.line Colors.blue Dots.triangle "Nina" model.data.nina
@@ -396,7 +396,7 @@ source =
 
 
 
-  -- PROGRAM 
+  -- PROGRAM
 
 
   main : Program Never Model Msg
