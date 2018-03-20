@@ -32,7 +32,7 @@ Furthermore, the `System` holds your axis range minimum and maximum, as well as
 that off your data range. This can be useful info when moving stuff in `Junk`!
 
 **Note:** Most of the functions in `Junk` takes data-space coordinates, so it's
-only when you do you're own crazy junk in pure SVG that you have to worry about
+only when you do your own crazy junk in pure SVG that you have to worry about
 this module!
 
 
