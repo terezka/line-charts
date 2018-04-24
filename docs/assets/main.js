@@ -10158,6 +10158,49 @@ var _eskimoblood$elm_color_extra$Color_Convert$colorToHex = function (cl) {
 					}
 				})));
 };
+var _eskimoblood$elm_color_extra$Color_Convert$colorToHexWithAlpha = function (color) {
+	var _p11 = _elm_lang$core$Color$toRgb(color);
+	var red = _p11.red;
+	var green = _p11.green;
+	var blue = _p11.blue;
+	var alpha = _p11.alpha;
+	return _elm_lang$core$Native_Utils.eq(alpha, 1) ? _eskimoblood$elm_color_extra$Color_Convert$colorToHex(color) : A2(
+		_elm_lang$core$String$join,
+		'',
+		A2(
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			'#',
+			A2(
+				_elm_lang$core$List$map,
+				_eskimoblood$elm_color_extra$Color_Convert$toHex,
+				{
+					ctor: '::',
+					_0: red,
+					_1: {
+						ctor: '::',
+						_0: green,
+						_1: {
+							ctor: '::',
+							_0: blue,
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$core$Basics$round(alpha * 255),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				})));
+};
+var _eskimoblood$elm_color_extra$Color_Convert$roundToPlaces = F2(
+	function (places, number) {
+		var multiplier = _elm_lang$core$Basics$toFloat(
+			Math.pow(10, places));
+		return _elm_lang$core$Basics$toFloat(
+			_elm_lang$core$Basics$round(number * multiplier)) / multiplier;
+	});
 var _eskimoblood$elm_color_extra$Color_Convert$hexToColor = function () {
 	var pattern = A2(
 		_elm_lang$core$Basics_ops['++'],
@@ -10180,18 +10223,30 @@ var _eskimoblood$elm_color_extra$Color_Convert$hexToColor = function () {
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								'(?:([a-f\\d])([a-f\\d])([a-f\\d]))',
-								A2(_elm_lang$core$Basics_ops['++'], ')', '$'))))))));
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'|',
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'(?:([a-f\\d]{2})([a-f\\d]{2})([a-f\\d]{2})([a-f\\d]{2}))',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'|',
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'(?:([a-f\\d])([a-f\\d])([a-f\\d])([a-f\\d]))',
+												A2(_elm_lang$core$Basics_ops['++'], ')', '$'))))))))))));
 	var extend = function (token) {
-		var _p11 = _elm_lang$core$String$toList(token);
-		if ((_p11.ctor === '::') && (_p11._1.ctor === '[]')) {
-			var _p12 = _p11._0;
+		var _p12 = _elm_lang$core$String$toList(token);
+		if ((_p12.ctor === '::') && (_p12._1.ctor === '[]')) {
+			var _p13 = _p12._0;
 			return _elm_lang$core$String$fromList(
 				{
 					ctor: '::',
-					_0: _p12,
+					_0: _p13,
 					_1: {
 						ctor: '::',
-						_0: _p12,
+						_0: _p13,
 						_1: {ctor: '[]'}
 					}
 				});
@@ -10199,23 +10254,44 @@ var _eskimoblood$elm_color_extra$Color_Convert$hexToColor = function () {
 			return token;
 		}
 	};
-	return function (_p13) {
+	return function (_p14) {
 		return A2(
 			_elm_lang$core$Result$andThen,
 			function (colors) {
-				var _p15 = A2(
+				var _p16 = A2(
 					_elm_lang$core$List$map,
-					function (_p14) {
+					function (_p15) {
 						return _fredcy$elm_parseint$ParseInt$parseIntHex(
-							extend(_p14));
+							extend(_p15));
 					},
 					colors);
-				if (((((((_p15.ctor === '::') && (_p15._0.ctor === 'Ok')) && (_p15._1.ctor === '::')) && (_p15._1._0.ctor === 'Ok')) && (_p15._1._1.ctor === '::')) && (_p15._1._1._0.ctor === 'Ok')) && (_p15._1._1._1.ctor === '[]')) {
-					return _elm_lang$core$Result$Ok(
-						A3(_elm_lang$core$Color$rgb, _p15._0._0, _p15._1._0._0, _p15._1._1._0._0));
-				} else {
-					return _elm_lang$core$Result$Err('Parsing ints from hex failed');
-				}
+				_v4_2:
+				do {
+					if ((((((_p16.ctor === '::') && (_p16._0.ctor === 'Ok')) && (_p16._1.ctor === '::')) && (_p16._1._0.ctor === 'Ok')) && (_p16._1._1.ctor === '::')) && (_p16._1._1._0.ctor === 'Ok')) {
+						if (_p16._1._1._1.ctor === '::') {
+							if ((_p16._1._1._1._0.ctor === 'Ok') && (_p16._1._1._1._1.ctor === '[]')) {
+								return _elm_lang$core$Result$Ok(
+									A4(
+										_elm_lang$core$Color$rgba,
+										_p16._0._0,
+										_p16._1._0._0,
+										_p16._1._1._0._0,
+										A2(
+											_eskimoblood$elm_color_extra$Color_Convert$roundToPlaces,
+											2,
+											_elm_lang$core$Basics$toFloat(_p16._1._1._1._0._0) / 255)));
+							} else {
+								break _v4_2;
+							}
+						} else {
+							return _elm_lang$core$Result$Ok(
+								A3(_elm_lang$core$Color$rgb, _p16._0._0, _p16._1._0._0, _p16._1._1._0._0));
+						}
+					} else {
+						break _v4_2;
+					}
+				} while(false);
+				return _elm_lang$core$Result$Err('Parsing ints from hex failed');
 			},
 			A2(
 				_elm_lang$core$Result$fromMaybe,
@@ -10233,7 +10309,7 @@ var _eskimoblood$elm_color_extra$Color_Convert$hexToColor = function () {
 								_elm_lang$core$Regex$find,
 								_elm_lang$core$Regex$AtMost(1),
 								_elm_lang$core$Regex$regex(pattern),
-								_elm_lang$core$String$toLower(_p13)))))));
+								_elm_lang$core$String$toLower(_p14)))))));
 	};
 }();
 var _eskimoblood$elm_color_extra$Color_Convert$cssColorString = F2(
@@ -10249,7 +10325,7 @@ var _eskimoblood$elm_color_extra$Color_Convert$cssColorString = F2(
 					A2(_elm_lang$core$String$join, ', ', values),
 					')')));
 	});
-var _eskimoblood$elm_color_extra$Color_Convert$toPercentString = function (_p16) {
+var _eskimoblood$elm_color_extra$Color_Convert$toPercentString = function (_p17) {
 	return A3(
 		_elm_lang$core$Basics$flip,
 		F2(
@@ -10265,9 +10341,9 @@ var _eskimoblood$elm_color_extra$Color_Convert$toPercentString = function (_p16)
 							return x * y;
 						}),
 					100,
-					_p16))));
+					_p17))));
 };
-var _eskimoblood$elm_color_extra$Color_Convert$hueToString = function (_p17) {
+var _eskimoblood$elm_color_extra$Color_Convert$hueToString = function (_p18) {
 	return _elm_lang$core$Basics$toString(
 		_elm_lang$core$Basics$round(
 			A3(
@@ -10283,14 +10359,14 @@ var _eskimoblood$elm_color_extra$Color_Convert$hueToString = function (_p17) {
 							return x * y;
 						}),
 					180,
-					_p17))));
+					_p18))));
 };
 var _eskimoblood$elm_color_extra$Color_Convert$colorToCssHsla = function (cl) {
-	var _p18 = _elm_lang$core$Color$toHsl(cl);
-	var hue = _p18.hue;
-	var saturation = _p18.saturation;
-	var lightness = _p18.lightness;
-	var alpha = _p18.alpha;
+	var _p19 = _elm_lang$core$Color$toHsl(cl);
+	var hue = _p19.hue;
+	var saturation = _p19.saturation;
+	var lightness = _p19.lightness;
+	var alpha = _p19.alpha;
 	return A2(
 		_eskimoblood$elm_color_extra$Color_Convert$cssColorString,
 		'hsla',
@@ -10313,11 +10389,11 @@ var _eskimoblood$elm_color_extra$Color_Convert$colorToCssHsla = function (cl) {
 		});
 };
 var _eskimoblood$elm_color_extra$Color_Convert$colorToCssHsl = function (cl) {
-	var _p19 = _elm_lang$core$Color$toHsl(cl);
-	var hue = _p19.hue;
-	var saturation = _p19.saturation;
-	var lightness = _p19.lightness;
-	var alpha = _p19.alpha;
+	var _p20 = _elm_lang$core$Color$toHsl(cl);
+	var hue = _p20.hue;
+	var saturation = _p20.saturation;
+	var lightness = _p20.lightness;
+	var alpha = _p20.alpha;
 	return A2(
 		_eskimoblood$elm_color_extra$Color_Convert$cssColorString,
 		'hsl',
@@ -10336,11 +10412,11 @@ var _eskimoblood$elm_color_extra$Color_Convert$colorToCssHsl = function (cl) {
 		});
 };
 var _eskimoblood$elm_color_extra$Color_Convert$colorToCssRgba = function (cl) {
-	var _p20 = _elm_lang$core$Color$toRgb(cl);
-	var red = _p20.red;
-	var green = _p20.green;
-	var blue = _p20.blue;
-	var alpha = _p20.alpha;
+	var _p21 = _elm_lang$core$Color$toRgb(cl);
+	var red = _p21.red;
+	var green = _p21.green;
+	var blue = _p21.blue;
+	var alpha = _p21.alpha;
 	return A2(
 		_eskimoblood$elm_color_extra$Color_Convert$cssColorString,
 		'rgba',
@@ -10363,11 +10439,11 @@ var _eskimoblood$elm_color_extra$Color_Convert$colorToCssRgba = function (cl) {
 		});
 };
 var _eskimoblood$elm_color_extra$Color_Convert$colorToCssRgb = function (cl) {
-	var _p21 = _elm_lang$core$Color$toRgb(cl);
-	var red = _p21.red;
-	var green = _p21.green;
-	var blue = _p21.blue;
-	var alpha = _p21.alpha;
+	var _p22 = _elm_lang$core$Color$toRgb(cl);
+	var red = _p22.red;
+	var green = _p22.green;
+	var blue = _p22.blue;
+	var alpha = _p22.alpha;
 	return A2(
 		_eskimoblood$elm_color_extra$Color_Convert$cssColorString,
 		'rgb',
@@ -12767,13 +12843,13 @@ var _myrho$elm_round$Round$roundCom = _myrho$elm_round$Round$roundFun(
 	});
 var _myrho$elm_round$Round$roundNumCom = _myrho$elm_round$Round$funNum(_myrho$elm_round$Round$roundCom);
 
-var _user$project$Random_Pipeline$send = _elm_lang$core$Random$generate;
-var _user$project$Random_Pipeline$with = _elm_lang$core$Random$map2(
+var _terezka$line_charts$Random_Pipeline$send = _elm_lang$core$Random$generate;
+var _terezka$line_charts$Random_Pipeline$with = _elm_lang$core$Random$map2(
 	F2(
 		function (x, y) {
 			return y(x);
 		}));
-var _user$project$Random_Pipeline$generate = function (f) {
+var _terezka$line_charts$Random_Pipeline$generate = function (f) {
 	return A2(
 		_elm_lang$core$Random$map,
 		function (_p0) {
@@ -12782,42 +12858,42 @@ var _user$project$Random_Pipeline$generate = function (f) {
 		_elm_lang$core$Random$bool);
 };
 
-var _user$project$Internal_Coordinate$largestRange = F2(
+var _terezka$line_charts$Internal_Coordinate$largestRange = F2(
 	function (data, range) {
 		return {
 			min: A2(_elm_lang$core$Basics$min, data.min, range.min),
 			max: A2(_elm_lang$core$Basics$max, data.max, range.max)
 		};
 	});
-var _user$project$Internal_Coordinate$smallestRange = F2(
+var _terezka$line_charts$Internal_Coordinate$smallestRange = F2(
 	function (data, range) {
 		return {
 			min: A2(_elm_lang$core$Basics$max, data.min, range.min),
 			max: A2(_elm_lang$core$Basics$min, data.max, range.max)
 		};
 	});
-var _user$project$Internal_Coordinate$lengthY = function (system) {
+var _terezka$line_charts$Internal_Coordinate$lengthY = function (system) {
 	return A2(_elm_lang$core$Basics$max, 1, (system.frame.size.height - system.frame.margin.bottom) - system.frame.margin.top);
 };
-var _user$project$Internal_Coordinate$lengthX = function (system) {
+var _terezka$line_charts$Internal_Coordinate$lengthX = function (system) {
 	return A2(_elm_lang$core$Basics$max, 1, (system.frame.size.width - system.frame.margin.left) - system.frame.margin.right);
 };
-var _user$project$Internal_Coordinate$reachY = function (system) {
+var _terezka$line_charts$Internal_Coordinate$reachY = function (system) {
 	var diff = system.y.max - system.y.min;
 	return (_elm_lang$core$Native_Utils.cmp(diff, 0) > 0) ? diff : 1;
 };
-var _user$project$Internal_Coordinate$reachX = function (system) {
+var _terezka$line_charts$Internal_Coordinate$reachX = function (system) {
 	var diff = system.x.max - system.x.min;
 	return (_elm_lang$core$Native_Utils.cmp(diff, 0) > 0) ? diff : 1;
 };
-var _user$project$Internal_Coordinate$ground = function (range) {
+var _terezka$line_charts$Internal_Coordinate$ground = function (range) {
 	return _elm_lang$core$Native_Utils.update(
 		range,
 		{
 			min: A2(_elm_lang$core$Basics$min, range.min, 0)
 		});
 };
-var _user$project$Internal_Coordinate$maximum = function (toValue) {
+var _terezka$line_charts$Internal_Coordinate$maximum = function (toValue) {
 	return function (_p0) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
@@ -12826,7 +12902,7 @@ var _user$project$Internal_Coordinate$maximum = function (toValue) {
 				A2(_elm_lang$core$List$map, toValue, _p0)));
 	};
 };
-var _user$project$Internal_Coordinate$minimum = function (toValue) {
+var _terezka$line_charts$Internal_Coordinate$minimum = function (toValue) {
 	return function (_p1) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
@@ -12835,46 +12911,46 @@ var _user$project$Internal_Coordinate$minimum = function (toValue) {
 				A2(_elm_lang$core$List$map, toValue, _p1)));
 	};
 };
-var _user$project$Internal_Coordinate$minimumOrZero = function (toValue) {
+var _terezka$line_charts$Internal_Coordinate$minimumOrZero = function (toValue) {
 	return function (_p2) {
 		return A2(
 			_elm_lang$core$Basics$min,
 			0,
-			A2(_user$project$Internal_Coordinate$minimum, toValue, _p2));
+			A2(_terezka$line_charts$Internal_Coordinate$minimum, toValue, _p2));
 	};
 };
-var _user$project$Internal_Coordinate$range = F2(
+var _terezka$line_charts$Internal_Coordinate$range = F2(
 	function (toValue, data) {
 		var range = {
-			min: A2(_user$project$Internal_Coordinate$minimum, toValue, data),
-			max: A2(_user$project$Internal_Coordinate$maximum, toValue, data)
+			min: A2(_terezka$line_charts$Internal_Coordinate$minimum, toValue, data),
+			max: A2(_terezka$line_charts$Internal_Coordinate$maximum, toValue, data)
 		};
 		return _elm_lang$core$Native_Utils.eq(range.min, range.max) ? _elm_lang$core$Native_Utils.update(
 			range,
 			{max: range.max + 1}) : range;
 	});
-var _user$project$Internal_Coordinate$System = F6(
+var _terezka$line_charts$Internal_Coordinate$System = F6(
 	function (a, b, c, d, e, f) {
 		return {frame: a, x: b, y: c, xData: d, yData: e, id: f};
 	});
-var _user$project$Internal_Coordinate$Frame = F2(
+var _terezka$line_charts$Internal_Coordinate$Frame = F2(
 	function (a, b) {
 		return {margin: a, size: b};
 	});
-var _user$project$Internal_Coordinate$Size = F2(
+var _terezka$line_charts$Internal_Coordinate$Size = F2(
 	function (a, b) {
 		return {width: a, height: b};
 	});
-var _user$project$Internal_Coordinate$Margin = F4(
+var _terezka$line_charts$Internal_Coordinate$Margin = F4(
 	function (a, b, c, d) {
 		return {top: a, right: b, bottom: c, left: d};
 	});
-var _user$project$Internal_Coordinate$Range = F2(
+var _terezka$line_charts$Internal_Coordinate$Range = F2(
 	function (a, b) {
 		return {min: a, max: b};
 	});
 
-var _user$project$Internal_Container$sizeStyles = F3(
+var _terezka$line_charts$Internal_Container$sizeStyles = F3(
 	function (_p0, width, height) {
 		var _p1 = _p0;
 		var _p2 = _p1._0.size;
@@ -12906,51 +12982,51 @@ var _user$project$Internal_Container$sizeStyles = F3(
 			return {ctor: '[]'};
 		}
 	});
-var _user$project$Internal_Container$properties = F2(
+var _terezka$line_charts$Internal_Container$properties = F2(
 	function (f, _p3) {
 		var _p4 = _p3;
 		return f(_p4._0);
 	});
-var _user$project$Internal_Container$Properties = F5(
+var _terezka$line_charts$Internal_Container$Properties = F5(
 	function (a, b, c, d, e) {
 		return {attributesHtml: a, attributesSvg: b, size: c, margin: d, id: e};
 	});
-var _user$project$Internal_Container$Margin = F4(
+var _terezka$line_charts$Internal_Container$Margin = F4(
 	function (a, b, c, d) {
 		return {top: a, right: b, bottom: c, left: d};
 	});
-var _user$project$Internal_Container$Config = function (a) {
+var _terezka$line_charts$Internal_Container$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Container$custom = _user$project$Internal_Container$Config;
-var _user$project$Internal_Container$Relative = {ctor: 'Relative'};
-var _user$project$Internal_Container$relative = _user$project$Internal_Container$Relative;
-var _user$project$Internal_Container$responsive = function (id) {
-	return _user$project$Internal_Container$custom(
+var _terezka$line_charts$Internal_Container$custom = _terezka$line_charts$Internal_Container$Config;
+var _terezka$line_charts$Internal_Container$Relative = {ctor: 'Relative'};
+var _terezka$line_charts$Internal_Container$relative = _terezka$line_charts$Internal_Container$Relative;
+var _terezka$line_charts$Internal_Container$responsive = function (id) {
+	return _terezka$line_charts$Internal_Container$custom(
 		{
 			attributesHtml: {ctor: '[]'},
 			attributesSvg: {ctor: '[]'},
-			size: _user$project$Internal_Container$relative,
-			margin: A4(_user$project$Internal_Container$Margin, 60, 140, 60, 80),
+			size: _terezka$line_charts$Internal_Container$relative,
+			margin: A4(_terezka$line_charts$Internal_Container$Margin, 60, 140, 60, 80),
 			id: id
 		});
 };
-var _user$project$Internal_Container$Static = {ctor: 'Static'};
-var _user$project$Internal_Container$static = _user$project$Internal_Container$Static;
-var _user$project$Internal_Container$spaced = F5(
+var _terezka$line_charts$Internal_Container$Static = {ctor: 'Static'};
+var _terezka$line_charts$Internal_Container$static = _terezka$line_charts$Internal_Container$Static;
+var _terezka$line_charts$Internal_Container$spaced = F5(
 	function (id, top, right, bottom, left) {
-		return _user$project$Internal_Container$custom(
+		return _terezka$line_charts$Internal_Container$custom(
 			{
 				attributesHtml: {ctor: '[]'},
 				attributesSvg: {ctor: '[]'},
-				size: _user$project$Internal_Container$static,
-				margin: A4(_user$project$Internal_Container$Margin, top, right, bottom, left),
+				size: _terezka$line_charts$Internal_Container$static,
+				margin: A4(_terezka$line_charts$Internal_Container$Margin, top, right, bottom, left),
 				id: id
 			});
 	});
-var _user$project$Internal_Container$styled = F2(
+var _terezka$line_charts$Internal_Container$styled = F2(
 	function (id, styles) {
-		return _user$project$Internal_Container$custom(
+		return _terezka$line_charts$Internal_Container$custom(
 			{
 				attributesHtml: {
 					ctor: '::',
@@ -12958,129 +13034,129 @@ var _user$project$Internal_Container$styled = F2(
 					_1: {ctor: '[]'}
 				},
 				attributesSvg: {ctor: '[]'},
-				size: _user$project$Internal_Container$static,
-				margin: A4(_user$project$Internal_Container$Margin, 60, 140, 60, 80),
+				size: _terezka$line_charts$Internal_Container$static,
+				margin: A4(_terezka$line_charts$Internal_Container$Margin, 60, 140, 60, 80),
 				id: id
 			});
 	});
-var _user$project$Internal_Container$default = function (id) {
+var _terezka$line_charts$Internal_Container$default = function (id) {
 	return A2(
-		_user$project$Internal_Container$styled,
+		_terezka$line_charts$Internal_Container$styled,
 		id,
 		{ctor: '[]'});
 };
 
-var _user$project$LineChart_Container$static = _user$project$Internal_Container$static;
-var _user$project$LineChart_Container$relative = _user$project$Internal_Container$relative;
-var _user$project$LineChart_Container$custom = _user$project$Internal_Container$custom;
-var _user$project$LineChart_Container$responsive = _user$project$Internal_Container$responsive;
-var _user$project$LineChart_Container$styled = _user$project$Internal_Container$styled;
-var _user$project$LineChart_Container$spaced = _user$project$Internal_Container$spaced;
-var _user$project$LineChart_Container$default = _user$project$Internal_Container$default;
-var _user$project$LineChart_Container$Properties = F5(
+var _terezka$line_charts$LineChart_Container$static = _terezka$line_charts$Internal_Container$static;
+var _terezka$line_charts$LineChart_Container$relative = _terezka$line_charts$Internal_Container$relative;
+var _terezka$line_charts$LineChart_Container$custom = _terezka$line_charts$Internal_Container$custom;
+var _terezka$line_charts$LineChart_Container$responsive = _terezka$line_charts$Internal_Container$responsive;
+var _terezka$line_charts$LineChart_Container$styled = _terezka$line_charts$Internal_Container$styled;
+var _terezka$line_charts$LineChart_Container$spaced = _terezka$line_charts$Internal_Container$spaced;
+var _terezka$line_charts$LineChart_Container$default = _terezka$line_charts$Internal_Container$default;
+var _terezka$line_charts$LineChart_Container$Properties = F5(
 	function (a, b, c, d, e) {
 		return {attributesHtml: a, attributesSvg: b, size: c, margin: d, id: e};
 	});
-var _user$project$LineChart_Container$Margin = F4(
+var _terezka$line_charts$LineChart_Container$Margin = F4(
 	function (a, b, c, d) {
 		return {top: a, right: b, bottom: c, left: d};
 	});
 
-var _user$project$LineChart_Coordinate$scaleDataY = F2(
+var _terezka$line_charts$LineChart_Coordinate$scaleDataY = F2(
 	function (system, value) {
-		return (value * _user$project$Internal_Coordinate$reachY(system)) / _user$project$Internal_Coordinate$lengthY(system);
+		return (value * _terezka$line_charts$Internal_Coordinate$reachY(system)) / _terezka$line_charts$Internal_Coordinate$lengthY(system);
 	});
-var _user$project$LineChart_Coordinate$scaleDataX = F2(
+var _terezka$line_charts$LineChart_Coordinate$scaleDataX = F2(
 	function (system, value) {
-		return (value * _user$project$Internal_Coordinate$reachX(system)) / _user$project$Internal_Coordinate$lengthX(system);
+		return (value * _terezka$line_charts$Internal_Coordinate$reachX(system)) / _terezka$line_charts$Internal_Coordinate$lengthX(system);
 	});
-var _user$project$LineChart_Coordinate$scaleSvgY = F2(
+var _terezka$line_charts$LineChart_Coordinate$scaleSvgY = F2(
 	function (system, value) {
-		return (value * _user$project$Internal_Coordinate$lengthY(system)) / _user$project$Internal_Coordinate$reachY(system);
+		return (value * _terezka$line_charts$Internal_Coordinate$lengthY(system)) / _terezka$line_charts$Internal_Coordinate$reachY(system);
 	});
-var _user$project$LineChart_Coordinate$scaleSvgX = F2(
+var _terezka$line_charts$LineChart_Coordinate$scaleSvgX = F2(
 	function (system, value) {
-		return (value * _user$project$Internal_Coordinate$lengthX(system)) / _user$project$Internal_Coordinate$reachX(system);
+		return (value * _terezka$line_charts$Internal_Coordinate$lengthX(system)) / _terezka$line_charts$Internal_Coordinate$reachX(system);
 	});
-var _user$project$LineChart_Coordinate$toDataY = F2(
+var _terezka$line_charts$LineChart_Coordinate$toDataY = F2(
 	function (system, value) {
-		return system.y.max - A2(_user$project$LineChart_Coordinate$scaleDataY, system, value - system.frame.margin.top);
+		return system.y.max - A2(_terezka$line_charts$LineChart_Coordinate$scaleDataY, system, value - system.frame.margin.top);
 	});
-var _user$project$LineChart_Coordinate$toDataX = F2(
+var _terezka$line_charts$LineChart_Coordinate$toDataX = F2(
 	function (system, value) {
-		return system.x.min + A2(_user$project$LineChart_Coordinate$scaleDataX, system, value - system.frame.margin.left);
+		return system.x.min + A2(_terezka$line_charts$LineChart_Coordinate$scaleDataX, system, value - system.frame.margin.left);
 	});
-var _user$project$LineChart_Coordinate$toData = F2(
+var _terezka$line_charts$LineChart_Coordinate$toData = F2(
 	function (system, point) {
 		return {
-			x: A2(_user$project$LineChart_Coordinate$toDataX, system, point.x),
-			y: A2(_user$project$LineChart_Coordinate$toDataY, system, point.y)
+			x: A2(_terezka$line_charts$LineChart_Coordinate$toDataX, system, point.x),
+			y: A2(_terezka$line_charts$LineChart_Coordinate$toDataY, system, point.y)
 		};
 	});
-var _user$project$LineChart_Coordinate$toSvgY = F2(
+var _terezka$line_charts$LineChart_Coordinate$toSvgY = F2(
 	function (system, value) {
-		return A2(_user$project$LineChart_Coordinate$scaleSvgY, system, system.y.max - value) + system.frame.margin.top;
+		return A2(_terezka$line_charts$LineChart_Coordinate$scaleSvgY, system, system.y.max - value) + system.frame.margin.top;
 	});
-var _user$project$LineChart_Coordinate$toSvgX = F2(
+var _terezka$line_charts$LineChart_Coordinate$toSvgX = F2(
 	function (system, value) {
-		return A2(_user$project$LineChart_Coordinate$scaleSvgX, system, value - system.x.min) + system.frame.margin.left;
+		return A2(_terezka$line_charts$LineChart_Coordinate$scaleSvgX, system, value - system.x.min) + system.frame.margin.left;
 	});
-var _user$project$LineChart_Coordinate$toSvg = F2(
+var _terezka$line_charts$LineChart_Coordinate$toSvg = F2(
 	function (system, point) {
 		return {
-			x: A2(_user$project$LineChart_Coordinate$toSvgX, system, point.x),
-			y: A2(_user$project$LineChart_Coordinate$toSvgY, system, point.y)
+			x: A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, point.x),
+			y: A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, point.y)
 		};
 	});
-var _user$project$LineChart_Coordinate$Frame = F2(
+var _terezka$line_charts$LineChart_Coordinate$Frame = F2(
 	function (a, b) {
 		return {margin: a, size: b};
 	});
-var _user$project$LineChart_Coordinate$Size = F2(
+var _terezka$line_charts$LineChart_Coordinate$Size = F2(
 	function (a, b) {
 		return {width: a, height: b};
 	});
-var _user$project$LineChart_Coordinate$System = F6(
+var _terezka$line_charts$LineChart_Coordinate$System = F6(
 	function (a, b, c, d, e, f) {
 		return {frame: a, x: b, y: c, xData: d, yData: e, id: f};
 	});
-var _user$project$LineChart_Coordinate$Range = F2(
+var _terezka$line_charts$LineChart_Coordinate$Range = F2(
 	function (a, b) {
 		return {min: a, max: b};
 	});
-var _user$project$LineChart_Coordinate$Point = F2(
+var _terezka$line_charts$LineChart_Coordinate$Point = F2(
 	function (a, b) {
 		return {x: a, y: b};
 	});
 
-var _user$project$LineChart_Colors$transparent = A4(_elm_lang$core$Color$rgba, 0, 0, 0, 0);
-var _user$project$LineChart_Colors$grayLightest = A3(_elm_lang$core$Color$rgb, 243, 243, 243);
-var _user$project$LineChart_Colors$grayLight = A3(_elm_lang$core$Color$rgb, 211, 211, 211);
-var _user$project$LineChart_Colors$gray = A3(_elm_lang$core$Color$rgb, 163, 163, 163);
-var _user$project$LineChart_Colors$black = A3(_elm_lang$core$Color$rgb, 0, 0, 0);
-var _user$project$LineChart_Colors$strongBlue = A4(_elm_lang$core$Color$rgba, 89, 51, 204, 1);
-var _user$project$LineChart_Colors$tealLight = A4(_elm_lang$core$Color$rgba, 128, 203, 196, 1);
-var _user$project$LineChart_Colors$teal = A4(_elm_lang$core$Color$rgba, 29, 233, 182, 1);
-var _user$project$LineChart_Colors$cyanLight = A4(_elm_lang$core$Color$rgba, 128, 222, 234, 1);
-var _user$project$LineChart_Colors$cyan = A4(_elm_lang$core$Color$rgba, 0, 229, 255, 1);
-var _user$project$LineChart_Colors$purpleLight = A4(_elm_lang$core$Color$rgba, 206, 147, 216, 1);
-var _user$project$LineChart_Colors$purple = A4(_elm_lang$core$Color$rgba, 156, 39, 176, 1);
-var _user$project$LineChart_Colors$rust = A4(_elm_lang$core$Color$rgba, 205, 102, 51, 1);
-var _user$project$LineChart_Colors$redLight = A4(_elm_lang$core$Color$rgba, 239, 154, 154, 1);
-var _user$project$LineChart_Colors$red = A4(_elm_lang$core$Color$rgba, 216, 27, 96, 1);
-var _user$project$LineChart_Colors$greenLight = A4(_elm_lang$core$Color$rgba, 197, 225, 165, 1);
-var _user$project$LineChart_Colors$green = A4(_elm_lang$core$Color$rgba, 67, 160, 71, 1);
-var _user$project$LineChart_Colors$blueLight = A4(_elm_lang$core$Color$rgba, 128, 222, 234, 1);
-var _user$project$LineChart_Colors$blue = A4(_elm_lang$core$Color$rgba, 3, 169, 244, 1);
-var _user$project$LineChart_Colors$goldLight = A4(_elm_lang$core$Color$rgba, 255, 204, 128, 1);
-var _user$project$LineChart_Colors$gold = A4(_elm_lang$core$Color$rgba, 205, 145, 60, 1);
-var _user$project$LineChart_Colors$pinkLight = A4(_elm_lang$core$Color$rgba, 244, 143, 177, 1);
-var _user$project$LineChart_Colors$pink = A4(_elm_lang$core$Color$rgba, 245, 105, 215, 1);
+var _terezka$line_charts$LineChart_Colors$transparent = A4(_elm_lang$core$Color$rgba, 0, 0, 0, 0);
+var _terezka$line_charts$LineChart_Colors$grayLightest = A3(_elm_lang$core$Color$rgb, 243, 243, 243);
+var _terezka$line_charts$LineChart_Colors$grayLight = A3(_elm_lang$core$Color$rgb, 211, 211, 211);
+var _terezka$line_charts$LineChart_Colors$gray = A3(_elm_lang$core$Color$rgb, 163, 163, 163);
+var _terezka$line_charts$LineChart_Colors$black = A3(_elm_lang$core$Color$rgb, 0, 0, 0);
+var _terezka$line_charts$LineChart_Colors$strongBlue = A4(_elm_lang$core$Color$rgba, 89, 51, 204, 1);
+var _terezka$line_charts$LineChart_Colors$tealLight = A4(_elm_lang$core$Color$rgba, 128, 203, 196, 1);
+var _terezka$line_charts$LineChart_Colors$teal = A4(_elm_lang$core$Color$rgba, 29, 233, 182, 1);
+var _terezka$line_charts$LineChart_Colors$cyanLight = A4(_elm_lang$core$Color$rgba, 128, 222, 234, 1);
+var _terezka$line_charts$LineChart_Colors$cyan = A4(_elm_lang$core$Color$rgba, 0, 229, 255, 1);
+var _terezka$line_charts$LineChart_Colors$purpleLight = A4(_elm_lang$core$Color$rgba, 206, 147, 216, 1);
+var _terezka$line_charts$LineChart_Colors$purple = A4(_elm_lang$core$Color$rgba, 156, 39, 176, 1);
+var _terezka$line_charts$LineChart_Colors$rust = A4(_elm_lang$core$Color$rgba, 205, 102, 51, 1);
+var _terezka$line_charts$LineChart_Colors$redLight = A4(_elm_lang$core$Color$rgba, 239, 154, 154, 1);
+var _terezka$line_charts$LineChart_Colors$red = A4(_elm_lang$core$Color$rgba, 216, 27, 96, 1);
+var _terezka$line_charts$LineChart_Colors$greenLight = A4(_elm_lang$core$Color$rgba, 197, 225, 165, 1);
+var _terezka$line_charts$LineChart_Colors$green = A4(_elm_lang$core$Color$rgba, 67, 160, 71, 1);
+var _terezka$line_charts$LineChart_Colors$blueLight = A4(_elm_lang$core$Color$rgba, 128, 222, 234, 1);
+var _terezka$line_charts$LineChart_Colors$blue = A4(_elm_lang$core$Color$rgba, 3, 169, 244, 1);
+var _terezka$line_charts$LineChart_Colors$goldLight = A4(_elm_lang$core$Color$rgba, 255, 204, 128, 1);
+var _terezka$line_charts$LineChart_Colors$gold = A4(_elm_lang$core$Color$rgba, 205, 145, 60, 1);
+var _terezka$line_charts$LineChart_Colors$pinkLight = A4(_elm_lang$core$Color$rgba, 244, 143, 177, 1);
+var _terezka$line_charts$LineChart_Colors$pink = A4(_elm_lang$core$Color$rgba, 245, 105, 215, 1);
 
-var _user$project$Internal_Path$bool = function (bool) {
+var _terezka$line_charts$Internal_Path$bool = function (bool) {
 	return bool ? '1' : '0';
 };
-var _user$project$Internal_Path$point = function (_p0) {
+var _terezka$line_charts$Internal_Path$point = function (_p0) {
 	var _p1 = _p0;
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
@@ -13090,16 +13166,16 @@ var _user$project$Internal_Path$point = function (_p0) {
 			' ',
 			_elm_lang$core$Basics$toString(_p1.y)));
 };
-var _user$project$Internal_Path$points = function (points) {
+var _terezka$line_charts$Internal_Path$points = function (points) {
 	return A2(
 		_elm_lang$core$String$join,
 		',',
-		A2(_elm_lang$core$List$map, _user$project$Internal_Path$point, points));
+		A2(_elm_lang$core$List$map, _terezka$line_charts$Internal_Path$point, points));
 };
-var _user$project$Internal_Path$join = function (commands) {
+var _terezka$line_charts$Internal_Path$join = function (commands) {
 	return A2(_elm_lang$core$String$join, ' ', commands);
 };
-var _user$project$Internal_Path$toString = function (command) {
+var _terezka$line_charts$Internal_Path$toString = function (command) {
 	var _p2 = command;
 	switch (_p2.ctor) {
 		case 'Close':
@@ -13108,12 +13184,12 @@ var _user$project$Internal_Path$toString = function (command) {
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'M',
-				_user$project$Internal_Path$point(_p2._0));
+				_terezka$line_charts$Internal_Path$point(_p2._0));
 		case 'Line':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'L',
-				_user$project$Internal_Path$point(_p2._0));
+				_terezka$line_charts$Internal_Path$point(_p2._0));
 		case 'Horizontal':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
@@ -13128,7 +13204,7 @@ var _user$project$Internal_Path$toString = function (command) {
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'C',
-				_user$project$Internal_Path$points(
+				_terezka$line_charts$Internal_Path$points(
 					{
 						ctor: '::',
 						_0: _p2._0,
@@ -13146,7 +13222,7 @@ var _user$project$Internal_Path$toString = function (command) {
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Q',
-				_user$project$Internal_Path$points(
+				_terezka$line_charts$Internal_Path$points(
 					{
 						ctor: '::',
 						_0: _p2._0,
@@ -13160,7 +13236,7 @@ var _user$project$Internal_Path$toString = function (command) {
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Q',
-				_user$project$Internal_Path$points(
+				_terezka$line_charts$Internal_Path$points(
 					{
 						ctor: '::',
 						_0: _p2._0,
@@ -13174,12 +13250,12 @@ var _user$project$Internal_Path$toString = function (command) {
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'T',
-				_user$project$Internal_Path$point(_p2._0));
+				_terezka$line_charts$Internal_Path$point(_p2._0));
 		default:
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'A',
-				_user$project$Internal_Path$join(
+				_terezka$line_charts$Internal_Path$join(
 					{
 						ctor: '::',
 						_0: _elm_lang$core$Basics$toString(_p2._0),
@@ -13191,13 +13267,13 @@ var _user$project$Internal_Path$toString = function (command) {
 								_0: _elm_lang$core$Basics$toString(_p2._2),
 								_1: {
 									ctor: '::',
-									_0: _user$project$Internal_Path$bool(_p2._3),
+									_0: _terezka$line_charts$Internal_Path$bool(_p2._3),
 									_1: {
 										ctor: '::',
-										_0: _user$project$Internal_Path$bool(_p2._4),
+										_0: _terezka$line_charts$Internal_Path$bool(_p2._4),
 										_1: {
 											ctor: '::',
-											_0: _user$project$Internal_Path$point(_p2._5),
+											_0: _terezka$line_charts$Internal_Path$point(_p2._5),
 											_1: {ctor: '[]'}
 										}
 									}
@@ -13207,19 +13283,19 @@ var _user$project$Internal_Path$toString = function (command) {
 					}));
 	}
 };
-var _user$project$Internal_Path$toPoint = function (command) {
+var _terezka$line_charts$Internal_Path$toPoint = function (command) {
 	var _p3 = command;
 	switch (_p3.ctor) {
 		case 'Close':
-			return A2(_user$project$LineChart_Coordinate$Point, 0, 0);
+			return A2(_terezka$line_charts$LineChart_Coordinate$Point, 0, 0);
 		case 'Move':
 			return _p3._0;
 		case 'Line':
 			return _p3._0;
 		case 'Horizontal':
-			return A2(_user$project$LineChart_Coordinate$Point, _p3._0, 0);
+			return A2(_terezka$line_charts$LineChart_Coordinate$Point, _p3._0, 0);
 		case 'Vertical':
-			return A2(_user$project$LineChart_Coordinate$Point, 0, _p3._0);
+			return A2(_terezka$line_charts$LineChart_Coordinate$Point, 0, _p3._0);
 		case 'CubicBeziers':
 			return _p3._2;
 		case 'CubicBeziersShort':
@@ -13232,118 +13308,118 @@ var _user$project$Internal_Path$toPoint = function (command) {
 			return _p3._5;
 	}
 };
-var _user$project$Internal_Path$viewPath = function (attributes) {
+var _terezka$line_charts$Internal_Path$viewPath = function (attributes) {
 	return A2(
 		_elm_lang$svg$Svg$path,
 		attributes,
 		{ctor: '[]'});
 };
-var _user$project$Internal_Path$Close = {ctor: 'Close'};
-var _user$project$Internal_Path$Arc = F6(
+var _terezka$line_charts$Internal_Path$Close = {ctor: 'Close'};
+var _terezka$line_charts$Internal_Path$Arc = F6(
 	function (a, b, c, d, e, f) {
 		return {ctor: 'Arc', _0: a, _1: b, _2: c, _3: d, _4: e, _5: f};
 	});
-var _user$project$Internal_Path$QuadraticBeziersShort = function (a) {
+var _terezka$line_charts$Internal_Path$QuadraticBeziersShort = function (a) {
 	return {ctor: 'QuadraticBeziersShort', _0: a};
 };
-var _user$project$Internal_Path$QuadraticBeziers = F2(
+var _terezka$line_charts$Internal_Path$QuadraticBeziers = F2(
 	function (a, b) {
 		return {ctor: 'QuadraticBeziers', _0: a, _1: b};
 	});
-var _user$project$Internal_Path$CubicBeziersShort = F2(
+var _terezka$line_charts$Internal_Path$CubicBeziersShort = F2(
 	function (a, b) {
 		return {ctor: 'CubicBeziersShort', _0: a, _1: b};
 	});
-var _user$project$Internal_Path$CubicBeziers = F3(
+var _terezka$line_charts$Internal_Path$CubicBeziers = F3(
 	function (a, b, c) {
 		return {ctor: 'CubicBeziers', _0: a, _1: b, _2: c};
 	});
-var _user$project$Internal_Path$Vertical = function (a) {
+var _terezka$line_charts$Internal_Path$Vertical = function (a) {
 	return {ctor: 'Vertical', _0: a};
 };
-var _user$project$Internal_Path$Horizontal = function (a) {
+var _terezka$line_charts$Internal_Path$Horizontal = function (a) {
 	return {ctor: 'Horizontal', _0: a};
 };
-var _user$project$Internal_Path$Line = function (a) {
+var _terezka$line_charts$Internal_Path$Line = function (a) {
 	return {ctor: 'Line', _0: a};
 };
-var _user$project$Internal_Path$Move = function (a) {
+var _terezka$line_charts$Internal_Path$Move = function (a) {
 	return {ctor: 'Move', _0: a};
 };
-var _user$project$Internal_Path$translate = F2(
+var _terezka$line_charts$Internal_Path$translate = F2(
 	function (system, command) {
 		var _p4 = command;
 		switch (_p4.ctor) {
 			case 'Move':
-				return _user$project$Internal_Path$Move(
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._0));
+				return _terezka$line_charts$Internal_Path$Move(
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._0));
 			case 'Line':
-				return _user$project$Internal_Path$Line(
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._0));
+				return _terezka$line_charts$Internal_Path$Line(
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._0));
 			case 'Horizontal':
-				return _user$project$Internal_Path$Horizontal(
-					A2(_user$project$LineChart_Coordinate$toSvgX, system, _p4._0));
+				return _terezka$line_charts$Internal_Path$Horizontal(
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, _p4._0));
 			case 'Vertical':
-				return _user$project$Internal_Path$Vertical(
-					A2(_user$project$LineChart_Coordinate$toSvgY, system, _p4._0));
+				return _terezka$line_charts$Internal_Path$Vertical(
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, _p4._0));
 			case 'CubicBeziers':
 				return A3(
-					_user$project$Internal_Path$CubicBeziers,
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._0),
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._1),
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._2));
+					_terezka$line_charts$Internal_Path$CubicBeziers,
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._0),
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._1),
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._2));
 			case 'CubicBeziersShort':
 				return A2(
-					_user$project$Internal_Path$CubicBeziersShort,
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._0),
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._1));
+					_terezka$line_charts$Internal_Path$CubicBeziersShort,
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._0),
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._1));
 			case 'QuadraticBeziers':
 				return A2(
-					_user$project$Internal_Path$QuadraticBeziers,
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._0),
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._1));
+					_terezka$line_charts$Internal_Path$QuadraticBeziers,
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._0),
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._1));
 			case 'QuadraticBeziersShort':
-				return _user$project$Internal_Path$QuadraticBeziersShort(
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._0));
+				return _terezka$line_charts$Internal_Path$QuadraticBeziersShort(
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._0));
 			case 'Arc':
 				return A6(
-					_user$project$Internal_Path$Arc,
+					_terezka$line_charts$Internal_Path$Arc,
 					_p4._0,
 					_p4._1,
 					_p4._2,
 					_p4._3,
 					_p4._4,
-					A2(_user$project$LineChart_Coordinate$toSvg, system, _p4._5));
+					A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, _p4._5));
 			default:
-				return _user$project$Internal_Path$Close;
+				return _terezka$line_charts$Internal_Path$Close;
 		}
 	});
-var _user$project$Internal_Path$description = F2(
+var _terezka$line_charts$Internal_Path$description = F2(
 	function (system, commands) {
-		return _user$project$Internal_Path$join(
+		return _terezka$line_charts$Internal_Path$join(
 			A2(
 				_elm_lang$core$List$map,
 				function (_p5) {
-					return _user$project$Internal_Path$toString(
-						A2(_user$project$Internal_Path$translate, system, _p5));
+					return _terezka$line_charts$Internal_Path$toString(
+						A2(_terezka$line_charts$Internal_Path$translate, system, _p5));
 				},
 				commands));
 	});
-var _user$project$Internal_Path$view = F3(
+var _terezka$line_charts$Internal_Path$view = F3(
 	function (system, attributes, commands) {
-		return _user$project$Internal_Path$viewPath(
+		return _terezka$line_charts$Internal_Path$viewPath(
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				attributes,
 				{
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$d(
-						A2(_user$project$Internal_Path$description, system, commands)),
+						A2(_terezka$line_charts$Internal_Path$description, system, commands)),
 					_1: {ctor: '[]'}
 				}));
 	});
 
-var _user$project$Internal_Utils$part = F4(
+var _terezka$line_charts$Internal_Utils$part = F4(
 	function (isReal, points, current, parts) {
 		part:
 		while (true) {
@@ -13396,35 +13472,35 @@ var _user$project$Internal_Utils$part = F4(
 			}
 		}
 	});
-var _user$project$Internal_Utils$magnitude = function (num) {
+var _terezka$line_charts$Internal_Utils$magnitude = function (num) {
 	return _elm_lang$core$Basics$toFloat(
 		Math.pow(
 			10,
 			_elm_lang$core$Basics$floor(
 				A2(_elm_lang$core$Basics$logBase, _elm_lang$core$Basics$e, num) / A2(_elm_lang$core$Basics$logBase, _elm_lang$core$Basics$e, 10))));
 };
-var _user$project$Internal_Utils$toChartAreaId = function (id) {
+var _terezka$line_charts$Internal_Utils$toChartAreaId = function (id) {
 	return A2(_elm_lang$core$Basics_ops['++'], 'chart__chart-area--', id);
 };
-var _user$project$Internal_Utils$last = function (list) {
+var _terezka$line_charts$Internal_Utils$last = function (list) {
 	return _elm_lang$core$List$head(
 		A2(
 			_elm_lang$core$List$drop,
 			_elm_lang$core$List$length(list) - 1,
 			list));
 };
-var _user$project$Internal_Utils$lastSafe = F2(
+var _terezka$line_charts$Internal_Utils$lastSafe = F2(
 	function (first, rest) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
 			first,
-			_user$project$Internal_Utils$last(rest));
+			_terezka$line_charts$Internal_Utils$last(rest));
 	});
-var _user$project$Internal_Utils$towardsZero = function (_p3) {
+var _terezka$line_charts$Internal_Utils$towardsZero = function (_p3) {
 	var _p4 = _p3;
 	return A3(_elm_lang$core$Basics$clamp, _p4.min, _p4.max, 0);
 };
-var _user$project$Internal_Utils$viewWithEdges = F2(
+var _terezka$line_charts$Internal_Utils$viewWithEdges = F2(
 	function (stuff, view) {
 		var _p5 = stuff;
 		if (_p5.ctor === '::') {
@@ -13434,12 +13510,12 @@ var _user$project$Internal_Utils$viewWithEdges = F2(
 				view,
 				_p6,
 				_p7,
-				A2(_user$project$Internal_Utils$lastSafe, _p6, _p7));
+				A2(_terezka$line_charts$Internal_Utils$lastSafe, _p6, _p7));
 		} else {
 			return _elm_lang$svg$Svg$text('');
 		}
 	});
-var _user$project$Internal_Utils$viewWithFirst = F2(
+var _terezka$line_charts$Internal_Utils$viewWithFirst = F2(
 	function (stuff, view) {
 		var _p8 = stuff;
 		if (_p8.ctor === '::') {
@@ -13448,7 +13524,7 @@ var _user$project$Internal_Utils$viewWithFirst = F2(
 			return _elm_lang$svg$Svg$text('');
 		}
 	});
-var _user$project$Internal_Utils$withFirst = F2(
+var _terezka$line_charts$Internal_Utils$withFirst = F2(
 	function (stuff, process) {
 		var _p9 = stuff;
 		if (_p9.ctor === '::') {
@@ -13458,29 +13534,29 @@ var _user$project$Internal_Utils$withFirst = F2(
 			return _elm_lang$core$Maybe$Nothing;
 		}
 	});
-var _user$project$Internal_Utils$nonEmptyList = function (list) {
+var _terezka$line_charts$Internal_Utils$nonEmptyList = function (list) {
 	return _elm_lang$core$List$isEmpty(list) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(list);
 };
-var _user$project$Internal_Utils$viewMaybeHtml = F2(
+var _terezka$line_charts$Internal_Utils$viewMaybeHtml = F2(
 	function (a, view) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
 			_elm_lang$html$Html$text(''),
 			A2(_elm_lang$core$Maybe$map, view, a));
 	});
-var _user$project$Internal_Utils$viewMaybe = F2(
+var _terezka$line_charts$Internal_Utils$viewMaybe = F2(
 	function (a, view) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
 			_elm_lang$svg$Svg$text(''),
 			A2(_elm_lang$core$Maybe$map, view, a));
 	});
-var _user$project$Internal_Utils$viewIf = F2(
+var _terezka$line_charts$Internal_Utils$viewIf = F2(
 	function (condition, view) {
 		return condition ? view(
 			{ctor: '_Tuple0'}) : _elm_lang$svg$Svg$text('');
 	});
-var _user$project$Internal_Utils$indexedMap2 = F3(
+var _terezka$line_charts$Internal_Utils$indexedMap2 = F3(
 	function (f, a, b) {
 		var collect = F4(
 			function (a, b, i, c) {
@@ -13520,7 +13596,7 @@ var _user$project$Internal_Utils$indexedMap2 = F3(
 			0,
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Utils$unzip3 = function (pairs) {
+var _terezka$line_charts$Internal_Utils$unzip3 = function (pairs) {
 	var step = F2(
 		function (_p12, _p11) {
 			var _p13 = _p12;
@@ -13543,23 +13619,23 @@ var _user$project$Internal_Utils$unzip3 = function (pairs) {
 		},
 		pairs);
 };
-var _user$project$Internal_Utils$concat = F3(
+var _terezka$line_charts$Internal_Utils$concat = F3(
 	function (first, second, third) {
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
 			first,
 			A2(_elm_lang$core$Basics_ops['++'], second, third));
 	});
-var _user$project$Internal_Utils$apply2 = F3(
+var _terezka$line_charts$Internal_Utils$apply2 = F3(
 	function (stuff1, stuff2, toNewStuff) {
 		return A2(toNewStuff, stuff1, stuff2);
 	});
-var _user$project$Internal_Utils$apply = F2(
+var _terezka$line_charts$Internal_Utils$apply = F2(
 	function (stuff, toNewStuff) {
 		return toNewStuff(stuff);
 	});
 
-var _user$project$Internal_Svg$anchorStyle = function (anchor) {
+var _terezka$line_charts$Internal_Svg$anchorStyle = function (anchor) {
 	var anchorString = function () {
 		var _p0 = anchor;
 		switch (_p0.ctor) {
@@ -13577,7 +13653,7 @@ var _user$project$Internal_Svg$anchorStyle = function (anchor) {
 			'text-anchor: ',
 			A2(_elm_lang$core$Basics_ops['++'], anchorString, ';')));
 };
-var _user$project$Internal_Svg$label = F2(
+var _terezka$line_charts$Internal_Svg$label = F2(
 	function (color, string) {
 		return A2(
 			_elm_lang$svg$Svg$text_,
@@ -13603,17 +13679,17 @@ var _user$project$Internal_Svg$label = F2(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$Internal_Svg$yTick = F5(
+var _terezka$line_charts$Internal_Svg$yTick = F5(
 	function (system, width, userAttributes, x, y) {
 		var attributes = A3(
-			_user$project$Internal_Utils$concat,
+			_terezka$line_charts$Internal_Utils$concat,
 			{
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$class('chart__tick'),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$stroke(
-						_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$gray)),
+						_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_terezka$line_charts$LineChart_Colors$gray)),
 					_1: {ctor: '[]'}
 				}
 			},
@@ -13622,22 +13698,22 @@ var _user$project$Internal_Svg$yTick = F5(
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$x1(
 					_elm_lang$core$Basics$toString(
-						A2(_user$project$LineChart_Coordinate$toSvgX, system, x))),
+						A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, x))),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$x2(
 						_elm_lang$core$Basics$toString(
-							A2(_user$project$LineChart_Coordinate$toSvgX, system, x) - width)),
+							A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, x) - width)),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$y1(
 							_elm_lang$core$Basics$toString(
-								A2(_user$project$LineChart_Coordinate$toSvgY, system, y))),
+								A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, y))),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$y2(
 								_elm_lang$core$Basics$toString(
-									A2(_user$project$LineChart_Coordinate$toSvgY, system, y))),
+									A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, y))),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -13648,14 +13724,14 @@ var _user$project$Internal_Svg$yTick = F5(
 			attributes,
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Svg$xTick = F5(
+var _terezka$line_charts$Internal_Svg$xTick = F5(
 	function (system, height, userAttributes, y, x) {
 		var attributes = A3(
-			_user$project$Internal_Utils$concat,
+			_terezka$line_charts$Internal_Utils$concat,
 			{
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$stroke(
-					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$gray)),
+					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_terezka$line_charts$LineChart_Colors$gray)),
 				_1: {ctor: '[]'}
 			},
 			userAttributes,
@@ -13663,22 +13739,22 @@ var _user$project$Internal_Svg$xTick = F5(
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$x1(
 					_elm_lang$core$Basics$toString(
-						A2(_user$project$LineChart_Coordinate$toSvgX, system, x))),
+						A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, x))),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$x2(
 						_elm_lang$core$Basics$toString(
-							A2(_user$project$LineChart_Coordinate$toSvgX, system, x))),
+							A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, x))),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$y1(
 							_elm_lang$core$Basics$toString(
-								A2(_user$project$LineChart_Coordinate$toSvgY, system, y))),
+								A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, y))),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$y2(
 								_elm_lang$core$Basics$toString(
-									A2(_user$project$LineChart_Coordinate$toSvgY, system, y) + height)),
+									A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, y) + height)),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -13689,37 +13765,37 @@ var _user$project$Internal_Svg$xTick = F5(
 			attributes,
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Svg$rectangle = F6(
+var _terezka$line_charts$Internal_Svg$rectangle = F6(
 	function (system, userAttributes, x1, x2, y1, y2) {
 		var attributes = A3(
-			_user$project$Internal_Utils$concat,
+			_terezka$line_charts$Internal_Utils$concat,
 			{
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$fill(
-					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$gray)),
+					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_terezka$line_charts$LineChart_Colors$gray)),
 				_1: {ctor: '[]'}
 			},
 			userAttributes,
 			{ctor: '[]'});
 		return A3(
-			_user$project$Internal_Path$view,
+			_terezka$line_charts$Internal_Path$view,
 			system,
 			attributes,
 			{
 				ctor: '::',
-				_0: _user$project$Internal_Path$Move(
+				_0: _terezka$line_charts$Internal_Path$Move(
 					{x: x1, y: y1}),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Internal_Path$Line(
+					_0: _terezka$line_charts$Internal_Path$Line(
 						{x: x1, y: y2}),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Internal_Path$Line(
+						_0: _terezka$line_charts$Internal_Path$Line(
 							{x: x2, y: y2}),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Internal_Path$Line(
+							_0: _terezka$line_charts$Internal_Path$Line(
 								{x: x2, y: y1}),
 							_1: {ctor: '[]'}
 						}
@@ -13727,14 +13803,14 @@ var _user$project$Internal_Svg$rectangle = F6(
 				}
 			});
 	});
-var _user$project$Internal_Svg$vertical = F5(
+var _terezka$line_charts$Internal_Svg$vertical = F5(
 	function (system, userAttributes, x, y1, y2) {
 		var attributes = A3(
-			_user$project$Internal_Utils$concat,
+			_terezka$line_charts$Internal_Utils$concat,
 			{
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$stroke(
-					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$gray)),
+					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_terezka$line_charts$LineChart_Colors$gray)),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$style('pointer-events: none;'),
@@ -13744,34 +13820,34 @@ var _user$project$Internal_Svg$vertical = F5(
 			userAttributes,
 			{ctor: '[]'});
 		return A3(
-			_user$project$Internal_Path$view,
+			_terezka$line_charts$Internal_Path$view,
 			system,
 			attributes,
 			{
 				ctor: '::',
-				_0: _user$project$Internal_Path$Move(
+				_0: _terezka$line_charts$Internal_Path$Move(
 					{x: x, y: y1}),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Internal_Path$Line(
+					_0: _terezka$line_charts$Internal_Path$Line(
 						{x: x, y: y1}),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Internal_Path$Line(
+						_0: _terezka$line_charts$Internal_Path$Line(
 							{x: x, y: y2}),
 						_1: {ctor: '[]'}
 					}
 				}
 			});
 	});
-var _user$project$Internal_Svg$verticalGrid = F3(
+var _terezka$line_charts$Internal_Svg$verticalGrid = F3(
 	function (system, userAttributes, x) {
 		var attributes = A3(
-			_user$project$Internal_Utils$concat,
+			_terezka$line_charts$Internal_Utils$concat,
 			{
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$stroke(
-					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$gray)),
+					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_terezka$line_charts$LineChart_Colors$gray)),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$style('pointer-events: none;'),
@@ -13780,16 +13856,16 @@ var _user$project$Internal_Svg$verticalGrid = F3(
 			},
 			userAttributes,
 			{ctor: '[]'});
-		return A5(_user$project$Internal_Svg$vertical, system, attributes, x, system.y.min, system.y.max);
+		return A5(_terezka$line_charts$Internal_Svg$vertical, system, attributes, x, system.y.min, system.y.max);
 	});
-var _user$project$Internal_Svg$horizontal = F5(
+var _terezka$line_charts$Internal_Svg$horizontal = F5(
 	function (system, userAttributes, y, x1, x2) {
 		var attributes = A3(
-			_user$project$Internal_Utils$concat,
+			_terezka$line_charts$Internal_Utils$concat,
 			{
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$stroke(
-					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$gray)),
+					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_terezka$line_charts$LineChart_Colors$gray)),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$style('pointer-events: none;'),
@@ -13799,34 +13875,34 @@ var _user$project$Internal_Svg$horizontal = F5(
 			userAttributes,
 			{ctor: '[]'});
 		return A3(
-			_user$project$Internal_Path$view,
+			_terezka$line_charts$Internal_Path$view,
 			system,
 			attributes,
 			{
 				ctor: '::',
-				_0: _user$project$Internal_Path$Move(
+				_0: _terezka$line_charts$Internal_Path$Move(
 					{x: x1, y: y}),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Internal_Path$Line(
+					_0: _terezka$line_charts$Internal_Path$Line(
 						{x: x1, y: y}),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Internal_Path$Line(
+						_0: _terezka$line_charts$Internal_Path$Line(
 							{x: x2, y: y}),
 						_1: {ctor: '[]'}
 					}
 				}
 			});
 	});
-var _user$project$Internal_Svg$horizontalGrid = F3(
+var _terezka$line_charts$Internal_Svg$horizontalGrid = F3(
 	function (system, userAttributes, y) {
 		var attributes = A3(
-			_user$project$Internal_Utils$concat,
+			_terezka$line_charts$Internal_Utils$concat,
 			{
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$stroke(
-					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_user$project$LineChart_Colors$gray)),
+					_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_terezka$line_charts$LineChart_Colors$gray)),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$style('pointer-events: none;'),
@@ -13835,9 +13911,9 @@ var _user$project$Internal_Svg$horizontalGrid = F3(
 			},
 			userAttributes,
 			{ctor: '[]'});
-		return A5(_user$project$Internal_Svg$horizontal, system, attributes, y, system.x.min, system.x.max);
+		return A5(_terezka$line_charts$Internal_Svg$horizontal, system, attributes, y, system.x.min, system.x.max);
 	});
-var _user$project$Internal_Svg$gridDot = F3(
+var _terezka$line_charts$Internal_Svg$gridDot = F3(
 	function (radius, color, point) {
 		return A2(
 			_elm_lang$svg$Svg$circle,
@@ -13864,7 +13940,7 @@ var _user$project$Internal_Svg$gridDot = F3(
 			},
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Svg$withinChartArea = function (_p1) {
+var _terezka$line_charts$Internal_Svg$withinChartArea = function (_p1) {
 	var _p2 = _p1;
 	return _elm_lang$svg$Svg_Attributes$clipPath(
 		A2(
@@ -13872,39 +13948,39 @@ var _user$project$Internal_Svg$withinChartArea = function (_p1) {
 			'url(#',
 			A2(
 				_elm_lang$core$Basics_ops['++'],
-				_user$project$Internal_Utils$toChartAreaId(_p2.id),
+				_terezka$line_charts$Internal_Utils$toChartAreaId(_p2.id),
 				')')));
 };
-var _user$project$Internal_Svg$End = {ctor: 'End'};
-var _user$project$Internal_Svg$Middle = {ctor: 'Middle'};
-var _user$project$Internal_Svg$Start = {ctor: 'Start'};
-var _user$project$Internal_Svg$Transfrom = F2(
+var _terezka$line_charts$Internal_Svg$End = {ctor: 'End'};
+var _terezka$line_charts$Internal_Svg$Middle = {ctor: 'Middle'};
+var _terezka$line_charts$Internal_Svg$Start = {ctor: 'Start'};
+var _terezka$line_charts$Internal_Svg$Transfrom = F2(
 	function (a, b) {
 		return {ctor: 'Transfrom', _0: a, _1: b};
 	});
-var _user$project$Internal_Svg$move = F3(
+var _terezka$line_charts$Internal_Svg$move = F3(
 	function (system, x, y) {
 		return A2(
-			_user$project$Internal_Svg$Transfrom,
-			A2(_user$project$LineChart_Coordinate$toSvgX, system, x),
-			A2(_user$project$LineChart_Coordinate$toSvgY, system, y));
+			_terezka$line_charts$Internal_Svg$Transfrom,
+			A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, x),
+			A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, y));
 	});
-var _user$project$Internal_Svg$offset = F2(
+var _terezka$line_charts$Internal_Svg$offset = F2(
 	function (x, y) {
-		return A2(_user$project$Internal_Svg$Transfrom, x, y);
+		return A2(_terezka$line_charts$Internal_Svg$Transfrom, x, y);
 	});
-var _user$project$Internal_Svg$addPosition = F2(
+var _terezka$line_charts$Internal_Svg$addPosition = F2(
 	function (_p4, _p3) {
 		var _p5 = _p4;
 		var _p6 = _p3;
-		return A2(_user$project$Internal_Svg$Transfrom, _p6._0 + _p5._0, _p6._1 + _p5._1);
+		return A2(_terezka$line_charts$Internal_Svg$Transfrom, _p6._0 + _p5._0, _p6._1 + _p5._1);
 	});
-var _user$project$Internal_Svg$toPosition = A2(
+var _terezka$line_charts$Internal_Svg$toPosition = A2(
 	_elm_lang$core$List$foldr,
-	_user$project$Internal_Svg$addPosition,
-	A2(_user$project$Internal_Svg$Transfrom, 0, 0));
-var _user$project$Internal_Svg$transform = function (translations) {
-	var _p7 = _user$project$Internal_Svg$toPosition(translations);
+	_terezka$line_charts$Internal_Svg$addPosition,
+	A2(_terezka$line_charts$Internal_Svg$Transfrom, 0, 0));
+var _terezka$line_charts$Internal_Svg$transform = function (translations) {
+	var _p7 = _terezka$line_charts$Internal_Svg$toPosition(translations);
 	var x = _p7._0;
 	var y = _p7._1;
 	return _elm_lang$svg$Svg_Attributes$transform(
@@ -13923,7 +13999,7 @@ var _user$project$Internal_Svg$transform = function (translations) {
 						')')))));
 };
 
-var _user$project$Internal_Junk$find = F2(
+var _terezka$line_charts$Internal_Junk$find = F2(
 	function (hovered, data) {
 		find:
 		while (true) {
@@ -13950,7 +14026,7 @@ var _user$project$Internal_Junk$find = F2(
 			}
 		}
 	});
-var _user$project$Internal_Junk$findSeries = F2(
+var _terezka$line_charts$Internal_Junk$findSeries = F2(
 	function (hovered, datas) {
 		findSeries:
 		while (true) {
@@ -13960,7 +14036,7 @@ var _user$project$Internal_Junk$findSeries = F2(
 			} else {
 				var _p4 = _p2._0._2;
 				var _p3 = A2(
-					_user$project$Internal_Junk$find,
+					_terezka$line_charts$Internal_Junk$find,
 					{
 						ctor: '::',
 						_0: hovered,
@@ -13980,16 +14056,16 @@ var _user$project$Internal_Junk$findSeries = F2(
 			}
 		}
 	});
-var _user$project$Internal_Junk$shouldFlip = F2(
+var _terezka$line_charts$Internal_Junk$shouldFlip = F2(
 	function (system, x) {
 		return _elm_lang$core$Native_Utils.cmp(x - system.x.min, system.x.max - x) > 0;
 	});
-var _user$project$Internal_Junk$middle = F2(
+var _terezka$line_charts$Internal_Junk$middle = F2(
 	function (r, system) {
 		var range = r(system);
 		return range.min + ((range.max - range.min) / 2);
 	});
-var _user$project$Internal_Junk$viewRow = F3(
+var _terezka$line_charts$Internal_Junk$viewRow = F3(
 	function (color, label, value) {
 		return A2(
 			_elm_lang$html$Html$p,
@@ -14017,7 +14093,7 @@ var _user$project$Internal_Junk$viewRow = F3(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$Internal_Junk$viewHeader = _elm_lang$html$Html$p(
+var _terezka$line_charts$Internal_Junk$viewHeader = _elm_lang$html$Html$p(
 	{
 		ctor: '::',
 		_0: _elm_lang$html$Html_Attributes$style(
@@ -14040,7 +14116,7 @@ var _user$project$Internal_Junk$viewHeader = _elm_lang$html$Html$p(
 			}),
 		_1: {ctor: '[]'}
 	});
-var _user$project$Internal_Junk$standardStyles = {
+var _terezka$line_charts$Internal_Junk$standardStyles = {
 	ctor: '::',
 	_0: {ctor: '_Tuple2', _0: 'padding', _1: '5px'},
 	_1: {
@@ -14065,11 +14141,11 @@ var _user$project$Internal_Junk$standardStyles = {
 		}
 	}
 };
-var _user$project$Internal_Junk$hoverAt = F5(
+var _terezka$line_charts$Internal_Junk$hoverAt = F5(
 	function (system, x, y, styles, view) {
-		var yPercentage = (A2(_user$project$LineChart_Coordinate$toSvgY, system, y) * 100) / system.frame.size.height;
-		var space = A2(_user$project$Internal_Junk$shouldFlip, system, x) ? -15 : 15;
-		var xPercentage = ((A2(_user$project$LineChart_Coordinate$toSvgX, system, x) + space) * 100) / system.frame.size.width;
+		var yPercentage = (A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, y) * 100) / system.frame.size.height;
+		var space = A2(_terezka$line_charts$Internal_Junk$shouldFlip, system, x) ? -15 : 15;
+		var xPercentage = ((A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, x) + space) * 100) / system.frame.size.width;
 		var posititonStyles = {
 			ctor: '::',
 			_0: {
@@ -14098,7 +14174,7 @@ var _user$project$Internal_Junk$hoverAt = F5(
 						_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
 						_1: {
 							ctor: '::',
-							_0: A2(_user$project$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(-100%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(0)'},
+							_0: A2(_terezka$line_charts$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(-100%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translateX(0)'},
 							_1: {ctor: '[]'}
 						}
 					}
@@ -14107,7 +14183,7 @@ var _user$project$Internal_Junk$hoverAt = F5(
 		};
 		var containerStyles = A2(
 			_elm_lang$core$Basics_ops['++'],
-			_user$project$Internal_Junk$standardStyles,
+			_terezka$line_charts$Internal_Junk$standardStyles,
 			A2(_elm_lang$core$Basics_ops['++'], posititonStyles, styles));
 		return A2(
 			_elm_lang$html$Html$div,
@@ -14118,34 +14194,34 @@ var _user$project$Internal_Junk$hoverAt = F5(
 			},
 			view);
 	});
-var _user$project$Internal_Junk$hover = F3(
+var _terezka$line_charts$Internal_Junk$hover = F3(
 	function (system, x, styles) {
 		var containerStyles = A2(
 			_elm_lang$core$Basics_ops['++'],
 			{
 				ctor: '::',
-				_0: A2(_user$project$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translate(-100%, -50%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translate(0, -50%)'},
+				_0: A2(_terezka$line_charts$Internal_Junk$shouldFlip, system, x) ? {ctor: '_Tuple2', _0: 'transform', _1: 'translate(-100%, -50%)'} : {ctor: '_Tuple2', _0: 'transform', _1: 'translate(0, -50%)'},
 				_1: {ctor: '[]'}
 			},
 			styles);
 		var y = A2(
-			_user$project$Internal_Junk$middle,
+			_terezka$line_charts$Internal_Junk$middle,
 			function (_) {
 				return _.y;
 			},
 			system);
-		return A4(_user$project$Internal_Junk$hoverAt, system, x, y, containerStyles);
+		return A4(_terezka$line_charts$Internal_Junk$hoverAt, system, x, y, containerStyles);
 	});
-var _user$project$Internal_Junk$hoverManyHtml = F8(
+var _terezka$line_charts$Internal_Junk$hoverManyHtml = F8(
 	function (system, toX, toY, formatX, formatY, first, hovered, series) {
 		var viewValue = function (_p5) {
 			var _p6 = _p5;
 			return A2(
-				_user$project$Internal_Utils$viewMaybe,
-				A2(_user$project$Internal_Junk$find, hovered, _p6._2),
+				_terezka$line_charts$Internal_Utils$viewMaybe,
+				A2(_terezka$line_charts$Internal_Junk$find, hovered, _p6._2),
 				function (hovered) {
 					return A3(
-						_user$project$Internal_Junk$viewRow,
+						_terezka$line_charts$Internal_Junk$viewRow,
 						_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_p6._0),
 						_p6._1,
 						formatY(hovered));
@@ -14154,20 +14230,20 @@ var _user$project$Internal_Junk$hoverManyHtml = F8(
 		var x = A2(
 			_elm_lang$core$Maybe$withDefault,
 			A2(
-				_user$project$Internal_Junk$middle,
+				_terezka$line_charts$Internal_Junk$middle,
 				function (_) {
 					return _.x;
 				},
 				system),
 			toX(first));
 		return A4(
-			_user$project$Internal_Junk$hover,
+			_terezka$line_charts$Internal_Junk$hover,
 			system,
 			x,
 			{ctor: '[]'},
 			{
 				ctor: '::',
-				_0: _user$project$Internal_Junk$viewHeader(
+				_0: _terezka$line_charts$Internal_Junk$viewHeader(
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(
@@ -14177,12 +14253,12 @@ var _user$project$Internal_Junk$hoverManyHtml = F8(
 				_1: A2(_elm_lang$core$List$map, viewValue, series)
 			});
 	});
-var _user$project$Internal_Junk$hoverOneHtml = F6(
+var _terezka$line_charts$Internal_Junk$hoverOneHtml = F6(
 	function (series, system, toX, toY, properties, hovered) {
 		var viewValue = function (_p7) {
 			var _p8 = _p7;
 			return A3(
-				_user$project$Internal_Junk$viewRow,
+				_terezka$line_charts$Internal_Junk$viewRow,
 				'inherit',
 				_p8._0,
 				_p8._1(hovered));
@@ -14212,11 +14288,11 @@ var _user$project$Internal_Junk$hoverOneHtml = F6(
 					});
 			});
 		var viewHeaderOne = A2(
-			_user$project$Internal_Utils$viewMaybe,
-			A2(_user$project$Internal_Junk$findSeries, hovered, series),
+			_terezka$line_charts$Internal_Utils$viewMaybe,
+			A2(_terezka$line_charts$Internal_Junk$findSeries, hovered, series),
 			function (_p9) {
 				var _p10 = _p9;
-				return _user$project$Internal_Junk$viewHeader(
+				return _terezka$line_charts$Internal_Junk$viewHeader(
 					{
 						ctor: '::',
 						_0: A2(
@@ -14229,7 +14305,7 @@ var _user$project$Internal_Junk$hoverOneHtml = F6(
 		var y = A2(
 			_elm_lang$core$Maybe$withDefault,
 			A2(
-				_user$project$Internal_Junk$middle,
+				_terezka$line_charts$Internal_Junk$middle,
 				function (_) {
 					return _.y;
 				},
@@ -14238,14 +14314,14 @@ var _user$project$Internal_Junk$hoverOneHtml = F6(
 		var x = A2(
 			_elm_lang$core$Maybe$withDefault,
 			A2(
-				_user$project$Internal_Junk$middle,
+				_terezka$line_charts$Internal_Junk$middle,
 				function (_) {
 					return _.x;
 				},
 				system),
 			toX(hovered));
 		return A5(
-			_user$project$Internal_Junk$hoverAt,
+			_terezka$line_charts$Internal_Junk$hoverAt,
 			system,
 			x,
 			y,
@@ -14256,7 +14332,7 @@ var _user$project$Internal_Junk$hoverOneHtml = F6(
 				_1: A2(_elm_lang$core$List$map, viewValue, properties)
 			});
 	});
-var _user$project$Internal_Junk$addBelow = F2(
+var _terezka$line_charts$Internal_Junk$addBelow = F2(
 	function (below, layers) {
 		return _elm_lang$core$Native_Utils.update(
 			layers,
@@ -14264,37 +14340,37 @@ var _user$project$Internal_Junk$addBelow = F2(
 				below: A2(_elm_lang$core$Basics_ops['++'], below, layers.below)
 			});
 	});
-var _user$project$Internal_Junk$getLayers = F5(
+var _terezka$line_charts$Internal_Junk$getLayers = F5(
 	function (series, toX, toY, system, _p11) {
 		var _p12 = _p11;
 		return A4(_p12._0, series, toX, toY, system);
 	});
-var _user$project$Internal_Junk$Layers = F3(
+var _terezka$line_charts$Internal_Junk$Layers = F3(
 	function (a, b, c) {
 		return {below: a, above: b, html: c};
 	});
-var _user$project$Internal_Junk$Config = function (a) {
+var _terezka$line_charts$Internal_Junk$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Junk$none = _user$project$Internal_Junk$Config(
+var _terezka$line_charts$Internal_Junk$none = _terezka$line_charts$Internal_Junk$Config(
 	F4(
 		function (_p16, _p15, _p14, _p13) {
 			return A3(
-				_user$project$Internal_Junk$Layers,
+				_terezka$line_charts$Internal_Junk$Layers,
 				{ctor: '[]'},
 				{ctor: '[]'},
 				{ctor: '[]'});
 		}));
-var _user$project$Internal_Junk$custom = function (func) {
-	return _user$project$Internal_Junk$Config(
+var _terezka$line_charts$Internal_Junk$custom = function (func) {
+	return _terezka$line_charts$Internal_Junk$Config(
 		F3(
 			function (_p19, _p18, _p17) {
 				return func;
 			}));
 };
-var _user$project$Internal_Junk$hoverOne = F2(
+var _terezka$line_charts$Internal_Junk$hoverOne = F2(
 	function (hovered, properties) {
-		return _user$project$Internal_Junk$Config(
+		return _terezka$line_charts$Internal_Junk$Config(
 			F4(
 				function (series, toX, toY, system) {
 					return {
@@ -14303,22 +14379,22 @@ var _user$project$Internal_Junk$hoverOne = F2(
 						html: {
 							ctor: '::',
 							_0: A2(
-								_user$project$Internal_Utils$viewMaybe,
+								_terezka$line_charts$Internal_Utils$viewMaybe,
 								hovered,
-								A5(_user$project$Internal_Junk$hoverOneHtml, series, system, toX, toY, properties)),
+								A5(_terezka$line_charts$Internal_Junk$hoverOneHtml, series, system, toX, toY, properties)),
 							_1: {ctor: '[]'}
 						}
 					};
 				}));
 	});
-var _user$project$Internal_Junk$hoverMany = F3(
+var _terezka$line_charts$Internal_Junk$hoverMany = F3(
 	function (hovered, formatX, formatY) {
 		var _p20 = hovered;
 		if (_p20.ctor === '[]') {
-			return _user$project$Internal_Junk$none;
+			return _terezka$line_charts$Internal_Junk$none;
 		} else {
 			var _p21 = _p20._0;
-			return _user$project$Internal_Junk$Config(
+			return _terezka$line_charts$Internal_Junk$Config(
 				F4(
 					function (series, toX, toY, system) {
 						var xValue = A2(
@@ -14329,7 +14405,7 @@ var _user$project$Internal_Junk$hoverMany = F3(
 							below: {
 								ctor: '::',
 								_0: A3(
-									_user$project$Internal_Svg$verticalGrid,
+									_terezka$line_charts$Internal_Svg$verticalGrid,
 									system,
 									{ctor: '[]'},
 									xValue),
@@ -14338,7 +14414,7 @@ var _user$project$Internal_Junk$hoverMany = F3(
 							above: {ctor: '[]'},
 							html: {
 								ctor: '::',
-								_0: A8(_user$project$Internal_Junk$hoverManyHtml, system, toX, toY, formatX, formatY, _p21, hovered, series),
+								_0: A8(_terezka$line_charts$Internal_Junk$hoverManyHtml, system, toX, toY, formatX, formatY, _p21, hovered, series),
 								_1: {ctor: '[]'}
 							}
 						};
@@ -14346,119 +14422,119 @@ var _user$project$Internal_Junk$hoverMany = F3(
 		}
 	});
 
-var _user$project$LineChart_Junk$hoverAt = _user$project$Internal_Junk$hoverAt;
-var _user$project$LineChart_Junk$hover = _user$project$Internal_Junk$hover;
-var _user$project$LineChart_Junk$withinChartArea = _user$project$Internal_Svg$withinChartArea;
-var _user$project$LineChart_Junk$label = function (color) {
-	return _user$project$Internal_Svg$label(
+var _terezka$line_charts$LineChart_Junk$hoverAt = _terezka$line_charts$Internal_Junk$hoverAt;
+var _terezka$line_charts$LineChart_Junk$hover = _terezka$line_charts$Internal_Junk$hover;
+var _terezka$line_charts$LineChart_Junk$withinChartArea = _terezka$line_charts$Internal_Svg$withinChartArea;
+var _terezka$line_charts$LineChart_Junk$label = function (color) {
+	return _terezka$line_charts$Internal_Svg$label(
 		_eskimoblood$elm_color_extra$Color_Convert$colorToHex(color));
 };
-var _user$project$LineChart_Junk$circle = F5(
+var _terezka$line_charts$LineChart_Junk$circle = F5(
 	function (system, radius, color, x, y) {
 		return A3(
-			_user$project$Internal_Svg$gridDot,
+			_terezka$line_charts$Internal_Svg$gridDot,
 			radius,
 			color,
 			A2(
-				_user$project$LineChart_Coordinate$toSvg,
+				_terezka$line_charts$LineChart_Coordinate$toSvg,
 				system,
-				A2(_user$project$LineChart_Coordinate$Point, x, y)));
+				A2(_terezka$line_charts$LineChart_Coordinate$Point, x, y)));
 	});
-var _user$project$LineChart_Junk$rectangle = F2(
+var _terezka$line_charts$LineChart_Junk$rectangle = F2(
 	function (system, attributes) {
 		return A2(
-			_user$project$Internal_Svg$rectangle,
+			_terezka$line_charts$Internal_Svg$rectangle,
 			system,
 			{
 				ctor: '::',
-				_0: _user$project$LineChart_Junk$withinChartArea(system),
+				_0: _terezka$line_charts$LineChart_Junk$withinChartArea(system),
 				_1: attributes
 			});
 	});
-var _user$project$LineChart_Junk$horizontalCustom = F2(
+var _terezka$line_charts$LineChart_Junk$horizontalCustom = F2(
 	function (system, attributes) {
 		return A2(
-			_user$project$Internal_Svg$horizontal,
+			_terezka$line_charts$Internal_Svg$horizontal,
 			system,
 			{
 				ctor: '::',
-				_0: _user$project$LineChart_Junk$withinChartArea(system),
+				_0: _terezka$line_charts$LineChart_Junk$withinChartArea(system),
 				_1: attributes
 			});
 	});
-var _user$project$LineChart_Junk$verticalCustom = F2(
+var _terezka$line_charts$LineChart_Junk$verticalCustom = F2(
 	function (system, attributes) {
 		return A2(
-			_user$project$Internal_Svg$vertical,
+			_terezka$line_charts$Internal_Svg$vertical,
 			system,
 			{
 				ctor: '::',
-				_0: _user$project$LineChart_Junk$withinChartArea(system),
+				_0: _terezka$line_charts$LineChart_Junk$withinChartArea(system),
 				_1: attributes
 			});
 	});
-var _user$project$LineChart_Junk$horizontal = F3(
+var _terezka$line_charts$LineChart_Junk$horizontal = F3(
 	function (system, attributes, at) {
 		return A5(
-			_user$project$Internal_Svg$horizontal,
+			_terezka$line_charts$Internal_Svg$horizontal,
 			system,
 			{
 				ctor: '::',
-				_0: _user$project$LineChart_Junk$withinChartArea(system),
+				_0: _terezka$line_charts$LineChart_Junk$withinChartArea(system),
 				_1: attributes
 			},
 			at,
 			system.x.min,
 			system.x.max);
 	});
-var _user$project$LineChart_Junk$vertical = F3(
+var _terezka$line_charts$LineChart_Junk$vertical = F3(
 	function (system, attributes, at) {
 		return A5(
-			_user$project$Internal_Svg$vertical,
+			_terezka$line_charts$Internal_Svg$vertical,
 			system,
 			{
 				ctor: '::',
-				_0: _user$project$LineChart_Junk$withinChartArea(system),
+				_0: _terezka$line_charts$LineChart_Junk$withinChartArea(system),
 				_1: attributes
 			},
 			at,
 			system.y.min,
 			system.y.max);
 	});
-var _user$project$LineChart_Junk$offset = _user$project$Internal_Svg$offset;
-var _user$project$LineChart_Junk$move = _user$project$Internal_Svg$move;
-var _user$project$LineChart_Junk$transform = _user$project$Internal_Svg$transform;
-var _user$project$LineChart_Junk$placed = F5(
+var _terezka$line_charts$LineChart_Junk$offset = _terezka$line_charts$Internal_Svg$offset;
+var _terezka$line_charts$LineChart_Junk$move = _terezka$line_charts$Internal_Svg$move;
+var _terezka$line_charts$LineChart_Junk$transform = _terezka$line_charts$Internal_Svg$transform;
+var _terezka$line_charts$LineChart_Junk$placed = F5(
 	function (system, x, y, xo, yo) {
 		return _elm_lang$svg$Svg$g(
 			{
 				ctor: '::',
-				_0: _user$project$LineChart_Junk$transform(
+				_0: _terezka$line_charts$LineChart_Junk$transform(
 					{
 						ctor: '::',
-						_0: A3(_user$project$LineChart_Junk$move, system, x, y),
+						_0: A3(_terezka$line_charts$LineChart_Junk$move, system, x, y),
 						_1: {
 							ctor: '::',
-							_0: A2(_user$project$LineChart_Junk$offset, xo, yo),
+							_0: A2(_terezka$line_charts$LineChart_Junk$offset, xo, yo),
 							_1: {ctor: '[]'}
 						}
 					}),
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$LineChart_Junk$labelAt = F8(
+var _terezka$line_charts$LineChart_Junk$labelAt = F8(
 	function (system, x, y, xo, yo, anchor, color, text) {
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{
 				ctor: '::',
-				_0: _user$project$LineChart_Junk$transform(
+				_0: _terezka$line_charts$LineChart_Junk$transform(
 					{
 						ctor: '::',
-						_0: A3(_user$project$LineChart_Junk$move, system, x, y),
+						_0: A3(_terezka$line_charts$LineChart_Junk$move, system, x, y),
 						_1: {
 							ctor: '::',
-							_0: A2(_user$project$LineChart_Junk$offset, xo, yo),
+							_0: A2(_terezka$line_charts$LineChart_Junk$offset, xo, yo),
 							_1: {ctor: '[]'}
 						}
 					}),
@@ -14474,20 +14550,20 @@ var _user$project$LineChart_Junk$labelAt = F8(
 			},
 			{
 				ctor: '::',
-				_0: A2(_user$project$LineChart_Junk$label, color, text),
+				_0: A2(_terezka$line_charts$LineChart_Junk$label, color, text),
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$LineChart_Junk$custom = _user$project$Internal_Junk$custom;
-var _user$project$LineChart_Junk$hoverMany = _user$project$Internal_Junk$hoverMany;
-var _user$project$LineChart_Junk$hoverOne = _user$project$Internal_Junk$hoverOne;
-var _user$project$LineChart_Junk$default = _user$project$Internal_Junk$none;
-var _user$project$LineChart_Junk$Layers = F3(
+var _terezka$line_charts$LineChart_Junk$custom = _terezka$line_charts$Internal_Junk$custom;
+var _terezka$line_charts$LineChart_Junk$hoverMany = _terezka$line_charts$Internal_Junk$hoverMany;
+var _terezka$line_charts$LineChart_Junk$hoverOne = _terezka$line_charts$Internal_Junk$hoverOne;
+var _terezka$line_charts$LineChart_Junk$default = _terezka$line_charts$Internal_Junk$none;
+var _terezka$line_charts$LineChart_Junk$Layers = F3(
 	function (a, b, c) {
 		return {below: a, above: b, html: c};
 	});
 
-var _user$project$Internal_Area$opacityContainer = function (config) {
+var _terezka$line_charts$Internal_Area$opacityContainer = function (config) {
 	var _p0 = config;
 	switch (_p0.ctor) {
 		case 'None':
@@ -14500,7 +14576,7 @@ var _user$project$Internal_Area$opacityContainer = function (config) {
 			return _p0._0;
 	}
 };
-var _user$project$Internal_Area$opacitySingle = function (config) {
+var _terezka$line_charts$Internal_Area$opacitySingle = function (config) {
 	var _p1 = config;
 	switch (_p1.ctor) {
 		case 'None':
@@ -14513,7 +14589,7 @@ var _user$project$Internal_Area$opacitySingle = function (config) {
 			return 1;
 	}
 };
-var _user$project$Internal_Area$opacity = function (config) {
+var _terezka$line_charts$Internal_Area$opacity = function (config) {
 	var _p2 = config;
 	switch (_p2.ctor) {
 		case 'None':
@@ -14526,7 +14602,7 @@ var _user$project$Internal_Area$opacity = function (config) {
 			return _p2._0;
 	}
 };
-var _user$project$Internal_Area$hasArea = function (config) {
+var _terezka$line_charts$Internal_Area$hasArea = function (config) {
 	var _p3 = config;
 	switch (_p3.ctor) {
 		case 'None':
@@ -14539,32 +14615,32 @@ var _user$project$Internal_Area$hasArea = function (config) {
 			return true;
 	}
 };
-var _user$project$Internal_Area$Percentage = function (a) {
+var _terezka$line_charts$Internal_Area$Percentage = function (a) {
 	return {ctor: 'Percentage', _0: a};
 };
-var _user$project$Internal_Area$percentage = _user$project$Internal_Area$Percentage;
-var _user$project$Internal_Area$Stacked = function (a) {
+var _terezka$line_charts$Internal_Area$percentage = _terezka$line_charts$Internal_Area$Percentage;
+var _terezka$line_charts$Internal_Area$Stacked = function (a) {
 	return {ctor: 'Stacked', _0: a};
 };
-var _user$project$Internal_Area$stacked = _user$project$Internal_Area$Stacked;
-var _user$project$Internal_Area$Normal = function (a) {
+var _terezka$line_charts$Internal_Area$stacked = _terezka$line_charts$Internal_Area$Stacked;
+var _terezka$line_charts$Internal_Area$Normal = function (a) {
 	return {ctor: 'Normal', _0: a};
 };
-var _user$project$Internal_Area$normal = _user$project$Internal_Area$Normal;
-var _user$project$Internal_Area$None = {ctor: 'None'};
-var _user$project$Internal_Area$none = _user$project$Internal_Area$None;
-var _user$project$Internal_Area$default = _user$project$Internal_Area$none;
+var _terezka$line_charts$Internal_Area$normal = _terezka$line_charts$Internal_Area$Normal;
+var _terezka$line_charts$Internal_Area$None = {ctor: 'None'};
+var _terezka$line_charts$Internal_Area$none = _terezka$line_charts$Internal_Area$None;
+var _terezka$line_charts$Internal_Area$default = _terezka$line_charts$Internal_Area$none;
 
-var _user$project$LineChart_Area$percentage = _user$project$Internal_Area$percentage;
-var _user$project$LineChart_Area$stacked = _user$project$Internal_Area$stacked;
-var _user$project$LineChart_Area$normal = _user$project$Internal_Area$normal;
-var _user$project$LineChart_Area$default = _user$project$Internal_Area$none;
+var _terezka$line_charts$LineChart_Area$percentage = _terezka$line_charts$Internal_Area$percentage;
+var _terezka$line_charts$LineChart_Area$stacked = _terezka$line_charts$Internal_Area$stacked;
+var _terezka$line_charts$LineChart_Area$normal = _terezka$line_charts$Internal_Area$normal;
+var _terezka$line_charts$LineChart_Area$default = _terezka$line_charts$Internal_Area$none;
 
-var _user$project$Internal_Axis_Tick$properties = function (_p0) {
+var _terezka$line_charts$Internal_Axis_Tick$properties = function (_p0) {
 	var _p1 = _p0;
 	return _p1._0;
 };
-var _user$project$Internal_Axis_Tick$isPositive = function (direction) {
+var _terezka$line_charts$Internal_Axis_Tick$isPositive = function (direction) {
 	var _p2 = direction;
 	if (_p2.ctor === 'Positive') {
 		return true;
@@ -14572,102 +14648,102 @@ var _user$project$Internal_Axis_Tick$isPositive = function (direction) {
 		return false;
 	}
 };
-var _user$project$Internal_Axis_Tick$Properties = F7(
+var _terezka$line_charts$Internal_Axis_Tick$Properties = F7(
 	function (a, b, c, d, e, f, g) {
 		return {position: a, color: b, width: c, length: d, grid: e, direction: f, label: g};
 	});
-var _user$project$Internal_Axis_Tick$Config = function (a) {
+var _terezka$line_charts$Internal_Axis_Tick$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Axis_Tick$custom = _user$project$Internal_Axis_Tick$Config;
-var _user$project$Internal_Axis_Tick$Positive = {ctor: 'Positive'};
-var _user$project$Internal_Axis_Tick$opposite = function (n) {
-	return _user$project$Internal_Axis_Tick$custom(
+var _terezka$line_charts$Internal_Axis_Tick$custom = _terezka$line_charts$Internal_Axis_Tick$Config;
+var _terezka$line_charts$Internal_Axis_Tick$Positive = {ctor: 'Positive'};
+var _terezka$line_charts$Internal_Axis_Tick$opposite = function (n) {
+	return _terezka$line_charts$Internal_Axis_Tick$custom(
 		{
 			position: n,
-			color: _user$project$LineChart_Colors$gray,
+			color: _terezka$line_charts$LineChart_Colors$gray,
 			width: 1,
 			length: 5,
 			grid: true,
-			direction: _user$project$Internal_Axis_Tick$Positive,
+			direction: _terezka$line_charts$Internal_Axis_Tick$Positive,
 			label: _elm_lang$core$Maybe$Just(
 				A2(
-					_user$project$Internal_Svg$label,
+					_terezka$line_charts$Internal_Svg$label,
 					'inherit',
 					_elm_lang$core$Basics$toString(n)))
 		});
 };
-var _user$project$Internal_Axis_Tick$Negative = {ctor: 'Negative'};
-var _user$project$Internal_Axis_Tick$int = function (n) {
-	return _user$project$Internal_Axis_Tick$custom(
+var _terezka$line_charts$Internal_Axis_Tick$Negative = {ctor: 'Negative'};
+var _terezka$line_charts$Internal_Axis_Tick$int = function (n) {
+	return _terezka$line_charts$Internal_Axis_Tick$custom(
 		{
 			position: _elm_lang$core$Basics$toFloat(n),
-			color: _user$project$LineChart_Colors$gray,
+			color: _terezka$line_charts$LineChart_Colors$gray,
 			width: 1,
 			length: 5,
 			grid: true,
-			direction: _user$project$Internal_Axis_Tick$Negative,
+			direction: _terezka$line_charts$Internal_Axis_Tick$Negative,
 			label: _elm_lang$core$Maybe$Just(
 				A2(
-					_user$project$Internal_Svg$label,
+					_terezka$line_charts$Internal_Svg$label,
 					'inherit',
 					_elm_lang$core$Basics$toString(n)))
 		});
 };
-var _user$project$Internal_Axis_Tick$float = function (n) {
-	return _user$project$Internal_Axis_Tick$custom(
+var _terezka$line_charts$Internal_Axis_Tick$float = function (n) {
+	return _terezka$line_charts$Internal_Axis_Tick$custom(
 		{
 			position: n,
-			color: _user$project$LineChart_Colors$gray,
+			color: _terezka$line_charts$LineChart_Colors$gray,
 			width: 1,
 			length: 5,
 			grid: true,
-			direction: _user$project$Internal_Axis_Tick$Negative,
+			direction: _terezka$line_charts$Internal_Axis_Tick$Negative,
 			label: _elm_lang$core$Maybe$Just(
 				A2(
-					_user$project$Internal_Svg$label,
+					_terezka$line_charts$Internal_Svg$label,
 					'inherit',
 					_elm_lang$core$Basics$toString(n)))
 		});
 };
-var _user$project$Internal_Axis_Tick$gridless = function (n) {
-	return _user$project$Internal_Axis_Tick$custom(
+var _terezka$line_charts$Internal_Axis_Tick$gridless = function (n) {
+	return _terezka$line_charts$Internal_Axis_Tick$custom(
 		{
 			position: n,
-			color: _user$project$LineChart_Colors$gray,
+			color: _terezka$line_charts$LineChart_Colors$gray,
 			width: 1,
 			length: 5,
 			grid: false,
-			direction: _user$project$Internal_Axis_Tick$Negative,
+			direction: _terezka$line_charts$Internal_Axis_Tick$Negative,
 			label: _elm_lang$core$Maybe$Just(
 				A2(
-					_user$project$Internal_Svg$label,
+					_terezka$line_charts$Internal_Svg$label,
 					'inherit',
 					_elm_lang$core$Basics$toString(n)))
 		});
 };
-var _user$project$Internal_Axis_Tick$labelless = function (n) {
-	return _user$project$Internal_Axis_Tick$custom(
-		{position: n, color: _user$project$LineChart_Colors$gray, width: 1, length: 5, grid: true, direction: _user$project$Internal_Axis_Tick$Negative, label: _elm_lang$core$Maybe$Nothing});
+var _terezka$line_charts$Internal_Axis_Tick$labelless = function (n) {
+	return _terezka$line_charts$Internal_Axis_Tick$custom(
+		{position: n, color: _terezka$line_charts$LineChart_Colors$gray, width: 1, length: 5, grid: true, direction: _terezka$line_charts$Internal_Axis_Tick$Negative, label: _elm_lang$core$Maybe$Nothing});
 };
-var _user$project$Internal_Axis_Tick$long = function (n) {
-	return _user$project$Internal_Axis_Tick$custom(
+var _terezka$line_charts$Internal_Axis_Tick$long = function (n) {
+	return _terezka$line_charts$Internal_Axis_Tick$custom(
 		{
 			position: n,
-			color: _user$project$LineChart_Colors$gray,
+			color: _terezka$line_charts$LineChart_Colors$gray,
 			width: 1,
 			length: 20,
 			grid: true,
-			direction: _user$project$Internal_Axis_Tick$Negative,
+			direction: _terezka$line_charts$Internal_Axis_Tick$Negative,
 			label: _elm_lang$core$Maybe$Just(
 				A2(
-					_user$project$Internal_Svg$label,
+					_terezka$line_charts$Internal_Svg$label,
 					'inherit',
 					_elm_lang$core$Basics$toString(n)))
 		});
 };
 
-var _user$project$LineChart_Axis_Tick$formatBold = function (unit) {
+var _terezka$line_charts$LineChart_Axis_Tick$formatBold = function (unit) {
 	return function (_p0) {
 		return function () {
 			var _p1 = unit;
@@ -14696,7 +14772,7 @@ var _user$project$LineChart_Axis_Tick$formatBold = function (unit) {
 			_elm_lang$core$Date$fromTime(_p0));
 	};
 };
-var _user$project$LineChart_Axis_Tick$formatNorm = F2(
+var _terezka$line_charts$LineChart_Axis_Tick$formatNorm = F2(
 	function (unit, time) {
 		var format2 = _justinmimbs$elm_date_extra$Date_Extra$toFormattedString;
 		var format1 = _mgold$elm_date_format$Date_Format$format;
@@ -14721,92 +14797,92 @@ var _user$project$LineChart_Axis_Tick$formatNorm = F2(
 				return A2(format1, '%Y', date);
 		}
 	});
-var _user$project$LineChart_Axis_Tick$custom = _user$project$Internal_Axis_Tick$custom;
-var _user$project$LineChart_Axis_Tick$positive = _user$project$Internal_Axis_Tick$Positive;
-var _user$project$LineChart_Axis_Tick$negative = _user$project$Internal_Axis_Tick$Negative;
-var _user$project$LineChart_Axis_Tick$long = _user$project$Internal_Axis_Tick$long;
-var _user$project$LineChart_Axis_Tick$opposite = _user$project$Internal_Axis_Tick$opposite;
-var _user$project$LineChart_Axis_Tick$labelless = _user$project$Internal_Axis_Tick$labelless;
-var _user$project$LineChart_Axis_Tick$gridless = _user$project$Internal_Axis_Tick$gridless;
-var _user$project$LineChart_Axis_Tick$float = _user$project$Internal_Axis_Tick$float;
-var _user$project$LineChart_Axis_Tick$int = _user$project$Internal_Axis_Tick$int;
-var _user$project$LineChart_Axis_Tick$Time = F4(
+var _terezka$line_charts$LineChart_Axis_Tick$custom = _terezka$line_charts$Internal_Axis_Tick$custom;
+var _terezka$line_charts$LineChart_Axis_Tick$positive = _terezka$line_charts$Internal_Axis_Tick$Positive;
+var _terezka$line_charts$LineChart_Axis_Tick$negative = _terezka$line_charts$Internal_Axis_Tick$Negative;
+var _terezka$line_charts$LineChart_Axis_Tick$long = _terezka$line_charts$Internal_Axis_Tick$long;
+var _terezka$line_charts$LineChart_Axis_Tick$opposite = _terezka$line_charts$Internal_Axis_Tick$opposite;
+var _terezka$line_charts$LineChart_Axis_Tick$labelless = _terezka$line_charts$Internal_Axis_Tick$labelless;
+var _terezka$line_charts$LineChart_Axis_Tick$gridless = _terezka$line_charts$Internal_Axis_Tick$gridless;
+var _terezka$line_charts$LineChart_Axis_Tick$float = _terezka$line_charts$Internal_Axis_Tick$float;
+var _terezka$line_charts$LineChart_Axis_Tick$int = _terezka$line_charts$Internal_Axis_Tick$int;
+var _terezka$line_charts$LineChart_Axis_Tick$Time = F4(
 	function (a, b, c, d) {
 		return {timestamp: a, isFirst: b, interval: c, change: d};
 	});
-var _user$project$LineChart_Axis_Tick$Interval = F2(
+var _terezka$line_charts$LineChart_Axis_Tick$Interval = F2(
 	function (a, b) {
 		return {unit: a, multiple: b};
 	});
-var _user$project$LineChart_Axis_Tick$Properties = F7(
+var _terezka$line_charts$LineChart_Axis_Tick$Properties = F7(
 	function (a, b, c, d, e, f, g) {
 		return {position: a, color: b, width: c, length: d, grid: e, direction: f, label: g};
 	});
-var _user$project$LineChart_Axis_Tick$Year = {ctor: 'Year'};
-var _user$project$LineChart_Axis_Tick$Month = {ctor: 'Month'};
-var _user$project$LineChart_Axis_Tick$Week = {ctor: 'Week'};
-var _user$project$LineChart_Axis_Tick$Day = {ctor: 'Day'};
-var _user$project$LineChart_Axis_Tick$Hour = {ctor: 'Hour'};
-var _user$project$LineChart_Axis_Tick$Minute = {ctor: 'Minute'};
-var _user$project$LineChart_Axis_Tick$Second = {ctor: 'Second'};
-var _user$project$LineChart_Axis_Tick$nextUnit = function (unit) {
+var _terezka$line_charts$LineChart_Axis_Tick$Year = {ctor: 'Year'};
+var _terezka$line_charts$LineChart_Axis_Tick$Month = {ctor: 'Month'};
+var _terezka$line_charts$LineChart_Axis_Tick$Week = {ctor: 'Week'};
+var _terezka$line_charts$LineChart_Axis_Tick$Day = {ctor: 'Day'};
+var _terezka$line_charts$LineChart_Axis_Tick$Hour = {ctor: 'Hour'};
+var _terezka$line_charts$LineChart_Axis_Tick$Minute = {ctor: 'Minute'};
+var _terezka$line_charts$LineChart_Axis_Tick$Second = {ctor: 'Second'};
+var _terezka$line_charts$LineChart_Axis_Tick$nextUnit = function (unit) {
 	var _p4 = unit;
 	switch (_p4.ctor) {
 		case 'Millisecond':
-			return _user$project$LineChart_Axis_Tick$Second;
+			return _terezka$line_charts$LineChart_Axis_Tick$Second;
 		case 'Second':
-			return _user$project$LineChart_Axis_Tick$Minute;
+			return _terezka$line_charts$LineChart_Axis_Tick$Minute;
 		case 'Minute':
-			return _user$project$LineChart_Axis_Tick$Hour;
+			return _terezka$line_charts$LineChart_Axis_Tick$Hour;
 		case 'Hour':
-			return _user$project$LineChart_Axis_Tick$Day;
+			return _terezka$line_charts$LineChart_Axis_Tick$Day;
 		case 'Day':
-			return _user$project$LineChart_Axis_Tick$Week;
+			return _terezka$line_charts$LineChart_Axis_Tick$Week;
 		case 'Week':
-			return _user$project$LineChart_Axis_Tick$Month;
+			return _terezka$line_charts$LineChart_Axis_Tick$Month;
 		case 'Month':
-			return _user$project$LineChart_Axis_Tick$Year;
+			return _terezka$line_charts$LineChart_Axis_Tick$Year;
 		default:
-			return _user$project$LineChart_Axis_Tick$Year;
+			return _terezka$line_charts$LineChart_Axis_Tick$Year;
 	}
 };
-var _user$project$LineChart_Axis_Tick$format = function (_p5) {
+var _terezka$line_charts$LineChart_Axis_Tick$format = function (_p5) {
 	var _p6 = _p5;
 	var _p9 = _p6.timestamp;
 	var _p8 = _p6.interval;
 	if (_p6.isFirst) {
 		return A2(
-			_user$project$LineChart_Axis_Tick$formatBold,
-			_user$project$LineChart_Axis_Tick$nextUnit(_p8.unit),
+			_terezka$line_charts$LineChart_Axis_Tick$formatBold,
+			_terezka$line_charts$LineChart_Axis_Tick$nextUnit(_p8.unit),
 			_p9);
 	} else {
 		var _p7 = _p6.change;
 		if (_p7.ctor === 'Just') {
-			return A2(_user$project$LineChart_Axis_Tick$formatBold, _p7._0, _p9);
+			return A2(_terezka$line_charts$LineChart_Axis_Tick$formatBold, _p7._0, _p9);
 		} else {
-			return A2(_user$project$LineChart_Axis_Tick$formatNorm, _p8.unit, _p9);
+			return A2(_terezka$line_charts$LineChart_Axis_Tick$formatNorm, _p8.unit, _p9);
 		}
 	}
 };
-var _user$project$LineChart_Axis_Tick$time = function (time) {
-	return _user$project$LineChart_Axis_Tick$custom(
+var _terezka$line_charts$LineChart_Axis_Tick$time = function (time) {
+	return _terezka$line_charts$LineChart_Axis_Tick$custom(
 		{
 			position: time.timestamp,
 			color: _elm_lang$core$Color$gray,
 			width: 1,
 			length: 5,
 			grid: true,
-			direction: _user$project$LineChart_Axis_Tick$negative,
+			direction: _terezka$line_charts$LineChart_Axis_Tick$negative,
 			label: _elm_lang$core$Maybe$Just(
 				A2(
-					_user$project$Internal_Svg$label,
+					_terezka$line_charts$Internal_Svg$label,
 					'inherit',
-					_user$project$LineChart_Axis_Tick$format(time)))
+					_terezka$line_charts$LineChart_Axis_Tick$format(time)))
 		});
 };
-var _user$project$LineChart_Axis_Tick$Millisecond = {ctor: 'Millisecond'};
+var _terezka$line_charts$LineChart_Axis_Tick$Millisecond = {ctor: 'Millisecond'};
 
-var _user$project$Internal_Data$isWithinRange = F2(
+var _terezka$line_charts$Internal_Data$isWithinRange = F2(
 	function (system, point) {
 		return _elm_lang$core$Native_Utils.eq(
 			A3(_elm_lang$core$Basics$clamp, system.x.min, system.x.max, point.x),
@@ -14814,16 +14890,16 @@ var _user$project$Internal_Data$isWithinRange = F2(
 			A3(_elm_lang$core$Basics$clamp, system.y.min, system.y.max, point.y),
 			point.y);
 	});
-var _user$project$Internal_Data$Data = F3(
+var _terezka$line_charts$Internal_Data$Data = F3(
 	function (a, b, c) {
 		return {user: a, point: b, isReal: c};
 	});
-var _user$project$Internal_Data$Point = F2(
+var _terezka$line_charts$Internal_Data$Point = F2(
 	function (a, b) {
 		return {x: a, y: b};
 	});
 
-var _user$project$Internal_Axis_Range$applyY = F2(
+var _terezka$line_charts$Internal_Axis_Range$applyY = F2(
 	function (range, system) {
 		var _p0 = range;
 		switch (_p0.ctor) {
@@ -14847,18 +14923,18 @@ var _user$project$Internal_Axis_Range$applyY = F2(
 									})
 							})
 					});
-				var scale = _user$project$LineChart_Coordinate$scaleDataY(system_);
+				var scale = _terezka$line_charts$LineChart_Coordinate$scaleDataY(system_);
 				return A2(
-					_user$project$LineChart_Coordinate$Range,
+					_terezka$line_charts$LineChart_Coordinate$Range,
 					system.y.min - scale(_p4),
 					system.y.max + scale(_p3));
 			case 'Window':
-				return A2(_user$project$LineChart_Coordinate$Range, _p0._0, _p0._1);
+				return A2(_terezka$line_charts$LineChart_Coordinate$Range, _p0._0, _p0._1);
 			default:
 				return _p0._0(system.y);
 		}
 	});
-var _user$project$Internal_Axis_Range$applyX = F2(
+var _terezka$line_charts$Internal_Axis_Range$applyX = F2(
 	function (range, system) {
 		var _p5 = range;
 		switch (_p5.ctor) {
@@ -14882,46 +14958,46 @@ var _user$project$Internal_Axis_Range$applyX = F2(
 									})
 							})
 					});
-				var scale = _user$project$LineChart_Coordinate$scaleDataX(system_);
+				var scale = _terezka$line_charts$LineChart_Coordinate$scaleDataX(system_);
 				return A2(
-					_user$project$LineChart_Coordinate$Range,
+					_terezka$line_charts$LineChart_Coordinate$Range,
 					system.x.min - scale(_p9),
 					system.x.max + scale(_p8));
 			case 'Window':
-				return A2(_user$project$LineChart_Coordinate$Range, _p5._0, _p5._1);
+				return A2(_terezka$line_charts$LineChart_Coordinate$Range, _p5._0, _p5._1);
 			default:
 				return _p5._0(system.x);
 		}
 	});
-var _user$project$Internal_Axis_Range$Custom = function (a) {
+var _terezka$line_charts$Internal_Axis_Range$Custom = function (a) {
 	return {ctor: 'Custom', _0: a};
 };
-var _user$project$Internal_Axis_Range$custom = _user$project$Internal_Axis_Range$Custom;
-var _user$project$Internal_Axis_Range$Window = F2(
+var _terezka$line_charts$Internal_Axis_Range$custom = _terezka$line_charts$Internal_Axis_Range$Custom;
+var _terezka$line_charts$Internal_Axis_Range$Window = F2(
 	function (a, b) {
 		return {ctor: 'Window', _0: a, _1: b};
 	});
-var _user$project$Internal_Axis_Range$window = _user$project$Internal_Axis_Range$Window;
-var _user$project$Internal_Axis_Range$Padded = F2(
+var _terezka$line_charts$Internal_Axis_Range$window = _terezka$line_charts$Internal_Axis_Range$Window;
+var _terezka$line_charts$Internal_Axis_Range$Padded = F2(
 	function (a, b) {
 		return {ctor: 'Padded', _0: a, _1: b};
 	});
-var _user$project$Internal_Axis_Range$padded = _user$project$Internal_Axis_Range$Padded;
-var _user$project$Internal_Axis_Range$default = A2(_user$project$Internal_Axis_Range$padded, 0, 0);
+var _terezka$line_charts$Internal_Axis_Range$padded = _terezka$line_charts$Internal_Axis_Range$Padded;
+var _terezka$line_charts$Internal_Axis_Range$default = A2(_terezka$line_charts$Internal_Axis_Range$padded, 0, 0);
 
-var _user$project$Internal_Axis_Values_Time$magnitude = F2(
+var _terezka$line_charts$Internal_Axis_Values_Time$magnitude = F2(
 	function (interval, unit) {
 		var _p0 = unit;
 		if (_p0.ctor === 'Year') {
 			return A2(
 				_elm_lang$core$Basics$max,
 				1,
-				_user$project$Internal_Utils$magnitude(interval));
+				_terezka$line_charts$Internal_Utils$magnitude(interval));
 		} else {
 			return 1;
 		}
 	});
-var _user$project$Internal_Axis_Values_Time$highestMultiple = function (_p1) {
+var _terezka$line_charts$Internal_Axis_Values_Time$highestMultiple = function (_p1) {
 	return _elm_lang$core$Basics$toFloat(
 		A2(
 			_elm_lang$core$Maybe$withDefault,
@@ -14929,7 +15005,7 @@ var _user$project$Internal_Axis_Values_Time$highestMultiple = function (_p1) {
 			_elm_lang$core$List$head(
 				_elm_lang$core$List$reverse(_p1))));
 };
-var _user$project$Internal_Axis_Values_Time$toParts = function (date) {
+var _terezka$line_charts$Internal_Axis_Values_Time$toParts = function (date) {
 	return {
 		ctor: '_Tuple7',
 		_0: _elm_lang$core$Date$year(date),
@@ -14941,7 +15017,7 @@ var _user$project$Internal_Axis_Values_Time$toParts = function (date) {
 		_6: _elm_lang$core$Date$millisecond(date)
 	};
 };
-var _user$project$Internal_Axis_Values_Time$toExtraUnit = function (unit) {
+var _terezka$line_charts$Internal_Axis_Values_Time$toExtraUnit = function (unit) {
 	var _p2 = unit;
 	switch (_p2.ctor) {
 		case 'Millisecond':
@@ -14962,7 +15038,7 @@ var _user$project$Internal_Axis_Values_Time$toExtraUnit = function (unit) {
 			return _justinmimbs$elm_date_extra$Date_Extra$Year;
 	}
 };
-var _user$project$Internal_Axis_Values_Time$multiples = function (unit) {
+var _terezka$line_charts$Internal_Axis_Values_Time$multiples = function (unit) {
 	var _p3 = unit;
 	switch (_p3.ctor) {
 		case 'Millisecond':
@@ -15183,7 +15259,7 @@ var _user$project$Internal_Axis_Values_Time$multiples = function (unit) {
 			};
 	}
 };
-var _user$project$Internal_Axis_Values_Time$toMs = function (unit) {
+var _terezka$line_charts$Internal_Axis_Values_Time$toMs = function (unit) {
 	var _p4 = unit;
 	switch (_p4.ctor) {
 		case 'Millisecond':
@@ -15204,30 +15280,30 @@ var _user$project$Internal_Axis_Values_Time$toMs = function (unit) {
 			return (364 * 24) * 3600000;
 	}
 };
-var _user$project$Internal_Axis_Values_Time$all = {
+var _terezka$line_charts$Internal_Axis_Values_Time$all = {
 	ctor: '::',
-	_0: _user$project$LineChart_Axis_Tick$Millisecond,
+	_0: _terezka$line_charts$LineChart_Axis_Tick$Millisecond,
 	_1: {
 		ctor: '::',
-		_0: _user$project$LineChart_Axis_Tick$Second,
+		_0: _terezka$line_charts$LineChart_Axis_Tick$Second,
 		_1: {
 			ctor: '::',
-			_0: _user$project$LineChart_Axis_Tick$Minute,
+			_0: _terezka$line_charts$LineChart_Axis_Tick$Minute,
 			_1: {
 				ctor: '::',
-				_0: _user$project$LineChart_Axis_Tick$Hour,
+				_0: _terezka$line_charts$LineChart_Axis_Tick$Hour,
 				_1: {
 					ctor: '::',
-					_0: _user$project$LineChart_Axis_Tick$Day,
+					_0: _terezka$line_charts$LineChart_Axis_Tick$Day,
 					_1: {
 						ctor: '::',
-						_0: _user$project$LineChart_Axis_Tick$Week,
+						_0: _terezka$line_charts$LineChart_Axis_Tick$Week,
 						_1: {
 							ctor: '::',
-							_0: _user$project$LineChart_Axis_Tick$Month,
+							_0: _terezka$line_charts$LineChart_Axis_Tick$Month,
 							_1: {
 								ctor: '::',
-								_0: _user$project$LineChart_Axis_Tick$Year,
+								_0: _terezka$line_charts$LineChart_Axis_Tick$Year,
 								_1: {ctor: '[]'}
 							}
 						}
@@ -15237,13 +15313,13 @@ var _user$project$Internal_Axis_Values_Time$all = {
 		}
 	}
 };
-var _user$project$Internal_Axis_Values_Time$allReversed = _elm_lang$core$List$reverse(_user$project$Internal_Axis_Values_Time$all);
-var _user$project$Internal_Axis_Values_Time$getUnitChange = F3(
+var _terezka$line_charts$Internal_Axis_Values_Time$allReversed = _elm_lang$core$List$reverse(_terezka$line_charts$Internal_Axis_Values_Time$all);
+var _terezka$line_charts$Internal_Axis_Values_Time$getUnitChange = F3(
 	function (interval, value, next) {
 		var equalBy = function (unit) {
 			return A3(
 				_justinmimbs$elm_date_extra$Date_Extra$equalBy,
-				_user$project$Internal_Axis_Values_Time$toExtraUnit(unit),
+				_terezka$line_charts$Internal_Axis_Values_Time$toExtraUnit(unit),
 				_elm_lang$core$Date$fromTime(value),
 				_elm_lang$core$Date$fromTime(next));
 		};
@@ -15259,8 +15335,8 @@ var _user$project$Internal_Axis_Values_Time$getUnitChange = F3(
 					} else {
 						var _p6 = _p5._0;
 						if (_elm_lang$core$Native_Utils.cmp(
-							_user$project$Internal_Axis_Values_Time$toMs(_p6),
-							_user$project$Internal_Axis_Values_Time$toMs(interval)) < 1) {
+							_terezka$line_charts$Internal_Axis_Values_Time$toMs(_p6),
+							_terezka$line_charts$Internal_Axis_Values_Time$toMs(interval)) < 1) {
 							return _elm_lang$core$Maybe$Nothing;
 						} else {
 							if (!equalBy(_p6)) {
@@ -15277,34 +15353,34 @@ var _user$project$Internal_Axis_Values_Time$getUnitChange = F3(
 				}
 			}
 		};
-		return unitChange_(_user$project$Internal_Axis_Values_Time$allReversed);
+		return unitChange_(_terezka$line_charts$Internal_Axis_Values_Time$allReversed);
 	});
-var _user$project$Internal_Axis_Values_Time$next = F3(
+var _terezka$line_charts$Internal_Axis_Values_Time$next = F3(
 	function (timestamp, unit, multiple) {
 		return _elm_lang$core$Date$toTime(
 			A3(
 				_justinmimbs$elm_date_extra$Date_Extra$add,
-				_user$project$Internal_Axis_Values_Time$toExtraUnit(unit),
+				_terezka$line_charts$Internal_Axis_Values_Time$toExtraUnit(unit),
 				multiple,
 				_elm_lang$core$Date$fromTime(timestamp)));
 	});
-var _user$project$Internal_Axis_Values_Time$ceilingTo = F2(
+var _terezka$line_charts$Internal_Axis_Values_Time$ceilingTo = F2(
 	function (number, prec) {
 		return prec * _elm_lang$core$Basics$toFloat(
 			_elm_lang$core$Basics$ceiling(number / prec));
 	});
-var _user$project$Internal_Axis_Values_Time$ceilingToInt = F2(
+var _terezka$line_charts$Internal_Axis_Values_Time$ceilingToInt = F2(
 	function (number, prec) {
 		return _elm_lang$core$Basics$ceiling(
 			A2(
-				_user$project$Internal_Axis_Values_Time$ceilingTo,
+				_terezka$line_charts$Internal_Axis_Values_Time$ceilingTo,
 				_elm_lang$core$Basics$toFloat(number),
 				_elm_lang$core$Basics$toFloat(prec)));
 	});
-var _user$project$Internal_Axis_Values_Time$ceilingToWeek = F2(
+var _terezka$line_charts$Internal_Axis_Values_Time$ceilingToWeek = F2(
 	function (date, multiple) {
 		var weekNumber = A2(
-			_user$project$Internal_Axis_Values_Time$ceilingToInt,
+			_terezka$line_charts$Internal_Axis_Values_Time$ceilingToInt,
 			_justinmimbs$elm_date_extra$Date_Extra$weekNumber(date),
 			multiple);
 		return A3(
@@ -15317,22 +15393,22 @@ var _user$project$Internal_Axis_Values_Time$ceilingToWeek = F2(
 				weekNumber,
 				1));
 	});
-var _user$project$Internal_Axis_Values_Time$ceilingToMonth = F2(
+var _terezka$line_charts$Internal_Axis_Values_Time$ceilingToMonth = F2(
 	function (date, multiple) {
 		return _justinmimbs$elm_date_extra$Date_Extra_Facts$monthFromMonthNumber(
 			A2(
-				_user$project$Internal_Axis_Values_Time$ceilingToInt,
+				_terezka$line_charts$Internal_Axis_Values_Time$ceilingToInt,
 				_justinmimbs$elm_date_extra$Date_Extra$monthNumber(date),
 				multiple));
 	});
-var _user$project$Internal_Axis_Values_Time$beginAt = F3(
+var _terezka$line_charts$Internal_Axis_Values_Time$beginAt = F3(
 	function (min, unit, multiple) {
-		var interval = _user$project$Internal_Axis_Values_Time$toMs(unit) * _elm_lang$core$Basics$toFloat(multiple);
+		var interval = _terezka$line_charts$Internal_Axis_Values_Time$toMs(unit) * _elm_lang$core$Basics$toFloat(multiple);
 		var date = A2(
 			_justinmimbs$elm_date_extra$Date_Extra$ceiling,
-			_user$project$Internal_Axis_Values_Time$toExtraUnit(unit),
+			_terezka$line_charts$Internal_Axis_Values_Time$toExtraUnit(unit),
 			_elm_lang$core$Date$fromTime(min));
-		var _p7 = _user$project$Internal_Axis_Values_Time$toParts(date);
+		var _p7 = _terezka$line_charts$Internal_Axis_Values_Time$toParts(date);
 		var y = _p7._0;
 		var m = _p7._1;
 		var d = _p7._2;
@@ -15342,11 +15418,11 @@ var _user$project$Internal_Axis_Values_Time$beginAt = F3(
 		var _p8 = unit;
 		switch (_p8.ctor) {
 			case 'Millisecond':
-				return A2(_user$project$Internal_Axis_Values_Time$ceilingTo, min, interval);
+				return A2(_terezka$line_charts$Internal_Axis_Values_Time$ceilingTo, min, interval);
 			case 'Second':
-				return A2(_user$project$Internal_Axis_Values_Time$ceilingTo, min, interval);
+				return A2(_terezka$line_charts$Internal_Axis_Values_Time$ceilingTo, min, interval);
 			case 'Minute':
-				return A2(_user$project$Internal_Axis_Values_Time$ceilingTo, min, interval);
+				return A2(_terezka$line_charts$Internal_Axis_Values_Time$ceilingTo, min, interval);
 			case 'Hour':
 				return _elm_lang$core$Date$toTime(
 					A7(
@@ -15354,7 +15430,7 @@ var _user$project$Internal_Axis_Values_Time$beginAt = F3(
 						y,
 						m,
 						d,
-						A2(_user$project$Internal_Axis_Values_Time$ceilingToInt, hh, multiple),
+						A2(_terezka$line_charts$Internal_Axis_Values_Time$ceilingToInt, hh, multiple),
 						0,
 						0,
 						0));
@@ -15364,20 +15440,20 @@ var _user$project$Internal_Axis_Values_Time$beginAt = F3(
 						_justinmimbs$elm_date_extra$Date_Extra$fromParts,
 						y,
 						m,
-						A2(_user$project$Internal_Axis_Values_Time$ceilingToInt, d, multiple),
+						A2(_terezka$line_charts$Internal_Axis_Values_Time$ceilingToInt, d, multiple),
 						0,
 						0,
 						0,
 						0));
 			case 'Week':
 				return _elm_lang$core$Date$toTime(
-					A2(_user$project$Internal_Axis_Values_Time$ceilingToWeek, date, multiple));
+					A2(_terezka$line_charts$Internal_Axis_Values_Time$ceilingToWeek, date, multiple));
 			case 'Month':
 				return _elm_lang$core$Date$toTime(
 					A7(
 						_justinmimbs$elm_date_extra$Date_Extra$fromParts,
 						y,
-						A2(_user$project$Internal_Axis_Values_Time$ceilingToMonth, date, multiple),
+						A2(_terezka$line_charts$Internal_Axis_Values_Time$ceilingToMonth, date, multiple),
 						1,
 						0,
 						0,
@@ -15387,7 +15463,7 @@ var _user$project$Internal_Axis_Values_Time$beginAt = F3(
 				return _elm_lang$core$Date$toTime(
 					A7(
 						_justinmimbs$elm_date_extra$Date_Extra$fromParts,
-						A2(_user$project$Internal_Axis_Values_Time$ceilingToInt, y, multiple),
+						A2(_terezka$line_charts$Internal_Axis_Values_Time$ceilingToInt, y, multiple),
 						_elm_lang$core$Date$Jan,
 						1,
 						0,
@@ -15396,11 +15472,11 @@ var _user$project$Internal_Axis_Values_Time$beginAt = F3(
 						0));
 		}
 	});
-var _user$project$Internal_Axis_Values_Time$findBestMultiple = F2(
+var _terezka$line_charts$Internal_Axis_Values_Time$findBestMultiple = F2(
 	function (interval, unit) {
 		var middleOfNext = F2(
 			function (m1, m2) {
-				return ((_elm_lang$core$Basics$toFloat(m1) * _user$project$Internal_Axis_Values_Time$toMs(unit)) + (_elm_lang$core$Basics$toFloat(m2) * _user$project$Internal_Axis_Values_Time$toMs(unit))) / 2;
+				return ((_elm_lang$core$Basics$toFloat(m1) * _terezka$line_charts$Internal_Axis_Values_Time$toMs(unit)) + (_elm_lang$core$Basics$toFloat(m2) * _terezka$line_charts$Internal_Axis_Values_Time$toMs(unit))) / 2;
 			});
 		var findBest_ = function (multiples) {
 			findBest_:
@@ -15428,14 +15504,14 @@ var _user$project$Internal_Axis_Values_Time$findBestMultiple = F2(
 			}
 		};
 		return findBest_(
-			_user$project$Internal_Axis_Values_Time$multiples(unit));
+			_terezka$line_charts$Internal_Axis_Values_Time$multiples(unit));
 	});
-var _user$project$Internal_Axis_Values_Time$findBestUnit = F2(
+var _terezka$line_charts$Internal_Axis_Values_Time$findBestUnit = F2(
 	function (interval, units) {
 		var middleOfNext = F2(
 			function (u1, u2) {
-				return ((_user$project$Internal_Axis_Values_Time$toMs(u1) * _user$project$Internal_Axis_Values_Time$highestMultiple(
-					_user$project$Internal_Axis_Values_Time$multiples(u1))) + _user$project$Internal_Axis_Values_Time$toMs(u2)) / 2;
+				return ((_terezka$line_charts$Internal_Axis_Values_Time$toMs(u1) * _terezka$line_charts$Internal_Axis_Values_Time$highestMultiple(
+					_terezka$line_charts$Internal_Axis_Values_Time$multiples(u1))) + _terezka$line_charts$Internal_Axis_Values_Time$toMs(u2)) / 2;
 			});
 		var findBest_ = F2(
 			function (units, u0) {
@@ -15461,24 +15537,24 @@ var _user$project$Internal_Axis_Values_Time$findBestUnit = F2(
 							return _p12._0;
 						}
 					} else {
-						return _user$project$LineChart_Axis_Tick$Year;
+						return _terezka$line_charts$LineChart_Axis_Tick$Year;
 					}
 				}
 			});
-		return A2(findBest_, units, _user$project$LineChart_Axis_Tick$Year);
+		return A2(findBest_, units, _terezka$line_charts$LineChart_Axis_Tick$Year);
 	});
-var _user$project$Internal_Axis_Values_Time$values = F2(
+var _terezka$line_charts$Internal_Axis_Values_Time$values = F2(
 	function (amountRough, range) {
 		var intervalRough = (range.max - range.min) / _elm_lang$core$Basics$toFloat(amountRough);
-		var unit = A2(_user$project$Internal_Axis_Values_Time$findBestUnit, intervalRough, _user$project$Internal_Axis_Values_Time$all);
-		var multiple = A2(_user$project$Internal_Axis_Values_Time$findBestMultiple, intervalRough, unit);
-		var interval = _user$project$Internal_Axis_Values_Time$toMs(unit) * _elm_lang$core$Basics$toFloat(multiple);
-		var beginning = A3(_user$project$Internal_Axis_Values_Time$beginAt, range.min, unit, multiple);
+		var unit = A2(_terezka$line_charts$Internal_Axis_Values_Time$findBestUnit, intervalRough, _terezka$line_charts$Internal_Axis_Values_Time$all);
+		var multiple = A2(_terezka$line_charts$Internal_Axis_Values_Time$findBestMultiple, intervalRough, unit);
+		var interval = _terezka$line_charts$Internal_Axis_Values_Time$toMs(unit) * _elm_lang$core$Basics$toFloat(multiple);
+		var beginning = A3(_terezka$line_charts$Internal_Axis_Values_Time$beginAt, range.min, unit, multiple);
 		var toPositions = F2(
 			function (acc, i) {
 				toPositions:
 				while (true) {
-					var next_ = A3(_user$project$Internal_Axis_Values_Time$next, beginning, unit, i * multiple);
+					var next_ = A3(_terezka$line_charts$Internal_Axis_Values_Time$next, beginning, unit, i * multiple);
 					if (_elm_lang$core$Native_Utils.cmp(next_, range.max) > 0) {
 						return acc;
 					} else {
@@ -15501,7 +15577,7 @@ var _user$project$Internal_Axis_Values_Time$values = F2(
 			function (unitChange, value, isFirst) {
 				return {
 					change: unitChange,
-					interval: A2(_user$project$LineChart_Axis_Tick$Interval, unit, multiple),
+					interval: A2(_terezka$line_charts$LineChart_Axis_Tick$Interval, unit, multiple),
 					timestamp: value,
 					isFirst: isFirst
 				};
@@ -15515,7 +15591,7 @@ var _user$project$Internal_Axis_Values_Time$values = F2(
 						if (_p15._1.ctor === '::') {
 							var _p17 = _p15._0;
 							var _p16 = _p15._1._0;
-							var newUnitChange = A3(_user$project$Internal_Axis_Values_Time$getUnitChange, unit, _p17, _p16);
+							var newUnitChange = A3(_terezka$line_charts$Internal_Axis_Values_Time$getUnitChange, unit, _p17, _p16);
 							var isFirst = _elm_lang$core$List$isEmpty(acc);
 							var newAcc = {
 								ctor: '::',
@@ -15555,12 +15631,12 @@ var _user$project$Internal_Axis_Values_Time$values = F2(
 			{ctor: '[]'});
 	});
 
-var _user$project$Internal_Axis_Values$ceilingTo = F2(
+var _terezka$line_charts$Internal_Axis_Values$ceilingTo = F2(
 	function (prec, number) {
 		return prec * _elm_lang$core$Basics$toFloat(
 			_elm_lang$core$Basics$ceiling(number / prec));
 	});
-var _user$project$Internal_Axis_Values$getPrecision = function (number) {
+var _terezka$line_charts$Internal_Axis_Values$getPrecision = function (number) {
 	var _p0 = A2(
 		_elm_lang$core$String$split,
 		'e',
@@ -15583,7 +15659,7 @@ var _user$project$Internal_Axis_Values$getPrecision = function (number) {
 		}
 	}
 };
-var _user$project$Internal_Axis_Values$correctFloat = function (prec) {
+var _terezka$line_charts$Internal_Axis_Values$correctFloat = function (prec) {
 	return function (_p2) {
 		return A2(
 			_elm_lang$core$Result$withDefault,
@@ -15592,7 +15668,7 @@ var _user$project$Internal_Axis_Values$correctFloat = function (prec) {
 				A2(_myrho$elm_round$Round$round, prec, _p2)));
 	};
 };
-var _user$project$Internal_Axis_Values$getMultiples = F3(
+var _terezka$line_charts$Internal_Axis_Values$getMultiples = F3(
 	function (magnitude, allowDecimals, hasTickAmount) {
 		var defaults = hasTickAmount ? {
 			ctor: '::',
@@ -15673,9 +15749,9 @@ var _user$project$Internal_Axis_Values$getMultiples = F3(
 			_1: {ctor: '[]'}
 		} : defaults));
 	});
-var _user$project$Internal_Axis_Values$getInterval = F3(
+var _terezka$line_charts$Internal_Axis_Values$getInterval = F3(
 	function (intervalRaw, allowDecimals, hasTickAmount) {
-		var magnitude = _user$project$Internal_Utils$magnitude(intervalRaw);
+		var magnitude = _terezka$line_charts$Internal_Utils$magnitude(intervalRaw);
 		var normalized = intervalRaw / magnitude;
 		var findMultiple = function (multiples) {
 			findMultiple:
@@ -15707,7 +15783,7 @@ var _user$project$Internal_Axis_Values$getInterval = F3(
 				}
 			}
 		};
-		var multiples = A3(_user$project$Internal_Axis_Values$getMultiples, magnitude, allowDecimals, hasTickAmount);
+		var multiples = A3(_terezka$line_charts$Internal_Axis_Values$getMultiples, magnitude, allowDecimals, hasTickAmount);
 		var findMultipleExact = function (multiples) {
 			findMultipleExact:
 			while (true) {
@@ -15727,16 +15803,16 @@ var _user$project$Internal_Axis_Values$getInterval = F3(
 			}
 		};
 		var multiple = hasTickAmount ? findMultipleExact(multiples) : findMultiple(multiples);
-		var precision = _user$project$Internal_Axis_Values$getPrecision(magnitude) + _user$project$Internal_Axis_Values$getPrecision(multiple);
-		return A2(_user$project$Internal_Axis_Values$correctFloat, precision, multiple * magnitude);
+		var precision = _terezka$line_charts$Internal_Axis_Values$getPrecision(magnitude) + _terezka$line_charts$Internal_Axis_Values$getPrecision(multiple);
+		return A2(_terezka$line_charts$Internal_Axis_Values$correctFloat, precision, multiple * magnitude);
 	});
-var _user$project$Internal_Axis_Values$positions = F5(
+var _terezka$line_charts$Internal_Axis_Values$positions = F5(
 	function (range, beginning, interval, m, acc) {
 		positions:
 		while (true) {
 			var next = A2(
-				_user$project$Internal_Axis_Values$correctFloat,
-				_user$project$Internal_Axis_Values$getPrecision(interval),
+				_terezka$line_charts$Internal_Axis_Values$correctFloat,
+				_terezka$line_charts$Internal_Axis_Values$getPrecision(interval),
 				beginning + (m * interval));
 			if (_elm_lang$core$Native_Utils.cmp(next, range.max) > 0) {
 				return acc;
@@ -15762,31 +15838,31 @@ var _user$project$Internal_Axis_Values$positions = F5(
 			}
 		}
 	});
-var _user$project$Internal_Axis_Values$getBeginning = F2(
+var _terezka$line_charts$Internal_Axis_Values$getBeginning = F2(
 	function (min, interval) {
 		var multiple = min / interval;
 		return _elm_lang$core$Native_Utils.eq(
 			multiple,
 			_elm_lang$core$Basics$toFloat(
-				_elm_lang$core$Basics$round(multiple))) ? min : A2(_user$project$Internal_Axis_Values$ceilingTo, interval, min);
+				_elm_lang$core$Basics$round(multiple))) ? min : A2(_terezka$line_charts$Internal_Axis_Values$ceilingTo, interval, min);
 	});
-var _user$project$Internal_Axis_Values$values = F4(
+var _terezka$line_charts$Internal_Axis_Values$values = F4(
 	function (allowDecimals, exact, amountRough, range) {
 		var intervalRough = (range.max - range.min) / _elm_lang$core$Basics$toFloat(amountRough);
-		var interval = A3(_user$project$Internal_Axis_Values$getInterval, intervalRough, allowDecimals, exact);
+		var interval = A3(_terezka$line_charts$Internal_Axis_Values$getInterval, intervalRough, allowDecimals, exact);
 		var intervalSafe = _elm_lang$core$Native_Utils.eq(interval, 0) ? 1 : interval;
-		var beginning = A2(_user$project$Internal_Axis_Values$getBeginning, range.min, intervalSafe);
+		var beginning = A2(_terezka$line_charts$Internal_Axis_Values$getBeginning, range.min, intervalSafe);
 		var amountRoughSafe = _elm_lang$core$Native_Utils.eq(amountRough, 0) ? 1 : amountRough;
 		return A5(
-			_user$project$Internal_Axis_Values$positions,
+			_terezka$line_charts$Internal_Axis_Values$positions,
 			range,
 			beginning,
 			intervalSafe,
 			0,
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Axis_Values$time = _user$project$Internal_Axis_Values_Time$values;
-var _user$project$Internal_Axis_Values$custom = F3(
+var _terezka$line_charts$Internal_Axis_Values$time = _terezka$line_charts$Internal_Axis_Values_Time$values;
+var _terezka$line_charts$Internal_Axis_Values$custom = F3(
 	function (intersection, interval, range) {
 		var offset = function (value) {
 			return interval * _elm_lang$core$Basics$toFloat(
@@ -15794,138 +15870,138 @@ var _user$project$Internal_Axis_Values$custom = F3(
 		};
 		var beginning = intersection - offset(intersection - range.min);
 		return A5(
-			_user$project$Internal_Axis_Values$positions,
+			_terezka$line_charts$Internal_Axis_Values$positions,
 			range,
 			beginning,
 			interval,
 			0,
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Axis_Values$float = function (amount) {
+var _terezka$line_charts$Internal_Axis_Values$float = function (amount) {
 	var _p9 = amount;
 	if (_p9.ctor === 'Exactly') {
-		return A3(_user$project$Internal_Axis_Values$values, true, true, _p9._0);
+		return A3(_terezka$line_charts$Internal_Axis_Values$values, true, true, _p9._0);
 	} else {
-		return A3(_user$project$Internal_Axis_Values$values, true, false, _p9._0);
+		return A3(_terezka$line_charts$Internal_Axis_Values$values, true, false, _p9._0);
 	}
 };
-var _user$project$Internal_Axis_Values$int = function (amount) {
+var _terezka$line_charts$Internal_Axis_Values$int = function (amount) {
 	var _p10 = amount;
 	if (_p10.ctor === 'Exactly') {
 		return function (_p11) {
 			return A2(
 				_elm_lang$core$List$map,
 				_elm_lang$core$Basics$round,
-				A4(_user$project$Internal_Axis_Values$values, false, true, _p10._0, _p11));
+				A4(_terezka$line_charts$Internal_Axis_Values$values, false, true, _p10._0, _p11));
 		};
 	} else {
 		return function (_p12) {
 			return A2(
 				_elm_lang$core$List$map,
 				_elm_lang$core$Basics$round,
-				A4(_user$project$Internal_Axis_Values$values, false, false, _p10._0, _p12));
+				A4(_terezka$line_charts$Internal_Axis_Values$values, false, false, _p10._0, _p12));
 		};
 	}
 };
-var _user$project$Internal_Axis_Values$Around = function (a) {
+var _terezka$line_charts$Internal_Axis_Values$Around = function (a) {
 	return {ctor: 'Around', _0: a};
 };
-var _user$project$Internal_Axis_Values$around = _user$project$Internal_Axis_Values$Around;
-var _user$project$Internal_Axis_Values$Exactly = function (a) {
+var _terezka$line_charts$Internal_Axis_Values$around = _terezka$line_charts$Internal_Axis_Values$Around;
+var _terezka$line_charts$Internal_Axis_Values$Exactly = function (a) {
 	return {ctor: 'Exactly', _0: a};
 };
-var _user$project$Internal_Axis_Values$exactly = _user$project$Internal_Axis_Values$Exactly;
+var _terezka$line_charts$Internal_Axis_Values$exactly = _terezka$line_charts$Internal_Axis_Values$Exactly;
 
-var _user$project$Internal_Axis_Ticks$ticks = F3(
+var _terezka$line_charts$Internal_Axis_Ticks$ticks = F3(
 	function (dataRange, range, _p0) {
 		var _p1 = _p0;
 		return A2(
 			_elm_lang$core$List$map,
-			_user$project$Internal_Axis_Tick$properties,
+			_terezka$line_charts$Internal_Axis_Tick$properties,
 			A2(_p1._0, dataRange, range));
 	});
-var _user$project$Internal_Axis_Ticks$Config = function (a) {
+var _terezka$line_charts$Internal_Axis_Ticks$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Axis_Ticks$custom = _user$project$Internal_Axis_Ticks$Config;
-var _user$project$Internal_Axis_Ticks$intCustom = F2(
+var _terezka$line_charts$Internal_Axis_Ticks$custom = _terezka$line_charts$Internal_Axis_Ticks$Config;
+var _terezka$line_charts$Internal_Axis_Ticks$intCustom = F2(
 	function (amount, tick) {
-		return _user$project$Internal_Axis_Ticks$custom(
+		return _terezka$line_charts$Internal_Axis_Ticks$custom(
 			F2(
 				function (data, range) {
 					return A2(
 						_elm_lang$core$List$map,
 						tick,
 						A2(
-							_user$project$Internal_Axis_Values$int,
-							_user$project$Internal_Axis_Values$around(amount),
-							A2(_user$project$Internal_Coordinate$smallestRange, data, range)));
+							_terezka$line_charts$Internal_Axis_Values$int,
+							_terezka$line_charts$Internal_Axis_Values$around(amount),
+							A2(_terezka$line_charts$Internal_Coordinate$smallestRange, data, range)));
 				}));
 	});
-var _user$project$Internal_Axis_Ticks$int = function (amount) {
-	return A2(_user$project$Internal_Axis_Ticks$intCustom, amount, _user$project$LineChart_Axis_Tick$int);
+var _terezka$line_charts$Internal_Axis_Ticks$int = function (amount) {
+	return A2(_terezka$line_charts$Internal_Axis_Ticks$intCustom, amount, _terezka$line_charts$LineChart_Axis_Tick$int);
 };
-var _user$project$Internal_Axis_Ticks$floatCustom = F2(
+var _terezka$line_charts$Internal_Axis_Ticks$floatCustom = F2(
 	function (amount, tick) {
-		return _user$project$Internal_Axis_Ticks$custom(
+		return _terezka$line_charts$Internal_Axis_Ticks$custom(
 			F2(
 				function (data, range) {
 					return A2(
 						_elm_lang$core$List$map,
 						tick,
 						A2(
-							_user$project$Internal_Axis_Values$float,
-							_user$project$Internal_Axis_Values$around(amount),
-							A2(_user$project$Internal_Coordinate$smallestRange, data, range)));
+							_terezka$line_charts$Internal_Axis_Values$float,
+							_terezka$line_charts$Internal_Axis_Values$around(amount),
+							A2(_terezka$line_charts$Internal_Coordinate$smallestRange, data, range)));
 				}));
 	});
-var _user$project$Internal_Axis_Ticks$float = function (amount) {
-	return A2(_user$project$Internal_Axis_Ticks$floatCustom, amount, _user$project$LineChart_Axis_Tick$float);
+var _terezka$line_charts$Internal_Axis_Ticks$float = function (amount) {
+	return A2(_terezka$line_charts$Internal_Axis_Ticks$floatCustom, amount, _terezka$line_charts$LineChart_Axis_Tick$float);
 };
-var _user$project$Internal_Axis_Ticks$timeCustom = F2(
+var _terezka$line_charts$Internal_Axis_Ticks$timeCustom = F2(
 	function (amount, tick) {
-		return _user$project$Internal_Axis_Ticks$custom(
+		return _terezka$line_charts$Internal_Axis_Ticks$custom(
 			F2(
 				function (data, range) {
 					return A2(
 						_elm_lang$core$List$map,
 						tick,
 						A2(
-							_user$project$Internal_Axis_Values$time,
+							_terezka$line_charts$Internal_Axis_Values$time,
 							amount,
-							A2(_user$project$Internal_Coordinate$smallestRange, data, range)));
+							A2(_terezka$line_charts$Internal_Coordinate$smallestRange, data, range)));
 				}));
 	});
-var _user$project$Internal_Axis_Ticks$time = function (amount) {
-	return A2(_user$project$Internal_Axis_Ticks$timeCustom, amount, _user$project$LineChart_Axis_Tick$time);
+var _terezka$line_charts$Internal_Axis_Ticks$time = function (amount) {
+	return A2(_terezka$line_charts$Internal_Axis_Ticks$timeCustom, amount, _terezka$line_charts$LineChart_Axis_Tick$time);
 };
 
-var _user$project$Internal_Axis_Line$config = function (_p0) {
+var _terezka$line_charts$Internal_Axis_Line$config = function (_p0) {
 	var _p1 = _p0;
 	return _p1._0;
 };
-var _user$project$Internal_Axis_Line$Properties = F5(
+var _terezka$line_charts$Internal_Axis_Line$Properties = F5(
 	function (a, b, c, d, e) {
 		return {color: a, width: b, events: c, start: d, end: e};
 	});
-var _user$project$Internal_Axis_Line$Config = function (a) {
+var _terezka$line_charts$Internal_Axis_Line$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Axis_Line$custom = _user$project$Internal_Axis_Line$Config;
-var _user$project$Internal_Axis_Line$none = _user$project$Internal_Axis_Line$custom(
+var _terezka$line_charts$Internal_Axis_Line$custom = _terezka$line_charts$Internal_Axis_Line$Config;
+var _terezka$line_charts$Internal_Axis_Line$none = _terezka$line_charts$Internal_Axis_Line$custom(
 	F2(
 		function (_p3, _p2) {
 			var _p4 = _p2;
 			return {
-				color: _user$project$LineChart_Colors$transparent,
+				color: _terezka$line_charts$LineChart_Colors$transparent,
 				width: 0,
 				events: {ctor: '[]'},
 				start: _p4.min,
 				end: _p4.max
 			};
 		}));
-var _user$project$Internal_Axis_Line$full = function (color) {
-	return _user$project$Internal_Axis_Line$custom(
+var _terezka$line_charts$Internal_Axis_Line$full = function (color) {
+	return _terezka$line_charts$Internal_Axis_Line$custom(
 		F2(
 			function (data, range) {
 				return {
@@ -15937,12 +16013,12 @@ var _user$project$Internal_Axis_Line$full = function (color) {
 				};
 			}));
 };
-var _user$project$Internal_Axis_Line$default = _user$project$Internal_Axis_Line$full(_user$project$LineChart_Colors$gray);
-var _user$project$Internal_Axis_Line$rangeFrame = function (color) {
-	return _user$project$Internal_Axis_Line$custom(
+var _terezka$line_charts$Internal_Axis_Line$default = _terezka$line_charts$Internal_Axis_Line$full(_terezka$line_charts$LineChart_Colors$gray);
+var _terezka$line_charts$Internal_Axis_Line$rangeFrame = function (color) {
+	return _terezka$line_charts$Internal_Axis_Line$custom(
 		F2(
 			function (data, range) {
-				var smallest = A2(_user$project$Internal_Coordinate$smallestRange, data, range);
+				var smallest = A2(_terezka$line_charts$Internal_Coordinate$smallestRange, data, range);
 				return {
 					color: color,
 					width: 1,
@@ -15953,7 +16029,7 @@ var _user$project$Internal_Axis_Line$rangeFrame = function (color) {
 			}));
 };
 
-var _user$project$Internal_Axis_Intersection$getY = function (_p0) {
+var _terezka$line_charts$Internal_Axis_Intersection$getY = function (_p0) {
 	var _p1 = _p0;
 	return function (_p2) {
 		return function (_) {
@@ -15962,7 +16038,7 @@ var _user$project$Internal_Axis_Intersection$getY = function (_p0) {
 			_p1._0(_p2));
 	};
 };
-var _user$project$Internal_Axis_Intersection$getX = function (_p3) {
+var _terezka$line_charts$Internal_Axis_Intersection$getX = function (_p3) {
 	var _p4 = _p3;
 	return function (_p5) {
 		return function (_) {
@@ -15971,112 +16047,112 @@ var _user$project$Internal_Axis_Intersection$getX = function (_p3) {
 			_p4._0(_p5));
 	};
 };
-var _user$project$Internal_Axis_Intersection$towardsZero = function (_p6) {
+var _terezka$line_charts$Internal_Axis_Intersection$towardsZero = function (_p6) {
 	var _p7 = _p6;
 	return A3(_elm_lang$core$Basics$clamp, _p7.min, _p7.max, 0);
 };
-var _user$project$Internal_Axis_Intersection$Config = function (a) {
+var _terezka$line_charts$Internal_Axis_Intersection$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Axis_Intersection$custom = F2(
+var _terezka$line_charts$Internal_Axis_Intersection$custom = F2(
 	function (toX, toY) {
-		return _user$project$Internal_Axis_Intersection$Config(
+		return _terezka$line_charts$Internal_Axis_Intersection$Config(
 			function (_p8) {
 				var _p9 = _p8;
 				return A2(
-					_user$project$Internal_Data$Point,
+					_terezka$line_charts$Internal_Data$Point,
 					toX(_p9.x),
 					toY(_p9.y));
 			});
 	});
-var _user$project$Internal_Axis_Intersection$default = A2(
-	_user$project$Internal_Axis_Intersection$custom,
+var _terezka$line_charts$Internal_Axis_Intersection$default = A2(
+	_terezka$line_charts$Internal_Axis_Intersection$custom,
 	function (_) {
 		return _.min;
 	},
 	function (_) {
 		return _.min;
 	});
-var _user$project$Internal_Axis_Intersection$atOrigin = A2(_user$project$Internal_Axis_Intersection$custom, _user$project$Internal_Axis_Intersection$towardsZero, _user$project$Internal_Axis_Intersection$towardsZero);
-var _user$project$Internal_Axis_Intersection$at = F2(
+var _terezka$line_charts$Internal_Axis_Intersection$atOrigin = A2(_terezka$line_charts$Internal_Axis_Intersection$custom, _terezka$line_charts$Internal_Axis_Intersection$towardsZero, _terezka$line_charts$Internal_Axis_Intersection$towardsZero);
+var _terezka$line_charts$Internal_Axis_Intersection$at = F2(
 	function (x, y) {
 		return A2(
-			_user$project$Internal_Axis_Intersection$custom,
+			_terezka$line_charts$Internal_Axis_Intersection$custom,
 			_elm_lang$core$Basics$always(x),
 			_elm_lang$core$Basics$always(y));
 	});
 
-var _user$project$Internal_Axis_Title$config = function (_p0) {
+var _terezka$line_charts$Internal_Axis_Title$config = function (_p0) {
 	var _p1 = _p0;
 	return _p1._0;
 };
-var _user$project$Internal_Axis_Title$Properties = F3(
+var _terezka$line_charts$Internal_Axis_Title$Properties = F3(
 	function (a, b, c) {
 		return {view: a, position: b, offset: c};
 	});
-var _user$project$Internal_Axis_Title$Config = function (a) {
+var _terezka$line_charts$Internal_Axis_Title$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Axis_Title$custom = F4(
+var _terezka$line_charts$Internal_Axis_Title$custom = F4(
 	function (position, x, y, title) {
-		return _user$project$Internal_Axis_Title$Config(
+		return _terezka$line_charts$Internal_Axis_Title$Config(
 			{
 				view: title,
 				position: position,
 				offset: {ctor: '_Tuple2', _0: x, _1: y}
 			});
 	});
-var _user$project$Internal_Axis_Title$atPosition = F3(
+var _terezka$line_charts$Internal_Axis_Title$atPosition = F3(
 	function (position, x, y) {
 		return function (_p2) {
 			return A4(
-				_user$project$Internal_Axis_Title$custom,
+				_terezka$line_charts$Internal_Axis_Title$custom,
 				position,
 				x,
 				y,
-				A2(_user$project$Internal_Svg$label, 'inherit', _p2));
+				A2(_terezka$line_charts$Internal_Svg$label, 'inherit', _p2));
 		};
 	});
-var _user$project$Internal_Axis_Title$atAxisMax = function () {
+var _terezka$line_charts$Internal_Axis_Title$atAxisMax = function () {
 	var position = F2(
 		function (data, range) {
 			return range.max;
 		});
-	return _user$project$Internal_Axis_Title$atPosition(position);
+	return _terezka$line_charts$Internal_Axis_Title$atPosition(position);
 }();
-var _user$project$Internal_Axis_Title$default = A2(_user$project$Internal_Axis_Title$atAxisMax, 0, 0);
-var _user$project$Internal_Axis_Title$atDataMax = function () {
+var _terezka$line_charts$Internal_Axis_Title$default = A2(_terezka$line_charts$Internal_Axis_Title$atAxisMax, 0, 0);
+var _terezka$line_charts$Internal_Axis_Title$atDataMax = function () {
 	var position = F2(
 		function (data, range) {
 			return A2(_elm_lang$core$Basics$min, data.max, range.max);
 		});
-	return _user$project$Internal_Axis_Title$atPosition(position);
+	return _terezka$line_charts$Internal_Axis_Title$atPosition(position);
 }();
 
-var _user$project$Internal_Axis$viewVerticalLabel = F4(
+var _terezka$line_charts$Internal_Axis$viewVerticalLabel = F4(
 	function (system, _p0, position, view) {
 		var _p1 = _p0;
 		var _p3 = _p1.length;
 		var _p2 = _p1.direction;
-		var xOffset = _user$project$Internal_Axis_Tick$isPositive(_p2) ? (5 + _p3) : (-5 - _p3);
-		var anchor = _user$project$Internal_Axis_Tick$isPositive(_p2) ? _user$project$Internal_Svg$Start : _user$project$Internal_Svg$End;
+		var xOffset = _terezka$line_charts$Internal_Axis_Tick$isPositive(_p2) ? (5 + _p3) : (-5 - _p3);
+		var anchor = _terezka$line_charts$Internal_Axis_Tick$isPositive(_p2) ? _terezka$line_charts$Internal_Svg$Start : _terezka$line_charts$Internal_Svg$End;
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{
 				ctor: '::',
-				_0: _user$project$Internal_Svg$transform(
+				_0: _terezka$line_charts$Internal_Svg$transform(
 					{
 						ctor: '::',
-						_0: A3(_user$project$Internal_Svg$move, system, position.x, position.y),
+						_0: A3(_terezka$line_charts$Internal_Svg$move, system, position.x, position.y),
 						_1: {
 							ctor: '::',
-							_0: A2(_user$project$Internal_Svg$offset, xOffset, 5),
+							_0: A2(_terezka$line_charts$Internal_Svg$offset, xOffset, 5),
 							_1: {ctor: '[]'}
 						}
 					}),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Internal_Svg$anchorStyle(anchor),
+					_0: _terezka$line_charts$Internal_Svg$anchorStyle(anchor),
 					_1: {ctor: '[]'}
 				}
 			},
@@ -16086,28 +16162,28 @@ var _user$project$Internal_Axis$viewVerticalLabel = F4(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$Internal_Axis$viewHorizontalLabel = F4(
+var _terezka$line_charts$Internal_Axis$viewHorizontalLabel = F4(
 	function (system, _p4, position, view) {
 		var _p5 = _p4;
 		var _p6 = _p5.length;
-		var yOffset = _user$project$Internal_Axis_Tick$isPositive(_p5.direction) ? (-5 - _p6) : (15 + _p6);
+		var yOffset = _terezka$line_charts$Internal_Axis_Tick$isPositive(_p5.direction) ? (-5 - _p6) : (15 + _p6);
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{
 				ctor: '::',
-				_0: _user$project$Internal_Svg$transform(
+				_0: _terezka$line_charts$Internal_Svg$transform(
 					{
 						ctor: '::',
-						_0: A3(_user$project$Internal_Svg$move, system, position.x, position.y),
+						_0: A3(_terezka$line_charts$Internal_Svg$move, system, position.x, position.y),
 						_1: {
 							ctor: '::',
-							_0: A2(_user$project$Internal_Svg$offset, 0, yOffset),
+							_0: A2(_terezka$line_charts$Internal_Svg$offset, 0, yOffset),
 							_1: {ctor: '[]'}
 						}
 					}),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Internal_Svg$anchorStyle(_user$project$Internal_Svg$Middle),
+					_0: _terezka$line_charts$Internal_Svg$anchorStyle(_terezka$line_charts$Internal_Svg$Middle),
 					_1: {ctor: '[]'}
 				}
 			},
@@ -16117,7 +16193,7 @@ var _user$project$Internal_Axis$viewHorizontalLabel = F4(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$Internal_Axis$attributesTick = function (_p7) {
+var _terezka$line_charts$Internal_Axis$attributesTick = function (_p7) {
 	var _p8 = _p7;
 	return {
 		ctor: '::',
@@ -16131,12 +16207,12 @@ var _user$project$Internal_Axis$attributesTick = function (_p7) {
 		}
 	};
 };
-var _user$project$Internal_Axis$lengthOfTick = function (_p9) {
+var _terezka$line_charts$Internal_Axis$lengthOfTick = function (_p9) {
 	var _p10 = _p9;
 	var _p11 = _p10.length;
-	return _user$project$Internal_Axis_Tick$isPositive(_p10.direction) ? (0 - _p11) : _p11;
+	return _terezka$line_charts$Internal_Axis_Tick$isPositive(_p10.direction) ? (0 - _p11) : _p11;
 };
-var _user$project$Internal_Axis$viewVerticalTick = F3(
+var _terezka$line_charts$Internal_Axis$viewVerticalTick = F3(
 	function (system, _p12, tick) {
 		var _p13 = _p12;
 		return A2(
@@ -16149,23 +16225,23 @@ var _user$project$Internal_Axis$viewVerticalTick = F3(
 			{
 				ctor: '::',
 				_0: A5(
-					_user$project$Internal_Svg$yTick,
+					_terezka$line_charts$Internal_Svg$yTick,
 					system,
-					_user$project$Internal_Axis$lengthOfTick(tick),
-					_user$project$Internal_Axis$attributesTick(tick),
+					_terezka$line_charts$Internal_Axis$lengthOfTick(tick),
+					_terezka$line_charts$Internal_Axis$attributesTick(tick),
 					_p13.x,
 					_p13.y),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_user$project$Internal_Utils$viewMaybe,
+						_terezka$line_charts$Internal_Utils$viewMaybe,
 						tick.label,
-						A3(_user$project$Internal_Axis$viewVerticalLabel, system, tick, _p13)),
+						A3(_terezka$line_charts$Internal_Axis$viewVerticalLabel, system, tick, _p13)),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
-var _user$project$Internal_Axis$viewHorizontalTick = F3(
+var _terezka$line_charts$Internal_Axis$viewHorizontalTick = F3(
 	function (system, _p14, tick) {
 		var _p15 = _p14;
 		return A2(
@@ -16178,23 +16254,23 @@ var _user$project$Internal_Axis$viewHorizontalTick = F3(
 			{
 				ctor: '::',
 				_0: A5(
-					_user$project$Internal_Svg$xTick,
+					_terezka$line_charts$Internal_Svg$xTick,
 					system,
-					_user$project$Internal_Axis$lengthOfTick(tick),
-					_user$project$Internal_Axis$attributesTick(tick),
+					_terezka$line_charts$Internal_Axis$lengthOfTick(tick),
+					_terezka$line_charts$Internal_Axis$attributesTick(tick),
 					_p15.y,
 					_p15.x),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_user$project$Internal_Utils$viewMaybe,
+						_terezka$line_charts$Internal_Utils$viewMaybe,
 						tick.label,
-						A3(_user$project$Internal_Axis$viewHorizontalLabel, system, tick, _p15)),
+						A3(_terezka$line_charts$Internal_Axis$viewHorizontalLabel, system, tick, _p15)),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
-var _user$project$Internal_Axis$attributesLine = F2(
+var _terezka$line_charts$Internal_Axis$attributesLine = F2(
 	function (system, _p16) {
 		var _p17 = _p16;
 		return A2(
@@ -16210,33 +16286,33 @@ var _user$project$Internal_Axis$attributesLine = F2(
 						_eskimoblood$elm_color_extra$Color_Convert$colorToHex(_p17.color)),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Internal_Svg$withinChartArea(system),
+						_0: _terezka$line_charts$Internal_Svg$withinChartArea(system),
 						_1: {ctor: '[]'}
 					}
 				}
 			});
 	});
-var _user$project$Internal_Axis$viewVerticalAxisLine = F3(
+var _terezka$line_charts$Internal_Axis$viewVerticalAxisLine = F3(
 	function (system, axisPosition, config) {
 		return A5(
-			_user$project$Internal_Svg$vertical,
+			_terezka$line_charts$Internal_Svg$vertical,
 			system,
-			A2(_user$project$Internal_Axis$attributesLine, system, config),
+			A2(_terezka$line_charts$Internal_Axis$attributesLine, system, config),
 			axisPosition,
 			config.start,
 			config.end);
 	});
-var _user$project$Internal_Axis$viewHorizontalAxisLine = F3(
+var _terezka$line_charts$Internal_Axis$viewHorizontalAxisLine = F3(
 	function (system, axisPosition, config) {
 		return A5(
-			_user$project$Internal_Svg$horizontal,
+			_terezka$line_charts$Internal_Svg$horizontal,
 			system,
-			A2(_user$project$Internal_Axis$attributesLine, system, config),
+			A2(_terezka$line_charts$Internal_Axis$attributesLine, system, config),
 			axisPosition,
 			config.start,
 			config.end);
 	});
-var _user$project$Internal_Axis$viewVerticalTitle = F3(
+var _terezka$line_charts$Internal_Axis$viewVerticalTitle = F3(
 	function (system, at, _p18) {
 		var _p19 = _p18;
 		var _p21 = _p19.title;
@@ -16252,19 +16328,19 @@ var _user$project$Internal_Axis$viewVerticalTitle = F3(
 				_0: _elm_lang$svg$Svg_Attributes$class('chart__title'),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Internal_Svg$transform(
+					_0: _terezka$line_charts$Internal_Svg$transform(
 						{
 							ctor: '::',
-							_0: A3(_user$project$Internal_Svg$move, system, position.x, position.y),
+							_0: A3(_terezka$line_charts$Internal_Svg$move, system, position.x, position.y),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Internal_Svg$offset, xOffset + 2, yOffset - 10),
+								_0: A2(_terezka$line_charts$Internal_Svg$offset, xOffset + 2, yOffset - 10),
 								_1: {ctor: '[]'}
 							}
 						}),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Internal_Svg$anchorStyle(_user$project$Internal_Svg$End),
+						_0: _terezka$line_charts$Internal_Svg$anchorStyle(_terezka$line_charts$Internal_Svg$End),
 						_1: {ctor: '[]'}
 					}
 				}
@@ -16275,7 +16351,7 @@ var _user$project$Internal_Axis$viewVerticalTitle = F3(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$Internal_Axis$viewHorizontalTitle = F3(
+var _terezka$line_charts$Internal_Axis$viewHorizontalTitle = F3(
 	function (system, at, _p22) {
 		var _p23 = _p22;
 		var _p25 = _p23.title;
@@ -16291,19 +16367,19 @@ var _user$project$Internal_Axis$viewHorizontalTitle = F3(
 				_0: _elm_lang$svg$Svg_Attributes$class('chart__title'),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Internal_Svg$transform(
+					_0: _terezka$line_charts$Internal_Svg$transform(
 						{
 							ctor: '::',
-							_0: A3(_user$project$Internal_Svg$move, system, position.x, position.y),
+							_0: A3(_terezka$line_charts$Internal_Svg$move, system, position.x, position.y),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Internal_Svg$offset, xOffset + 15, yOffset + 5),
+								_0: A2(_terezka$line_charts$Internal_Svg$offset, xOffset + 15, yOffset + 5),
 								_1: {ctor: '[]'}
 							}
 						}),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Internal_Svg$anchorStyle(_user$project$Internal_Svg$Start),
+						_0: _terezka$line_charts$Internal_Svg$anchorStyle(_terezka$line_charts$Internal_Svg$Start),
 						_1: {ctor: '[]'}
 					}
 				}
@@ -16314,27 +16390,27 @@ var _user$project$Internal_Axis$viewHorizontalTitle = F3(
 				_1: {ctor: '[]'}
 			});
 	});
-var _user$project$Internal_Axis$viewVertical = F3(
+var _terezka$line_charts$Internal_Axis$viewVertical = F3(
 	function (system, intersection, _p26) {
 		var _p27 = _p26;
 		var _p28 = _p27._0;
 		var viewConfig = {
-			line: A3(_user$project$Internal_Axis_Line$config, _p28.axisLine, system.yData, system.y),
-			ticks: A3(_user$project$Internal_Axis_Ticks$ticks, system.yData, system.y, _p28.ticks),
-			intersection: A2(_user$project$Internal_Axis_Intersection$getX, intersection, system),
-			title: _user$project$Internal_Axis_Title$config(_p28.title)
+			line: A3(_terezka$line_charts$Internal_Axis_Line$config, _p28.axisLine, system.yData, system.y),
+			ticks: A3(_terezka$line_charts$Internal_Axis_Ticks$ticks, system.yData, system.y, _p28.ticks),
+			intersection: A2(_terezka$line_charts$Internal_Axis_Intersection$getX, intersection, system),
+			title: _terezka$line_charts$Internal_Axis_Title$config(_p28.title)
 		};
 		var at = function (y) {
 			return {x: viewConfig.intersection, y: y};
 		};
 		var viewTick = function (tick) {
 			return A3(
-				_user$project$Internal_Axis$viewVerticalTick,
+				_terezka$line_charts$Internal_Axis$viewVerticalTick,
 				system,
 				at(tick.position),
 				tick);
 		};
-		var viewAxisLine = A2(_user$project$Internal_Axis$viewVerticalAxisLine, system, viewConfig.intersection);
+		var viewAxisLine = A2(_terezka$line_charts$Internal_Axis$viewVerticalAxisLine, system, viewConfig.intersection);
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{
@@ -16344,7 +16420,7 @@ var _user$project$Internal_Axis$viewVertical = F3(
 			},
 			{
 				ctor: '::',
-				_0: A3(_user$project$Internal_Axis$viewVerticalTitle, system, at, viewConfig),
+				_0: A3(_terezka$line_charts$Internal_Axis$viewVerticalTitle, system, at, viewConfig),
 				_1: {
 					ctor: '::',
 					_0: viewAxisLine(viewConfig.line),
@@ -16363,27 +16439,27 @@ var _user$project$Internal_Axis$viewVertical = F3(
 				}
 			});
 	});
-var _user$project$Internal_Axis$viewHorizontal = F3(
+var _terezka$line_charts$Internal_Axis$viewHorizontal = F3(
 	function (system, intersection, _p29) {
 		var _p30 = _p29;
 		var _p31 = _p30._0;
 		var viewConfig = {
-			line: A3(_user$project$Internal_Axis_Line$config, _p31.axisLine, system.xData, system.x),
-			ticks: A3(_user$project$Internal_Axis_Ticks$ticks, system.xData, system.x, _p31.ticks),
-			intersection: A2(_user$project$Internal_Axis_Intersection$getY, intersection, system),
-			title: _user$project$Internal_Axis_Title$config(_p31.title)
+			line: A3(_terezka$line_charts$Internal_Axis_Line$config, _p31.axisLine, system.xData, system.x),
+			ticks: A3(_terezka$line_charts$Internal_Axis_Ticks$ticks, system.xData, system.x, _p31.ticks),
+			intersection: A2(_terezka$line_charts$Internal_Axis_Intersection$getY, intersection, system),
+			title: _terezka$line_charts$Internal_Axis_Title$config(_p31.title)
 		};
 		var at = function (x) {
 			return {x: x, y: viewConfig.intersection};
 		};
 		var viewTick = function (tick) {
 			return A3(
-				_user$project$Internal_Axis$viewHorizontalTick,
+				_terezka$line_charts$Internal_Axis$viewHorizontalTick,
 				system,
 				at(tick.position),
 				tick);
 		};
-		var viewAxisLine = A2(_user$project$Internal_Axis$viewHorizontalAxisLine, system, viewConfig.intersection);
+		var viewAxisLine = A2(_terezka$line_charts$Internal_Axis$viewHorizontalAxisLine, system, viewConfig.intersection);
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{
@@ -16393,7 +16469,7 @@ var _user$project$Internal_Axis$viewHorizontal = F3(
 			},
 			{
 				ctor: '::',
-				_0: A3(_user$project$Internal_Axis$viewHorizontalTitle, system, at, viewConfig),
+				_0: A3(_terezka$line_charts$Internal_Axis$viewHorizontalTitle, system, at, viewConfig),
 				_1: {
 					ctor: '::',
 					_0: viewAxisLine(viewConfig.line),
@@ -16412,195 +16488,195 @@ var _user$project$Internal_Axis$viewHorizontal = F3(
 				}
 			});
 	});
-var _user$project$Internal_Axis$ticks = function (_p32) {
+var _terezka$line_charts$Internal_Axis$ticks = function (_p32) {
 	var _p33 = _p32;
 	return _p33._0.ticks;
 };
-var _user$project$Internal_Axis$range = function (_p34) {
+var _terezka$line_charts$Internal_Axis$range = function (_p34) {
 	var _p35 = _p34;
 	return _p35._0.range;
 };
-var _user$project$Internal_Axis$pixels = function (_p36) {
+var _terezka$line_charts$Internal_Axis$pixels = function (_p36) {
 	var _p37 = _p36;
 	return _elm_lang$core$Basics$toFloat(_p37._0.pixels);
 };
-var _user$project$Internal_Axis$variable = function (_p38) {
+var _terezka$line_charts$Internal_Axis$variable = function (_p38) {
 	var _p39 = _p38;
 	return _p39._0.variable;
 };
-var _user$project$Internal_Axis$Properties = F6(
+var _terezka$line_charts$Internal_Axis$Properties = F6(
 	function (a, b, c, d, e, f) {
 		return {title: a, variable: b, pixels: c, range: d, axisLine: e, ticks: f};
 	});
-var _user$project$Internal_Axis$ViewConfig = F4(
+var _terezka$line_charts$Internal_Axis$ViewConfig = F4(
 	function (a, b, c, d) {
 		return {line: a, ticks: b, intersection: c, title: d};
 	});
-var _user$project$Internal_Axis$Config = function (a) {
+var _terezka$line_charts$Internal_Axis$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Axis$custom = _user$project$Internal_Axis$Config;
-var _user$project$Internal_Axis$default = F3(
+var _terezka$line_charts$Internal_Axis$custom = _terezka$line_charts$Internal_Axis$Config;
+var _terezka$line_charts$Internal_Axis$default = F3(
 	function (pixels, title, variable) {
-		return _user$project$Internal_Axis$custom(
+		return _terezka$line_charts$Internal_Axis$custom(
 			{
-				title: A3(_user$project$Internal_Axis_Title$atDataMax, 0, 0, title),
+				title: A3(_terezka$line_charts$Internal_Axis_Title$atDataMax, 0, 0, title),
 				variable: function (_p40) {
 					return _elm_lang$core$Maybe$Just(
 						variable(_p40));
 				},
 				pixels: pixels,
-				range: A2(_user$project$Internal_Axis_Range$padded, 20, 20),
-				axisLine: _user$project$Internal_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
-				ticks: _user$project$Internal_Axis_Ticks$custom(
+				range: A2(_terezka$line_charts$Internal_Axis_Range$padded, 20, 20),
+				axisLine: _terezka$line_charts$Internal_Axis_Line$rangeFrame(_terezka$line_charts$LineChart_Colors$gray),
+				ticks: _terezka$line_charts$Internal_Axis_Ticks$custom(
 					F2(
 						function (data, range) {
 							var rangeLong = range.max - range.min;
-							var smallest = A2(_user$project$Internal_Coordinate$smallestRange, data, range);
+							var smallest = A2(_terezka$line_charts$Internal_Coordinate$smallestRange, data, range);
 							var rangeSmall = smallest.max - smallest.min;
 							var diff = 1 - ((rangeLong - rangeSmall) / rangeLong);
 							var amount = _elm_lang$core$Basics$round(
 								(diff * _elm_lang$core$Basics$toFloat(pixels)) / 90);
 							return A2(
 								_elm_lang$core$List$map,
-								_user$project$LineChart_Axis_Tick$float,
+								_terezka$line_charts$LineChart_Axis_Tick$float,
 								A2(
-									_user$project$Internal_Axis_Values$float,
-									_user$project$Internal_Axis_Values$around(amount),
+									_terezka$line_charts$Internal_Axis_Values$float,
+									_terezka$line_charts$Internal_Axis_Values$around(amount),
 									smallest));
 						}))
 			});
 	});
-var _user$project$Internal_Axis$full = F3(
+var _terezka$line_charts$Internal_Axis$full = F3(
 	function (pixels, title, variable) {
-		return _user$project$Internal_Axis$custom(
+		return _terezka$line_charts$Internal_Axis$custom(
 			{
-				title: A3(_user$project$Internal_Axis_Title$atAxisMax, 0, 0, title),
+				title: A3(_terezka$line_charts$Internal_Axis_Title$atAxisMax, 0, 0, title),
 				variable: function (_p41) {
 					return _elm_lang$core$Maybe$Just(
 						variable(_p41));
 				},
 				pixels: pixels,
-				range: A2(_user$project$Internal_Axis_Range$padded, 20, 20),
-				axisLine: _user$project$Internal_Axis_Line$default,
-				ticks: _user$project$Internal_Axis_Ticks$custom(
+				range: A2(_terezka$line_charts$Internal_Axis_Range$padded, 20, 20),
+				axisLine: _terezka$line_charts$Internal_Axis_Line$default,
+				ticks: _terezka$line_charts$Internal_Axis_Ticks$custom(
 					F2(
 						function (data, range) {
 							var amount = (pixels / 90) | 0;
-							var largest = A2(_user$project$Internal_Coordinate$largestRange, data, range);
+							var largest = A2(_terezka$line_charts$Internal_Coordinate$largestRange, data, range);
 							return A2(
 								_elm_lang$core$List$map,
-								_user$project$LineChart_Axis_Tick$float,
+								_terezka$line_charts$LineChart_Axis_Tick$float,
 								A2(
-									_user$project$Internal_Axis_Values$float,
-									_user$project$Internal_Axis_Values$around(amount),
+									_terezka$line_charts$Internal_Axis_Values$float,
+									_terezka$line_charts$Internal_Axis_Values$around(amount),
 									largest));
 						}))
 			});
 	});
-var _user$project$Internal_Axis$time = F3(
+var _terezka$line_charts$Internal_Axis$time = F3(
 	function (pixels, title, variable) {
-		return _user$project$Internal_Axis$custom(
+		return _terezka$line_charts$Internal_Axis$custom(
 			{
-				title: A3(_user$project$Internal_Axis_Title$atDataMax, 0, 0, title),
+				title: A3(_terezka$line_charts$Internal_Axis_Title$atDataMax, 0, 0, title),
 				variable: function (_p42) {
 					return _elm_lang$core$Maybe$Just(
 						variable(_p42));
 				},
 				pixels: pixels,
-				range: A2(_user$project$Internal_Axis_Range$padded, 20, 20),
-				axisLine: _user$project$Internal_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
-				ticks: _user$project$Internal_Axis_Ticks$custom(
+				range: A2(_terezka$line_charts$Internal_Axis_Range$padded, 20, 20),
+				axisLine: _terezka$line_charts$Internal_Axis_Line$rangeFrame(_terezka$line_charts$LineChart_Colors$gray),
+				ticks: _terezka$line_charts$Internal_Axis_Ticks$custom(
 					F2(
 						function (data, range) {
 							var rangeLong = range.max - range.min;
-							var smallest = A2(_user$project$Internal_Coordinate$smallestRange, data, range);
+							var smallest = A2(_terezka$line_charts$Internal_Coordinate$smallestRange, data, range);
 							var rangeSmall = smallest.max - smallest.min;
 							var diff = 1 - ((rangeLong - rangeSmall) / rangeLong);
 							var amount = _elm_lang$core$Basics$round(
 								(diff * _elm_lang$core$Basics$toFloat(pixels)) / 90);
 							return A2(
 								_elm_lang$core$List$map,
-								_user$project$LineChart_Axis_Tick$time,
-								A2(_user$project$Internal_Axis_Values$time, amount, smallest));
+								_terezka$line_charts$LineChart_Axis_Tick$time,
+								A2(_terezka$line_charts$Internal_Axis_Values$time, amount, smallest));
 						}))
 			});
 	});
-var _user$project$Internal_Axis$none = F2(
+var _terezka$line_charts$Internal_Axis$none = F2(
 	function (pixels, variable) {
-		return _user$project$Internal_Axis$custom(
+		return _terezka$line_charts$Internal_Axis$custom(
 			{
-				title: _user$project$Internal_Axis_Title$default(''),
+				title: _terezka$line_charts$Internal_Axis_Title$default(''),
 				variable: function (_p43) {
 					return _elm_lang$core$Maybe$Just(
 						variable(_p43));
 				},
 				pixels: pixels,
-				range: A2(_user$project$Internal_Axis_Range$padded, 20, 20),
-				axisLine: _user$project$Internal_Axis_Line$none,
-				ticks: _user$project$Internal_Axis_Ticks$custom(
+				range: A2(_terezka$line_charts$Internal_Axis_Range$padded, 20, 20),
+				axisLine: _terezka$line_charts$Internal_Axis_Line$none,
+				ticks: _terezka$line_charts$Internal_Axis_Ticks$custom(
 					F2(
 						function (_p45, _p44) {
 							return {ctor: '[]'};
 						}))
 			});
 	});
-var _user$project$Internal_Axis$picky = F4(
+var _terezka$line_charts$Internal_Axis$picky = F4(
 	function (pixels, title, variable, ticks) {
-		return _user$project$Internal_Axis$custom(
+		return _terezka$line_charts$Internal_Axis$custom(
 			{
-				title: A3(_user$project$Internal_Axis_Title$atAxisMax, 0, 0, title),
+				title: A3(_terezka$line_charts$Internal_Axis_Title$atAxisMax, 0, 0, title),
 				variable: function (_p46) {
 					return _elm_lang$core$Maybe$Just(
 						variable(_p46));
 				},
 				pixels: pixels,
-				range: A2(_user$project$Internal_Axis_Range$padded, 20, 20),
-				axisLine: _user$project$Internal_Axis_Line$default,
-				ticks: _user$project$Internal_Axis_Ticks$custom(
+				range: A2(_terezka$line_charts$Internal_Axis_Range$padded, 20, 20),
+				axisLine: _terezka$line_charts$Internal_Axis_Line$default,
+				ticks: _terezka$line_charts$Internal_Axis_Ticks$custom(
 					F2(
 						function (_p48, _p47) {
-							return A2(_elm_lang$core$List$map, _user$project$LineChart_Axis_Tick$float, ticks);
+							return A2(_elm_lang$core$List$map, _terezka$line_charts$LineChart_Axis_Tick$float, ticks);
 						}))
 			});
 	});
 
-var _user$project$LineChart_Axis_Range$custom = _user$project$Internal_Axis_Range$custom;
-var _user$project$LineChart_Axis_Range$window = _user$project$Internal_Axis_Range$window;
-var _user$project$LineChart_Axis_Range$padded = _user$project$Internal_Axis_Range$padded;
-var _user$project$LineChart_Axis_Range$default = _user$project$Internal_Axis_Range$default;
+var _terezka$line_charts$LineChart_Axis_Range$custom = _terezka$line_charts$Internal_Axis_Range$custom;
+var _terezka$line_charts$LineChart_Axis_Range$window = _terezka$line_charts$Internal_Axis_Range$window;
+var _terezka$line_charts$LineChart_Axis_Range$padded = _terezka$line_charts$Internal_Axis_Range$padded;
+var _terezka$line_charts$LineChart_Axis_Range$default = _terezka$line_charts$Internal_Axis_Range$default;
 
-var _user$project$LineChart_Axis_Line$custom = _user$project$Internal_Axis_Line$custom;
-var _user$project$LineChart_Axis_Line$none = _user$project$Internal_Axis_Line$none;
-var _user$project$LineChart_Axis_Line$rangeFrame = _user$project$Internal_Axis_Line$rangeFrame;
-var _user$project$LineChart_Axis_Line$full = _user$project$Internal_Axis_Line$full;
-var _user$project$LineChart_Axis_Line$default = _user$project$Internal_Axis_Line$default;
-var _user$project$LineChart_Axis_Line$Properties = F5(
+var _terezka$line_charts$LineChart_Axis_Line$custom = _terezka$line_charts$Internal_Axis_Line$custom;
+var _terezka$line_charts$LineChart_Axis_Line$none = _terezka$line_charts$Internal_Axis_Line$none;
+var _terezka$line_charts$LineChart_Axis_Line$rangeFrame = _terezka$line_charts$Internal_Axis_Line$rangeFrame;
+var _terezka$line_charts$LineChart_Axis_Line$full = _terezka$line_charts$Internal_Axis_Line$full;
+var _terezka$line_charts$LineChart_Axis_Line$default = _terezka$line_charts$Internal_Axis_Line$default;
+var _terezka$line_charts$LineChart_Axis_Line$Properties = F5(
 	function (a, b, c, d, e) {
 		return {color: a, width: b, events: c, start: d, end: e};
 	});
 
-var _user$project$LineChart_Axis_Ticks$custom = _user$project$Internal_Axis_Ticks$custom;
-var _user$project$LineChart_Axis_Ticks$timeCustom = _user$project$Internal_Axis_Ticks$timeCustom;
-var _user$project$LineChart_Axis_Ticks$floatCustom = _user$project$Internal_Axis_Ticks$floatCustom;
-var _user$project$LineChart_Axis_Ticks$intCustom = _user$project$Internal_Axis_Ticks$intCustom;
-var _user$project$LineChart_Axis_Ticks$float = _user$project$Internal_Axis_Ticks$float;
-var _user$project$LineChart_Axis_Ticks$time = _user$project$Internal_Axis_Ticks$time;
-var _user$project$LineChart_Axis_Ticks$int = _user$project$Internal_Axis_Ticks$int;
-var _user$project$LineChart_Axis_Ticks$default = _user$project$Internal_Axis_Ticks$float(5);
+var _terezka$line_charts$LineChart_Axis_Ticks$custom = _terezka$line_charts$Internal_Axis_Ticks$custom;
+var _terezka$line_charts$LineChart_Axis_Ticks$timeCustom = _terezka$line_charts$Internal_Axis_Ticks$timeCustom;
+var _terezka$line_charts$LineChart_Axis_Ticks$floatCustom = _terezka$line_charts$Internal_Axis_Ticks$floatCustom;
+var _terezka$line_charts$LineChart_Axis_Ticks$intCustom = _terezka$line_charts$Internal_Axis_Ticks$intCustom;
+var _terezka$line_charts$LineChart_Axis_Ticks$float = _terezka$line_charts$Internal_Axis_Ticks$float;
+var _terezka$line_charts$LineChart_Axis_Ticks$time = _terezka$line_charts$Internal_Axis_Ticks$time;
+var _terezka$line_charts$LineChart_Axis_Ticks$int = _terezka$line_charts$Internal_Axis_Ticks$int;
+var _terezka$line_charts$LineChart_Axis_Ticks$default = _terezka$line_charts$Internal_Axis_Ticks$float(5);
 
-var _user$project$LineChart_Axis$custom = _user$project$Internal_Axis$custom;
-var _user$project$LineChart_Axis$none = _user$project$Internal_Axis$none;
-var _user$project$LineChart_Axis$picky = _user$project$Internal_Axis$picky;
-var _user$project$LineChart_Axis$time = _user$project$Internal_Axis$time;
-var _user$project$LineChart_Axis$full = _user$project$Internal_Axis$full;
-var _user$project$LineChart_Axis$default = _user$project$Internal_Axis$default;
-var _user$project$LineChart_Axis$Properties = F6(
+var _terezka$line_charts$LineChart_Axis$custom = _terezka$line_charts$Internal_Axis$custom;
+var _terezka$line_charts$LineChart_Axis$none = _terezka$line_charts$Internal_Axis$none;
+var _terezka$line_charts$LineChart_Axis$picky = _terezka$line_charts$Internal_Axis$picky;
+var _terezka$line_charts$LineChart_Axis$time = _terezka$line_charts$Internal_Axis$time;
+var _terezka$line_charts$LineChart_Axis$full = _terezka$line_charts$Internal_Axis$full;
+var _terezka$line_charts$LineChart_Axis$default = _terezka$line_charts$Internal_Axis$default;
+var _terezka$line_charts$LineChart_Axis$Properties = F6(
 	function (a, b, c, d, e, f) {
 		return {title: a, variable: b, pixels: c, range: d, axisLine: e, ticks: f};
 	});
 
-var _user$project$Internal_Dots$varietyAttributes = F2(
+var _terezka$line_charts$Internal_Dots$varietyAttributes = F2(
 	function (color, variety) {
 		var _p0 = variety;
 		switch (_p0.ctor) {
@@ -16667,7 +16743,7 @@ var _user$project$Internal_Dots$varietyAttributes = F2(
 				};
 		}
 	});
-var _user$project$Internal_Dots$pathPlus = F2(
+var _terezka$line_charts$Internal_Dots$pathPlus = F2(
 	function (area, point) {
 		var side = _elm_lang$core$Basics$sqrt(area / 5);
 		var r3 = side;
@@ -16779,7 +16855,7 @@ var _user$project$Internal_Dots$pathPlus = F2(
 		};
 		return A2(_elm_lang$core$String$join, ' ', commands);
 	});
-var _user$project$Internal_Dots$pathTriangle = F2(
+var _terezka$line_charts$Internal_Dots$pathTriangle = F2(
 	function (area, point) {
 		var side = _elm_lang$core$Basics$sqrt(
 			(area * 4) / _elm_lang$core$Basics$sqrt(3));
@@ -16826,7 +16902,7 @@ var _user$project$Internal_Dots$pathTriangle = F2(
 		};
 		return A2(_elm_lang$core$String$join, ' ', commands);
 	});
-var _user$project$Internal_Dots$viewCross = F5(
+var _terezka$line_charts$Internal_Dots$viewCross = F5(
 	function (events, variety, color, area, point) {
 		var rotation = A2(
 			_elm_lang$core$Basics_ops['++'],
@@ -16844,7 +16920,7 @@ var _user$project$Internal_Dots$viewCross = F5(
 		var attributes = {
 			ctor: '::',
 			_0: _elm_lang$svg$Svg_Attributes$d(
-				A2(_user$project$Internal_Dots$pathPlus, area, point)),
+				A2(_terezka$line_charts$Internal_Dots$pathPlus, area, point)),
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$transform(rotation),
@@ -16859,15 +16935,15 @@ var _user$project$Internal_Dots$viewCross = F5(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					attributes,
-					A2(_user$project$Internal_Dots$varietyAttributes, color, variety))),
+					A2(_terezka$line_charts$Internal_Dots$varietyAttributes, color, variety))),
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Dots$viewPlus = F5(
+var _terezka$line_charts$Internal_Dots$viewPlus = F5(
 	function (events, variety, color, area, point) {
 		var attributes = {
 			ctor: '::',
 			_0: _elm_lang$svg$Svg_Attributes$d(
-				A2(_user$project$Internal_Dots$pathPlus, area, point)),
+				A2(_terezka$line_charts$Internal_Dots$pathPlus, area, point)),
 			_1: {ctor: '[]'}
 		};
 		return A2(
@@ -16878,10 +16954,10 @@ var _user$project$Internal_Dots$viewPlus = F5(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					attributes,
-					A2(_user$project$Internal_Dots$varietyAttributes, color, variety))),
+					A2(_terezka$line_charts$Internal_Dots$varietyAttributes, color, variety))),
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Dots$viewDiamond = F5(
+var _terezka$line_charts$Internal_Dots$viewDiamond = F5(
 	function (events, variety, color, area, point) {
 		var rotation = A2(
 			_elm_lang$core$Basics_ops['++'],
@@ -16930,10 +17006,10 @@ var _user$project$Internal_Dots$viewDiamond = F5(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					attributes,
-					A2(_user$project$Internal_Dots$varietyAttributes, color, variety))),
+					A2(_terezka$line_charts$Internal_Dots$varietyAttributes, color, variety))),
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Dots$viewSquare = F5(
+var _terezka$line_charts$Internal_Dots$viewSquare = F5(
 	function (events, variety, color, area, point) {
 		var side = _elm_lang$core$Basics$sqrt(area);
 		var attributes = {
@@ -16965,15 +17041,15 @@ var _user$project$Internal_Dots$viewSquare = F5(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					attributes,
-					A2(_user$project$Internal_Dots$varietyAttributes, color, variety))),
+					A2(_terezka$line_charts$Internal_Dots$varietyAttributes, color, variety))),
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Dots$viewTriangle = F5(
+var _terezka$line_charts$Internal_Dots$viewTriangle = F5(
 	function (events, variety, color, area, point) {
 		var attributes = {
 			ctor: '::',
 			_0: _elm_lang$svg$Svg_Attributes$d(
-				A2(_user$project$Internal_Dots$pathTriangle, area, point)),
+				A2(_terezka$line_charts$Internal_Dots$pathTriangle, area, point)),
 			_1: {ctor: '[]'}
 		};
 		return A2(
@@ -16984,10 +17060,10 @@ var _user$project$Internal_Dots$viewTriangle = F5(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					attributes,
-					A2(_user$project$Internal_Dots$varietyAttributes, color, variety))),
+					A2(_terezka$line_charts$Internal_Dots$varietyAttributes, color, variety))),
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Dots$viewCircle = F5(
+var _terezka$line_charts$Internal_Dots$viewCircle = F5(
 	function (events, variety, color, area, point) {
 		var radius = _elm_lang$core$Basics$sqrt(area / _elm_lang$core$Basics$pi);
 		var attributes = {
@@ -17014,27 +17090,27 @@ var _user$project$Internal_Dots$viewCircle = F5(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					attributes,
-					A2(_user$project$Internal_Dots$varietyAttributes, color, variety))),
+					A2(_terezka$line_charts$Internal_Dots$varietyAttributes, color, variety))),
 			{ctor: '[]'});
 	});
-var _user$project$Internal_Dots$viewShape = F5(
+var _terezka$line_charts$Internal_Dots$viewShape = F5(
 	function (system, _p1, shape, color, point) {
 		var _p2 = _p1;
 		var view = function () {
 			var _p3 = shape;
 			switch (_p3.ctor) {
 				case 'Circle':
-					return _user$project$Internal_Dots$viewCircle;
+					return _terezka$line_charts$Internal_Dots$viewCircle;
 				case 'Triangle':
-					return _user$project$Internal_Dots$viewTriangle;
+					return _terezka$line_charts$Internal_Dots$viewTriangle;
 				case 'Square':
-					return _user$project$Internal_Dots$viewSquare;
+					return _terezka$line_charts$Internal_Dots$viewSquare;
 				case 'Diamond':
-					return _user$project$Internal_Dots$viewDiamond;
+					return _terezka$line_charts$Internal_Dots$viewDiamond;
 				case 'Cross':
-					return _user$project$Internal_Dots$viewCross;
+					return _terezka$line_charts$Internal_Dots$viewCross;
 				case 'Plus':
-					return _user$project$Internal_Dots$viewPlus;
+					return _terezka$line_charts$Internal_Dots$viewPlus;
 				default:
 					return F5(
 						function (_p8, _p7, _p6, _p5, _p4) {
@@ -17042,7 +17118,7 @@ var _user$project$Internal_Dots$viewShape = F5(
 						});
 			}
 		}();
-		var pointSvg = A2(_user$project$LineChart_Coordinate$toSvg, system, point);
+		var pointSvg = A2(_terezka$line_charts$LineChart_Coordinate$toSvg, system, point);
 		var size = (2 * _elm_lang$core$Basics$pi) * _p2.radius;
 		return A5(
 			view,
@@ -17052,7 +17128,7 @@ var _user$project$Internal_Dots$viewShape = F5(
 			size,
 			pointSvg);
 	});
-var _user$project$Internal_Dots$viewSample = F5(
+var _terezka$line_charts$Internal_Dots$viewSample = F5(
 	function (_p9, shape, color, system, data) {
 		var _p10 = _p9;
 		var _p11 = _p10._0.legend(
@@ -17063,30 +17139,30 @@ var _user$project$Internal_Dots$viewSample = F5(
 				},
 				data));
 		var style = _p11._0;
-		return A4(_user$project$Internal_Dots$viewShape, system, style, shape, color);
+		return A4(_terezka$line_charts$Internal_Dots$viewShape, system, style, shape, color);
 	});
-var _user$project$Internal_Dots$view = F2(
+var _terezka$line_charts$Internal_Dots$view = F2(
 	function (_p12, data) {
 		var _p13 = _p12;
 		var _p14 = _p13.dotsConfig;
 		var config = _p14._0;
 		var _p15 = config.individual(data.user);
 		var style = _p15._0;
-		return A5(_user$project$Internal_Dots$viewShape, _p13.system, style, _p13.shape, _p13.color, data.point);
+		return A5(_terezka$line_charts$Internal_Dots$viewShape, _p13.system, style, _p13.shape, _p13.color, data.point);
 	});
-var _user$project$Internal_Dots$StyleConfig = F2(
+var _terezka$line_charts$Internal_Dots$StyleConfig = F2(
 	function (a, b) {
 		return {radius: a, variety: b};
 	});
-var _user$project$Internal_Dots$Arguments = F4(
+var _terezka$line_charts$Internal_Dots$Arguments = F4(
 	function (a, b, c, d) {
 		return {system: a, dotsConfig: b, shape: c, color: d};
 	});
-var _user$project$Internal_Dots$Config = function (a) {
+var _terezka$line_charts$Internal_Dots$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Dots$custom = function (style) {
-	return _user$project$Internal_Dots$Config(
+var _terezka$line_charts$Internal_Dots$custom = function (style) {
+	return _terezka$line_charts$Internal_Dots$Config(
 		{
 			legend: function (_p16) {
 				return style;
@@ -17096,72 +17172,72 @@ var _user$project$Internal_Dots$custom = function (style) {
 			}
 		});
 };
-var _user$project$Internal_Dots$customAny = _user$project$Internal_Dots$Config;
-var _user$project$Internal_Dots$Style = function (a) {
+var _terezka$line_charts$Internal_Dots$customAny = _terezka$line_charts$Internal_Dots$Config;
+var _terezka$line_charts$Internal_Dots$Style = function (a) {
 	return {ctor: 'Style', _0: a};
 };
-var _user$project$Internal_Dots$style = F2(
+var _terezka$line_charts$Internal_Dots$style = F2(
 	function (radius, variety) {
-		return _user$project$Internal_Dots$Style(
+		return _terezka$line_charts$Internal_Dots$Style(
 			{radius: radius, variety: variety});
 	});
-var _user$project$Internal_Dots$Full = {ctor: 'Full'};
-var _user$project$Internal_Dots$full = function (radius) {
-	return A2(_user$project$Internal_Dots$style, radius, _user$project$Internal_Dots$Full);
+var _terezka$line_charts$Internal_Dots$Full = {ctor: 'Full'};
+var _terezka$line_charts$Internal_Dots$full = function (radius) {
+	return A2(_terezka$line_charts$Internal_Dots$style, radius, _terezka$line_charts$Internal_Dots$Full);
 };
-var _user$project$Internal_Dots$Aura = F2(
+var _terezka$line_charts$Internal_Dots$Aura = F2(
 	function (a, b) {
 		return {ctor: 'Aura', _0: a, _1: b};
 	});
-var _user$project$Internal_Dots$aura = F3(
+var _terezka$line_charts$Internal_Dots$aura = F3(
 	function (radius, aura, opacity) {
 		return A2(
-			_user$project$Internal_Dots$style,
+			_terezka$line_charts$Internal_Dots$style,
 			radius,
-			A2(_user$project$Internal_Dots$Aura, aura, opacity));
+			A2(_terezka$line_charts$Internal_Dots$Aura, aura, opacity));
 	});
-var _user$project$Internal_Dots$Disconnected = function (a) {
+var _terezka$line_charts$Internal_Dots$Disconnected = function (a) {
 	return {ctor: 'Disconnected', _0: a};
 };
-var _user$project$Internal_Dots$disconnected = F2(
+var _terezka$line_charts$Internal_Dots$disconnected = F2(
 	function (radius, border) {
 		return A2(
-			_user$project$Internal_Dots$style,
+			_terezka$line_charts$Internal_Dots$style,
 			radius,
-			_user$project$Internal_Dots$Disconnected(border));
+			_terezka$line_charts$Internal_Dots$Disconnected(border));
 	});
-var _user$project$Internal_Dots$default = _user$project$Internal_Dots$Config(
+var _terezka$line_charts$Internal_Dots$default = _terezka$line_charts$Internal_Dots$Config(
 	{
 		legend: function (_p18) {
-			return A2(_user$project$Internal_Dots$disconnected, 10, 2);
+			return A2(_terezka$line_charts$Internal_Dots$disconnected, 10, 2);
 		},
 		individual: function (_p19) {
-			return A2(_user$project$Internal_Dots$disconnected, 10, 2);
+			return A2(_terezka$line_charts$Internal_Dots$disconnected, 10, 2);
 		}
 	});
-var _user$project$Internal_Dots$Empty = function (a) {
+var _terezka$line_charts$Internal_Dots$Empty = function (a) {
 	return {ctor: 'Empty', _0: a};
 };
-var _user$project$Internal_Dots$empty = F2(
+var _terezka$line_charts$Internal_Dots$empty = F2(
 	function (radius, border) {
 		return A2(
-			_user$project$Internal_Dots$style,
+			_terezka$line_charts$Internal_Dots$style,
 			radius,
-			_user$project$Internal_Dots$Empty(border));
+			_terezka$line_charts$Internal_Dots$Empty(border));
 	});
-var _user$project$Internal_Dots$Plus = {ctor: 'Plus'};
-var _user$project$Internal_Dots$Cross = {ctor: 'Cross'};
-var _user$project$Internal_Dots$Diamond = {ctor: 'Diamond'};
-var _user$project$Internal_Dots$Square = {ctor: 'Square'};
-var _user$project$Internal_Dots$Triangle = {ctor: 'Triangle'};
-var _user$project$Internal_Dots$Circle = {ctor: 'Circle'};
-var _user$project$Internal_Dots$None = {ctor: 'None'};
+var _terezka$line_charts$Internal_Dots$Plus = {ctor: 'Plus'};
+var _terezka$line_charts$Internal_Dots$Cross = {ctor: 'Cross'};
+var _terezka$line_charts$Internal_Dots$Diamond = {ctor: 'Diamond'};
+var _terezka$line_charts$Internal_Dots$Square = {ctor: 'Square'};
+var _terezka$line_charts$Internal_Dots$Triangle = {ctor: 'Triangle'};
+var _terezka$line_charts$Internal_Dots$Circle = {ctor: 'Circle'};
+var _terezka$line_charts$Internal_Dots$None = {ctor: 'None'};
 
-var _user$project$LineChart_Dots$aura = _user$project$Internal_Dots$aura;
-var _user$project$LineChart_Dots$disconnected = _user$project$Internal_Dots$disconnected;
-var _user$project$LineChart_Dots$empty = _user$project$Internal_Dots$empty;
-var _user$project$LineChart_Dots$full = _user$project$Internal_Dots$full;
-var _user$project$LineChart_Dots$hoverMany = function (hovered) {
+var _terezka$line_charts$LineChart_Dots$aura = _terezka$line_charts$Internal_Dots$aura;
+var _terezka$line_charts$LineChart_Dots$disconnected = _terezka$line_charts$Internal_Dots$disconnected;
+var _terezka$line_charts$LineChart_Dots$empty = _terezka$line_charts$Internal_Dots$empty;
+var _terezka$line_charts$LineChart_Dots$full = _terezka$line_charts$Internal_Dots$full;
+var _terezka$line_charts$LineChart_Dots$hoverMany = function (hovered) {
 	var styleIndividual = function (datum) {
 		return A2(
 			_elm_lang$core$List$any,
@@ -17169,38 +17245,38 @@ var _user$project$LineChart_Dots$hoverMany = function (hovered) {
 				function (x, y) {
 					return _elm_lang$core$Native_Utils.eq(x, y);
 				})(datum),
-			hovered) ? A3(_user$project$LineChart_Dots$aura, 7, 6, 0.3) : A2(_user$project$LineChart_Dots$disconnected, 10, 2);
+			hovered) ? A3(_terezka$line_charts$LineChart_Dots$aura, 7, 6, 0.3) : A2(_terezka$line_charts$LineChart_Dots$disconnected, 10, 2);
 	};
 	var styleLegend = function (_p0) {
-		return A2(_user$project$LineChart_Dots$disconnected, 10, 2);
+		return A2(_terezka$line_charts$LineChart_Dots$disconnected, 10, 2);
 	};
-	return _user$project$Internal_Dots$customAny(
+	return _terezka$line_charts$Internal_Dots$customAny(
 		{legend: styleLegend, individual: styleIndividual});
 };
-var _user$project$LineChart_Dots$hoverOne = function (maybeHovered) {
+var _terezka$line_charts$LineChart_Dots$hoverOne = function (maybeHovered) {
 	var styleIndividual = function (datum) {
 		return _elm_lang$core$Native_Utils.eq(
 			_elm_lang$core$Maybe$Just(datum),
-			maybeHovered) ? A3(_user$project$LineChart_Dots$aura, 7, 6, 0.3) : A2(_user$project$LineChart_Dots$disconnected, 10, 2);
+			maybeHovered) ? A3(_terezka$line_charts$LineChart_Dots$aura, 7, 6, 0.3) : A2(_terezka$line_charts$LineChart_Dots$disconnected, 10, 2);
 	};
 	var styleLegend = function (_p1) {
-		return A2(_user$project$LineChart_Dots$disconnected, 10, 2);
+		return A2(_terezka$line_charts$LineChart_Dots$disconnected, 10, 2);
 	};
-	return _user$project$Internal_Dots$customAny(
+	return _terezka$line_charts$Internal_Dots$customAny(
 		{legend: styleLegend, individual: styleIndividual});
 };
-var _user$project$LineChart_Dots$customAny = _user$project$Internal_Dots$customAny;
-var _user$project$LineChart_Dots$custom = _user$project$Internal_Dots$custom;
-var _user$project$LineChart_Dots$default = _user$project$Internal_Dots$default;
-var _user$project$LineChart_Dots$cross = _user$project$Internal_Dots$Cross;
-var _user$project$LineChart_Dots$plus = _user$project$Internal_Dots$Plus;
-var _user$project$LineChart_Dots$diamond = _user$project$Internal_Dots$Diamond;
-var _user$project$LineChart_Dots$square = _user$project$Internal_Dots$Square;
-var _user$project$LineChart_Dots$triangle = _user$project$Internal_Dots$Triangle;
-var _user$project$LineChart_Dots$circle = _user$project$Internal_Dots$Circle;
-var _user$project$LineChart_Dots$none = _user$project$Internal_Dots$None;
+var _terezka$line_charts$LineChart_Dots$customAny = _terezka$line_charts$Internal_Dots$customAny;
+var _terezka$line_charts$LineChart_Dots$custom = _terezka$line_charts$Internal_Dots$custom;
+var _terezka$line_charts$LineChart_Dots$default = _terezka$line_charts$Internal_Dots$default;
+var _terezka$line_charts$LineChart_Dots$cross = _terezka$line_charts$Internal_Dots$Cross;
+var _terezka$line_charts$LineChart_Dots$plus = _terezka$line_charts$Internal_Dots$Plus;
+var _terezka$line_charts$LineChart_Dots$diamond = _terezka$line_charts$Internal_Dots$Diamond;
+var _terezka$line_charts$LineChart_Dots$square = _terezka$line_charts$Internal_Dots$Square;
+var _terezka$line_charts$LineChart_Dots$triangle = _terezka$line_charts$Internal_Dots$Triangle;
+var _terezka$line_charts$LineChart_Dots$circle = _terezka$line_charts$Internal_Dots$Circle;
+var _terezka$line_charts$LineChart_Dots$none = _terezka$line_charts$Internal_Dots$None;
 
-var _user$project$Internal_Grid$viewLines = F5(
+var _terezka$line_charts$Internal_Grid$viewLines = F5(
 	function (system, verticals, horizontals, width, color) {
 		var attributes = {
 			ctor: '::',
@@ -17217,21 +17293,21 @@ var _user$project$Internal_Grid$viewLines = F5(
 			_elm_lang$core$Basics_ops['++'],
 			A2(
 				_elm_lang$core$List$map,
-				A2(_user$project$Internal_Svg$horizontalGrid, system, attributes),
+				A2(_terezka$line_charts$Internal_Svg$horizontalGrid, system, attributes),
 				horizontals),
 			A2(
 				_elm_lang$core$List$map,
-				A2(_user$project$Internal_Svg$verticalGrid, system, attributes),
+				A2(_terezka$line_charts$Internal_Svg$verticalGrid, system, attributes),
 				verticals));
 	});
-var _user$project$Internal_Grid$viewDots = F5(
+var _terezka$line_charts$Internal_Grid$viewDots = F5(
 	function (system, verticals, horizontals, radius, color) {
 		var dot = F2(
 			function (x, y) {
 				return A2(
-					_user$project$LineChart_Coordinate$toSvg,
+					_terezka$line_charts$LineChart_Coordinate$toSvg,
 					system,
-					A2(_user$project$LineChart_Coordinate$Point, x, y));
+					A2(_terezka$line_charts$LineChart_Coordinate$Point, x, y));
 			});
 		var dots_ = function (g) {
 			return A2(
@@ -17242,10 +17318,10 @@ var _user$project$Internal_Grid$viewDots = F5(
 		var dots = A2(_elm_lang$core$List$concatMap, dots_, verticals);
 		return A2(
 			_elm_lang$core$List$map,
-			A2(_user$project$Internal_Svg$gridDot, radius, color),
+			A2(_terezka$line_charts$Internal_Svg$gridDot, radius, color),
 			dots);
 	});
-var _user$project$Internal_Grid$view = F4(
+var _terezka$line_charts$Internal_Grid$view = F4(
 	function (system, xAxis, yAxis, grid) {
 		var hasGrid = function (tick) {
 			return tick.grid ? _elm_lang$core$Maybe$Just(tick.position) : _elm_lang$core$Maybe$Nothing;
@@ -17254,49 +17330,49 @@ var _user$project$Internal_Grid$view = F4(
 			_elm_lang$core$List$filterMap,
 			hasGrid,
 			A3(
-				_user$project$Internal_Axis_Ticks$ticks,
+				_terezka$line_charts$Internal_Axis_Ticks$ticks,
 				system.yData,
 				system.y,
-				_user$project$Internal_Axis$ticks(yAxis)));
+				_terezka$line_charts$Internal_Axis$ticks(yAxis)));
 		var verticals = A2(
 			_elm_lang$core$List$filterMap,
 			hasGrid,
 			A3(
-				_user$project$Internal_Axis_Ticks$ticks,
+				_terezka$line_charts$Internal_Axis_Ticks$ticks,
 				system.xData,
 				system.x,
-				_user$project$Internal_Axis$ticks(xAxis)));
+				_terezka$line_charts$Internal_Axis$ticks(xAxis)));
 		var _p0 = grid;
 		if (_p0.ctor === 'Dots') {
-			return A5(_user$project$Internal_Grid$viewDots, system, verticals, horizontals, _p0._0, _p0._1);
+			return A5(_terezka$line_charts$Internal_Grid$viewDots, system, verticals, horizontals, _p0._0, _p0._1);
 		} else {
-			return A5(_user$project$Internal_Grid$viewLines, system, verticals, horizontals, _p0._0, _p0._1);
+			return A5(_terezka$line_charts$Internal_Grid$viewLines, system, verticals, horizontals, _p0._0, _p0._1);
 		}
 	});
-var _user$project$Internal_Grid$Lines = F2(
+var _terezka$line_charts$Internal_Grid$Lines = F2(
 	function (a, b) {
 		return {ctor: 'Lines', _0: a, _1: b};
 	});
-var _user$project$Internal_Grid$lines = _user$project$Internal_Grid$Lines;
-var _user$project$Internal_Grid$default = A2(_user$project$Internal_Grid$lines, 1, _user$project$LineChart_Colors$grayLightest);
-var _user$project$Internal_Grid$Dots = F2(
+var _terezka$line_charts$Internal_Grid$lines = _terezka$line_charts$Internal_Grid$Lines;
+var _terezka$line_charts$Internal_Grid$default = A2(_terezka$line_charts$Internal_Grid$lines, 1, _terezka$line_charts$LineChart_Colors$grayLightest);
+var _terezka$line_charts$Internal_Grid$Dots = F2(
 	function (a, b) {
 		return {ctor: 'Dots', _0: a, _1: b};
 	});
-var _user$project$Internal_Grid$dots = _user$project$Internal_Grid$Dots;
+var _terezka$line_charts$Internal_Grid$dots = _terezka$line_charts$Internal_Grid$Dots;
 
-var _user$project$LineChart_Grid$lines = _user$project$Internal_Grid$lines;
-var _user$project$LineChart_Grid$dots = _user$project$Internal_Grid$dots;
-var _user$project$LineChart_Grid$default = _user$project$Internal_Grid$default;
+var _terezka$line_charts$LineChart_Grid$lines = _terezka$line_charts$Internal_Grid$lines;
+var _terezka$line_charts$LineChart_Grid$dots = _terezka$line_charts$Internal_Grid$dots;
+var _terezka$line_charts$LineChart_Grid$default = _terezka$line_charts$Internal_Grid$default;
 
-var _user$project$Internal_Interpolation$after = F2(
+var _terezka$line_charts$Internal_Interpolation$after = F2(
 	function (a, b) {
 		return {
 			ctor: '::',
 			_0: a,
 			_1: {
 				ctor: '::',
-				_0: A2(_user$project$Internal_Data$Point, b.x, a.y),
+				_0: A2(_terezka$line_charts$Internal_Data$Point, b.x, a.y),
 				_1: {
 					ctor: '::',
 					_0: b,
@@ -17305,11 +17381,11 @@ var _user$project$Internal_Interpolation$after = F2(
 			}
 		};
 	});
-var _user$project$Internal_Interpolation$fakeLast = F2(
+var _terezka$line_charts$Internal_Interpolation$fakeLast = F2(
 	function (last0, last1) {
-		return A2(_user$project$Internal_Data$Point, (last1.x + last1.x) - last0.x, last1.y);
+		return A2(_terezka$line_charts$Internal_Data$Point, (last1.x + last1.x) - last0.x, last1.y);
 	});
-var _user$project$Internal_Interpolation$stepped = function (sections) {
+var _terezka$line_charts$Internal_Interpolation$stepped = function (sections) {
 	var expand = F2(
 		function (result, section) {
 			expand:
@@ -17321,7 +17397,7 @@ var _user$project$Internal_Interpolation$stepped = function (sections) {
 						var _v1 = A2(
 							_elm_lang$core$Basics_ops['++'],
 							result,
-							A2(_user$project$Internal_Interpolation$after, _p0._0._0, _p1)),
+							A2(_terezka$line_charts$Internal_Interpolation$after, _p0._0._0, _p1)),
 							_v2 = {
 							ctor: '_Tuple2',
 							_0: {ctor: '::', _0: _p1, _1: _p0._0._1._1},
@@ -17337,7 +17413,7 @@ var _user$project$Internal_Interpolation$stepped = function (sections) {
 								result,
 								{
 									ctor: '::',
-									_0: A2(_user$project$Internal_Data$Point, _p0._1._0.x, _p0._0._0.y),
+									_0: A2(_terezka$line_charts$Internal_Data$Point, _p0._1._0.x, _p0._0._0.y),
 									_1: {ctor: '[]'}
 								});
 						} else {
@@ -17354,7 +17430,7 @@ var _user$project$Internal_Interpolation$stepped = function (sections) {
 		function (_p2) {
 			return A2(
 				_elm_lang$core$List$map,
-				_user$project$Internal_Path$Line,
+				_terezka$line_charts$Internal_Path$Line,
 				A2(
 					expand,
 					{ctor: '[]'},
@@ -17362,28 +17438,28 @@ var _user$project$Internal_Interpolation$stepped = function (sections) {
 		},
 		sections);
 };
-var _user$project$Internal_Interpolation$sign = function (x) {
+var _terezka$line_charts$Internal_Interpolation$sign = function (x) {
 	return (_elm_lang$core$Native_Utils.cmp(x, 0) < 0) ? -1 : 1;
 };
-var _user$project$Internal_Interpolation$slope2 = F3(
+var _terezka$line_charts$Internal_Interpolation$slope2 = F3(
 	function (point0, point1, t) {
 		var h = point1.x - point0.x;
 		return (!_elm_lang$core$Native_Utils.eq(h, 0)) ? ((((3 * (point1.y - point0.y)) / h) - t) / 2) : t;
 	});
-var _user$project$Internal_Interpolation$toH = F2(
+var _terezka$line_charts$Internal_Interpolation$toH = F2(
 	function (h0, h1) {
 		return _elm_lang$core$Native_Utils.eq(h0, 0) ? ((_elm_lang$core$Native_Utils.cmp(h1, 0) < 0) ? (0 * -1) : h1) : h0;
 	});
-var _user$project$Internal_Interpolation$slope3 = F3(
+var _terezka$line_charts$Internal_Interpolation$slope3 = F3(
 	function (point0, point1, point2) {
 		var h1 = point2.x - point1.x;
 		var h0 = point1.x - point0.x;
-		var s0h = A2(_user$project$Internal_Interpolation$toH, h0, h1);
+		var s0h = A2(_terezka$line_charts$Internal_Interpolation$toH, h0, h1);
 		var s0 = (point1.y - point0.y) / s0h;
-		var s1h = A2(_user$project$Internal_Interpolation$toH, h1, h0);
+		var s1h = A2(_terezka$line_charts$Internal_Interpolation$toH, h1, h0);
 		var s1 = (point2.y - point1.y) / s1h;
 		var p = ((s0 * h1) + (s1 * h0)) / (h0 + h1);
-		var slope = (_user$project$Internal_Interpolation$sign(s0) + _user$project$Internal_Interpolation$sign(s1)) * A2(
+		var slope = (_terezka$line_charts$Internal_Interpolation$sign(s0) + _terezka$line_charts$Internal_Interpolation$sign(s1)) * A2(
 			_elm_lang$core$Basics$min,
 			A2(
 				_elm_lang$core$Basics$min,
@@ -17392,24 +17468,24 @@ var _user$project$Internal_Interpolation$slope3 = F3(
 			0.5 * _elm_lang$core$Basics$abs(p));
 		return _elm_lang$core$Basics$isNaN(slope) ? 0 : slope;
 	});
-var _user$project$Internal_Interpolation$monotoneCurve = F4(
+var _terezka$line_charts$Internal_Interpolation$monotoneCurve = F4(
 	function (point0, point1, tangent0, tangent1) {
 		var dx = (point1.x - point0.x) / 3;
 		return A3(
-			_user$project$Internal_Path$CubicBeziers,
+			_terezka$line_charts$Internal_Path$CubicBeziers,
 			{x: point0.x + dx, y: point0.y + (dx * tangent0)},
 			{x: point1.x - dx, y: point1.y - (dx * tangent1)},
 			point1);
 	});
-var _user$project$Internal_Interpolation$linear = _elm_lang$core$List$map(
-	_elm_lang$core$List$map(_user$project$Internal_Path$Line));
-var _user$project$Internal_Interpolation$Stepped = {ctor: 'Stepped'};
-var _user$project$Internal_Interpolation$Monotone = {ctor: 'Monotone'};
-var _user$project$Internal_Interpolation$Linear = {ctor: 'Linear'};
-var _user$project$Internal_Interpolation$Previous = function (a) {
+var _terezka$line_charts$Internal_Interpolation$linear = _elm_lang$core$List$map(
+	_elm_lang$core$List$map(_terezka$line_charts$Internal_Path$Line));
+var _terezka$line_charts$Internal_Interpolation$Stepped = {ctor: 'Stepped'};
+var _terezka$line_charts$Internal_Interpolation$Monotone = {ctor: 'Monotone'};
+var _terezka$line_charts$Internal_Interpolation$Linear = {ctor: 'Linear'};
+var _terezka$line_charts$Internal_Interpolation$Previous = function (a) {
 	return {ctor: 'Previous', _0: a};
 };
-var _user$project$Internal_Interpolation$monotonePart = F2(
+var _terezka$line_charts$Internal_Interpolation$monotonePart = F2(
 	function (points, _p3) {
 		monotonePart:
 		while (true) {
@@ -17425,8 +17501,8 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 							var _p8 = _p5._1._1._1._0;
 							var _p7 = _p5._1._1._0;
 							var _p6 = _p5._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p6, _p7, _p8);
-							var t0 = A3(_user$project$Internal_Interpolation$slope2, _p6, _p7, t1);
+							var t1 = A3(_terezka$line_charts$Internal_Interpolation$slope3, _p6, _p7, _p8);
+							var t0 = A3(_terezka$line_charts$Internal_Interpolation$slope2, _p6, _p7, t1);
 							var _v5 = {
 								ctor: '::',
 								_0: _p7,
@@ -17434,13 +17510,13 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 							},
 								_v6 = {
 								ctor: '_Tuple2',
-								_0: _user$project$Internal_Interpolation$Previous(t1),
+								_0: _terezka$line_charts$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
 									_p16,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p6, _p7, t0, t1),
+										_0: A4(_terezka$line_charts$Internal_Interpolation$monotoneCurve, _p6, _p7, t0, t1),
 										_1: {ctor: '[]'}
 									})
 							};
@@ -17450,19 +17526,19 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 						} else {
 							var _p13 = _p5._1._1._0;
 							var _p12 = _p5._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p12, _p13, _p13);
+							var t1 = A3(_terezka$line_charts$Internal_Interpolation$slope3, _p12, _p13, _p13);
 							return {
 								ctor: '_Tuple2',
-								_0: _user$project$Internal_Interpolation$Previous(t1),
+								_0: _terezka$line_charts$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
 									_p16,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p12, _p13, t1, t1),
+										_0: A4(_terezka$line_charts$Internal_Interpolation$monotoneCurve, _p12, _p13, t1, t1),
 										_1: {
 											ctor: '::',
-											_0: _user$project$Internal_Path$Line(_p13),
+											_0: _terezka$line_charts$Internal_Path$Line(_p13),
 											_1: {ctor: '[]'}
 										}
 									})
@@ -17477,7 +17553,7 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 							var _p11 = _p5._1._1._1._0;
 							var _p10 = _p5._1._1._0;
 							var _p9 = _p5._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p9, _p10, _p11);
+							var t1 = A3(_terezka$line_charts$Internal_Interpolation$slope3, _p9, _p10, _p11);
 							var _v7 = {
 								ctor: '::',
 								_0: _p10,
@@ -17485,13 +17561,13 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 							},
 								_v8 = {
 								ctor: '_Tuple2',
-								_0: _user$project$Internal_Interpolation$Previous(t1),
+								_0: _terezka$line_charts$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
 									_p16,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p9, _p10, _p5._0._0, t1),
+										_0: A4(_terezka$line_charts$Internal_Interpolation$monotoneCurve, _p9, _p10, _p5._0._0, t1),
 										_1: {ctor: '[]'}
 									})
 							};
@@ -17501,19 +17577,19 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 						} else {
 							var _p15 = _p5._1._1._0;
 							var _p14 = _p5._1._0;
-							var t1 = A3(_user$project$Internal_Interpolation$slope3, _p14, _p15, _p15);
+							var t1 = A3(_terezka$line_charts$Internal_Interpolation$slope3, _p14, _p15, _p15);
 							return {
 								ctor: '_Tuple2',
-								_0: _user$project$Internal_Interpolation$Previous(t1),
+								_0: _terezka$line_charts$Internal_Interpolation$Previous(t1),
 								_1: A2(
 									_elm_lang$core$Basics_ops['++'],
 									_p16,
 									{
 										ctor: '::',
-										_0: A4(_user$project$Internal_Interpolation$monotoneCurve, _p14, _p15, _p5._0._0, t1),
+										_0: A4(_terezka$line_charts$Internal_Interpolation$monotoneCurve, _p14, _p15, _p5._0._0, t1),
 										_1: {
 											ctor: '::',
-											_0: _user$project$Internal_Path$Line(_p15),
+											_0: _terezka$line_charts$Internal_Path$Line(_p15),
 											_1: {ctor: '[]'}
 										}
 									})
@@ -17527,7 +17603,7 @@ var _user$project$Internal_Interpolation$monotonePart = F2(
 			return {ctor: '_Tuple2', _0: _p17, _1: _p16};
 		}
 	});
-var _user$project$Internal_Interpolation$monotoneSection = F2(
+var _terezka$line_charts$Internal_Interpolation$monotoneSection = F2(
 	function (points, _p18) {
 		var _p19 = _p18;
 		var _p23 = _p19._0;
@@ -17536,14 +17612,14 @@ var _user$project$Internal_Interpolation$monotoneSection = F2(
 			if (_p21.ctor === '::') {
 				var _p22 = _p21._0;
 				return A2(
-					_user$project$Internal_Interpolation$monotonePart,
+					_terezka$line_charts$Internal_Interpolation$monotonePart,
 					{ctor: '::', _0: _p22, _1: _p21._1},
 					{
 						ctor: '_Tuple2',
 						_0: _p23,
 						_1: {
 							ctor: '::',
-							_0: _user$project$Internal_Path$Line(_p22),
+							_0: _terezka$line_charts$Internal_Path$Line(_p22),
 							_1: {ctor: '[]'}
 						}
 					});
@@ -17563,20 +17639,20 @@ var _user$project$Internal_Interpolation$monotoneSection = F2(
 			_1: {ctor: '::', _0: commands, _1: _p19._1}
 		};
 	});
-var _user$project$Internal_Interpolation$First = {ctor: 'First'};
-var _user$project$Internal_Interpolation$monotone = function (sections) {
+var _terezka$line_charts$Internal_Interpolation$First = {ctor: 'First'};
+var _terezka$line_charts$Internal_Interpolation$monotone = function (sections) {
 	return _elm_lang$core$Tuple$second(
 		A3(
 			_elm_lang$core$List$foldr,
-			_user$project$Internal_Interpolation$monotoneSection,
+			_terezka$line_charts$Internal_Interpolation$monotoneSection,
 			{
 				ctor: '_Tuple2',
-				_0: _user$project$Internal_Interpolation$First,
+				_0: _terezka$line_charts$Internal_Interpolation$First,
 				_1: {ctor: '[]'}
 			},
 			sections));
 };
-var _user$project$Internal_Interpolation$toCommands = F2(
+var _terezka$line_charts$Internal_Interpolation$toCommands = F2(
 	function (interpolation, data) {
 		var pointsSections = _elm_lang$core$List$map(
 			function (_p24) {
@@ -17606,18 +17682,18 @@ var _user$project$Internal_Interpolation$toCommands = F2(
 		var _p26 = interpolation;
 		switch (_p26.ctor) {
 			case 'Linear':
-				return _user$project$Internal_Interpolation$linear(
+				return _terezka$line_charts$Internal_Interpolation$linear(
 					points(data));
 			case 'Monotone':
-				return _user$project$Internal_Interpolation$monotone(
+				return _terezka$line_charts$Internal_Interpolation$monotone(
 					points(data));
 			default:
-				return _user$project$Internal_Interpolation$stepped(
+				return _terezka$line_charts$Internal_Interpolation$stepped(
 					pointsSections(data));
 		}
 	});
 
-var _user$project$Internal_Line$toAreaAttributes = F3(
+var _terezka$line_charts$Internal_Line$toAreaAttributes = F3(
 	function (_p1, _p0, area) {
 		var _p2 = _p1;
 		var _p3 = _p0;
@@ -17633,66 +17709,66 @@ var _user$project$Internal_Line$toAreaAttributes = F3(
 			}
 		};
 	});
-var _user$project$Internal_Line$viewArea = F5(
+var _terezka$line_charts$Internal_Line$viewArea = F5(
 	function (_p4, line, style, interpolation, data) {
 		var _p5 = _p4;
 		var _p7 = _p5.system;
 		var _p6 = _p5.area;
 		var attributes = {
 			ctor: '::',
-			_0: _user$project$LineChart_Junk$withinChartArea(_p7),
+			_0: _terezka$line_charts$LineChart_Junk$withinChartArea(_p7),
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$fillOpacity(
 					_elm_lang$core$Basics$toString(
-						_user$project$Internal_Area$opacitySingle(_p6))),
-				_1: A3(_user$project$Internal_Line$toAreaAttributes, line, style, _p6)
+						_terezka$line_charts$Internal_Area$opacitySingle(_p6))),
+				_1: A3(_terezka$line_charts$Internal_Line$toAreaAttributes, line, style, _p6)
 			}
 		};
 		var ground = function (point) {
 			return A2(
-				_user$project$Internal_Data$Point,
+				_terezka$line_charts$Internal_Data$Point,
 				point.x,
-				_user$project$Internal_Utils$towardsZero(_p7.y));
+				_terezka$line_charts$Internal_Utils$towardsZero(_p7.y));
 		};
 		var commands = F3(
 			function (first, middle, last) {
 				return A3(
-					_user$project$Internal_Utils$concat,
+					_terezka$line_charts$Internal_Utils$concat,
 					{
 						ctor: '::',
-						_0: _user$project$Internal_Path$Move(
+						_0: _terezka$line_charts$Internal_Path$Move(
 							ground(
-								_user$project$Internal_Path$toPoint(first))),
+								_terezka$line_charts$Internal_Path$toPoint(first))),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Internal_Path$Line(
-								_user$project$Internal_Path$toPoint(first)),
+							_0: _terezka$line_charts$Internal_Path$Line(
+								_terezka$line_charts$Internal_Path$toPoint(first)),
 							_1: {ctor: '[]'}
 						}
 					},
 					interpolation,
 					{
 						ctor: '::',
-						_0: _user$project$Internal_Path$Line(
+						_0: _terezka$line_charts$Internal_Path$Line(
 							ground(
-								_user$project$Internal_Path$toPoint(last))),
+								_terezka$line_charts$Internal_Path$toPoint(last))),
 						_1: {ctor: '[]'}
 					});
 			});
 		return A2(
-			_user$project$Internal_Utils$viewWithEdges,
+			_terezka$line_charts$Internal_Utils$viewWithEdges,
 			interpolation,
 			F3(
 				function (first, middle, last) {
 					return A3(
-						_user$project$Internal_Path$view,
+						_terezka$line_charts$Internal_Path$view,
 						_p7,
 						attributes,
 						A3(commands, first, middle, last));
 				}));
 	});
-var _user$project$Internal_Line$toSeriesAttributes = F2(
+var _terezka$line_charts$Internal_Line$toSeriesAttributes = F2(
 	function (_p9, _p8) {
 		var _p10 = _p9;
 		var _p11 = _p8;
@@ -17730,7 +17806,7 @@ var _user$project$Internal_Line$toSeriesAttributes = F2(
 			}
 		};
 	});
-var _user$project$Internal_Line$viewSample = F5(
+var _terezka$line_charts$Internal_Line$viewSample = F5(
 	function (_p13, line, area, data, sampleWidth) {
 		var _p14 = _p13;
 		var rectangleAttributes = {
@@ -17776,13 +17852,13 @@ var _user$project$Internal_Line$viewSample = F5(
 					return _.user;
 				},
 				data));
-		var lineAttributes = A2(_user$project$Internal_Line$toSeriesAttributes, line, style);
+		var lineAttributes = A2(_terezka$line_charts$Internal_Line$toSeriesAttributes, line, style);
 		var areaAttributes = {
 			ctor: '::',
 			_0: _elm_lang$svg$Svg_Attributes$fillOpacity(
 				_elm_lang$core$Basics$toString(
-					_user$project$Internal_Area$opacity(area))),
-			_1: A3(_user$project$Internal_Line$toAreaAttributes, line, style, area)
+					_terezka$line_charts$Internal_Area$opacity(area))),
+			_1: A3(_terezka$line_charts$Internal_Line$toAreaAttributes, line, style, area)
 		};
 		var viewRectangle = function (_p15) {
 			var _p16 = _p15;
@@ -17803,44 +17879,44 @@ var _user$project$Internal_Line$viewSample = F5(
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_user$project$Internal_Utils$viewIf,
-						_user$project$Internal_Area$hasArea(area),
+						_terezka$line_charts$Internal_Utils$viewIf,
+						_terezka$line_charts$Internal_Area$hasArea(area),
 						viewRectangle),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
-var _user$project$Internal_Line$viewSeries = F5(
+var _terezka$line_charts$Internal_Line$viewSeries = F5(
 	function (_p17, line, style, interpolation, data) {
 		var _p18 = _p17;
 		var _p20 = _p18.system;
 		var attributes = {
 			ctor: '::',
-			_0: _user$project$LineChart_Junk$withinChartArea(_p20),
-			_1: A2(_user$project$Internal_Line$toSeriesAttributes, line, style)
+			_0: _terezka$line_charts$LineChart_Junk$withinChartArea(_p20),
+			_1: A2(_terezka$line_charts$Internal_Line$toSeriesAttributes, line, style)
 		};
 		return A2(
-			_user$project$Internal_Utils$viewWithFirst,
+			_terezka$line_charts$Internal_Utils$viewWithFirst,
 			data,
 			F2(
 				function (first, _p19) {
 					return A3(
-						_user$project$Internal_Path$view,
+						_terezka$line_charts$Internal_Path$view,
 						_p20,
 						attributes,
 						{
 							ctor: '::',
-							_0: _user$project$Internal_Path$Move(first.point),
+							_0: _terezka$line_charts$Internal_Path$Move(first.point),
 							_1: interpolation
 						});
 				}));
 	});
-var _user$project$Internal_Line$viewDot = F3(
+var _terezka$line_charts$Internal_Line$viewDot = F3(
 	function ($arguments, _p22, _p21) {
 		var _p23 = _p22;
 		var _p25 = _p23._0;
 		var _p24 = _p21;
-		return _user$project$Internal_Dots$view(
+		return _terezka$line_charts$Internal_Dots$view(
 			{
 				system: $arguments.system,
 				dotsConfig: $arguments.dotsConfig,
@@ -17848,7 +17924,7 @@ var _user$project$Internal_Line$viewDot = F3(
 				color: _p24._0.color(_p25.color)
 			});
 	});
-var _user$project$Internal_Line$viewSingle = F3(
+var _terezka$line_charts$Internal_Line$viewSingle = F3(
 	function ($arguments, line, data) {
 		var style = function (_p26) {
 			var _p27 = _p26;
@@ -17861,7 +17937,7 @@ var _user$project$Internal_Line$viewSingle = F3(
 					data));
 		}($arguments.lineConfig);
 		var sections = A4(
-			_user$project$Internal_Utils$part,
+			_terezka$line_charts$Internal_Utils$part,
 			function (_) {
 				return _.isReal;
 			},
@@ -17878,19 +17954,19 @@ var _user$project$Internal_Line$viewSingle = F3(
 			},
 			A2(
 				_elm_lang$core$List$map,
-				A3(_user$project$Internal_Line$viewDot, $arguments, line, style),
+				A3(_terezka$line_charts$Internal_Line$viewDot, $arguments, line, style),
 				A2(
 					_elm_lang$core$List$filter,
 					function (_p28) {
 						return A2(
-							_user$project$Internal_Data$isWithinRange,
+							_terezka$line_charts$Internal_Data$isWithinRange,
 							$arguments.system,
 							function (_) {
 								return _.point;
 							}(_p28));
 					},
 					_elm_lang$core$List$concat(parts))));
-		var commands = A2(_user$project$Internal_Interpolation$toCommands, $arguments.interpolation, sections);
+		var commands = A2(_terezka$line_charts$Internal_Interpolation$toCommands, $arguments.interpolation, sections);
 		var viewAreas = function (_p29) {
 			var _p30 = _p29;
 			return A2(
@@ -17902,7 +17978,7 @@ var _user$project$Internal_Line$viewSingle = F3(
 				},
 				A3(
 					_elm_lang$core$List$map2,
-					A3(_user$project$Internal_Line$viewArea, $arguments, line, style),
+					A3(_terezka$line_charts$Internal_Line$viewArea, $arguments, line, style),
 					commands,
 					parts));
 		};
@@ -17915,20 +17991,20 @@ var _user$project$Internal_Line$viewSingle = F3(
 			},
 			A3(
 				_elm_lang$core$List$map2,
-				A3(_user$project$Internal_Line$viewSeries, $arguments, line, style),
+				A3(_terezka$line_charts$Internal_Line$viewSeries, $arguments, line, style),
 				commands,
 				parts));
 		return {
 			ctor: '_Tuple3',
 			_0: A2(
-				_user$project$Internal_Utils$viewIf,
-				_user$project$Internal_Area$hasArea($arguments.area),
+				_terezka$line_charts$Internal_Utils$viewIf,
+				_terezka$line_charts$Internal_Area$hasArea($arguments.area),
 				viewAreas),
 			_1: viewSeriess,
 			_2: viewDots
 		};
 	});
-var _user$project$Internal_Line$viewStacked = F2(
+var _terezka$line_charts$Internal_Line$viewStacked = F2(
 	function (area, _p31) {
 		var _p32 = _p31;
 		var toList = F2(
@@ -17949,7 +18025,7 @@ var _user$project$Internal_Line$viewStacked = F2(
 			_elm_lang$core$Basics_ops['++'],
 			'opacity: ',
 			_elm_lang$core$Basics$toString(
-				_user$project$Internal_Area$opacityContainer(area)));
+				_terezka$line_charts$Internal_Area$opacityContainer(area)));
 		return {
 			ctor: '::',
 			_0: A2(
@@ -17978,7 +18054,7 @@ var _user$project$Internal_Line$viewStacked = F2(
 			}
 		};
 	});
-var _user$project$Internal_Line$viewNormal = function (_p33) {
+var _terezka$line_charts$Internal_Line$viewNormal = function (_p33) {
 	var _p34 = _p33;
 	var view = F3(
 		function (area, line, dots) {
@@ -18005,11 +18081,11 @@ var _user$project$Internal_Line$viewNormal = function (_p33) {
 		});
 	return A4(_elm_lang$core$List$map3, view, _p34._0, _p34._1, _p34._2);
 };
-var _user$project$Internal_Line$view = F3(
+var _terezka$line_charts$Internal_Line$view = F3(
 	function ($arguments, lines, datas) {
 		var buildSeriesViews = (_elm_lang$core$Native_Utils.cmp(
-			_user$project$Internal_Area$opacityContainer($arguments.area),
-			1) < 0) ? _user$project$Internal_Line$viewStacked($arguments.area) : _user$project$Internal_Line$viewNormal;
+			_terezka$line_charts$Internal_Area$opacityContainer($arguments.area),
+			1) < 0) ? _terezka$line_charts$Internal_Line$viewStacked($arguments.area) : _terezka$line_charts$Internal_Line$viewNormal;
 		var container = _elm_lang$svg$Svg$g(
 			{
 				ctor: '::',
@@ -18018,14 +18094,14 @@ var _user$project$Internal_Line$view = F3(
 			});
 		return container(
 			buildSeriesViews(
-				_user$project$Internal_Utils$unzip3(
+				_terezka$line_charts$Internal_Utils$unzip3(
 					A3(
 						_elm_lang$core$List$map2,
-						_user$project$Internal_Line$viewSingle($arguments),
+						_terezka$line_charts$Internal_Line$viewSingle($arguments),
 						lines,
 						datas))));
 	});
-var _user$project$Internal_Line$color = F3(
+var _terezka$line_charts$Internal_Line$color = F3(
 	function (_p36, _p35, data) {
 		var _p37 = _p36;
 		var _p38 = _p35;
@@ -18039,72 +18115,72 @@ var _user$project$Internal_Line$color = F3(
 		var style = _p39._0;
 		return style.color(_p38._0.color);
 	});
-var _user$project$Internal_Line$data = function (_p40) {
+var _terezka$line_charts$Internal_Line$data = function (_p40) {
 	var _p41 = _p40;
 	return _p41._0.data;
 };
-var _user$project$Internal_Line$shape = function (_p42) {
+var _terezka$line_charts$Internal_Line$shape = function (_p42) {
 	var _p43 = _p42;
 	return _p43._0.shape;
 };
-var _user$project$Internal_Line$label = function (_p44) {
+var _terezka$line_charts$Internal_Line$label = function (_p44) {
 	var _p45 = _p44;
 	return _p45._0.label;
 };
-var _user$project$Internal_Line$SeriesConfig = F5(
+var _terezka$line_charts$Internal_Line$SeriesConfig = F5(
 	function (a, b, c, d, e) {
 		return {color: a, shape: b, dashing: c, label: d, data: e};
 	});
-var _user$project$Internal_Line$Arguments = F5(
+var _terezka$line_charts$Internal_Line$Arguments = F5(
 	function (a, b, c, d, e) {
 		return {system: a, dotsConfig: b, interpolation: c, lineConfig: d, area: e};
 	});
-var _user$project$Internal_Line$Series = function (a) {
+var _terezka$line_charts$Internal_Line$Series = function (a) {
 	return {ctor: 'Series', _0: a};
 };
-var _user$project$Internal_Line$line = F4(
+var _terezka$line_charts$Internal_Line$line = F4(
 	function (color, shape, label, data) {
-		return _user$project$Internal_Line$Series(
+		return _terezka$line_charts$Internal_Line$Series(
 			A5(
-				_user$project$Internal_Line$SeriesConfig,
+				_terezka$line_charts$Internal_Line$SeriesConfig,
 				color,
 				shape,
 				{ctor: '[]'},
 				label,
 				data));
 	});
-var _user$project$Internal_Line$dash = F5(
+var _terezka$line_charts$Internal_Line$dash = F5(
 	function (color, shape, label, dashing, data) {
-		return _user$project$Internal_Line$Series(
-			A5(_user$project$Internal_Line$SeriesConfig, color, shape, dashing, label, data));
+		return _terezka$line_charts$Internal_Line$Series(
+			A5(_terezka$line_charts$Internal_Line$SeriesConfig, color, shape, dashing, label, data));
 	});
-var _user$project$Internal_Line$Config = function (a) {
+var _terezka$line_charts$Internal_Line$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Line$custom = _user$project$Internal_Line$Config;
-var _user$project$Internal_Line$Style = function (a) {
+var _terezka$line_charts$Internal_Line$custom = _terezka$line_charts$Internal_Line$Config;
+var _terezka$line_charts$Internal_Line$Style = function (a) {
 	return {ctor: 'Style', _0: a};
 };
-var _user$project$Internal_Line$style = F2(
+var _terezka$line_charts$Internal_Line$style = F2(
 	function (width, color) {
-		return _user$project$Internal_Line$Style(
+		return _terezka$line_charts$Internal_Line$Style(
 			{width: width, color: color});
 	});
-var _user$project$Internal_Line$default = _user$project$Internal_Line$Config(
+var _terezka$line_charts$Internal_Line$default = _terezka$line_charts$Internal_Line$Config(
 	function (_p46) {
-		return A2(_user$project$Internal_Line$style, 1, _elm_lang$core$Basics$identity);
+		return A2(_terezka$line_charts$Internal_Line$style, 1, _elm_lang$core$Basics$identity);
 	});
-var _user$project$Internal_Line$wider = function (width) {
-	return _user$project$Internal_Line$Config(
+var _terezka$line_charts$Internal_Line$wider = function (width) {
+	return _terezka$line_charts$Internal_Line$Config(
 		function (_p47) {
-			return A2(_user$project$Internal_Line$style, width, _elm_lang$core$Basics$identity);
+			return A2(_terezka$line_charts$Internal_Line$style, width, _elm_lang$core$Basics$identity);
 		});
 };
 
-var _user$project$LineChart_Line$style = _user$project$Internal_Line$style;
-var _user$project$LineChart_Line$custom = _user$project$Internal_Line$custom;
-var _user$project$LineChart_Line$hoverOne = function (hovered) {
-	return _user$project$LineChart_Line$custom(
+var _terezka$line_charts$LineChart_Line$style = _terezka$line_charts$Internal_Line$style;
+var _terezka$line_charts$LineChart_Line$custom = _terezka$line_charts$Internal_Line$custom;
+var _terezka$line_charts$LineChart_Line$hoverOne = function (hovered) {
+	return _terezka$line_charts$LineChart_Line$custom(
 		function (data) {
 			return A2(
 				_elm_lang$core$List$any,
@@ -18117,13 +18193,13 @@ var _user$project$LineChart_Line$hoverOne = function (hovered) {
 						hovered,
 						_elm_lang$core$Maybe$Just(_p0));
 				},
-				data) ? A2(_user$project$LineChart_Line$style, 3, _elm_lang$core$Basics$identity) : A2(_user$project$LineChart_Line$style, 1, _elm_lang$core$Basics$identity);
+				data) ? A2(_terezka$line_charts$LineChart_Line$style, 3, _elm_lang$core$Basics$identity) : A2(_terezka$line_charts$LineChart_Line$style, 1, _elm_lang$core$Basics$identity);
 		});
 };
-var _user$project$LineChart_Line$wider = _user$project$Internal_Line$wider;
-var _user$project$LineChart_Line$default = _user$project$Internal_Line$default;
+var _terezka$line_charts$LineChart_Line$wider = _terezka$line_charts$Internal_Line$wider;
+var _terezka$line_charts$LineChart_Line$default = _terezka$line_charts$Internal_Line$default;
 
-var _user$project$Internal_Events$position = _elm_lang$core$Json_Decode$oneOf(
+var _terezka$line_charts$Internal_Events$position = _elm_lang$core$Json_Decode$oneOf(
 	{
 		ctor: '::',
 		_0: _debois$elm_dom$DOM$boundingClientRect,
@@ -18131,12 +18207,12 @@ var _user$project$Internal_Events$position = _elm_lang$core$Json_Decode$oneOf(
 			ctor: '::',
 			_0: _elm_lang$core$Json_Decode$lazy(
 				function (_p0) {
-					return _debois$elm_dom$DOM$parentElement(_user$project$Internal_Events$position);
+					return _debois$elm_dom$DOM$parentElement(_terezka$line_charts$Internal_Events$position);
 				}),
 			_1: {ctor: '[]'}
 		}
 	});
-var _user$project$Internal_Events$toJsonDecoder = F3(
+var _terezka$line_charts$Internal_Events$toJsonDecoder = F3(
 	function (data, system, _p1) {
 		var _p2 = _p1;
 		var handle = F3(
@@ -18159,49 +18235,49 @@ var _user$project$Internal_Events$toJsonDecoder = F3(
 					_p2._0,
 					data,
 					newSystem,
-					A2(_user$project$LineChart_Coordinate$Point, x, y));
+					A2(_terezka$line_charts$LineChart_Coordinate$Point, x, y));
 			});
 		return A4(
 			_elm_lang$core$Json_Decode$map3,
 			handle,
 			A2(_elm_lang$core$Json_Decode$field, 'pageX', _elm_lang$core$Json_Decode$float),
 			A2(_elm_lang$core$Json_Decode$field, 'pageY', _elm_lang$core$Json_Decode$float),
-			_debois$elm_dom$DOM$target(_user$project$Internal_Events$position));
+			_debois$elm_dom$DOM$target(_terezka$line_charts$Internal_Events$position));
 	});
-var _user$project$Internal_Events$distanceY = F3(
+var _terezka$line_charts$Internal_Events$distanceY = F3(
 	function (system, searched, dot) {
 		return _elm_lang$core$Basics$abs(
-			A2(_user$project$LineChart_Coordinate$toSvgY, system, dot.y) - A2(_user$project$LineChart_Coordinate$toSvgY, system, searched.y));
+			A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, dot.y) - A2(_terezka$line_charts$LineChart_Coordinate$toSvgY, system, searched.y));
 	});
-var _user$project$Internal_Events$distanceX = F3(
+var _terezka$line_charts$Internal_Events$distanceX = F3(
 	function (system, searched, dot) {
 		return _elm_lang$core$Basics$abs(
-			A2(_user$project$LineChart_Coordinate$toSvgX, system, dot.x) - A2(_user$project$LineChart_Coordinate$toSvgX, system, searched.x));
+			A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, dot.x) - A2(_terezka$line_charts$LineChart_Coordinate$toSvgX, system, searched.x));
 	});
-var _user$project$Internal_Events$distance = F3(
+var _terezka$line_charts$Internal_Events$distance = F3(
 	function (system, searched, dot) {
 		return _elm_lang$core$Basics$sqrt(
 			Math.pow(
-				A3(_user$project$Internal_Events$distanceX, system, searched, dot),
+				A3(_terezka$line_charts$Internal_Events$distanceX, system, searched, dot),
 				2) + Math.pow(
-				A3(_user$project$Internal_Events$distanceY, system, searched, dot),
+				A3(_terezka$line_charts$Internal_Events$distanceY, system, searched, dot),
 				2));
 	});
-var _user$project$Internal_Events$withinRadius = F4(
+var _terezka$line_charts$Internal_Events$withinRadius = F4(
 	function (system, radius, searched, dot) {
 		return _elm_lang$core$Native_Utils.cmp(
-			A3(_user$project$Internal_Events$distance, system, searched, dot),
+			A3(_terezka$line_charts$Internal_Events$distance, system, searched, dot),
 			radius) < 1;
 	});
-var _user$project$Internal_Events$withinRadiusX = F4(
+var _terezka$line_charts$Internal_Events$withinRadiusX = F4(
 	function (system, radius, searched, dot) {
 		return _elm_lang$core$Native_Utils.cmp(
-			A3(_user$project$Internal_Events$distanceX, system, searched, dot),
+			A3(_terezka$line_charts$Internal_Events$distanceX, system, searched, dot),
 			radius) < 1;
 	});
-var _user$project$Internal_Events$getNearestXHelp = F3(
+var _terezka$line_charts$Internal_Events$getNearestXHelp = F3(
 	function (points, system, searched) {
-		var distanceX_ = A2(_user$project$Internal_Events$distanceX, system, searched);
+		var distanceX_ = A2(_terezka$line_charts$Internal_Events$distanceX, system, searched);
 		var getClosest = F2(
 			function (point, allClosest) {
 				var _p7 = _elm_lang$core$List$head(allClosest);
@@ -18228,9 +18304,9 @@ var _user$project$Internal_Events$getNearestXHelp = F3(
 			{ctor: '[]'},
 			points);
 	});
-var _user$project$Internal_Events$getNearestHelp = F3(
+var _terezka$line_charts$Internal_Events$getNearestHelp = F3(
 	function (points, system, searched) {
-		var distance_ = A2(_user$project$Internal_Events$distance, system, searched);
+		var distance_ = A2(_terezka$line_charts$Internal_Events$distance, system, searched);
 		var getClosest = F2(
 			function (point, closest) {
 				return (_elm_lang$core$Native_Utils.cmp(
@@ -18238,7 +18314,7 @@ var _user$project$Internal_Events$getNearestHelp = F3(
 					distance_(point.point)) < 0) ? closest : point;
 			});
 		return A2(
-			_user$project$Internal_Utils$withFirst,
+			_terezka$line_charts$Internal_Utils$withFirst,
 			A2(
 				_elm_lang$core$List$filter,
 				function (_) {
@@ -18247,7 +18323,7 @@ var _user$project$Internal_Events$getNearestHelp = F3(
 				points),
 			_elm_lang$core$List$foldl(getClosest));
 	});
-var _user$project$Internal_Events$toContainerAttributes = F3(
+var _terezka$line_charts$Internal_Events$toContainerAttributes = F3(
 	function (data, system, _p9) {
 		var _p10 = _p9;
 		var order = function (_p11) {
@@ -18257,7 +18333,7 @@ var _user$project$Internal_Events$toContainerAttributes = F3(
 		};
 		return A2(_elm_lang$core$List$filterMap, order, _p10._0);
 	});
-var _user$project$Internal_Events$toChartAttributes = F3(
+var _terezka$line_charts$Internal_Events$toChartAttributes = F3(
 	function (data, system, _p13) {
 		var _p14 = _p13;
 		var order = function (_p15) {
@@ -18267,23 +18343,23 @@ var _user$project$Internal_Events$toChartAttributes = F3(
 		};
 		return A2(_elm_lang$core$List$filterMap, order, _p14._0);
 	});
-var _user$project$Internal_Events$Options = F3(
+var _terezka$line_charts$Internal_Events$Options = F3(
 	function (a, b, c) {
 		return {stopPropagation: a, preventDefault: b, catchOutsideChart: c};
 	});
-var _user$project$Internal_Events$Config = function (a) {
+var _terezka$line_charts$Internal_Events$Config = function (a) {
 	return {ctor: 'Config', _0: a};
 };
-var _user$project$Internal_Events$custom = _user$project$Internal_Events$Config;
-var _user$project$Internal_Events$default = _user$project$Internal_Events$custom(
+var _terezka$line_charts$Internal_Events$custom = _terezka$line_charts$Internal_Events$Config;
+var _terezka$line_charts$Internal_Events$default = _terezka$line_charts$Internal_Events$custom(
 	{ctor: '[]'});
-var _user$project$Internal_Events$Event = F2(
+var _terezka$line_charts$Internal_Events$Event = F2(
 	function (a, b) {
 		return {ctor: 'Event', _0: a, _1: b};
 	});
-var _user$project$Internal_Events$onMouseLeave = function (msg) {
+var _terezka$line_charts$Internal_Events$onMouseLeave = function (msg) {
 	return A2(
-		_user$project$Internal_Events$Event,
+		_terezka$line_charts$Internal_Events$Event,
 		false,
 		F2(
 			function (_p18, _p17) {
@@ -18293,63 +18369,63 @@ var _user$project$Internal_Events$onMouseLeave = function (msg) {
 					_elm_lang$core$Json_Decode$succeed(msg));
 			}));
 };
-var _user$project$Internal_Events$Decoder = function (a) {
+var _terezka$line_charts$Internal_Events$Decoder = function (a) {
 	return {ctor: 'Decoder', _0: a};
 };
-var _user$project$Internal_Events$getSvg = _user$project$Internal_Events$Decoder(
+var _terezka$line_charts$Internal_Events$getSvg = _terezka$line_charts$Internal_Events$Decoder(
 	F3(
 		function (points, system, searched) {
 			return searched;
 		}));
-var _user$project$Internal_Events$getData = _user$project$Internal_Events$Decoder(
+var _terezka$line_charts$Internal_Events$getData = _terezka$line_charts$Internal_Events$Decoder(
 	F3(
 		function (points, system, searchedSvg) {
-			return A2(_user$project$LineChart_Coordinate$toData, system, searchedSvg);
+			return A2(_terezka$line_charts$LineChart_Coordinate$toData, system, searchedSvg);
 		}));
-var _user$project$Internal_Events$getNearest = _user$project$Internal_Events$Decoder(
+var _terezka$line_charts$Internal_Events$getNearest = _terezka$line_charts$Internal_Events$Decoder(
 	F3(
 		function (points, system, searchedSvg) {
-			var searched = A2(_user$project$LineChart_Coordinate$toData, system, searchedSvg);
+			var searched = A2(_terezka$line_charts$LineChart_Coordinate$toData, system, searchedSvg);
 			return A2(
 				_elm_lang$core$Maybe$map,
 				function (_) {
 					return _.user;
 				},
-				A3(_user$project$Internal_Events$getNearestHelp, points, system, searched));
+				A3(_terezka$line_charts$Internal_Events$getNearestHelp, points, system, searched));
 		}));
-var _user$project$Internal_Events$getWithin = function (radius) {
-	return _user$project$Internal_Events$Decoder(
+var _terezka$line_charts$Internal_Events$getWithin = function (radius) {
+	return _terezka$line_charts$Internal_Events$Decoder(
 		F3(
 			function (points, system, searchedSvg) {
-				var searched = A2(_user$project$LineChart_Coordinate$toData, system, searchedSvg);
+				var searched = A2(_terezka$line_charts$LineChart_Coordinate$toData, system, searchedSvg);
 				var keepIfEligible = function (closest) {
-					return A4(_user$project$Internal_Events$withinRadius, system, radius, searched, closest.point) ? _elm_lang$core$Maybe$Just(closest.user) : _elm_lang$core$Maybe$Nothing;
+					return A4(_terezka$line_charts$Internal_Events$withinRadius, system, radius, searched, closest.point) ? _elm_lang$core$Maybe$Just(closest.user) : _elm_lang$core$Maybe$Nothing;
 				};
 				return A2(
 					_elm_lang$core$Maybe$andThen,
 					keepIfEligible,
-					A3(_user$project$Internal_Events$getNearestHelp, points, system, searched));
+					A3(_terezka$line_charts$Internal_Events$getNearestHelp, points, system, searched));
 			}));
 };
-var _user$project$Internal_Events$getNearestX = _user$project$Internal_Events$Decoder(
+var _terezka$line_charts$Internal_Events$getNearestX = _terezka$line_charts$Internal_Events$Decoder(
 	F3(
 		function (points, system, searchedSvg) {
-			var searched = A2(_user$project$LineChart_Coordinate$toData, system, searchedSvg);
+			var searched = A2(_terezka$line_charts$LineChart_Coordinate$toData, system, searchedSvg);
 			return A2(
 				_elm_lang$core$List$map,
 				function (_) {
 					return _.user;
 				},
-				A3(_user$project$Internal_Events$getNearestXHelp, points, system, searched));
+				A3(_terezka$line_charts$Internal_Events$getNearestXHelp, points, system, searched));
 		}));
-var _user$project$Internal_Events$getWithinX = function (radius) {
-	return _user$project$Internal_Events$Decoder(
+var _terezka$line_charts$Internal_Events$getWithinX = function (radius) {
+	return _terezka$line_charts$Internal_Events$Decoder(
 		F3(
 			function (points, system, searchedSvg) {
-				var searched = A2(_user$project$LineChart_Coordinate$toData, system, searchedSvg);
+				var searched = A2(_terezka$line_charts$LineChart_Coordinate$toData, system, searchedSvg);
 				var keepIfEligible = function (_p19) {
 					return A4(
-						_user$project$Internal_Events$withinRadiusX,
+						_terezka$line_charts$Internal_Events$withinRadiusX,
 						system,
 						radius,
 						searched,
@@ -18365,23 +18441,23 @@ var _user$project$Internal_Events$getWithinX = function (radius) {
 					A2(
 						_elm_lang$core$List$filter,
 						keepIfEligible,
-						A3(_user$project$Internal_Events$getNearestXHelp, points, system, searched)));
+						A3(_terezka$line_charts$Internal_Events$getNearestXHelp, points, system, searched)));
 			}));
 };
-var _user$project$Internal_Events$map = F2(
+var _terezka$line_charts$Internal_Events$map = F2(
 	function (f, _p20) {
 		var _p21 = _p20;
-		return _user$project$Internal_Events$Decoder(
+		return _terezka$line_charts$Internal_Events$Decoder(
 			F3(
 				function (ps, s, p) {
 					return f(
 						A3(_p21._0, ps, s, p));
 				}));
 	});
-var _user$project$Internal_Events$on = F3(
+var _terezka$line_charts$Internal_Events$on = F3(
 	function (event, toMsg, decoder) {
 		return A2(
-			_user$project$Internal_Events$Event,
+			_terezka$line_charts$Internal_Events$Event,
 			false,
 			F2(
 				function (data, system) {
@@ -18389,64 +18465,64 @@ var _user$project$Internal_Events$on = F3(
 						_elm_lang$svg$Svg_Events$on,
 						event,
 						A3(
-							_user$project$Internal_Events$toJsonDecoder,
+							_terezka$line_charts$Internal_Events$toJsonDecoder,
 							data,
 							system,
-							A2(_user$project$Internal_Events$map, toMsg, decoder)));
+							A2(_terezka$line_charts$Internal_Events$map, toMsg, decoder)));
 				}));
 	});
-var _user$project$Internal_Events$onClick = _user$project$Internal_Events$on('click');
-var _user$project$Internal_Events$click = function (msg) {
-	return _user$project$Internal_Events$custom(
+var _terezka$line_charts$Internal_Events$onClick = _terezka$line_charts$Internal_Events$on('click');
+var _terezka$line_charts$Internal_Events$click = function (msg) {
+	return _terezka$line_charts$Internal_Events$custom(
 		{
 			ctor: '::',
 			_0: A2(
-				_user$project$Internal_Events$onClick,
+				_terezka$line_charts$Internal_Events$onClick,
 				msg,
-				_user$project$Internal_Events$getWithin(30)),
+				_terezka$line_charts$Internal_Events$getWithin(30)),
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Internal_Events$onMouseMove = _user$project$Internal_Events$on('mousemove');
-var _user$project$Internal_Events$hoverMany = function (msg) {
-	return _user$project$Internal_Events$custom(
+var _terezka$line_charts$Internal_Events$onMouseMove = _terezka$line_charts$Internal_Events$on('mousemove');
+var _terezka$line_charts$Internal_Events$hoverMany = function (msg) {
+	return _terezka$line_charts$Internal_Events$custom(
 		{
 			ctor: '::',
-			_0: A2(_user$project$Internal_Events$onMouseMove, msg, _user$project$Internal_Events$getNearestX),
+			_0: A2(_terezka$line_charts$Internal_Events$onMouseMove, msg, _terezka$line_charts$Internal_Events$getNearestX),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Internal_Events$onMouseLeave(
+				_0: _terezka$line_charts$Internal_Events$onMouseLeave(
 					msg(
 						{ctor: '[]'})),
 				_1: {ctor: '[]'}
 			}
 		});
 };
-var _user$project$Internal_Events$hoverOne = function (msg) {
-	return _user$project$Internal_Events$custom(
+var _terezka$line_charts$Internal_Events$hoverOne = function (msg) {
+	return _terezka$line_charts$Internal_Events$custom(
 		{
 			ctor: '::',
 			_0: A2(
-				_user$project$Internal_Events$onMouseMove,
+				_terezka$line_charts$Internal_Events$onMouseMove,
 				msg,
-				_user$project$Internal_Events$getWithin(30)),
+				_terezka$line_charts$Internal_Events$getWithin(30)),
 			_1: {
 				ctor: '::',
 				_0: A3(
-					_user$project$Internal_Events$on,
+					_terezka$line_charts$Internal_Events$on,
 					'touchstart',
 					msg,
-					_user$project$Internal_Events$getWithin(100)),
+					_terezka$line_charts$Internal_Events$getWithin(100)),
 				_1: {
 					ctor: '::',
 					_0: A3(
-						_user$project$Internal_Events$on,
+						_terezka$line_charts$Internal_Events$on,
 						'touchmove',
 						msg,
-						_user$project$Internal_Events$getWithin(100)),
+						_terezka$line_charts$Internal_Events$getWithin(100)),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Internal_Events$onMouseLeave(
+						_0: _terezka$line_charts$Internal_Events$onMouseLeave(
 							msg(_elm_lang$core$Maybe$Nothing)),
 						_1: {ctor: '[]'}
 					}
@@ -18454,12 +18530,12 @@ var _user$project$Internal_Events$hoverOne = function (msg) {
 			}
 		});
 };
-var _user$project$Internal_Events$onMouseDown = _user$project$Internal_Events$on('mousedown');
-var _user$project$Internal_Events$onMouseUp = _user$project$Internal_Events$on('mouseup');
-var _user$project$Internal_Events$onWithOptions = F4(
+var _terezka$line_charts$Internal_Events$onMouseDown = _terezka$line_charts$Internal_Events$on('mousedown');
+var _terezka$line_charts$Internal_Events$onMouseUp = _terezka$line_charts$Internal_Events$on('mouseup');
+var _terezka$line_charts$Internal_Events$onWithOptions = F4(
 	function (event, options, toMsg, decoder) {
 		return A2(
-			_user$project$Internal_Events$Event,
+			_terezka$line_charts$Internal_Events$Event,
 			options.catchOutsideChart,
 			F2(
 				function (data, system) {
@@ -18468,17 +18544,17 @@ var _user$project$Internal_Events$onWithOptions = F4(
 						event,
 						A2(_elm_lang$html$Html_Events$Options, options.stopPropagation, options.preventDefault),
 						A3(
-							_user$project$Internal_Events$toJsonDecoder,
+							_terezka$line_charts$Internal_Events$toJsonDecoder,
 							data,
 							system,
-							A2(_user$project$Internal_Events$map, toMsg, decoder)));
+							A2(_terezka$line_charts$Internal_Events$map, toMsg, decoder)));
 				}));
 	});
-var _user$project$Internal_Events$map2 = F3(
+var _terezka$line_charts$Internal_Events$map2 = F3(
 	function (f, _p23, _p22) {
 		var _p24 = _p23;
 		var _p25 = _p22;
-		return _user$project$Internal_Events$Decoder(
+		return _terezka$line_charts$Internal_Events$Decoder(
 			F3(
 				function (ps, s, p) {
 					return A2(
@@ -18487,12 +18563,12 @@ var _user$project$Internal_Events$map2 = F3(
 						A3(_p25._0, ps, s, p));
 				}));
 	});
-var _user$project$Internal_Events$map3 = F4(
+var _terezka$line_charts$Internal_Events$map3 = F4(
 	function (f, _p28, _p27, _p26) {
 		var _p29 = _p28;
 		var _p30 = _p27;
 		var _p31 = _p26;
-		return _user$project$Internal_Events$Decoder(
+		return _terezka$line_charts$Internal_Events$Decoder(
 			F3(
 				function (ps, s, p) {
 					return A3(
@@ -18503,33 +18579,33 @@ var _user$project$Internal_Events$map3 = F4(
 				}));
 	});
 
-var _user$project$LineChart_Events$map3 = _user$project$Internal_Events$map3;
-var _user$project$LineChart_Events$map2 = _user$project$Internal_Events$map2;
-var _user$project$LineChart_Events$map = _user$project$Internal_Events$map;
-var _user$project$LineChart_Events$getWithinX = _user$project$Internal_Events$getWithinX;
-var _user$project$LineChart_Events$getNearestX = _user$project$Internal_Events$getNearestX;
-var _user$project$LineChart_Events$getWithin = _user$project$Internal_Events$getWithin;
-var _user$project$LineChart_Events$getNearest = _user$project$Internal_Events$getNearest;
-var _user$project$LineChart_Events$getData = _user$project$Internal_Events$getData;
-var _user$project$LineChart_Events$getSvg = _user$project$Internal_Events$getSvg;
-var _user$project$LineChart_Events$onWithOptions = _user$project$Internal_Events$onWithOptions;
-var _user$project$LineChart_Events$on = _user$project$Internal_Events$on;
-var _user$project$LineChart_Events$onMouseLeave = _user$project$Internal_Events$onMouseLeave;
-var _user$project$LineChart_Events$onMouseUp = _user$project$Internal_Events$onMouseUp;
-var _user$project$LineChart_Events$onMouseDown = _user$project$Internal_Events$onMouseDown;
-var _user$project$LineChart_Events$onMouseMove = _user$project$Internal_Events$onMouseMove;
-var _user$project$LineChart_Events$onClick = _user$project$Internal_Events$onClick;
-var _user$project$LineChart_Events$custom = _user$project$Internal_Events$custom;
-var _user$project$LineChart_Events$click = _user$project$Internal_Events$click;
-var _user$project$LineChart_Events$hoverMany = _user$project$Internal_Events$hoverMany;
-var _user$project$LineChart_Events$hoverOne = _user$project$Internal_Events$hoverOne;
-var _user$project$LineChart_Events$default = _user$project$Internal_Events$default;
-var _user$project$LineChart_Events$Options = F3(
+var _terezka$line_charts$LineChart_Events$map3 = _terezka$line_charts$Internal_Events$map3;
+var _terezka$line_charts$LineChart_Events$map2 = _terezka$line_charts$Internal_Events$map2;
+var _terezka$line_charts$LineChart_Events$map = _terezka$line_charts$Internal_Events$map;
+var _terezka$line_charts$LineChart_Events$getWithinX = _terezka$line_charts$Internal_Events$getWithinX;
+var _terezka$line_charts$LineChart_Events$getNearestX = _terezka$line_charts$Internal_Events$getNearestX;
+var _terezka$line_charts$LineChart_Events$getWithin = _terezka$line_charts$Internal_Events$getWithin;
+var _terezka$line_charts$LineChart_Events$getNearest = _terezka$line_charts$Internal_Events$getNearest;
+var _terezka$line_charts$LineChart_Events$getData = _terezka$line_charts$Internal_Events$getData;
+var _terezka$line_charts$LineChart_Events$getSvg = _terezka$line_charts$Internal_Events$getSvg;
+var _terezka$line_charts$LineChart_Events$onWithOptions = _terezka$line_charts$Internal_Events$onWithOptions;
+var _terezka$line_charts$LineChart_Events$on = _terezka$line_charts$Internal_Events$on;
+var _terezka$line_charts$LineChart_Events$onMouseLeave = _terezka$line_charts$Internal_Events$onMouseLeave;
+var _terezka$line_charts$LineChart_Events$onMouseUp = _terezka$line_charts$Internal_Events$onMouseUp;
+var _terezka$line_charts$LineChart_Events$onMouseDown = _terezka$line_charts$Internal_Events$onMouseDown;
+var _terezka$line_charts$LineChart_Events$onMouseMove = _terezka$line_charts$Internal_Events$onMouseMove;
+var _terezka$line_charts$LineChart_Events$onClick = _terezka$line_charts$Internal_Events$onClick;
+var _terezka$line_charts$LineChart_Events$custom = _terezka$line_charts$Internal_Events$custom;
+var _terezka$line_charts$LineChart_Events$click = _terezka$line_charts$Internal_Events$click;
+var _terezka$line_charts$LineChart_Events$hoverMany = _terezka$line_charts$Internal_Events$hoverMany;
+var _terezka$line_charts$LineChart_Events$hoverOne = _terezka$line_charts$Internal_Events$hoverOne;
+var _terezka$line_charts$LineChart_Events$default = _terezka$line_charts$Internal_Events$default;
+var _terezka$line_charts$LineChart_Events$Options = F3(
 	function (a, b, c) {
 		return {stopPropagation: a, preventDefault: b, catchOutsideChart: c};
 	});
 
-var _user$project$Internal_Legends$defaultLegend = F2(
+var _terezka$line_charts$Internal_Legends$defaultLegend = F2(
 	function (index, _p0) {
 		var _p1 = _p0;
 		return A2(
@@ -18539,11 +18615,11 @@ var _user$project$Internal_Legends$defaultLegend = F2(
 				_0: _elm_lang$svg$Svg_Attributes$class('chart__legend'),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Internal_Svg$transform(
+					_0: _terezka$line_charts$Internal_Svg$transform(
 						{
 							ctor: '::',
 							_0: A2(
-								_user$project$Internal_Svg$offset,
+								_terezka$line_charts$Internal_Svg$offset,
 								20,
 								_elm_lang$core$Basics$toFloat(index) * 20),
 							_1: {ctor: '[]'}
@@ -18560,24 +18636,24 @@ var _user$project$Internal_Legends$defaultLegend = F2(
 						_elm_lang$svg$Svg$g,
 						{
 							ctor: '::',
-							_0: _user$project$Internal_Svg$transform(
+							_0: _terezka$line_charts$Internal_Svg$transform(
 								{
 									ctor: '::',
-									_0: A2(_user$project$Internal_Svg$offset, 40, 4),
+									_0: A2(_terezka$line_charts$Internal_Svg$offset, 40, 4),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
 						},
 						{
 							ctor: '::',
-							_0: A2(_user$project$Internal_Svg$label, 'inherit', _p1.label),
+							_0: A2(_terezka$line_charts$Internal_Svg$label, 'inherit', _p1.label),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
-var _user$project$Internal_Legends$defaultLegends = F8(
+var _terezka$line_charts$Internal_Legends$defaultLegends = F8(
 	function (toX, toY, offsetX, offsetY, hovered, $arguments, system, legends) {
 		return A2(
 			_elm_lang$svg$Svg$g,
@@ -18586,36 +18662,36 @@ var _user$project$Internal_Legends$defaultLegends = F8(
 				_0: _elm_lang$svg$Svg_Attributes$class('chart__legends'),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Internal_Svg$transform(
+					_0: _terezka$line_charts$Internal_Svg$transform(
 						{
 							ctor: '::',
 							_0: A3(
-								_user$project$Internal_Svg$move,
+								_terezka$line_charts$Internal_Svg$move,
 								system,
 								toX(system.x),
 								toY(system.y)),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Internal_Svg$offset, offsetX, offsetY),
+								_0: A2(_terezka$line_charts$Internal_Svg$offset, offsetX, offsetY),
 								_1: {ctor: '[]'}
 							}
 						}),
 					_1: {ctor: '[]'}
 				}
 			},
-			A2(_elm_lang$core$List$indexedMap, _user$project$Internal_Legends$defaultLegend, legends));
+			A2(_elm_lang$core$List$indexedMap, _terezka$line_charts$Internal_Legends$defaultLegend, legends));
 	});
-var _user$project$Internal_Legends$viewSample = F4(
+var _terezka$line_charts$Internal_Legends$viewSample = F4(
 	function (_p2, sampleWidth, line, data) {
 		var _p3 = _p2;
 		var _p5 = _p3.system;
 		var _p4 = _p3.lineConfig;
-		var shape = _user$project$Internal_Line$shape(line);
-		var color = A3(_user$project$Internal_Line$color, _p4, line, data);
+		var shape = _terezka$line_charts$Internal_Line$shape(line);
+		var color = A3(_terezka$line_charts$Internal_Line$color, _p4, line, data);
 		var dotPosition = A2(
-			_user$project$LineChart_Coordinate$toData,
+			_terezka$line_charts$LineChart_Coordinate$toData,
 			_p5,
-			A2(_user$project$Internal_Data$Point, sampleWidth / 2, 0));
+			A2(_terezka$line_charts$Internal_Data$Point, sampleWidth / 2, 0));
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{
@@ -18625,37 +18701,37 @@ var _user$project$Internal_Legends$viewSample = F4(
 			},
 			{
 				ctor: '::',
-				_0: A5(_user$project$Internal_Line$viewSample, _p4, line, _p3.area, data, sampleWidth),
+				_0: A5(_terezka$line_charts$Internal_Line$viewSample, _p4, line, _p3.area, data, sampleWidth),
 				_1: {
 					ctor: '::',
-					_0: A6(_user$project$Internal_Dots$viewSample, _p3.dotsConfig, shape, color, _p5, data, dotPosition),
+					_0: A6(_terezka$line_charts$Internal_Dots$viewSample, _p3.dotsConfig, shape, color, _p5, data, dotPosition),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
-var _user$project$Internal_Legends$viewGrouped = F3(
+var _terezka$line_charts$Internal_Legends$viewGrouped = F3(
 	function ($arguments, sampleWidth, container) {
 		var toLegend = F2(
 			function (line, data) {
 				return {
-					sample: A4(_user$project$Internal_Legends$viewSample, $arguments, sampleWidth, line, data),
-					label: _user$project$Internal_Line$label(line)
+					sample: A4(_terezka$line_charts$Internal_Legends$viewSample, $arguments, sampleWidth, line, data),
+					label: _terezka$line_charts$Internal_Line$label(line)
 				};
 			});
 		var legends = A3(_elm_lang$core$List$map2, toLegend, $arguments.lines, $arguments.data);
 		return A2(container, $arguments.system, legends);
 	});
-var _user$project$Internal_Legends$viewFree = F5(
+var _terezka$line_charts$Internal_Legends$viewFree = F5(
 	function (system, placement, viewLabel, line, data) {
 		var _p6 = function () {
 			var _p7 = placement;
 			if (_p7.ctor === 'Beginning') {
-				return {ctor: '_Tuple3', _0: data, _1: _user$project$Internal_Svg$End, _2: -10};
+				return {ctor: '_Tuple3', _0: data, _1: _terezka$line_charts$Internal_Svg$End, _2: -10};
 			} else {
 				return {
 					ctor: '_Tuple3',
 					_0: _elm_lang$core$List$reverse(data),
-					_1: _user$project$Internal_Svg$Start,
+					_1: _terezka$line_charts$Internal_Svg$Start,
 					_2: 10
 				};
 			}
@@ -18665,13 +18741,13 @@ var _user$project$Internal_Legends$viewFree = F5(
 		var xOffset = _p6._2;
 		var transform = function (_p8) {
 			var _p9 = _p8;
-			return _user$project$Internal_Svg$transform(
+			return _terezka$line_charts$Internal_Svg$transform(
 				{
 					ctor: '::',
-					_0: A3(_user$project$Internal_Svg$move, system, _p9.x, _p9.y),
+					_0: A3(_terezka$line_charts$Internal_Svg$move, system, _p9.x, _p9.y),
 					_1: {
 						ctor: '::',
-						_0: A2(_user$project$Internal_Svg$offset, xOffset, 3),
+						_0: A2(_terezka$line_charts$Internal_Svg$offset, xOffset, 3),
 						_1: {ctor: '[]'}
 					}
 				});
@@ -18685,23 +18761,23 @@ var _user$project$Internal_Legends$viewFree = F5(
 					_0: transform(_p11.point),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Internal_Svg$anchorStyle(anchor),
+						_0: _terezka$line_charts$Internal_Svg$anchorStyle(anchor),
 						_1: {ctor: '[]'}
 					}
 				},
 				{
 					ctor: '::',
 					_0: viewLabel(
-						_user$project$Internal_Line$label(line)),
+						_terezka$line_charts$Internal_Line$label(line)),
 					_1: {ctor: '[]'}
 				});
 		};
 		return A2(
-			_user$project$Internal_Utils$viewMaybe,
+			_terezka$line_charts$Internal_Utils$viewMaybe,
 			_elm_lang$core$List$head(orderedPoints),
 			viewLegend);
 	});
-var _user$project$Internal_Legends$viewFrees = F3(
+var _terezka$line_charts$Internal_Legends$viewFrees = F3(
 	function (_p12, placement, view) {
 		var _p13 = _p12;
 		return A2(
@@ -18713,18 +18789,18 @@ var _user$project$Internal_Legends$viewFrees = F3(
 			},
 			A3(
 				_elm_lang$core$List$map2,
-				A3(_user$project$Internal_Legends$viewFree, _p13.system, placement, view),
+				A3(_terezka$line_charts$Internal_Legends$viewFree, _p13.system, placement, view),
 				_p13.lines,
 				_p13.data));
 	});
-var _user$project$Internal_Legends$view = function ($arguments) {
+var _terezka$line_charts$Internal_Legends$view = function ($arguments) {
 	var _p14 = $arguments.legends;
 	switch (_p14.ctor) {
 		case 'Free':
-			return A3(_user$project$Internal_Legends$viewFrees, $arguments, _p14._0, _p14._1);
+			return A3(_terezka$line_charts$Internal_Legends$viewFrees, $arguments, _p14._0, _p14._1);
 		case 'Grouped':
 			return A3(
-				_user$project$Internal_Legends$viewGrouped,
+				_terezka$line_charts$Internal_Legends$viewGrouped,
 				$arguments,
 				_p14._0,
 				_p14._1($arguments));
@@ -18732,24 +18808,24 @@ var _user$project$Internal_Legends$view = function ($arguments) {
 			return _elm_lang$svg$Svg$text('');
 	}
 };
-var _user$project$Internal_Legends$Legend = F2(
+var _terezka$line_charts$Internal_Legends$Legend = F2(
 	function (a, b) {
 		return {sample: a, label: b};
 	});
-var _user$project$Internal_Legends$Arguments = F9(
+var _terezka$line_charts$Internal_Legends$Arguments = F9(
 	function (a, b, c, d, e, f, g, h, i) {
 		return {system: a, dotsConfig: b, lineConfig: c, area: d, lines: e, data: f, x: g, y: h, legends: i};
 	});
-var _user$project$Internal_Legends$Grouped = F2(
+var _terezka$line_charts$Internal_Legends$Grouped = F2(
 	function (a, b) {
 		return {ctor: 'Grouped', _0: a, _1: b};
 	});
-var _user$project$Internal_Legends$hover = function (data) {
+var _terezka$line_charts$Internal_Legends$hover = function (data) {
 	return A2(
-		_user$project$Internal_Legends$Grouped,
+		_terezka$line_charts$Internal_Legends$Grouped,
 		30,
 		A5(
-			_user$project$Internal_Legends$defaultLegends,
+			_terezka$line_charts$Internal_Legends$defaultLegends,
 			function (_) {
 				return _.max;
 			},
@@ -18760,77 +18836,77 @@ var _user$project$Internal_Legends$hover = function (data) {
 			10,
 			data));
 };
-var _user$project$Internal_Legends$default = _user$project$Internal_Legends$hover(
+var _terezka$line_charts$Internal_Legends$default = _terezka$line_charts$Internal_Legends$hover(
 	{ctor: '[]'});
-var _user$project$Internal_Legends$hoverOne = function (maybeOne) {
+var _terezka$line_charts$Internal_Legends$hoverOne = function (maybeOne) {
 	var _p15 = maybeOne;
 	if (_p15.ctor === 'Just') {
-		return _user$project$Internal_Legends$hover(
+		return _terezka$line_charts$Internal_Legends$hover(
 			{
 				ctor: '::',
 				_0: _p15._0,
 				_1: {ctor: '[]'}
 			});
 	} else {
-		return _user$project$Internal_Legends$hover(
+		return _terezka$line_charts$Internal_Legends$hover(
 			{ctor: '[]'});
 	}
 };
-var _user$project$Internal_Legends$grouped = F4(
+var _terezka$line_charts$Internal_Legends$grouped = F4(
 	function (toX, toY, offsetX, offsetY) {
 		return A2(
-			_user$project$Internal_Legends$Grouped,
+			_terezka$line_charts$Internal_Legends$Grouped,
 			30,
 			A5(
-				_user$project$Internal_Legends$defaultLegends,
+				_terezka$line_charts$Internal_Legends$defaultLegends,
 				toX,
 				toY,
 				offsetX,
 				offsetY,
 				{ctor: '[]'}));
 	});
-var _user$project$Internal_Legends$groupedCustom = F2(
+var _terezka$line_charts$Internal_Legends$groupedCustom = F2(
 	function (sampleWidth, container) {
 		return A2(
-			_user$project$Internal_Legends$Grouped,
+			_terezka$line_charts$Internal_Legends$Grouped,
 			sampleWidth,
 			function (_p16) {
 				return container;
 			});
 	});
-var _user$project$Internal_Legends$Free = F2(
+var _terezka$line_charts$Internal_Legends$Free = F2(
 	function (a, b) {
 		return {ctor: 'Free', _0: a, _1: b};
 	});
-var _user$project$Internal_Legends$None = {ctor: 'None'};
-var _user$project$Internal_Legends$none = _user$project$Internal_Legends$None;
-var _user$project$Internal_Legends$Ending = {ctor: 'Ending'};
-var _user$project$Internal_Legends$byEnding = _user$project$Internal_Legends$Free(_user$project$Internal_Legends$Ending);
-var _user$project$Internal_Legends$Beginning = {ctor: 'Beginning'};
-var _user$project$Internal_Legends$byBeginning = _user$project$Internal_Legends$Free(_user$project$Internal_Legends$Beginning);
+var _terezka$line_charts$Internal_Legends$None = {ctor: 'None'};
+var _terezka$line_charts$Internal_Legends$none = _terezka$line_charts$Internal_Legends$None;
+var _terezka$line_charts$Internal_Legends$Ending = {ctor: 'Ending'};
+var _terezka$line_charts$Internal_Legends$byEnding = _terezka$line_charts$Internal_Legends$Free(_terezka$line_charts$Internal_Legends$Ending);
+var _terezka$line_charts$Internal_Legends$Beginning = {ctor: 'Beginning'};
+var _terezka$line_charts$Internal_Legends$byBeginning = _terezka$line_charts$Internal_Legends$Free(_terezka$line_charts$Internal_Legends$Beginning);
 
-var _user$project$LineChart_Legends$groupedCustom = _user$project$Internal_Legends$groupedCustom;
-var _user$project$LineChart_Legends$grouped = _user$project$Internal_Legends$grouped;
-var _user$project$LineChart_Legends$byBeginning = _user$project$Internal_Legends$byBeginning;
-var _user$project$LineChart_Legends$byEnding = _user$project$Internal_Legends$byEnding;
-var _user$project$LineChart_Legends$none = _user$project$Internal_Legends$none;
-var _user$project$LineChart_Legends$default = _user$project$Internal_Legends$default;
-var _user$project$LineChart_Legends$Legend = F2(
+var _terezka$line_charts$LineChart_Legends$groupedCustom = _terezka$line_charts$Internal_Legends$groupedCustom;
+var _terezka$line_charts$LineChart_Legends$grouped = _terezka$line_charts$Internal_Legends$grouped;
+var _terezka$line_charts$LineChart_Legends$byBeginning = _terezka$line_charts$Internal_Legends$byBeginning;
+var _terezka$line_charts$LineChart_Legends$byEnding = _terezka$line_charts$Internal_Legends$byEnding;
+var _terezka$line_charts$LineChart_Legends$none = _terezka$line_charts$Internal_Legends$none;
+var _terezka$line_charts$LineChart_Legends$default = _terezka$line_charts$Internal_Legends$default;
+var _terezka$line_charts$LineChart_Legends$Legend = F2(
 	function (a, b) {
 		return {sample: a, label: b};
 	});
 
-var _user$project$LineChart_Interpolation$stepped = _user$project$Internal_Interpolation$Stepped;
-var _user$project$LineChart_Interpolation$monotone = _user$project$Internal_Interpolation$Monotone;
-var _user$project$LineChart_Interpolation$linear = _user$project$Internal_Interpolation$Linear;
-var _user$project$LineChart_Interpolation$default = _user$project$LineChart_Interpolation$linear;
+var _terezka$line_charts$LineChart_Interpolation$stepped = _terezka$line_charts$Internal_Interpolation$Stepped;
+var _terezka$line_charts$LineChart_Interpolation$monotone = _terezka$line_charts$Internal_Interpolation$Monotone;
+var _terezka$line_charts$LineChart_Interpolation$linear = _terezka$line_charts$Internal_Interpolation$Linear;
+var _terezka$line_charts$LineChart_Interpolation$default = _terezka$line_charts$LineChart_Interpolation$linear;
 
-var _user$project$LineChart_Axis_Intersection$custom = _user$project$Internal_Axis_Intersection$custom;
-var _user$project$LineChart_Axis_Intersection$at = _user$project$Internal_Axis_Intersection$at;
-var _user$project$LineChart_Axis_Intersection$atOrigin = _user$project$Internal_Axis_Intersection$atOrigin;
-var _user$project$LineChart_Axis_Intersection$default = _user$project$Internal_Axis_Intersection$default;
+var _terezka$line_charts$LineChart_Axis_Intersection$custom = _terezka$line_charts$Internal_Axis_Intersection$custom;
+var _terezka$line_charts$LineChart_Axis_Intersection$at = _terezka$line_charts$Internal_Axis_Intersection$at;
+var _terezka$line_charts$LineChart_Axis_Intersection$atOrigin = _terezka$line_charts$Internal_Axis_Intersection$atOrigin;
+var _terezka$line_charts$LineChart_Axis_Intersection$default = _terezka$line_charts$Internal_Axis_Intersection$default;
 
-var _user$project$LineChart$defaultLabel = {
+var _terezka$line_charts$LineChart$defaultLabel = {
 	ctor: '::',
 	_0: 'First',
 	_1: {
@@ -18843,54 +18919,54 @@ var _user$project$LineChart$defaultLabel = {
 		}
 	}
 };
-var _user$project$LineChart$defaultShapes = {
+var _terezka$line_charts$LineChart$defaultShapes = {
 	ctor: '::',
-	_0: _user$project$Internal_Dots$Circle,
+	_0: _terezka$line_charts$Internal_Dots$Circle,
 	_1: {
 		ctor: '::',
-		_0: _user$project$Internal_Dots$Triangle,
+		_0: _terezka$line_charts$Internal_Dots$Triangle,
 		_1: {
 			ctor: '::',
-			_0: _user$project$Internal_Dots$Cross,
+			_0: _terezka$line_charts$Internal_Dots$Cross,
 			_1: {ctor: '[]'}
 		}
 	}
 };
-var _user$project$LineChart$defaultColors = {
+var _terezka$line_charts$LineChart$defaultColors = {
 	ctor: '::',
-	_0: _user$project$LineChart_Colors$pink,
+	_0: _terezka$line_charts$LineChart_Colors$pink,
 	_1: {
 		ctor: '::',
-		_0: _user$project$LineChart_Colors$blue,
+		_0: _terezka$line_charts$LineChart_Colors$blue,
 		_1: {
 			ctor: '::',
-			_0: _user$project$LineChart_Colors$gold,
+			_0: _terezka$line_charts$LineChart_Colors$gold,
 			_1: {ctor: '[]'}
 		}
 	}
 };
-var _user$project$LineChart$defaultLines = A4(_elm_lang$core$List$map4, _user$project$Internal_Line$line, _user$project$LineChart$defaultColors, _user$project$LineChart$defaultShapes, _user$project$LineChart$defaultLabel);
-var _user$project$LineChart$defaultConfig = F2(
+var _terezka$line_charts$LineChart$defaultLines = A4(_elm_lang$core$List$map4, _terezka$line_charts$Internal_Line$line, _terezka$line_charts$LineChart$defaultColors, _terezka$line_charts$LineChart$defaultShapes, _terezka$line_charts$LineChart$defaultLabel);
+var _terezka$line_charts$LineChart$defaultConfig = F2(
 	function (toX, toY) {
 		return {
-			y: A3(_user$project$LineChart_Axis$default, 400, '', toY),
-			x: A3(_user$project$LineChart_Axis$default, 700, '', toX),
-			container: _user$project$LineChart_Container$default('line-chart-1'),
-			interpolation: _user$project$LineChart_Interpolation$default,
-			intersection: _user$project$LineChart_Axis_Intersection$default,
-			legends: _user$project$LineChart_Legends$default,
-			events: _user$project$LineChart_Events$default,
-			junk: _user$project$LineChart_Junk$default,
-			grid: _user$project$LineChart_Grid$default,
-			area: _user$project$LineChart_Area$default,
-			line: _user$project$LineChart_Line$default,
-			dots: _user$project$LineChart_Dots$default
+			y: A3(_terezka$line_charts$LineChart_Axis$default, 400, '', toY),
+			x: A3(_terezka$line_charts$LineChart_Axis$default, 700, '', toX),
+			container: _terezka$line_charts$LineChart_Container$default('line-chart-1'),
+			interpolation: _terezka$line_charts$LineChart_Interpolation$default,
+			intersection: _terezka$line_charts$LineChart_Axis_Intersection$default,
+			legends: _terezka$line_charts$LineChart_Legends$default,
+			events: _terezka$line_charts$LineChart_Events$default,
+			junk: _terezka$line_charts$LineChart_Junk$default,
+			grid: _terezka$line_charts$LineChart_Grid$default,
+			area: _terezka$line_charts$LineChart_Area$default,
+			line: _terezka$line_charts$LineChart_Line$default,
+			dots: _terezka$line_charts$LineChart_Dots$default
 		};
 	});
-var _user$project$LineChart$toSystem = F2(
+var _terezka$line_charts$LineChart$toSystem = F2(
 	function (config, data) {
 		var yRange = A2(
-			_user$project$Internal_Coordinate$range,
+			_terezka$line_charts$Internal_Coordinate$range,
 			function (_p0) {
 				return function (_) {
 					return _.y;
@@ -18901,7 +18977,7 @@ var _user$project$LineChart$toSystem = F2(
 			},
 			data);
 		var xRange = A2(
-			_user$project$Internal_Coordinate$range,
+			_terezka$line_charts$Internal_Coordinate$range,
 			function (_p1) {
 				return function (_) {
 					return _.x;
@@ -18912,15 +18988,15 @@ var _user$project$LineChart$toSystem = F2(
 			},
 			data);
 		var size = A2(
-			_user$project$Internal_Coordinate$Size,
-			_user$project$Internal_Axis$pixels(config.x),
-			_user$project$Internal_Axis$pixels(config.y));
-		var hasArea = _user$project$Internal_Area$hasArea(config.area);
+			_terezka$line_charts$Internal_Coordinate$Size,
+			_terezka$line_charts$Internal_Axis$pixels(config.x),
+			_terezka$line_charts$Internal_Axis$pixels(config.y));
+		var hasArea = _terezka$line_charts$Internal_Area$hasArea(config.area);
 		var adjustDomainRange = function (domain) {
-			return hasArea ? _user$project$Internal_Coordinate$ground(domain) : domain;
+			return hasArea ? _terezka$line_charts$Internal_Coordinate$ground(domain) : domain;
 		};
-		var container = A2(_user$project$Internal_Container$properties, _elm_lang$core$Basics$identity, config.container);
-		var frame = A2(_user$project$Internal_Coordinate$Frame, container.margin, size);
+		var container = A2(_terezka$line_charts$Internal_Container$properties, _elm_lang$core$Basics$identity, config.container);
+		var frame = A2(_terezka$line_charts$Internal_Coordinate$Frame, container.margin, size);
 		var system = {
 			frame: frame,
 			x: xRange,
@@ -18933,30 +19009,30 @@ var _user$project$LineChart$toSystem = F2(
 			system,
 			{
 				x: A2(
-					_user$project$Internal_Axis_Range$applyX,
-					_user$project$Internal_Axis$range(config.x),
+					_terezka$line_charts$Internal_Axis_Range$applyX,
+					_terezka$line_charts$Internal_Axis$range(config.x),
 					system),
 				y: A2(
-					_user$project$Internal_Axis_Range$applyY,
-					_user$project$Internal_Axis$range(config.y),
+					_terezka$line_charts$Internal_Axis_Range$applyY,
+					_terezka$line_charts$Internal_Axis$range(config.y),
 					system)
 			});
 	});
-var _user$project$LineChart$setY = F2(
+var _terezka$line_charts$LineChart$setY = F2(
 	function (datum, y) {
 		return A3(
-			_user$project$Internal_Data$Data,
+			_terezka$line_charts$Internal_Data$Data,
 			datum.user,
-			A2(_user$project$Internal_Data$Point, datum.point.x, y),
+			A2(_terezka$line_charts$Internal_Data$Point, datum.point.x, y),
 			datum.isReal);
 	});
-var _user$project$LineChart$normalize = function (datasets) {
+var _terezka$line_charts$LineChart$normalize = function (datasets) {
 	var _p2 = datasets;
 	if (_p2.ctor === '::') {
 		var _p3 = _p2._0;
 		var toPercentage = F2(
 			function (highest, datum) {
-				return A2(_user$project$LineChart$setY, datum, (100 * datum.point.y) / highest.point.y);
+				return A2(_terezka$line_charts$LineChart$setY, datum, (100 * datum.point.y) / highest.point.y);
 			});
 		return A2(
 			_elm_lang$core$List$map,
@@ -18966,11 +19042,11 @@ var _user$project$LineChart$normalize = function (datasets) {
 		return datasets;
 	}
 };
-var _user$project$LineChart$addBelows = F2(
+var _terezka$line_charts$LineChart$addBelows = F2(
 	function (data, dataBelow) {
 		var add = F2(
 			function (below, datum) {
-				return A2(_user$project$LineChart$setY, below, below.point.y + datum.point.y);
+				return A2(_terezka$line_charts$LineChart$setY, below, below.point.y + datum.point.y);
 			});
 		var iterate = F4(
 			function (datum0, data, dataBelow, result) {
@@ -19070,7 +19146,7 @@ var _user$project$LineChart$addBelows = F2(
 				_elm_lang$core$Maybe$withDefault,
 				{ctor: '[]'},
 				A2(
-					_user$project$Internal_Utils$withFirst,
+					_terezka$line_charts$Internal_Utils$withFirst,
 					data,
 					F2(
 						function (first, rest) {
@@ -19082,7 +19158,7 @@ var _user$project$LineChart$addBelows = F2(
 								{ctor: '[]'});
 						}))));
 	});
-var _user$project$LineChart$stack = function (dataset) {
+var _terezka$line_charts$LineChart$stack = function (dataset) {
 	var stackBelows = F2(
 		function (dataset, result) {
 			stackBelows:
@@ -19093,7 +19169,7 @@ var _user$project$LineChart$stack = function (dataset) {
 					var _v23 = _p12,
 						_v24 = {
 						ctor: '::',
-						_0: A3(_elm_lang$core$List$foldl, _user$project$LineChart$addBelows, _p11._0, _p12),
+						_0: A3(_elm_lang$core$List$foldl, _terezka$line_charts$LineChart$addBelows, _p11._0, _p12),
 						_1: result
 					};
 					dataset = _v23;
@@ -19110,10 +19186,10 @@ var _user$project$LineChart$stack = function (dataset) {
 			dataset,
 			{ctor: '[]'}));
 };
-var _user$project$LineChart$toDataPoints = F2(
+var _terezka$line_charts$LineChart$toDataPoints = F2(
 	function (config, lines) {
-		var y = _user$project$Internal_Axis$variable(config.y);
-		var x = _user$project$Internal_Axis$variable(config.x);
+		var y = _terezka$line_charts$Internal_Axis$variable(config.y);
+		var x = _terezka$line_charts$Internal_Axis$variable(config.x);
 		var addPoint = function (datum) {
 			var _p13 = {
 				ctor: '_Tuple2',
@@ -19124,16 +19200,16 @@ var _user$project$LineChart$toDataPoints = F2(
 				if (_p13._1.ctor === 'Just') {
 					return _elm_lang$core$Maybe$Just(
 						A3(
-							_user$project$Internal_Data$Data,
+							_terezka$line_charts$Internal_Data$Data,
 							datum,
-							A2(_user$project$Internal_Data$Point, _p13._0._0, _p13._1._0),
+							A2(_terezka$line_charts$Internal_Data$Point, _p13._0._0, _p13._1._0),
 							true));
 				} else {
 					return _elm_lang$core$Maybe$Just(
 						A3(
-							_user$project$Internal_Data$Data,
+							_terezka$line_charts$Internal_Data$Data,
 							datum,
-							A2(_user$project$Internal_Data$Point, _p13._0._0, 0),
+							A2(_terezka$line_charts$Internal_Data$Point, _p13._0._0, 0),
 							false));
 				}
 			} else {
@@ -19150,7 +19226,7 @@ var _user$project$LineChart$toDataPoints = F2(
 				return A2(
 					_elm_lang$core$List$filterMap,
 					addPoint,
-					_user$project$Internal_Line$data(_p14));
+					_terezka$line_charts$Internal_Line$data(_p14));
 			},
 			lines);
 		var _p15 = config.area;
@@ -19160,13 +19236,13 @@ var _user$project$LineChart$toDataPoints = F2(
 			case 'Normal':
 				return data;
 			case 'Stacked':
-				return _user$project$LineChart$stack(data);
+				return _terezka$line_charts$LineChart$stack(data);
 			default:
-				return _user$project$LineChart$normalize(
-					_user$project$LineChart$stack(data));
+				return _terezka$line_charts$LineChart$normalize(
+					_terezka$line_charts$LineChart$stack(data));
 		}
 	});
-var _user$project$LineChart$chartAreaAttributes = function (system) {
+var _terezka$line_charts$LineChart$chartAreaAttributes = function (system) {
 	return {
 		ctor: '::',
 		_0: _elm_lang$svg$Svg_Attributes$x(
@@ -19179,19 +19255,19 @@ var _user$project$LineChart$chartAreaAttributes = function (system) {
 				ctor: '::',
 				_0: _elm_lang$svg$Svg_Attributes$width(
 					_elm_lang$core$Basics$toString(
-						_user$project$Internal_Coordinate$lengthX(system))),
+						_terezka$line_charts$Internal_Coordinate$lengthX(system))),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$height(
 						_elm_lang$core$Basics$toString(
-							_user$project$Internal_Coordinate$lengthY(system))),
+							_terezka$line_charts$Internal_Coordinate$lengthY(system))),
 					_1: {ctor: '[]'}
 				}
 			}
 		}
 	};
 };
-var _user$project$LineChart$chartAreaPlatform = F3(
+var _terezka$line_charts$LineChart$chartAreaPlatform = F3(
 	function (config, data, system) {
 		var attributes = _elm_lang$core$List$concat(
 			{
@@ -19203,10 +19279,10 @@ var _user$project$LineChart$chartAreaPlatform = F3(
 				},
 				_1: {
 					ctor: '::',
-					_0: _user$project$LineChart$chartAreaAttributes(system),
+					_0: _terezka$line_charts$LineChart$chartAreaAttributes(system),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Internal_Events$toChartAttributes, data, system, config.events),
+						_0: A3(_terezka$line_charts$Internal_Events$toChartAttributes, data, system, config.events),
 						_1: {ctor: '[]'}
 					}
 				}
@@ -19216,29 +19292,29 @@ var _user$project$LineChart$chartAreaPlatform = F3(
 			attributes,
 			{ctor: '[]'});
 	});
-var _user$project$LineChart$clipPath = function (system) {
+var _terezka$line_charts$LineChart$clipPath = function (system) {
 	return A2(
 		_elm_lang$svg$Svg$clipPath,
 		{
 			ctor: '::',
 			_0: _elm_lang$svg$Svg_Attributes$id(
-				_user$project$Internal_Utils$toChartAreaId(system.id)),
+				_terezka$line_charts$Internal_Utils$toChartAreaId(system.id)),
 			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
 			_0: A2(
 				_elm_lang$svg$Svg$rect,
-				_user$project$LineChart$chartAreaAttributes(system),
+				_terezka$line_charts$LineChart$chartAreaAttributes(system),
 				{ctor: '[]'}),
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$LineChart$container = F4(
+var _terezka$line_charts$LineChart$container = F4(
 	function (config, _p16, junkHtml, plot) {
 		var _p17 = _p16;
 		var _p18 = _p17.frame;
-		var sizeStyles = A3(_user$project$Internal_Container$sizeStyles, config.container, _p18.size.width, _p18.size.height);
+		var sizeStyles = A3(_terezka$line_charts$Internal_Container$sizeStyles, config.container, _p18.size.width, _p18.size.height);
 		var styles = _elm_lang$html$Html_Attributes$style(
 			{
 				ctor: '::',
@@ -19246,7 +19322,7 @@ var _user$project$LineChart$container = F4(
 				_1: sizeStyles
 			});
 		var userAttributes = A2(
-			_user$project$Internal_Container$properties,
+			_terezka$line_charts$Internal_Container$properties,
 			function (_) {
 				return _.attributesHtml;
 			},
@@ -19256,7 +19332,7 @@ var _user$project$LineChart$container = F4(
 			{ctor: '::', _0: styles, _1: userAttributes},
 			{ctor: '::', _0: plot, _1: junkHtml});
 	});
-var _user$project$LineChart$viewBoxAttribute = function (_p19) {
+var _terezka$line_charts$LineChart$viewBoxAttribute = function (_p19) {
 	var _p20 = _p19;
 	var _p21 = _p20.frame;
 	return _elm_lang$svg$Svg_Attributes$viewBox(
@@ -19271,26 +19347,26 @@ var _user$project$LineChart$viewBoxAttribute = function (_p19) {
 					' ',
 					_elm_lang$core$Basics$toString(_p21.size.height)))));
 };
-var _user$project$LineChart$viewCustom = F2(
+var _terezka$line_charts$LineChart$viewCustom = F2(
 	function (config, lines) {
 		var junkLineInfo = function (line) {
 			return {
 				ctor: '_Tuple3',
 				_0: A3(
-					_user$project$Internal_Line$color,
+					_terezka$line_charts$Internal_Line$color,
 					config.line,
 					line,
 					{ctor: '[]'}),
-				_1: _user$project$Internal_Line$label(line),
-				_2: _user$project$Internal_Line$data(line)
+				_1: _terezka$line_charts$Internal_Line$label(line),
+				_2: _terezka$line_charts$Internal_Line$data(line)
 			};
 		};
 		var getJunk = A3(
-			_user$project$Internal_Junk$getLayers,
+			_terezka$line_charts$Internal_Junk$getLayers,
 			A2(_elm_lang$core$List$map, junkLineInfo, lines),
-			_user$project$Internal_Axis$variable(config.x),
-			_user$project$Internal_Axis$variable(config.y));
-		var data = A2(_user$project$LineChart$toDataPoints, config, lines);
+			_terezka$line_charts$Internal_Axis$variable(config.x),
+			_terezka$line_charts$Internal_Axis$variable(config.y));
+		var data = A2(_terezka$line_charts$LineChart$toDataPoints, config, lines);
 		var dataSafe = A2(
 			_elm_lang$core$List$map,
 			_elm_lang$core$List$filter(
@@ -19299,19 +19375,19 @@ var _user$project$LineChart$viewCustom = F2(
 				}),
 			data);
 		var dataAllSafe = _elm_lang$core$List$concat(dataSafe);
-		var system = A2(_user$project$LineChart$toSystem, config, dataAllSafe);
-		var addGrid = _user$project$Internal_Junk$addBelow(
-			A4(_user$project$Internal_Grid$view, system, config.x, config.y, config.grid));
+		var system = A2(_terezka$line_charts$LineChart$toSystem, config, dataAllSafe);
+		var addGrid = _terezka$line_charts$Internal_Junk$addBelow(
+			A4(_terezka$line_charts$Internal_Grid$view, system, config.x, config.y, config.grid));
 		var junk = addGrid(
 			A2(getJunk, system, config.junk));
-		var viewLines = _user$project$Internal_Line$view(
+		var viewLines = _terezka$line_charts$Internal_Line$view(
 			{system: system, interpolation: config.interpolation, dotsConfig: config.dots, lineConfig: config.line, area: config.area});
-		var viewLegends = _user$project$Internal_Legends$view(
+		var viewLegends = _terezka$line_charts$Internal_Legends$view(
 			{
 				system: system,
 				legends: config.legends,
-				x: _user$project$Internal_Axis$variable(config.x),
-				y: _user$project$Internal_Axis$variable(config.y),
+				x: _terezka$line_charts$Internal_Axis$variable(config.x),
+				y: _terezka$line_charts$Internal_Axis$variable(config.y),
 				dotsConfig: config.dots,
 				lineConfig: config.line,
 				area: config.area,
@@ -19323,19 +19399,19 @@ var _user$project$LineChart$viewCustom = F2(
 			{
 				ctor: '::',
 				_0: A2(
-					_user$project$Internal_Container$properties,
+					_terezka$line_charts$Internal_Container$properties,
 					function (_) {
 						return _.attributesSvg;
 					},
 					config.container),
 				_1: {
 					ctor: '::',
-					_0: A3(_user$project$Internal_Events$toContainerAttributes, dataAll, system, config.events),
+					_0: A3(_terezka$line_charts$Internal_Events$toContainerAttributes, dataAll, system, config.events),
 					_1: {
 						ctor: '::',
 						_0: {
 							ctor: '::',
-							_0: _user$project$LineChart$viewBoxAttribute(system),
+							_0: _terezka$line_charts$LineChart$viewBoxAttribute(system),
 							_1: {ctor: '[]'}
 						},
 						_1: {ctor: '[]'}
@@ -19343,7 +19419,7 @@ var _user$project$LineChart$viewCustom = F2(
 				}
 			});
 		return A4(
-			_user$project$LineChart$container,
+			_terezka$line_charts$LineChart$container,
 			config,
 			system,
 			junk.html,
@@ -19357,7 +19433,7 @@ var _user$project$LineChart$viewCustom = F2(
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _user$project$LineChart$clipPath(system),
+							_0: _terezka$line_charts$LineChart$clipPath(system),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -19375,13 +19451,13 @@ var _user$project$LineChart$viewCustom = F2(
 							_0: A2(viewLines, lines, data),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$LineChart$chartAreaPlatform, config, dataAll, system),
+								_0: A3(_terezka$line_charts$LineChart$chartAreaPlatform, config, dataAll, system),
 								_1: {
 									ctor: '::',
-									_0: A3(_user$project$Internal_Axis$viewHorizontal, system, config.intersection, config.x),
+									_0: A3(_terezka$line_charts$Internal_Axis$viewHorizontal, system, config.intersection, config.x),
 									_1: {
 										ctor: '::',
-										_0: A3(_user$project$Internal_Axis$viewVertical, system, config.intersection, config.y),
+										_0: A3(_terezka$line_charts$Internal_Axis$viewVertical, system, config.intersection, config.y),
 										_1: {
 											ctor: '::',
 											_0: viewLegends,
@@ -19405,20 +19481,20 @@ var _user$project$LineChart$viewCustom = F2(
 					}
 				}));
 	});
-var _user$project$LineChart$dash = _user$project$Internal_Line$dash;
-var _user$project$LineChart$line = _user$project$Internal_Line$line;
-var _user$project$LineChart$view = F2(
+var _terezka$line_charts$LineChart$dash = _terezka$line_charts$Internal_Line$dash;
+var _terezka$line_charts$LineChart$line = _terezka$line_charts$Internal_Line$line;
+var _terezka$line_charts$LineChart$view = F2(
 	function (toX, toY) {
-		return _user$project$LineChart$viewCustom(
-			A2(_user$project$LineChart$defaultConfig, toX, toY));
+		return _terezka$line_charts$LineChart$viewCustom(
+			A2(_terezka$line_charts$LineChart$defaultConfig, toX, toY));
 	});
-var _user$project$LineChart$view3 = F5(
+var _terezka$line_charts$LineChart$view3 = F5(
 	function (toX, toY, dataset1, dataset2, dataset3) {
 		return A3(
-			_user$project$LineChart$view,
+			_terezka$line_charts$LineChart$view,
 			toX,
 			toY,
-			_user$project$LineChart$defaultLines(
+			_terezka$line_charts$LineChart$defaultLines(
 				{
 					ctor: '::',
 					_0: dataset1,
@@ -19433,13 +19509,13 @@ var _user$project$LineChart$view3 = F5(
 					}
 				}));
 	});
-var _user$project$LineChart$view2 = F4(
+var _terezka$line_charts$LineChart$view2 = F4(
 	function (toX, toY, dataset1, dataset2) {
 		return A3(
-			_user$project$LineChart$view,
+			_terezka$line_charts$LineChart$view,
 			toX,
 			toY,
-			_user$project$LineChart$defaultLines(
+			_terezka$line_charts$LineChart$defaultLines(
 				{
 					ctor: '::',
 					_0: dataset1,
@@ -19450,20 +19526,20 @@ var _user$project$LineChart$view2 = F4(
 					}
 				}));
 	});
-var _user$project$LineChart$view1 = F3(
+var _terezka$line_charts$LineChart$view1 = F3(
 	function (toX, toY, dataset) {
 		return A3(
-			_user$project$LineChart$view,
+			_terezka$line_charts$LineChart$view,
 			toX,
 			toY,
-			_user$project$LineChart$defaultLines(
+			_terezka$line_charts$LineChart$defaultLines(
 				{
 					ctor: '::',
 					_0: dataset,
 					_1: {ctor: '[]'}
 				}));
 	});
-var _user$project$LineChart$Config = function (a) {
+var _terezka$line_charts$LineChart$Config = function (a) {
 	return function (b) {
 		return function (c) {
 			return function (d) {
@@ -19489,138 +19565,138 @@ var _user$project$LineChart$Config = function (a) {
 	};
 };
 
-var _user$project$Area$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hinted : List Datum\n    }\n\n\n  type alias Data =\n    { nora : List Datum\n    , noah : List Datum\n    , nina : List Datum\n    }\n\n\n  type alias Datum =\n    { time : Time.Time\n    , velocity : Float\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hinted = []\n      }\n    , generateData\n    )\n\n\n  generateData : Cmd Msg\n  generateData =\n    let\n      genNumbers =\n        Random.list 40 (Random.float 5 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveData\n\n\n\n  -- API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Datum\n  toData numbers =\n    let\n      toDatum index velocity =\n        Datum (indexToTime index) velocity\n    in\n    List.indexedMap toDatum numbers\n\n\n  indexToTime : Int -> Time.Time\n  indexToTime index =\n    Time.hour * 24 * 356 * 45 + -- 45 years\n    Time.hour * 24 * 30 + -- a month\n    Time.hour * 1 * toFloat index -- hours from first datum\n\n\n  setHint : List Datum -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveData ( List Float, List Float, List Float )\n    | Hint (List Datum)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveData numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint points ->\n        model\n          |> setHint points\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div []\n      [ LineChart.viewCustom (chartConfig model)\n          [ LineChart.line Colors.pink Dots.diamond  \"Nora\" model.data.nora\n          , LineChart.line Colors.cyan Dots.circle   \"Noah\" model.data.noah\n          , LineChart.line Colors.blue Dots.triangle \"Nina\" model.data.nina\n          ]\n      ]\n\n\n\n  -- CHART CONFIG\n\n\n  chartConfig : Model -> LineChart.Config Datum Msg\n  chartConfig model =\n    { y = Axis.default 450 \"velocity\" .velocity\n    , x = Axis.time 1270 \"time\" .time\n    , container = containerConfig\n    , interpolation = Interpolation.monotone\n    , intersection = Intersection.default\n    , legends = Legends.default\n    , events = Events.hoverMany Hint\n    , junk = Junk.hoverMany model.hinted formatX formatY\n    , grid = Grid.dots 1 Colors.gray\n    , area = Area.stacked 0.5\n    , line = Line.default\n    , dots = Dots.custom (Dots.empty 5 1)\n    }\n\n\n  containerConfig : Container.Config Msg\n  containerConfig =\n    Container.custom\n      { attributesHtml = []\n      , attributesSvg = []\n      , size = Container.relative\n      , margin = Container.Margin 30 100 30 70\n      , id = \"line-chart-area\"\n      }\n\n\n  formatX : Datum -> String\n  formatX datum =\n    Date.Format.format \"%e. %b, %Y\" (Date.fromTime datum.time)\n\n\n  formatY : Datum -> String\n  formatY datum =\n    toString (round100 datum.velocity) ++ \" m/s\"\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n\n\n  -- PROGRAM\n\n\n  main : Program Never Model Msg\n  main =\n    Html.program\n      { init = init\n      , update = update\n      , view = view\n      , subscriptions = always Sub.none\n      }\n\n\n  ';
-var _user$project$Area$indexToTime = function (index) {
+var _terezka$line_charts$Area$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hinted : List Datum\n    }\n\n\n  type alias Data =\n    { nora : List Datum\n    , noah : List Datum\n    , nina : List Datum\n    }\n\n\n  type alias Datum =\n    { time : Time.Time\n    , velocity : Float\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hinted = []\n      }\n    , generateData\n    )\n\n\n  generateData : Cmd Msg\n  generateData =\n    let\n      genNumbers =\n        Random.list 40 (Random.float 5 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveData\n\n\n\n  -- API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Datum\n  toData numbers =\n    let\n      toDatum index velocity =\n        Datum (indexToTime index) velocity\n    in\n    List.indexedMap toDatum numbers\n\n\n  indexToTime : Int -> Time.Time\n  indexToTime index =\n    Time.hour * 24 * 356 * 45 + -- 45 years\n    Time.hour * 24 * 30 + -- a month\n    Time.hour * 1 * toFloat index -- hours from first datum\n\n\n  setHint : List Datum -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveData ( List Float, List Float, List Float )\n    | Hint (List Datum)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveData numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint points ->\n        model\n          |> setHint points\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div []\n      [ LineChart.viewCustom (chartConfig model)\n          [ LineChart.line Colors.pink Dots.diamond  \"Nora\" model.data.nora\n          , LineChart.line Colors.cyan Dots.circle   \"Noah\" model.data.noah\n          , LineChart.line Colors.blue Dots.triangle \"Nina\" model.data.nina\n          ]\n      ]\n\n\n\n  -- CHART CONFIG\n\n\n  chartConfig : Model -> LineChart.Config Datum Msg\n  chartConfig model =\n    { y = Axis.default 450 \"velocity\" .velocity\n    , x = Axis.time 1270 \"time\" .time\n    , container = containerConfig\n    , interpolation = Interpolation.monotone\n    , intersection = Intersection.default\n    , legends = Legends.default\n    , events = Events.hoverMany Hint\n    , junk = Junk.hoverMany model.hinted formatX formatY\n    , grid = Grid.dots 1 Colors.gray\n    , area = Area.stacked 0.5\n    , line = Line.default\n    , dots = Dots.custom (Dots.empty 5 1)\n    }\n\n\n  containerConfig : Container.Config Msg\n  containerConfig =\n    Container.custom\n      { attributesHtml = []\n      , attributesSvg = []\n      , size = Container.relative\n      , margin = Container.Margin 30 100 30 70\n      , id = \"line-chart-area\"\n      }\n\n\n  formatX : Datum -> String\n  formatX datum =\n    Date.Format.format \"%e. %b, %Y\" (Date.fromTime datum.time)\n\n\n  formatY : Datum -> String\n  formatY datum =\n    toString (round100 datum.velocity) ++ \" m/s\"\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n\n\n  -- PROGRAM\n\n\n  main : Program Never Model Msg\n  main =\n    Html.program\n      { init = init\n      , update = update\n      , view = view\n      , subscriptions = always Sub.none\n      }\n\n\n  ';
+var _terezka$line_charts$Area$indexToTime = function (index) {
 	return ((((_elm_lang$core$Time$hour * 24) * 365) * 45) + ((_elm_lang$core$Time$hour * 24) * 30)) + ((_elm_lang$core$Time$hour * 1) * _elm_lang$core$Basics$toFloat(index));
 };
-var _user$project$Area$round100 = function ($float) {
+var _terezka$line_charts$Area$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
 };
-var _user$project$Area$formatY = function (datum) {
+var _terezka$line_charts$Area$formatY = function (datum) {
 	return A2(
 		_elm_lang$core$Basics_ops['++'],
 		_elm_lang$core$Basics$toString(
-			_user$project$Area$round100(datum.velocity)),
+			_terezka$line_charts$Area$round100(datum.velocity)),
 		' m/s');
 };
-var _user$project$Area$formatX = function (datum) {
+var _terezka$line_charts$Area$formatX = function (datum) {
 	return A2(
 		_mgold$elm_date_format$Date_Format$format,
 		'%e. %b, %Y',
 		_elm_lang$core$Date$fromTime(datum.time));
 };
-var _user$project$Area$containerConfig = _user$project$LineChart_Container$custom(
+var _terezka$line_charts$Area$containerConfig = _terezka$line_charts$LineChart_Container$custom(
 	{
 		attributesHtml: {ctor: '[]'},
 		attributesSvg: {ctor: '[]'},
-		size: _user$project$LineChart_Container$relative,
-		margin: A4(_user$project$LineChart_Container$Margin, 30, 100, 30, 70),
+		size: _terezka$line_charts$LineChart_Container$relative,
+		margin: A4(_terezka$line_charts$LineChart_Container$Margin, 30, 100, 30, 70),
 		id: 'line-chart-area'
 	});
-var _user$project$Area$addCmd = F2(
+var _terezka$line_charts$Area$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
-var _user$project$Area$setHint = F2(
+var _terezka$line_charts$Area$setHint = F2(
 	function (hinted, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{hinted: hinted});
 	});
-var _user$project$Area$setData = F2(
+var _terezka$line_charts$Area$setData = F2(
 	function (data, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{data: data});
 	});
-var _user$project$Area$update = F2(
+var _terezka$line_charts$Area$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
 		if (_p0.ctor === 'RecieveData') {
 			return A2(
-				_user$project$Area$addCmd,
+				_terezka$line_charts$Area$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Area$setData, _p0._0, model));
+				A2(_terezka$line_charts$Area$setData, _p0._0, model));
 		} else {
 			return A2(
-				_user$project$Area$addCmd,
+				_terezka$line_charts$Area$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Area$setHint, _p0._0, model));
+				A2(_terezka$line_charts$Area$setHint, _p0._0, model));
 		}
 	});
-var _user$project$Area$Model = F2(
+var _terezka$line_charts$Area$Model = F2(
 	function (a, b) {
 		return {data: a, hinted: b};
 	});
-var _user$project$Area$Data = F3(
+var _terezka$line_charts$Area$Data = F3(
 	function (a, b, c) {
 		return {nora: a, noah: b, nina: c};
 	});
-var _user$project$Area$Datum = F2(
+var _terezka$line_charts$Area$Datum = F2(
 	function (a, b) {
 		return {time: a, velocity: b};
 	});
-var _user$project$Area$toData = function (numbers) {
+var _terezka$line_charts$Area$toData = function (numbers) {
 	var toDatum = F2(
 		function (index, velocity) {
 			return A2(
-				_user$project$Area$Datum,
-				_user$project$Area$indexToTime(index),
+				_terezka$line_charts$Area$Datum,
+				_terezka$line_charts$Area$indexToTime(index),
 				velocity);
 		});
 	return A2(_elm_lang$core$List$indexedMap, toDatum, numbers);
 };
-var _user$project$Area$Hint = function (a) {
+var _terezka$line_charts$Area$Hint = function (a) {
 	return {ctor: 'Hint', _0: a};
 };
-var _user$project$Area$chartConfig = function (model) {
+var _terezka$line_charts$Area$chartConfig = function (model) {
 	return {
 		y: A3(
-			_user$project$LineChart_Axis$default,
+			_terezka$line_charts$LineChart_Axis$default,
 			450,
 			'velocity',
 			function (_) {
 				return _.velocity;
 			}),
 		x: A3(
-			_user$project$LineChart_Axis$time,
+			_terezka$line_charts$LineChart_Axis$time,
 			1270,
 			'time',
 			function (_) {
 				return _.time;
 			}),
-		container: _user$project$Area$containerConfig,
-		interpolation: _user$project$LineChart_Interpolation$monotone,
-		intersection: _user$project$LineChart_Axis_Intersection$default,
-		legends: _user$project$LineChart_Legends$default,
-		events: _user$project$LineChart_Events$hoverMany(_user$project$Area$Hint),
-		junk: A3(_user$project$LineChart_Junk$hoverMany, model.hinted, _user$project$Area$formatX, _user$project$Area$formatY),
-		grid: A2(_user$project$LineChart_Grid$dots, 1, _user$project$LineChart_Colors$gray),
-		area: _user$project$LineChart_Area$stacked(0.5),
-		line: _user$project$LineChart_Line$default,
-		dots: _user$project$LineChart_Dots$custom(
-			A2(_user$project$LineChart_Dots$empty, 5, 1))
+		container: _terezka$line_charts$Area$containerConfig,
+		interpolation: _terezka$line_charts$LineChart_Interpolation$monotone,
+		intersection: _terezka$line_charts$LineChart_Axis_Intersection$default,
+		legends: _terezka$line_charts$LineChart_Legends$default,
+		events: _terezka$line_charts$LineChart_Events$hoverMany(_terezka$line_charts$Area$Hint),
+		junk: A3(_terezka$line_charts$LineChart_Junk$hoverMany, model.hinted, _terezka$line_charts$Area$formatX, _terezka$line_charts$Area$formatY),
+		grid: A2(_terezka$line_charts$LineChart_Grid$dots, 1, _terezka$line_charts$LineChart_Colors$gray),
+		area: _terezka$line_charts$LineChart_Area$stacked(0.5),
+		line: _terezka$line_charts$LineChart_Line$default,
+		dots: _terezka$line_charts$LineChart_Dots$custom(
+			A2(_terezka$line_charts$LineChart_Dots$empty, 5, 1))
 	};
 };
-var _user$project$Area$view = function (model) {
+var _terezka$line_charts$Area$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
 			_0: A2(
-				_user$project$LineChart$viewCustom,
-				_user$project$Area$chartConfig(model),
+				_terezka$line_charts$LineChart$viewCustom,
+				_terezka$line_charts$Area$chartConfig(model),
 				{
 					ctor: '::',
-					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$diamond, 'Nora', model.data.nora),
+					_0: A4(_terezka$line_charts$LineChart$line, _terezka$line_charts$LineChart_Colors$pink, _terezka$line_charts$LineChart_Dots$diamond, 'Nora', model.data.nora),
 					_1: {
 						ctor: '::',
-						_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'Noah', model.data.noah),
+						_0: A4(_terezka$line_charts$LineChart$line, _terezka$line_charts$LineChart_Colors$cyan, _terezka$line_charts$LineChart_Dots$circle, 'Noah', model.data.noah),
 						_1: {
 							ctor: '::',
-							_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$triangle, 'Nina', model.data.nina),
+							_0: A4(_terezka$line_charts$LineChart$line, _terezka$line_charts$LineChart_Colors$blue, _terezka$line_charts$LineChart_Dots$triangle, 'Nina', model.data.nina),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -19628,79 +19704,79 @@ var _user$project$Area$view = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Area$RecieveData = function (a) {
+var _terezka$line_charts$Area$RecieveData = function (a) {
 	return {ctor: 'RecieveData', _0: a};
 };
-var _user$project$Area$generateData = function () {
+var _terezka$line_charts$Area$generateData = function () {
 	var compile = F3(
 		function (a, b, c) {
 			return A3(
-				_user$project$Area$Data,
-				_user$project$Area$toData(a),
-				_user$project$Area$toData(b),
-				_user$project$Area$toData(c));
+				_terezka$line_charts$Area$Data,
+				_terezka$line_charts$Area$toData(a),
+				_terezka$line_charts$Area$toData(b),
+				_terezka$line_charts$Area$toData(c));
 		});
 	var genNumbers = A2(
 		_elm_lang$core$Random$list,
 		40,
 		A2(_elm_lang$core$Random$float, 5, 20));
 	return A2(
-		_user$project$Random_Pipeline$send,
-		_user$project$Area$RecieveData,
+		_terezka$line_charts$Random_Pipeline$send,
+		_terezka$line_charts$Area$RecieveData,
 		A2(
-			_user$project$Random_Pipeline$with,
+			_terezka$line_charts$Random_Pipeline$with,
 			genNumbers,
 			A2(
-				_user$project$Random_Pipeline$with,
+				_terezka$line_charts$Random_Pipeline$with,
 				genNumbers,
 				A2(
-					_user$project$Random_Pipeline$with,
+					_terezka$line_charts$Random_Pipeline$with,
 					genNumbers,
-					_user$project$Random_Pipeline$generate(compile)))));
+					_terezka$line_charts$Random_Pipeline$generate(compile)))));
 }();
-var _user$project$Area$init = {
+var _terezka$line_charts$Area$init = {
 	ctor: '_Tuple2',
 	_0: {
 		data: A3(
-			_user$project$Area$Data,
+			_terezka$line_charts$Area$Data,
 			{ctor: '[]'},
 			{ctor: '[]'},
 			{ctor: '[]'}),
 		hinted: {ctor: '[]'}
 	},
-	_1: _user$project$Area$generateData
+	_1: _terezka$line_charts$Area$generateData
 };
-var _user$project$Area$main = _elm_lang$html$Html$program(
+var _terezka$line_charts$Area$main = _elm_lang$html$Html$program(
 	{
-		init: _user$project$Area$init,
-		update: _user$project$Area$update,
-		view: _user$project$Area$view,
+		init: _terezka$line_charts$Area$init,
+		update: _terezka$line_charts$Area$update,
+		view: _terezka$line_charts$Area$view,
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})();
 
-var _user$project$LineChart_Axis_Title$custom = _user$project$Internal_Axis_Title$custom;
-var _user$project$LineChart_Axis_Title$atPosition = _user$project$Internal_Axis_Title$atPosition;
-var _user$project$LineChart_Axis_Title$atAxisMax = _user$project$Internal_Axis_Title$atAxisMax;
-var _user$project$LineChart_Axis_Title$atDataMax = _user$project$Internal_Axis_Title$atDataMax;
-var _user$project$LineChart_Axis_Title$default = _user$project$Internal_Axis_Title$default;
+var _terezka$line_charts$LineChart_Axis_Title$custom = _terezka$line_charts$Internal_Axis_Title$custom;
+var _terezka$line_charts$LineChart_Axis_Title$atPosition = _terezka$line_charts$Internal_Axis_Title$atPosition;
+var _terezka$line_charts$LineChart_Axis_Title$atAxisMax = _terezka$line_charts$Internal_Axis_Title$atAxisMax;
+var _terezka$line_charts$LineChart_Axis_Title$atDataMax = _terezka$line_charts$Internal_Axis_Title$atDataMax;
+var _terezka$line_charts$LineChart_Axis_Title$default = _terezka$line_charts$Internal_Axis_Title$default;
 
-var _user$project$Lines$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hinted : Maybe Datum\n    }\n\n\n  type alias Data =\n    { denmark : List Datum\n    , sweden : List Datum\n    , iceland : List Datum\n    , greenland : List Datum\n    , norway : List Datum\n    , finland : List Datum\n    }\n\n\n  type alias Datum =\n    { time : Time.Time\n    , rain : Float\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] [] [] [] []\n      , hinted = Nothing\n      }\n    , generateData\n    )\n\n\n\n  -- API\n\n\n  setData : Data -> Model -> Model\n  setData data model =\n    { model | data = data }\n\n\n  setHint : Maybe Datum -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveData Data\n    | Hint (Maybe Datum)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveData numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div []\n      [ LineChart.viewCustom (chartConfig model)\n          [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle \"Denmark\"   model.data.denmark\n          , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle \"Sweden\"    model.data.sweden\n          , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle \"Iceland\"   model.data.iceland\n          , LineChart.line (Manipulate.lighten 0   Colors.blue) Dots.circle \"Greenland\" model.data.greenland\n          , LineChart.line (Manipulate.lighten 0   Colors.pink) Dots.circle \"Norway\"    model.data.norway\n          , LineChart.line (Manipulate.darken  0.2 Colors.pink) Dots.circle \"Finland\"   model.data.finland\n          ]\n      ]\n\n\n\n  -- CHART CONFIG\n\n\n  chartConfig : Model -> LineChart.Config Datum Msg\n  chartConfig model =\n    { y = yAxisConfig\n    , x = xAxisConfig\n    , container = containerConfig\n    , interpolation = Interpolation.monotone\n    , intersection = Intersection.default\n    , legends = Legends.default\n    , events = eventsConfig\n    , junk = Junk.default\n    , grid = Grid.default\n    , area = Area.default\n    , line = lineConfig model.hinted\n    , dots = Dots.custom (Dots.disconnected 4 2)\n    }\n\n\n\n  -- CHART CONFIG / AXES\n\n\n  yAxisConfig : Axis.Config Datum Msg\n  yAxisConfig =\n    Axis.custom\n      { title = Title.atDataMax -10 -10 \"Rain\"\n      , variable = Just << .rain\n      , pixels = 450\n      , range = Range.padded 20 20\n      , axisLine = AxisLine.rangeFrame Colors.gray\n      , ticks = Ticks.custom <| \\dataRange axisRange ->\n          [ tickRain ( dataRange.min, \"bits\" )\n          , tickRain ( middle dataRange, \"some\" )\n          , tickRain ( dataRange.max, \"lots\" )\n          ]\n      }\n\n\n  xAxisConfig : Axis.Config Datum Msg\n  xAxisConfig =\n    Axis.custom\n      { title = Title.default \"Time\"\n      , variable = Just << .time\n      , pixels = 1270\n      , range = Range.padded 20 20\n      , axisLine = AxisLine.none\n      , ticks = Ticks.timeCustom 10 tickTime\n      }\n\n\n\n  -- CHART CONFIG / AXES / TICKS\n\n\n  tickRain : ( Float, String ) -> Tick.Config msg\n  tickRain ( value, label ) =\n    Tick.custom\n      { position = value\n      , color = Colors.gray\n      , width = 1\n      , length = 5\n      , grid = True\n      , direction = Tick.negative\n      , label = Just (tickLabel label)\n      }\n\n\n  tickTime : Tick.Time -> Tick.Config msg\n  tickTime time =\n    let label = Tick.format time in\n    Tick.custom\n      { position = time.timestamp\n      , color = Colors.gray\n      , width = 1\n      , length = 5\n      , grid = False\n      , direction = Tick.negative\n      , label = Just (tickLabel label)\n      }\n\n\n  tickLabel : String -> Svg.Svg msg\n  tickLabel =\n    Junk.label Colors.black\n\n\n\n  -- CHART CONFIG / CONTIANER\n\n\n  containerConfig : Container.Config Msg\n  containerConfig =\n    Container.custom\n      { attributesHtml = []\n      , attributesSvg = []\n      , size = Container.relative\n      , margin = Container.Margin 30 180 30 70\n      , id = \"line-chart-lines\"\n      }\n\n\n\n  -- CHART CONFIG / EVENTS\n\n\n  eventsConfig : Events.Config Datum Msg\n  eventsConfig =\n    Events.custom\n      [ Events.onMouseMove Hint Events.getNearest\n      , Events.onMouseLeave (Hint Nothing)\n      ]\n\n\n\n  -- CHART CONFIG / LINE\n\n\n  lineConfig : Maybe Datum -> Line.Config Datum\n  lineConfig maybeHovered =\n    Line.custom (toLineStyle maybeHovered)\n\n\n  toLineStyle : Maybe Datum -> List Datum -> Line.Style\n  toLineStyle maybeHovered lineData =\n    case maybeHovered of\n      Nothing ->\n        Line.style 1 identity\n\n      Just hovered ->\n        if List.any ((==) hovered) lineData then\n          Line.style 2 identity\n        else\n          Line.style 1 (Manipulate.grayscale)\n\n\n\n  -- UTILS\n\n\n  round10 : Float -> Float\n  round10 float =\n    toFloat (round (float * 10)) / 10\n\n\n  middle : Coordinate.Range -> Float\n  middle r =\n    r.min + (r.max - r.min) / 2\n\n\n\n  -- GENERATE DATA\n\n\n  generateData : Cmd Msg\n  generateData =\n    let\n      genNumbers min max =\n        Random.list 10 (Random.float min max)\n\n      compile a b c d e f =\n        Data (toData a) (toData b) (toData c) (toData d) (toData e) (toData f)\n    in\n    Random.Pipeline.generate compile\n      |> Random.Pipeline.with (genNumbers 50 90)\n      |> Random.Pipeline.with (genNumbers 20 60)\n      |> Random.Pipeline.with (genNumbers 30 60)\n      |> Random.Pipeline.with (genNumbers 40 90)\n      |> Random.Pipeline.with (genNumbers 80 100)\n      |> Random.Pipeline.with (genNumbers 70 90)\n      |> Random.Pipeline.send RecieveData\n\n\n  toData : List Float -> List Datum\n  toData numbers =\n    let\n      toDatum index rain =\n        Datum (indexToTime index) rain\n    in\n    List.indexedMap toDatum numbers\n\n\n  indexToTime : Int -> Time.Time\n  indexToTime index =\n    Time.hour * 24 * 365 * 30 + xInterval * toFloat index\n\n\n  xInterval : Time.Time\n  xInterval =\n    Time.hour * 24 * 31\n\n\n\n  -- PROGRAM\n\n\n  main : Program Never Model Msg\n  main =\n    Html.program\n      { init = init\n      , update = update\n      , view = view\n      , subscriptions = always Sub.none\n      }\n\n  ';
-var _user$project$Lines$xInterval = (_elm_lang$core$Time$hour * 24) * 31;
-var _user$project$Lines$indexToTime = function (index) {
-	return (((_elm_lang$core$Time$hour * 24) * 365) * 30) + (_user$project$Lines$xInterval * _elm_lang$core$Basics$toFloat(index));
+var _terezka$line_charts$Lines$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hinted : Maybe Datum\n    }\n\n\n  type alias Data =\n    { denmark : List Datum\n    , sweden : List Datum\n    , iceland : List Datum\n    , greenland : List Datum\n    , norway : List Datum\n    , finland : List Datum\n    }\n\n\n  type alias Datum =\n    { time : Time.Time\n    , rain : Float\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] [] [] [] []\n      , hinted = Nothing\n      }\n    , generateData\n    )\n\n\n\n  -- API\n\n\n  setData : Data -> Model -> Model\n  setData data model =\n    { model | data = data }\n\n\n  setHint : Maybe Datum -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveData Data\n    | Hint (Maybe Datum)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveData numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div []\n      [ LineChart.viewCustom (chartConfig model)\n          [ LineChart.line (Manipulate.lighten 0.2 Colors.cyan) Dots.circle \"Denmark\"   model.data.denmark\n          , LineChart.line (Manipulate.lighten 0   Colors.cyan) Dots.circle \"Sweden\"    model.data.sweden\n          , LineChart.line (Manipulate.lighten 0.2 Colors.blue) Dots.circle \"Iceland\"   model.data.iceland\n          , LineChart.line (Manipulate.lighten 0   Colors.blue) Dots.circle \"Greenland\" model.data.greenland\n          , LineChart.line (Manipulate.lighten 0   Colors.pink) Dots.circle \"Norway\"    model.data.norway\n          , LineChart.line (Manipulate.darken  0.2 Colors.pink) Dots.circle \"Finland\"   model.data.finland\n          ]\n      ]\n\n\n\n  -- CHART CONFIG\n\n\n  chartConfig : Model -> LineChart.Config Datum Msg\n  chartConfig model =\n    { y = yAxisConfig\n    , x = xAxisConfig\n    , container = containerConfig\n    , interpolation = Interpolation.monotone\n    , intersection = Intersection.default\n    , legends = Legends.default\n    , events = eventsConfig\n    , junk = Junk.default\n    , grid = Grid.default\n    , area = Area.default\n    , line = lineConfig model.hinted\n    , dots = Dots.custom (Dots.disconnected 4 2)\n    }\n\n\n\n  -- CHART CONFIG / AXES\n\n\n  yAxisConfig : Axis.Config Datum Msg\n  yAxisConfig =\n    Axis.custom\n      { title = Title.atDataMax -10 -10 \"Rain\"\n      , variable = Just << .rain\n      , pixels = 450\n      , range = Range.padded 20 20\n      , axisLine = AxisLine.rangeFrame Colors.gray\n      , ticks = Ticks.custom <| \\dataRange axisRange ->\n          [ tickRain ( dataRange.min, \"bits\" )\n          , tickRain ( middle dataRange, \"some\" )\n          , tickRain ( dataRange.max, \"lots\" )\n          ]\n      }\n\n\n  xAxisConfig : Axis.Config Datum Msg\n  xAxisConfig =\n    Axis.custom\n      { title = Title.default \"Time\"\n      , variable = Just << .time\n      , pixels = 1270\n      , range = Range.padded 20 20\n      , axisLine = AxisLine.none\n      , ticks = Ticks.timeCustom 10 tickTime\n      }\n\n\n\n  -- CHART CONFIG / AXES / TICKS\n\n\n  tickRain : ( Float, String ) -> Tick.Config msg\n  tickRain ( value, label ) =\n    Tick.custom\n      { position = value\n      , color = Colors.gray\n      , width = 1\n      , length = 5\n      , grid = True\n      , direction = Tick.negative\n      , label = Just (tickLabel label)\n      }\n\n\n  tickTime : Tick.Time -> Tick.Config msg\n  tickTime time =\n    let label = Tick.format time in\n    Tick.custom\n      { position = time.timestamp\n      , color = Colors.gray\n      , width = 1\n      , length = 5\n      , grid = False\n      , direction = Tick.negative\n      , label = Just (tickLabel label)\n      }\n\n\n  tickLabel : String -> Svg.Svg msg\n  tickLabel =\n    Junk.label Colors.black\n\n\n\n  -- CHART CONFIG / CONTIANER\n\n\n  containerConfig : Container.Config Msg\n  containerConfig =\n    Container.custom\n      { attributesHtml = []\n      , attributesSvg = []\n      , size = Container.relative\n      , margin = Container.Margin 30 180 30 70\n      , id = \"line-chart-lines\"\n      }\n\n\n\n  -- CHART CONFIG / EVENTS\n\n\n  eventsConfig : Events.Config Datum Msg\n  eventsConfig =\n    Events.custom\n      [ Events.onMouseMove Hint Events.getNearest\n      , Events.onMouseLeave (Hint Nothing)\n      ]\n\n\n\n  -- CHART CONFIG / LINE\n\n\n  lineConfig : Maybe Datum -> Line.Config Datum\n  lineConfig maybeHovered =\n    Line.custom (toLineStyle maybeHovered)\n\n\n  toLineStyle : Maybe Datum -> List Datum -> Line.Style\n  toLineStyle maybeHovered lineData =\n    case maybeHovered of\n      Nothing ->\n        Line.style 1 identity\n\n      Just hovered ->\n        if List.any ((==) hovered) lineData then\n          Line.style 2 identity\n        else\n          Line.style 1 (Manipulate.grayscale)\n\n\n\n  -- UTILS\n\n\n  round10 : Float -> Float\n  round10 float =\n    toFloat (round (float * 10)) / 10\n\n\n  middle : Coordinate.Range -> Float\n  middle r =\n    r.min + (r.max - r.min) / 2\n\n\n\n  -- GENERATE DATA\n\n\n  generateData : Cmd Msg\n  generateData =\n    let\n      genNumbers min max =\n        Random.list 10 (Random.float min max)\n\n      compile a b c d e f =\n        Data (toData a) (toData b) (toData c) (toData d) (toData e) (toData f)\n    in\n    Random.Pipeline.generate compile\n      |> Random.Pipeline.with (genNumbers 50 90)\n      |> Random.Pipeline.with (genNumbers 20 60)\n      |> Random.Pipeline.with (genNumbers 30 60)\n      |> Random.Pipeline.with (genNumbers 40 90)\n      |> Random.Pipeline.with (genNumbers 80 100)\n      |> Random.Pipeline.with (genNumbers 70 90)\n      |> Random.Pipeline.send RecieveData\n\n\n  toData : List Float -> List Datum\n  toData numbers =\n    let\n      toDatum index rain =\n        Datum (indexToTime index) rain\n    in\n    List.indexedMap toDatum numbers\n\n\n  indexToTime : Int -> Time.Time\n  indexToTime index =\n    Time.hour * 24 * 365 * 30 + xInterval * toFloat index\n\n\n  xInterval : Time.Time\n  xInterval =\n    Time.hour * 24 * 31\n\n\n\n  -- PROGRAM\n\n\n  main : Program Never Model Msg\n  main =\n    Html.program\n      { init = init\n      , update = update\n      , view = view\n      , subscriptions = always Sub.none\n      }\n\n  ';
+var _terezka$line_charts$Lines$xInterval = (_elm_lang$core$Time$hour * 24) * 31;
+var _terezka$line_charts$Lines$indexToTime = function (index) {
+	return (((_elm_lang$core$Time$hour * 24) * 365) * 30) + (_terezka$line_charts$Lines$xInterval * _elm_lang$core$Basics$toFloat(index));
 };
-var _user$project$Lines$middle = function (r) {
+var _terezka$line_charts$Lines$middle = function (r) {
 	return r.min + ((r.max - r.min) / 2);
 };
-var _user$project$Lines$round10 = function ($float) {
+var _terezka$line_charts$Lines$round10 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 10)) / 10;
 };
-var _user$project$Lines$toLineStyle = F2(
+var _terezka$line_charts$Lines$toLineStyle = F2(
 	function (maybeHovered, lineData) {
 		var _p0 = maybeHovered;
 		if (_p0.ctor === 'Nothing') {
-			return A2(_user$project$LineChart_Line$style, 1, _elm_lang$core$Basics$identity);
+			return A2(_terezka$line_charts$LineChart_Line$style, 1, _elm_lang$core$Basics$identity);
 		} else {
 			return A2(
 				_elm_lang$core$List$any,
@@ -19708,53 +19784,53 @@ var _user$project$Lines$toLineStyle = F2(
 					function (x, y) {
 						return _elm_lang$core$Native_Utils.eq(x, y);
 					})(_p0._0),
-				lineData) ? A2(_user$project$LineChart_Line$style, 2, _elm_lang$core$Basics$identity) : A2(_user$project$LineChart_Line$style, 1, _eskimoblood$elm_color_extra$Color_Manipulate$grayscale);
+				lineData) ? A2(_terezka$line_charts$LineChart_Line$style, 2, _elm_lang$core$Basics$identity) : A2(_terezka$line_charts$LineChart_Line$style, 1, _eskimoblood$elm_color_extra$Color_Manipulate$grayscale);
 		}
 	});
-var _user$project$Lines$lineConfig = function (maybeHovered) {
-	return _user$project$LineChart_Line$custom(
-		_user$project$Lines$toLineStyle(maybeHovered));
+var _terezka$line_charts$Lines$lineConfig = function (maybeHovered) {
+	return _terezka$line_charts$LineChart_Line$custom(
+		_terezka$line_charts$Lines$toLineStyle(maybeHovered));
 };
-var _user$project$Lines$containerConfig = _user$project$LineChart_Container$custom(
+var _terezka$line_charts$Lines$containerConfig = _terezka$line_charts$LineChart_Container$custom(
 	{
 		attributesHtml: {ctor: '[]'},
 		attributesSvg: {ctor: '[]'},
-		size: _user$project$LineChart_Container$relative,
-		margin: A4(_user$project$LineChart_Container$Margin, 30, 180, 30, 70),
+		size: _terezka$line_charts$LineChart_Container$relative,
+		margin: A4(_terezka$line_charts$LineChart_Container$Margin, 30, 180, 30, 70),
 		id: 'line-chart-lines'
 	});
-var _user$project$Lines$tickLabel = _user$project$LineChart_Junk$label(_user$project$LineChart_Colors$black);
-var _user$project$Lines$tickTime = function (time) {
-	var label = _user$project$LineChart_Axis_Tick$format(time);
-	return _user$project$LineChart_Axis_Tick$custom(
+var _terezka$line_charts$Lines$tickLabel = _terezka$line_charts$LineChart_Junk$label(_terezka$line_charts$LineChart_Colors$black);
+var _terezka$line_charts$Lines$tickTime = function (time) {
+	var label = _terezka$line_charts$LineChart_Axis_Tick$format(time);
+	return _terezka$line_charts$LineChart_Axis_Tick$custom(
 		{
 			position: time.timestamp,
-			color: _user$project$LineChart_Colors$gray,
+			color: _terezka$line_charts$LineChart_Colors$gray,
 			width: 1,
 			length: 5,
 			grid: false,
-			direction: _user$project$LineChart_Axis_Tick$negative,
+			direction: _terezka$line_charts$LineChart_Axis_Tick$negative,
 			label: _elm_lang$core$Maybe$Just(
-				_user$project$Lines$tickLabel(label))
+				_terezka$line_charts$Lines$tickLabel(label))
 		});
 };
-var _user$project$Lines$tickRain = function (_p1) {
+var _terezka$line_charts$Lines$tickRain = function (_p1) {
 	var _p2 = _p1;
-	return _user$project$LineChart_Axis_Tick$custom(
+	return _terezka$line_charts$LineChart_Axis_Tick$custom(
 		{
 			position: _p2._0,
-			color: _user$project$LineChart_Colors$gray,
+			color: _terezka$line_charts$LineChart_Colors$gray,
 			width: 1,
 			length: 5,
 			grid: true,
-			direction: _user$project$LineChart_Axis_Tick$negative,
+			direction: _terezka$line_charts$LineChart_Axis_Tick$negative,
 			label: _elm_lang$core$Maybe$Just(
-				_user$project$Lines$tickLabel(_p2._1))
+				_terezka$line_charts$Lines$tickLabel(_p2._1))
 		});
 };
-var _user$project$Lines$xAxisConfig = _user$project$LineChart_Axis$custom(
+var _terezka$line_charts$Lines$xAxisConfig = _terezka$line_charts$LineChart_Axis$custom(
 	{
-		title: _user$project$LineChart_Axis_Title$default('Time'),
+		title: _terezka$line_charts$LineChart_Axis_Title$default('Time'),
 		variable: function (_p3) {
 			return _elm_lang$core$Maybe$Just(
 				function (_) {
@@ -19762,13 +19838,13 @@ var _user$project$Lines$xAxisConfig = _user$project$LineChart_Axis$custom(
 				}(_p3));
 		},
 		pixels: 1270,
-		range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
-		axisLine: _user$project$LineChart_Axis_Line$none,
-		ticks: A2(_user$project$LineChart_Axis_Ticks$timeCustom, 10, _user$project$Lines$tickTime)
+		range: A2(_terezka$line_charts$LineChart_Axis_Range$padded, 20, 20),
+		axisLine: _terezka$line_charts$LineChart_Axis_Line$none,
+		ticks: A2(_terezka$line_charts$LineChart_Axis_Ticks$timeCustom, 10, _terezka$line_charts$Lines$tickTime)
 	});
-var _user$project$Lines$yAxisConfig = _user$project$LineChart_Axis$custom(
+var _terezka$line_charts$Lines$yAxisConfig = _terezka$line_charts$LineChart_Axis$custom(
 	{
-		title: A3(_user$project$LineChart_Axis_Title$atDataMax, -10, -10, 'Rain'),
+		title: A3(_terezka$line_charts$LineChart_Axis_Title$atDataMax, -10, -10, 'Rain'),
 		variable: function (_p4) {
 			return _elm_lang$core$Maybe$Just(
 				function (_) {
@@ -19776,26 +19852,26 @@ var _user$project$Lines$yAxisConfig = _user$project$LineChart_Axis$custom(
 				}(_p4));
 		},
 		pixels: 450,
-		range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
-		axisLine: _user$project$LineChart_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
-		ticks: _user$project$LineChart_Axis_Ticks$custom(
+		range: A2(_terezka$line_charts$LineChart_Axis_Range$padded, 20, 20),
+		axisLine: _terezka$line_charts$LineChart_Axis_Line$rangeFrame(_terezka$line_charts$LineChart_Colors$gray),
+		ticks: _terezka$line_charts$LineChart_Axis_Ticks$custom(
 			F2(
 				function (dataRange, axisRange) {
 					return {
 						ctor: '::',
-						_0: _user$project$Lines$tickRain(
+						_0: _terezka$line_charts$Lines$tickRain(
 							{ctor: '_Tuple2', _0: dataRange.min, _1: 'bits'}),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Lines$tickRain(
+							_0: _terezka$line_charts$Lines$tickRain(
 								{
 									ctor: '_Tuple2',
-									_0: _user$project$Lines$middle(dataRange),
+									_0: _terezka$line_charts$Lines$middle(dataRange),
 									_1: 'some'
 								}),
 							_1: {
 								ctor: '::',
-								_0: _user$project$Lines$tickRain(
+								_0: _terezka$line_charts$Lines$tickRain(
 									{ctor: '_Tuple2', _0: dataRange.max, _1: 'lots'}),
 								_1: {ctor: '[]'}
 							}
@@ -19803,145 +19879,145 @@ var _user$project$Lines$yAxisConfig = _user$project$LineChart_Axis$custom(
 					};
 				}))
 	});
-var _user$project$Lines$addCmd = F2(
+var _terezka$line_charts$Lines$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
-var _user$project$Lines$setHint = F2(
+var _terezka$line_charts$Lines$setHint = F2(
 	function (hinted, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{hinted: hinted});
 	});
-var _user$project$Lines$setData = F2(
+var _terezka$line_charts$Lines$setData = F2(
 	function (data, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{data: data});
 	});
-var _user$project$Lines$update = F2(
+var _terezka$line_charts$Lines$update = F2(
 	function (msg, model) {
 		var _p5 = msg;
 		if (_p5.ctor === 'RecieveData') {
 			return A2(
-				_user$project$Lines$addCmd,
+				_terezka$line_charts$Lines$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Lines$setData, _p5._0, model));
+				A2(_terezka$line_charts$Lines$setData, _p5._0, model));
 		} else {
 			return A2(
-				_user$project$Lines$addCmd,
+				_terezka$line_charts$Lines$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Lines$setHint, _p5._0, model));
+				A2(_terezka$line_charts$Lines$setHint, _p5._0, model));
 		}
 	});
-var _user$project$Lines$Model = F2(
+var _terezka$line_charts$Lines$Model = F2(
 	function (a, b) {
 		return {data: a, hinted: b};
 	});
-var _user$project$Lines$Data = F6(
+var _terezka$line_charts$Lines$Data = F6(
 	function (a, b, c, d, e, f) {
 		return {denmark: a, sweden: b, iceland: c, greenland: d, norway: e, finland: f};
 	});
-var _user$project$Lines$Datum = F2(
+var _terezka$line_charts$Lines$Datum = F2(
 	function (a, b) {
 		return {time: a, rain: b};
 	});
-var _user$project$Lines$toData = function (numbers) {
+var _terezka$line_charts$Lines$toData = function (numbers) {
 	var toDatum = F2(
 		function (index, rain) {
 			return A2(
-				_user$project$Lines$Datum,
-				_user$project$Lines$indexToTime(index),
+				_terezka$line_charts$Lines$Datum,
+				_terezka$line_charts$Lines$indexToTime(index),
 				rain);
 		});
 	return A2(_elm_lang$core$List$indexedMap, toDatum, numbers);
 };
-var _user$project$Lines$Hint = function (a) {
+var _terezka$line_charts$Lines$Hint = function (a) {
 	return {ctor: 'Hint', _0: a};
 };
-var _user$project$Lines$eventsConfig = _user$project$LineChart_Events$custom(
+var _terezka$line_charts$Lines$eventsConfig = _terezka$line_charts$LineChart_Events$custom(
 	{
 		ctor: '::',
-		_0: A2(_user$project$LineChart_Events$onMouseMove, _user$project$Lines$Hint, _user$project$LineChart_Events$getNearest),
+		_0: A2(_terezka$line_charts$LineChart_Events$onMouseMove, _terezka$line_charts$Lines$Hint, _terezka$line_charts$LineChart_Events$getNearest),
 		_1: {
 			ctor: '::',
-			_0: _user$project$LineChart_Events$onMouseLeave(
-				_user$project$Lines$Hint(_elm_lang$core$Maybe$Nothing)),
+			_0: _terezka$line_charts$LineChart_Events$onMouseLeave(
+				_terezka$line_charts$Lines$Hint(_elm_lang$core$Maybe$Nothing)),
 			_1: {ctor: '[]'}
 		}
 	});
-var _user$project$Lines$chartConfig = function (model) {
+var _terezka$line_charts$Lines$chartConfig = function (model) {
 	return {
-		y: _user$project$Lines$yAxisConfig,
-		x: _user$project$Lines$xAxisConfig,
-		container: _user$project$Lines$containerConfig,
-		interpolation: _user$project$LineChart_Interpolation$monotone,
-		intersection: _user$project$LineChart_Axis_Intersection$default,
-		legends: _user$project$LineChart_Legends$default,
-		events: _user$project$Lines$eventsConfig,
-		junk: _user$project$LineChart_Junk$default,
-		grid: _user$project$LineChart_Grid$default,
-		area: _user$project$LineChart_Area$default,
-		line: _user$project$Lines$lineConfig(model.hinted),
-		dots: _user$project$LineChart_Dots$custom(
-			A2(_user$project$LineChart_Dots$disconnected, 4, 2))
+		y: _terezka$line_charts$Lines$yAxisConfig,
+		x: _terezka$line_charts$Lines$xAxisConfig,
+		container: _terezka$line_charts$Lines$containerConfig,
+		interpolation: _terezka$line_charts$LineChart_Interpolation$monotone,
+		intersection: _terezka$line_charts$LineChart_Axis_Intersection$default,
+		legends: _terezka$line_charts$LineChart_Legends$default,
+		events: _terezka$line_charts$Lines$eventsConfig,
+		junk: _terezka$line_charts$LineChart_Junk$default,
+		grid: _terezka$line_charts$LineChart_Grid$default,
+		area: _terezka$line_charts$LineChart_Area$default,
+		line: _terezka$line_charts$Lines$lineConfig(model.hinted),
+		dots: _terezka$line_charts$LineChart_Dots$custom(
+			A2(_terezka$line_charts$LineChart_Dots$disconnected, 4, 2))
 	};
 };
-var _user$project$Lines$view = function (model) {
+var _terezka$line_charts$Lines$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
 			_0: A2(
-				_user$project$LineChart$viewCustom,
-				_user$project$Lines$chartConfig(model),
+				_terezka$line_charts$LineChart$viewCustom,
+				_terezka$line_charts$Lines$chartConfig(model),
 				{
 					ctor: '::',
 					_0: A4(
-						_user$project$LineChart$line,
-						A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0.2, _user$project$LineChart_Colors$cyan),
-						_user$project$LineChart_Dots$circle,
+						_terezka$line_charts$LineChart$line,
+						A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0.2, _terezka$line_charts$LineChart_Colors$cyan),
+						_terezka$line_charts$LineChart_Dots$circle,
 						'Denmark',
 						model.data.denmark),
 					_1: {
 						ctor: '::',
 						_0: A4(
-							_user$project$LineChart$line,
-							A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0, _user$project$LineChart_Colors$cyan),
-							_user$project$LineChart_Dots$circle,
+							_terezka$line_charts$LineChart$line,
+							A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0, _terezka$line_charts$LineChart_Colors$cyan),
+							_terezka$line_charts$LineChart_Dots$circle,
 							'Sweden',
 							model.data.sweden),
 						_1: {
 							ctor: '::',
 							_0: A4(
-								_user$project$LineChart$line,
-								A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0.2, _user$project$LineChart_Colors$blue),
-								_user$project$LineChart_Dots$circle,
+								_terezka$line_charts$LineChart$line,
+								A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0.2, _terezka$line_charts$LineChart_Colors$blue),
+								_terezka$line_charts$LineChart_Dots$circle,
 								'Iceland',
 								model.data.iceland),
 							_1: {
 								ctor: '::',
 								_0: A4(
-									_user$project$LineChart$line,
-									A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0, _user$project$LineChart_Colors$blue),
-									_user$project$LineChart_Dots$circle,
+									_terezka$line_charts$LineChart$line,
+									A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0, _terezka$line_charts$LineChart_Colors$blue),
+									_terezka$line_charts$LineChart_Dots$circle,
 									'Greenland',
 									model.data.greenland),
 								_1: {
 									ctor: '::',
 									_0: A4(
-										_user$project$LineChart$line,
-										A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0, _user$project$LineChart_Colors$pink),
-										_user$project$LineChart_Dots$circle,
+										_terezka$line_charts$LineChart$line,
+										A2(_eskimoblood$elm_color_extra$Color_Manipulate$lighten, 0, _terezka$line_charts$LineChart_Colors$pink),
+										_terezka$line_charts$LineChart_Dots$circle,
 										'Norway',
 										model.data.norway),
 									_1: {
 										ctor: '::',
 										_0: A4(
-											_user$project$LineChart$line,
-											A2(_eskimoblood$elm_color_extra$Color_Manipulate$darken, 0.2, _user$project$LineChart_Colors$pink),
-											_user$project$LineChart_Dots$circle,
+											_terezka$line_charts$LineChart$line,
+											A2(_eskimoblood$elm_color_extra$Color_Manipulate$darken, 0.2, _terezka$line_charts$LineChart_Colors$pink),
+											_terezka$line_charts$LineChart_Dots$circle,
 											'Finland',
 											model.data.finland),
 										_1: {ctor: '[]'}
@@ -19954,20 +20030,20 @@ var _user$project$Lines$view = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Lines$RecieveData = function (a) {
+var _terezka$line_charts$Lines$RecieveData = function (a) {
 	return {ctor: 'RecieveData', _0: a};
 };
-var _user$project$Lines$generateData = function () {
+var _terezka$line_charts$Lines$generateData = function () {
 	var compile = F6(
 		function (a, b, c, d, e, f) {
 			return A6(
-				_user$project$Lines$Data,
-				_user$project$Lines$toData(a),
-				_user$project$Lines$toData(b),
-				_user$project$Lines$toData(c),
-				_user$project$Lines$toData(d),
-				_user$project$Lines$toData(e),
-				_user$project$Lines$toData(f));
+				_terezka$line_charts$Lines$Data,
+				_terezka$line_charts$Lines$toData(a),
+				_terezka$line_charts$Lines$toData(b),
+				_terezka$line_charts$Lines$toData(c),
+				_terezka$line_charts$Lines$toData(d),
+				_terezka$line_charts$Lines$toData(e),
+				_terezka$line_charts$Lines$toData(f));
 		});
 	var genNumbers = F2(
 		function (min, max) {
@@ -19977,33 +20053,33 @@ var _user$project$Lines$generateData = function () {
 				A2(_elm_lang$core$Random$float, min, max));
 		});
 	return A2(
-		_user$project$Random_Pipeline$send,
-		_user$project$Lines$RecieveData,
+		_terezka$line_charts$Random_Pipeline$send,
+		_terezka$line_charts$Lines$RecieveData,
 		A2(
-			_user$project$Random_Pipeline$with,
+			_terezka$line_charts$Random_Pipeline$with,
 			A2(genNumbers, 70, 90),
 			A2(
-				_user$project$Random_Pipeline$with,
+				_terezka$line_charts$Random_Pipeline$with,
 				A2(genNumbers, 80, 100),
 				A2(
-					_user$project$Random_Pipeline$with,
+					_terezka$line_charts$Random_Pipeline$with,
 					A2(genNumbers, 40, 90),
 					A2(
-						_user$project$Random_Pipeline$with,
+						_terezka$line_charts$Random_Pipeline$with,
 						A2(genNumbers, 30, 60),
 						A2(
-							_user$project$Random_Pipeline$with,
+							_terezka$line_charts$Random_Pipeline$with,
 							A2(genNumbers, 20, 60),
 							A2(
-								_user$project$Random_Pipeline$with,
+								_terezka$line_charts$Random_Pipeline$with,
 								A2(genNumbers, 50, 90),
-								_user$project$Random_Pipeline$generate(compile))))))));
+								_terezka$line_charts$Random_Pipeline$generate(compile))))))));
 }();
-var _user$project$Lines$init = {
+var _terezka$line_charts$Lines$init = {
 	ctor: '_Tuple2',
 	_0: {
 		data: A6(
-			_user$project$Lines$Data,
+			_terezka$line_charts$Lines$Data,
 			{ctor: '[]'},
 			{ctor: '[]'},
 			{ctor: '[]'},
@@ -20012,22 +20088,22 @@ var _user$project$Lines$init = {
 			{ctor: '[]'}),
 		hinted: _elm_lang$core$Maybe$Nothing
 	},
-	_1: _user$project$Lines$generateData
+	_1: _terezka$line_charts$Lines$generateData
 };
-var _user$project$Lines$main = _elm_lang$html$Html$program(
+var _terezka$line_charts$Lines$main = _elm_lang$html$Html$program(
 	{
-		init: _user$project$Lines$init,
-		update: _user$project$Lines$update,
-		view: _user$project$Lines$view,
+		init: _terezka$line_charts$Lines$init,
+		update: _terezka$line_charts$Lines$update,
+		view: _terezka$line_charts$Lines$view,
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})();
 
-var _user$project$Selection$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hovered : Maybe Float\n    , selection : Maybe Selection\n    , dragging : Bool\n    , hinted : Maybe Datum\n    }\n\n\n  type alias Selection =\n    { xStart : Float\n    , xEnd : Float\n    }\n\n\n  type alias Data =\n    { nora : List Datum\n    , noah : List Datum\n    , nina : List Datum\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hovered = Nothing\n      , selection = Nothing\n      , dragging = False\n      , hinted = Nothing\n      }\n    , generateData\n    )\n\n\n  generateData : Cmd Msg\n  generateData =\n    let\n      genNumbers =\n        Random.list 201 (Random.float 0 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveData\n\n\n\n  -- MODEL API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Datum\n  toData numbers =\n    List.indexedMap (\\i -> Datum (toFloat i)) numbers\n\n\n  setSelection : Maybe Selection -> Model -> Model\n  setSelection selection model =\n    { model | selection = selection }\n\n\n  setDragging : Bool -> Model -> Model\n  setDragging dragging model =\n    { model | dragging = dragging }\n\n\n  setHovered : Maybe Float -> Model -> Model\n  setHovered hovered model =\n    { model | hovered = hovered }\n\n\n  setHint : Maybe Datum -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n  getSelectionXStart : Float -> Model -> Float\n  getSelectionXStart hovered model =\n    case model.selection of\n      Just selection -> selection.xStart\n      Nothing        -> hovered\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveData ( List Float, List Float, List Float )\n    -- Chart Main\n    | Hold Datum\n    | Move Datum\n    | Drop Datum\n    | LeaveChart Datum\n    | LeaveContainer Datum\n    -- Chart Zoom\n    | Hint (Maybe Datum)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveData numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hold point ->\n        model\n          |> setSelection Nothing\n          |> setDragging True\n          |> addCmd Cmd.none\n\n      Move point ->\n        if model.dragging then\n          let\n            start = getSelectionXStart point.x model\n            newSelection = Selection start point.x\n          in\n          model\n            |> setSelection (Just newSelection)\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n        else\n          model\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n\n      Drop point ->\n        if point.x == getSelectionXStart point.x model then\n          model\n            |> setSelection Nothing\n            |> setDragging False\n            |> addCmd Cmd.none\n        else\n          model\n            |> setDragging False\n            |> addCmd Cmd.none\n\n      LeaveChart point ->\n        model\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      LeaveContainer point ->\n        model\n          |> setDragging False\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    let\n      style =\n        [ ( \"display\", \"flex\" ) ]\n\n      content =\n        case model.selection of\n          Nothing ->\n            [ viewPlaceholder\n            , viewChartMain model\n            ]\n\n          Just selection ->\n            if selection.xStart == selection.xEnd then\n              [ viewPlaceholder\n              , viewChartMain model\n              ]\n            else\n              [ viewChartZoom model selection\n              , viewChartMain model\n              ]\n    in\n    Html.div [ Html.Attributes.style style ] content\n\n\n  viewPlaceholder : Html.Html Msg\n  viewPlaceholder =\n    Html.div\n      [ Html.Attributes.style\n          [ ( \"margin\", \"40px 25px 30px 70px\" )\n          , ( \"width\", \"505px\" )\n          , ( \"height\", \"360px\" )\n          , ( \"background\", \"#4646461a\" )\n          , ( \"text-align\", \"center\" )\n          , ( \"line-height\", \"340px\" )\n          ]\n      ]\n      [ Html.text \"Select a range on the graph to the right!\" ]\n\n\n\n  -- MAIN CHART\n\n\n  viewChartMain : Model -> Html.Html Msg\n  viewChartMain model =\n    viewChart model.data\n      { range = Range.default\n      , junk = junkConfig model\n      , legends = Legends.default\n      , events = events\n      , width = 670\n      , margin = Container.Margin 30 100 60 70\n      , dots = Dots.custom (Dots.full 0)\n      , id = \"line-chart\"\n      }\n\n\n  events : Events.Config Datum Msg\n  events =\n    let\n      options bool =\n        { stopPropagation = True\n        , preventDefault = True\n        , catchOutsideChart = bool\n        }\n    in\n    Events.custom\n      [ Events.onWithOptions \"mousedown\"  (options False) Hold           Events.getData\n      , Events.onWithOptions \"mousemove\"  (options False) Move           Events.getData\n      , Events.onWithOptions \"mouseup\"    (options True)  Drop           Events.getData\n      , Events.onWithOptions \"mouseleave\" (options False) LeaveChart     Events.getData\n      , Events.onWithOptions \"mouseleave\" (options True)  LeaveContainer Events.getData\n      ]\n\n\n  junkConfig : Model -> Junk.Config Datum msg\n  junkConfig model =\n    Junk.custom <| \\system ->\n      { below = below system model.selection\n      , above = above system model.hovered\n      , html = []\n      }\n\n\n  below : Coordinate.System -> Maybe Selection -> List (Svg.Svg msg)\n  below system selection =\n    case selection of\n      Just { xStart, xEnd } ->\n        let\n          attributes =\n            [ Svg.Attributes.fill \"#4646461a\" ]\n\n          ( yStart, yEnd ) =\n            ( system.y.min, system.y.max )\n\n          viewSelection =\n            Junk.rectangle system attributes xStart xEnd yStart yEnd\n        in\n        [ viewSelection ]\n\n      Nothing ->\n        []\n\n\n  above : Coordinate.System -> Maybe Float -> List (Svg.Svg msg)\n  above system hovered =\n    case hovered of\n      Just hovered ->\n        [ Junk.vertical system [] hovered ]\n\n      Nothing ->\n        []\n\n\n\n  -- ZOOM CHART\n\n\n  viewChartZoom : Model -> Selection -> Html.Html Msg\n  viewChartZoom model selection =\n    viewChart model.data\n      { range = xAxisRangeConfig selection\n      , junk =\n          Junk.hoverOne model.hinted\n            [ ( \"x\", toString << round100 << .x )\n            , ( \"y\", toString << round100 << .y )\n            ]\n      , events = Events.hoverOne Hint\n      , legends = Legends.none\n      , dots = Dots.hoverOne model.hinted\n      , width = 600\n      , margin = Container.Margin 30 25 60 70\n      , id = \"line-chart-zoom\"\n      }\n\n\n  xAxisRangeConfig : Selection -> Range.Config\n  xAxisRangeConfig selection =\n    let\n      xStart =\n        min selection.xStart selection.xEnd\n\n      xEnd =\n        max selection.xStart selection.xEnd\n    in\n    Range.window xStart xEnd\n\n\n\n\n  -- VIEW CHART\n\n\n  type alias Config =\n    { range : Range.Config\n    , junk : Junk.Config Datum Msg\n    , events : Events.Config Datum Msg\n    , legends : Legends.Config Datum Msg\n    , dots : Dots.Config Datum\n    , margin : Container.Margin\n    , width : Int\n    , id : String\n    }\n\n\n  viewChart : Data -> Config -> Html.Html Msg\n  viewChart data { range, junk, events, legends, dots, width, margin, id } =\n    LineChart.viewCustom\n      { y = Axis.default 450 \"y\" .y\n      , x =\n          Axis.custom\n            { title = Title.default \"x\"\n            , variable = Just << .x\n            , pixels = width\n            , range = range\n            , axisLine = AxisLine.rangeFrame Colors.gray\n            , ticks = Ticks.float 5\n            }\n      , container =\n          Container.custom\n            { attributesHtml = [ Html.Attributes.style [ ( \"display\", \"inline-block\" ) ] ]\n            , attributesSvg = []\n            , size = Container.static\n            , margin = margin\n            , id = \"chart-id\"\n            }\n      , interpolation = Interpolation.monotone\n      , intersection = Intersection.default\n      , legends = legends\n      , events = events\n      , junk = junk\n      , grid = Grid.default\n      , area = Area.default\n      , line = Line.default\n      , dots = dots\n      }\n      [ LineChart.line Colors.pink Dots.circle \"Nora\" data.nora\n      , LineChart.line Colors.cyan Dots.circle \"Noah\" data.noah\n      , LineChart.line Colors.blue Dots.circle \"Nina\" data.nina\n      ]\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n  ';
-var _user$project$Selection$round100 = function ($float) {
+var _terezka$line_charts$Selection$source = '\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hovered : Maybe Float\n    , selection : Maybe Selection\n    , dragging : Bool\n    , hinted : Maybe Datum\n    }\n\n\n  type alias Selection =\n    { xStart : Float\n    , xEnd : Float\n    }\n\n\n  type alias Data =\n    { nora : List Datum\n    , noah : List Datum\n    , nina : List Datum\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hovered = Nothing\n      , selection = Nothing\n      , dragging = False\n      , hinted = Nothing\n      }\n    , generateData\n    )\n\n\n  generateData : Cmd Msg\n  generateData =\n    let\n      genNumbers =\n        Random.list 201 (Random.float 0 20)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveData\n\n\n\n  -- MODEL API\n\n\n  setData : ( List Float, List Float, List Float ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Float -> List Datum\n  toData numbers =\n    List.indexedMap (\\i -> Datum (toFloat i)) numbers\n\n\n  setSelection : Maybe Selection -> Model -> Model\n  setSelection selection model =\n    { model | selection = selection }\n\n\n  setDragging : Bool -> Model -> Model\n  setDragging dragging model =\n    { model | dragging = dragging }\n\n\n  setHovered : Maybe Float -> Model -> Model\n  setHovered hovered model =\n    { model | hovered = hovered }\n\n\n  setHint : Maybe Datum -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n  getSelectionXStart : Float -> Model -> Float\n  getSelectionXStart hovered model =\n    case model.selection of\n      Just selection -> selection.xStart\n      Nothing        -> hovered\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveData ( List Float, List Float, List Float )\n    -- Chart Main\n    | Hold Datum\n    | Move Datum\n    | Drop Datum\n    | LeaveChart Datum\n    | LeaveContainer Datum\n    -- Chart Zoom\n    | Hint (Maybe Datum)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveData numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hold point ->\n        model\n          |> setSelection Nothing\n          |> setDragging True\n          |> addCmd Cmd.none\n\n      Move point ->\n        if model.dragging then\n          let\n            start = getSelectionXStart point.x model\n            newSelection = Selection start point.x\n          in\n          model\n            |> setSelection (Just newSelection)\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n        else\n          model\n            |> setHovered (Just point.x)\n            |> addCmd Cmd.none\n\n      Drop point ->\n        if point.x == getSelectionXStart point.x model then\n          model\n            |> setSelection Nothing\n            |> setDragging False\n            |> addCmd Cmd.none\n        else\n          model\n            |> setDragging False\n            |> addCmd Cmd.none\n\n      LeaveChart point ->\n        model\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      LeaveContainer point ->\n        model\n          |> setDragging False\n          |> setHovered Nothing\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    let\n      style =\n        [ ( \"display\", \"flex\" ) ]\n\n      content =\n        case model.selection of\n          Nothing ->\n            [ viewPlaceholder\n            , viewChartMain model\n            ]\n\n          Just selection ->\n            if selection.xStart == selection.xEnd then\n              [ viewPlaceholder\n              , viewChartMain model\n              ]\n            else\n              [ viewChartZoom model selection\n              , viewChartMain model\n              ]\n    in\n    Html.div [ Html.Attributes.style style ] content\n\n\n  viewPlaceholder : Html.Html Msg\n  viewPlaceholder =\n    Html.div\n      [ Html.Attributes.style\n          [ ( \"margin\", \"40px 25px 30px 70px\" )\n          , ( \"width\", \"505px\" )\n          , ( \"height\", \"360px\" )\n          , ( \"background\", \"#4646461a\" )\n          , ( \"text-align\", \"center\" )\n          , ( \"line-height\", \"340px\" )\n          ]\n      ]\n      [ Html.text \"Select a range on the graph to the right!\" ]\n\n\n\n  -- MAIN CHART\n\n\n  viewChartMain : Model -> Html.Html Msg\n  viewChartMain model =\n    viewChart model.data\n      { range = Range.default\n      , junk = junkConfig model\n      , legends = Legends.default\n      , events = events\n      , width = 670\n      , margin = Container.Margin 30 100 60 70\n      , dots = Dots.custom (Dots.full 0)\n      , id = \"line-chart\"\n      }\n\n\n  events : Events.Config Datum Msg\n  events =\n    let\n      options bool =\n        { stopPropagation = True\n        , preventDefault = True\n        , catchOutsideChart = bool\n        }\n    in\n    Events.custom\n      [ Events.onWithOptions \"mousedown\"  (options False) Hold           Events.getData\n      , Events.onWithOptions \"mousemove\"  (options False) Move           Events.getData\n      , Events.onWithOptions \"mouseup\"    (options True)  Drop           Events.getData\n      , Events.onWithOptions \"mouseleave\" (options False) LeaveChart     Events.getData\n      , Events.onWithOptions \"mouseleave\" (options True)  LeaveContainer Events.getData\n      ]\n\n\n  junkConfig : Model -> Junk.Config Datum msg\n  junkConfig model =\n    Junk.custom <| \\system ->\n      { below = below system model.selection\n      , above = above system model.hovered\n      , html = []\n      }\n\n\n  below : Coordinate.System -> Maybe Selection -> List (Svg.Svg msg)\n  below system selection =\n    case selection of\n      Just { xStart, xEnd } ->\n        let\n          attributes =\n            [ Svg.Attributes.fill \"#4646461a\" ]\n\n          ( yStart, yEnd ) =\n            ( system.y.min, system.y.max )\n\n          viewSelection =\n            Junk.rectangle system attributes xStart xEnd yStart yEnd\n        in\n        [ viewSelection ]\n\n      Nothing ->\n        []\n\n\n  above : Coordinate.System -> Maybe Float -> List (Svg.Svg msg)\n  above system hovered =\n    case hovered of\n      Just hovered ->\n        [ Junk.vertical system [] hovered ]\n\n      Nothing ->\n        []\n\n\n\n  -- ZOOM CHART\n\n\n  viewChartZoom : Model -> Selection -> Html.Html Msg\n  viewChartZoom model selection =\n    viewChart model.data\n      { range = xAxisRangeConfig selection\n      , junk =\n          Junk.hoverOne model.hinted\n            [ ( \"x\", toString << round100 << .x )\n            , ( \"y\", toString << round100 << .y )\n            ]\n      , events = Events.hoverOne Hint\n      , legends = Legends.none\n      , dots = Dots.hoverOne model.hinted\n      , width = 600\n      , margin = Container.Margin 30 25 60 70\n      , id = \"line-chart-zoom\"\n      }\n\n\n  xAxisRangeConfig : Selection -> Range.Config\n  xAxisRangeConfig selection =\n    let\n      xStart =\n        min selection.xStart selection.xEnd\n\n      xEnd =\n        max selection.xStart selection.xEnd\n    in\n    Range.window xStart xEnd\n\n\n\n\n  -- VIEW CHART\n\n\n  type alias Config =\n    { range : Range.Config\n    , junk : Junk.Config Datum Msg\n    , events : Events.Config Datum Msg\n    , legends : Legends.Config Datum Msg\n    , dots : Dots.Config Datum\n    , margin : Container.Margin\n    , width : Int\n    , id : String\n    }\n\n\n  viewChart : Data -> Config -> Html.Html Msg\n  viewChart data { range, junk, events, legends, dots, width, margin, id } =\n    LineChart.viewCustom\n      { y = Axis.default 450 \"y\" .y\n      , x =\n          Axis.custom\n            { title = Title.default \"x\"\n            , variable = Just << .x\n            , pixels = width\n            , range = range\n            , axisLine = AxisLine.rangeFrame Colors.gray\n            , ticks = Ticks.float 5\n            }\n      , container =\n          Container.custom\n            { attributesHtml = [ Html.Attributes.style [ ( \"display\", \"inline-block\" ) ] ]\n            , attributesSvg = []\n            , size = Container.static\n            , margin = margin\n            , id = \"chart-id\"\n            }\n      , interpolation = Interpolation.monotone\n      , intersection = Intersection.default\n      , legends = legends\n      , events = events\n      , junk = junk\n      , grid = Grid.default\n      , area = Area.default\n      , line = Line.default\n      , dots = dots\n      }\n      [ LineChart.line Colors.pink Dots.circle \"Nora\" data.nora\n      , LineChart.line Colors.cyan Dots.circle \"Noah\" data.noah\n      , LineChart.line Colors.blue Dots.circle \"Nina\" data.nina\n      ]\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n\n\n  ';
+var _terezka$line_charts$Selection$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
 };
-var _user$project$Selection$viewChart = F2(
+var _terezka$line_charts$Selection$viewChart = F2(
 	function (data, _p0) {
 		var _p1 = _p0;
 		var containerStyles = {
@@ -20044,11 +20120,11 @@ var _user$project$Selection$viewChart = F2(
 			}
 		};
 		return A2(
-			_user$project$LineChart$viewCustom,
+			_terezka$line_charts$LineChart$viewCustom,
 			{
-				y: _user$project$LineChart_Axis$custom(
+				y: _terezka$line_charts$LineChart_Axis$custom(
 					{
-						title: A3(_user$project$LineChart_Axis_Title$atAxisMax, 50, 0, 'displacement'),
+						title: A3(_terezka$line_charts$LineChart_Axis_Title$atAxisMax, 50, 0, 'displacement'),
 						variable: function (_p2) {
 							return _elm_lang$core$Maybe$Just(
 								function (_) {
@@ -20056,13 +20132,13 @@ var _user$project$Selection$viewChart = F2(
 								}(_p2));
 						},
 						pixels: 450,
-						range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
-						axisLine: _user$project$LineChart_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
-						ticks: _user$project$LineChart_Axis_Ticks$float(5)
+						range: A2(_terezka$line_charts$LineChart_Axis_Range$padded, 20, 20),
+						axisLine: _terezka$line_charts$LineChart_Axis_Line$rangeFrame(_terezka$line_charts$LineChart_Colors$gray),
+						ticks: _terezka$line_charts$LineChart_Axis_Ticks$float(5)
 					}),
-				x: _user$project$LineChart_Axis$custom(
+				x: _terezka$line_charts$LineChart_Axis$custom(
 					{
-						title: _user$project$LineChart_Axis_Title$default('time'),
+						title: _terezka$line_charts$LineChart_Axis_Title$default('time'),
 						variable: function (_p3) {
 							return _elm_lang$core$Maybe$Just(
 								function (_) {
@@ -20071,10 +20147,10 @@ var _user$project$Selection$viewChart = F2(
 						},
 						pixels: _p1.width,
 						range: _p1.range,
-						axisLine: _user$project$LineChart_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
-						ticks: _user$project$LineChart_Axis_Ticks$time(5)
+						axisLine: _terezka$line_charts$LineChart_Axis_Line$rangeFrame(_terezka$line_charts$LineChart_Colors$gray),
+						ticks: _terezka$line_charts$LineChart_Axis_Ticks$time(5)
 					}),
-				container: _user$project$LineChart_Container$custom(
+				container: _terezka$line_charts$LineChart_Container$custom(
 					{
 						attributesHtml: {
 							ctor: '::',
@@ -20082,78 +20158,78 @@ var _user$project$Selection$viewChart = F2(
 							_1: {ctor: '[]'}
 						},
 						attributesSvg: {ctor: '[]'},
-						size: _user$project$LineChart_Container$static,
+						size: _terezka$line_charts$LineChart_Container$static,
 						margin: _p1.margin,
 						id: _p1.id
 					}),
-				interpolation: _user$project$LineChart_Interpolation$monotone,
-				intersection: _user$project$LineChart_Axis_Intersection$default,
+				interpolation: _terezka$line_charts$LineChart_Interpolation$monotone,
+				intersection: _terezka$line_charts$LineChart_Axis_Intersection$default,
 				legends: _p1.legends,
 				events: _p1.events,
 				junk: _p1.junk,
-				grid: _user$project$LineChart_Grid$default,
-				area: _user$project$LineChart_Area$default,
-				line: _user$project$LineChart_Line$default,
+				grid: _terezka$line_charts$LineChart_Grid$default,
+				area: _terezka$line_charts$LineChart_Area$default,
+				line: _terezka$line_charts$LineChart_Line$default,
 				dots: _p1.dots
 			},
 			{
 				ctor: '::',
-				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$circle, 'San Jose', data.sanJose),
+				_0: A4(_terezka$line_charts$LineChart$line, _terezka$line_charts$LineChart_Colors$pink, _terezka$line_charts$LineChart_Dots$circle, 'San Jose', data.sanJose),
 				_1: {
 					ctor: '::',
-					_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$circle, 'San Fransisco', data.sanFransisco),
+					_0: A4(_terezka$line_charts$LineChart$line, _terezka$line_charts$LineChart_Colors$cyan, _terezka$line_charts$LineChart_Dots$circle, 'San Fransisco', data.sanFransisco),
 					_1: {
 						ctor: '::',
-						_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$circle, 'San Diego', data.sanDiego),
+						_0: A4(_terezka$line_charts$LineChart$line, _terezka$line_charts$LineChart_Colors$blue, _terezka$line_charts$LineChart_Dots$circle, 'San Diego', data.sanDiego),
 						_1: {ctor: '[]'}
 					}
 				}
 			});
 	});
-var _user$project$Selection$formatY = function (datum) {
+var _terezka$line_charts$Selection$formatY = function (datum) {
 	return _elm_lang$core$Basics$toString(
-		_user$project$Selection$round100(datum.displacement));
+		_terezka$line_charts$Selection$round100(datum.displacement));
 };
-var _user$project$Selection$formatX = function (datum) {
+var _terezka$line_charts$Selection$formatX = function (datum) {
 	return A2(
 		_mgold$elm_date_format$Date_Format$format,
 		'%l:%M%P, %e. %b, %Y',
 		_elm_lang$core$Date$fromTime(datum.time));
 };
-var _user$project$Selection$xAxisRangeConfig = function (selection) {
+var _terezka$line_charts$Selection$xAxisRangeConfig = function (selection) {
 	var xEnd = A2(_elm_lang$core$Basics$max, selection.xStart, selection.xEnd);
 	var xStart = A2(_elm_lang$core$Basics$min, selection.xStart, selection.xEnd);
-	return A2(_user$project$LineChart_Axis_Range$window, xStart, xEnd);
+	return A2(_terezka$line_charts$LineChart_Axis_Range$window, xStart, xEnd);
 };
-var _user$project$Selection$title = function (system) {
-	return A8(_user$project$LineChart_Junk$labelAt, system, system.x.max, system.y.max, 20, -5, 'start', _user$project$LineChart_Colors$black, 'Earthquake in');
+var _terezka$line_charts$Selection$title = function (system) {
+	return A8(_terezka$line_charts$LineChart_Junk$labelAt, system, system.x.max, system.y.max, 20, -5, 'start', _terezka$line_charts$LineChart_Colors$black, 'Earthquake in');
 };
-var _user$project$Selection$above = F2(
+var _terezka$line_charts$Selection$above = F2(
 	function (system, hovered) {
 		var _p4 = hovered;
 		if (_p4.ctor === 'Just') {
 			return {
 				ctor: '::',
 				_0: A3(
-					_user$project$LineChart_Junk$vertical,
+					_terezka$line_charts$LineChart_Junk$vertical,
 					system,
 					{ctor: '[]'},
 					_p4._0),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Selection$title(system),
+					_0: _terezka$line_charts$Selection$title(system),
 					_1: {ctor: '[]'}
 				}
 			};
 		} else {
 			return {
 				ctor: '::',
-				_0: _user$project$Selection$title(system),
+				_0: _terezka$line_charts$Selection$title(system),
 				_1: {ctor: '[]'}
 			};
 		}
 	});
-var _user$project$Selection$below = F2(
+var _terezka$line_charts$Selection$below = F2(
 	function (system, selection) {
 		var _p5 = selection;
 		if (_p5.ctor === 'Just') {
@@ -20165,7 +20241,7 @@ var _user$project$Selection$below = F2(
 				_0: _elm_lang$svg$Svg_Attributes$fill('#4646461a'),
 				_1: {ctor: '[]'}
 			};
-			var viewSelection = A6(_user$project$LineChart_Junk$rectangle, system, attributes, _p5._0.xStart, _p5._0.xEnd, yStart, yEnd);
+			var viewSelection = A6(_terezka$line_charts$LineChart_Junk$rectangle, system, attributes, _p5._0.xStart, _p5._0.xEnd, yStart, yEnd);
 			return {
 				ctor: '::',
 				_0: viewSelection,
@@ -20175,17 +20251,17 @@ var _user$project$Selection$below = F2(
 			return {ctor: '[]'};
 		}
 	});
-var _user$project$Selection$junkConfig = function (model) {
-	return _user$project$LineChart_Junk$custom(
+var _terezka$line_charts$Selection$junkConfig = function (model) {
+	return _terezka$line_charts$LineChart_Junk$custom(
 		function (system) {
 			return {
-				below: A2(_user$project$Selection$below, system, model.selection),
-				above: A2(_user$project$Selection$above, system, model.hovered),
+				below: A2(_terezka$line_charts$Selection$below, system, model.selection),
+				above: A2(_terezka$line_charts$Selection$above, system, model.hovered),
 				html: {ctor: '[]'}
 			};
 		});
 };
-var _user$project$Selection$viewPlaceholderText = A2(
+var _terezka$line_charts$Selection$viewPlaceholderText = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
@@ -20197,7 +20273,7 @@ var _user$project$Selection$viewPlaceholderText = A2(
 		_0: _elm_lang$html$Html$text('Select a range on the chart to the right!'),
 		_1: {ctor: '[]'}
 	});
-var _user$project$Selection$viewInnerPlaceholder = A2(
+var _terezka$line_charts$Selection$viewInnerPlaceholder = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
@@ -20206,10 +20282,10 @@ var _user$project$Selection$viewInnerPlaceholder = A2(
 	},
 	{
 		ctor: '::',
-		_0: _user$project$Selection$viewPlaceholderText,
+		_0: _terezka$line_charts$Selection$viewPlaceholderText,
 		_1: {ctor: '[]'}
 	});
-var _user$project$Selection$viewPlaceholder = A2(
+var _terezka$line_charts$Selection$viewPlaceholder = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
@@ -20218,14 +20294,14 @@ var _user$project$Selection$viewPlaceholder = A2(
 	},
 	{
 		ctor: '::',
-		_0: _user$project$Selection$viewInnerPlaceholder,
+		_0: _terezka$line_charts$Selection$viewInnerPlaceholder,
 		_1: {ctor: '[]'}
 	});
-var _user$project$Selection$addCmd = F2(
+var _terezka$line_charts$Selection$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
-var _user$project$Selection$getSelectionXStart = F2(
+var _terezka$line_charts$Selection$getSelectionXStart = F2(
 	function (hovered, model) {
 		var _p7 = model.selection;
 		if (_p7.ctor === 'Just') {
@@ -20234,85 +20310,85 @@ var _user$project$Selection$getSelectionXStart = F2(
 			return hovered;
 		}
 	});
-var _user$project$Selection$setHint = F2(
+var _terezka$line_charts$Selection$setHint = F2(
 	function (hinted, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{hinted: hinted});
 	});
-var _user$project$Selection$setHovered = F2(
+var _terezka$line_charts$Selection$setHovered = F2(
 	function (hovered, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{hovered: hovered});
 	});
-var _user$project$Selection$setDragging = F2(
+var _terezka$line_charts$Selection$setDragging = F2(
 	function (dragging, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{dragging: dragging});
 	});
-var _user$project$Selection$setSelection = F2(
+var _terezka$line_charts$Selection$setSelection = F2(
 	function (selection, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{selection: selection});
 	});
-var _user$project$Selection$setData = F2(
+var _terezka$line_charts$Selection$setData = F2(
 	function (data, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{data: data});
 	});
-var _user$project$Selection$indexToTime = function (index) {
+var _terezka$line_charts$Selection$indexToTime = function (index) {
 	return ((((_elm_lang$core$Time$hour * 24) * 365) * 45) + ((_elm_lang$core$Time$hour * 24) * 30)) + ((_elm_lang$core$Time$minute * 15) * _elm_lang$core$Basics$toFloat(index));
 };
-var _user$project$Selection$Model = F5(
+var _terezka$line_charts$Selection$Model = F5(
 	function (a, b, c, d, e) {
 		return {data: a, hovered: b, selection: c, dragging: d, hinted: e};
 	});
-var _user$project$Selection$Selection = F2(
+var _terezka$line_charts$Selection$Selection = F2(
 	function (a, b) {
 		return {xStart: a, xEnd: b};
 	});
-var _user$project$Selection$update = F2(
+var _terezka$line_charts$Selection$update = F2(
 	function (msg, model) {
 		var _p8 = msg;
 		switch (_p8.ctor) {
 			case 'RecieveData':
 				return A2(
-					_user$project$Selection$addCmd,
+					_terezka$line_charts$Selection$addCmd,
 					_elm_lang$core$Platform_Cmd$none,
-					A2(_user$project$Selection$setData, _p8._0, model));
+					A2(_terezka$line_charts$Selection$setData, _p8._0, model));
 			case 'Hold':
 				return A2(
-					_user$project$Selection$addCmd,
+					_terezka$line_charts$Selection$addCmd,
 					_elm_lang$core$Platform_Cmd$none,
 					A2(
-						_user$project$Selection$setDragging,
+						_terezka$line_charts$Selection$setDragging,
 						true,
-						A2(_user$project$Selection$setSelection, _elm_lang$core$Maybe$Nothing, model)));
+						A2(_terezka$line_charts$Selection$setSelection, _elm_lang$core$Maybe$Nothing, model)));
 			case 'Move':
 				var _p9 = _p8._0;
 				if (model.dragging) {
-					var start = A2(_user$project$Selection$getSelectionXStart, _p9.x, model);
-					var newSelection = A2(_user$project$Selection$Selection, start, _p9.x);
+					var start = A2(_terezka$line_charts$Selection$getSelectionXStart, _p9.x, model);
+					var newSelection = A2(_terezka$line_charts$Selection$Selection, start, _p9.x);
 					return A2(
-						_user$project$Selection$addCmd,
+						_terezka$line_charts$Selection$addCmd,
 						_elm_lang$core$Platform_Cmd$none,
 						A2(
-							_user$project$Selection$setHovered,
+							_terezka$line_charts$Selection$setHovered,
 							_elm_lang$core$Maybe$Just(_p9.x),
 							A2(
-								_user$project$Selection$setSelection,
+								_terezka$line_charts$Selection$setSelection,
 								_elm_lang$core$Maybe$Just(newSelection),
 								model)));
 				} else {
 					return A2(
-						_user$project$Selection$addCmd,
+						_terezka$line_charts$Selection$addCmd,
 						_elm_lang$core$Platform_Cmd$none,
 						A2(
-							_user$project$Selection$setHovered,
+							_terezka$line_charts$Selection$setHovered,
 							_elm_lang$core$Maybe$Just(_p9.x),
 							model));
 				}
@@ -20320,148 +20396,148 @@ var _user$project$Selection$update = F2(
 				var _p10 = _p8._0;
 				return _elm_lang$core$Native_Utils.eq(
 					_p10.x,
-					A2(_user$project$Selection$getSelectionXStart, _p10.x, model)) ? A2(
-					_user$project$Selection$addCmd,
+					A2(_terezka$line_charts$Selection$getSelectionXStart, _p10.x, model)) ? A2(
+					_terezka$line_charts$Selection$addCmd,
 					_elm_lang$core$Platform_Cmd$none,
 					A2(
-						_user$project$Selection$setDragging,
+						_terezka$line_charts$Selection$setDragging,
 						false,
-						A2(_user$project$Selection$setSelection, _elm_lang$core$Maybe$Nothing, model))) : A2(
-					_user$project$Selection$addCmd,
+						A2(_terezka$line_charts$Selection$setSelection, _elm_lang$core$Maybe$Nothing, model))) : A2(
+					_terezka$line_charts$Selection$addCmd,
 					_elm_lang$core$Platform_Cmd$none,
-					A2(_user$project$Selection$setDragging, false, model));
+					A2(_terezka$line_charts$Selection$setDragging, false, model));
 			case 'LeaveChart':
 				return A2(
-					_user$project$Selection$addCmd,
+					_terezka$line_charts$Selection$addCmd,
 					_elm_lang$core$Platform_Cmd$none,
-					A2(_user$project$Selection$setHovered, _elm_lang$core$Maybe$Nothing, model));
+					A2(_terezka$line_charts$Selection$setHovered, _elm_lang$core$Maybe$Nothing, model));
 			case 'LeaveContainer':
 				return A2(
-					_user$project$Selection$addCmd,
+					_terezka$line_charts$Selection$addCmd,
 					_elm_lang$core$Platform_Cmd$none,
 					A2(
-						_user$project$Selection$setHovered,
+						_terezka$line_charts$Selection$setHovered,
 						_elm_lang$core$Maybe$Nothing,
-						A2(_user$project$Selection$setDragging, false, model)));
+						A2(_terezka$line_charts$Selection$setDragging, false, model)));
 			default:
 				return A2(
-					_user$project$Selection$addCmd,
+					_terezka$line_charts$Selection$addCmd,
 					_elm_lang$core$Platform_Cmd$none,
-					A2(_user$project$Selection$setHint, _p8._0, model));
+					A2(_terezka$line_charts$Selection$setHint, _p8._0, model));
 		}
 	});
-var _user$project$Selection$Data = F3(
+var _terezka$line_charts$Selection$Data = F3(
 	function (a, b, c) {
 		return {sanJose: a, sanDiego: b, sanFransisco: c};
 	});
-var _user$project$Selection$Datum = F2(
+var _terezka$line_charts$Selection$Datum = F2(
 	function (a, b) {
 		return {time: a, displacement: b};
 	});
-var _user$project$Selection$toData = function (numbers) {
+var _terezka$line_charts$Selection$toData = function (numbers) {
 	var toDatum = F2(
 		function (index, displacement) {
 			return A2(
-				_user$project$Selection$Datum,
-				_user$project$Selection$indexToTime(index),
+				_terezka$line_charts$Selection$Datum,
+				_terezka$line_charts$Selection$indexToTime(index),
 				displacement);
 		});
 	return A2(_elm_lang$core$List$indexedMap, toDatum, numbers);
 };
-var _user$project$Selection$Config = F8(
+var _terezka$line_charts$Selection$Config = F8(
 	function (a, b, c, d, e, f, g, h) {
 		return {range: a, junk: b, events: c, legends: d, dots: e, margin: f, width: g, id: h};
 	});
-var _user$project$Selection$Hint = function (a) {
+var _terezka$line_charts$Selection$Hint = function (a) {
 	return {ctor: 'Hint', _0: a};
 };
-var _user$project$Selection$viewChartZoom = F2(
+var _terezka$line_charts$Selection$viewChartZoom = F2(
 	function (model, selection) {
 		return A2(
-			_user$project$Selection$viewChart,
+			_terezka$line_charts$Selection$viewChart,
 			model.data,
 			{
-				range: _user$project$Selection$xAxisRangeConfig(selection),
+				range: _terezka$line_charts$Selection$xAxisRangeConfig(selection),
 				junk: A2(
-					_user$project$LineChart_Junk$hoverOne,
+					_terezka$line_charts$LineChart_Junk$hoverOne,
 					model.hinted,
 					{
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'time', _1: _user$project$Selection$formatX},
+						_0: {ctor: '_Tuple2', _0: 'time', _1: _terezka$line_charts$Selection$formatX},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'displacement', _1: _user$project$Selection$formatY},
+							_0: {ctor: '_Tuple2', _0: 'displacement', _1: _terezka$line_charts$Selection$formatY},
 							_1: {ctor: '[]'}
 						}
 					}),
-				events: _user$project$LineChart_Events$hoverOne(_user$project$Selection$Hint),
-				legends: _user$project$LineChart_Legends$none,
-				dots: _user$project$LineChart_Dots$hoverOne(model.hinted),
+				events: _terezka$line_charts$LineChart_Events$hoverOne(_terezka$line_charts$Selection$Hint),
+				legends: _terezka$line_charts$LineChart_Legends$none,
+				dots: _terezka$line_charts$LineChart_Dots$hoverOne(model.hinted),
 				width: 670,
-				margin: A4(_user$project$LineChart_Container$Margin, 30, 60, 30, 75),
+				margin: A4(_terezka$line_charts$LineChart_Container$Margin, 30, 60, 30, 75),
 				id: 'line-chart-zoom'
 			});
 	});
-var _user$project$Selection$LeaveContainer = function (a) {
+var _terezka$line_charts$Selection$LeaveContainer = function (a) {
 	return {ctor: 'LeaveContainer', _0: a};
 };
-var _user$project$Selection$LeaveChart = function (a) {
+var _terezka$line_charts$Selection$LeaveChart = function (a) {
 	return {ctor: 'LeaveChart', _0: a};
 };
-var _user$project$Selection$Drop = function (a) {
+var _terezka$line_charts$Selection$Drop = function (a) {
 	return {ctor: 'Drop', _0: a};
 };
-var _user$project$Selection$Move = function (a) {
+var _terezka$line_charts$Selection$Move = function (a) {
 	return {ctor: 'Move', _0: a};
 };
-var _user$project$Selection$Hold = function (a) {
+var _terezka$line_charts$Selection$Hold = function (a) {
 	return {ctor: 'Hold', _0: a};
 };
-var _user$project$Selection$events = function () {
+var _terezka$line_charts$Selection$events = function () {
 	var options = function (bool) {
 		return {stopPropagation: true, preventDefault: true, catchOutsideChart: bool};
 	};
-	return _user$project$LineChart_Events$custom(
+	return _terezka$line_charts$LineChart_Events$custom(
 		{
 			ctor: '::',
 			_0: A4(
-				_user$project$LineChart_Events$onWithOptions,
+				_terezka$line_charts$LineChart_Events$onWithOptions,
 				'mousedown',
 				options(false),
-				_user$project$Selection$Hold,
-				_user$project$LineChart_Events$getData),
+				_terezka$line_charts$Selection$Hold,
+				_terezka$line_charts$LineChart_Events$getData),
 			_1: {
 				ctor: '::',
 				_0: A4(
-					_user$project$LineChart_Events$onWithOptions,
+					_terezka$line_charts$LineChart_Events$onWithOptions,
 					'mousemove',
 					options(false),
-					_user$project$Selection$Move,
-					_user$project$LineChart_Events$getData),
+					_terezka$line_charts$Selection$Move,
+					_terezka$line_charts$LineChart_Events$getData),
 				_1: {
 					ctor: '::',
 					_0: A4(
-						_user$project$LineChart_Events$onWithOptions,
+						_terezka$line_charts$LineChart_Events$onWithOptions,
 						'mouseup',
 						options(true),
-						_user$project$Selection$Drop,
-						_user$project$LineChart_Events$getData),
+						_terezka$line_charts$Selection$Drop,
+						_terezka$line_charts$LineChart_Events$getData),
 					_1: {
 						ctor: '::',
 						_0: A4(
-							_user$project$LineChart_Events$onWithOptions,
+							_terezka$line_charts$LineChart_Events$onWithOptions,
 							'mouseleave',
 							options(false),
-							_user$project$Selection$LeaveChart,
-							_user$project$LineChart_Events$getData),
+							_terezka$line_charts$Selection$LeaveChart,
+							_terezka$line_charts$LineChart_Events$getData),
 						_1: {
 							ctor: '::',
 							_0: A4(
-								_user$project$LineChart_Events$onWithOptions,
+								_terezka$line_charts$LineChart_Events$onWithOptions,
 								'mouseleave',
 								options(true),
-								_user$project$Selection$LeaveContainer,
-								_user$project$LineChart_Events$getData),
+								_terezka$line_charts$Selection$LeaveContainer,
+								_terezka$line_charts$LineChart_Events$getData),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -20469,23 +20545,23 @@ var _user$project$Selection$events = function () {
 			}
 		});
 }();
-var _user$project$Selection$viewChartMain = function (model) {
+var _terezka$line_charts$Selection$viewChartMain = function (model) {
 	return A2(
-		_user$project$Selection$viewChart,
+		_terezka$line_charts$Selection$viewChart,
 		model.data,
 		{
-			range: _user$project$LineChart_Axis_Range$default,
-			junk: _user$project$Selection$junkConfig(model),
-			legends: _user$project$LineChart_Legends$default,
-			events: _user$project$Selection$events,
+			range: _terezka$line_charts$LineChart_Axis_Range$default,
+			junk: _terezka$line_charts$Selection$junkConfig(model),
+			legends: _terezka$line_charts$LineChart_Legends$default,
+			events: _terezka$line_charts$Selection$events,
 			width: 670,
-			margin: A4(_user$project$LineChart_Container$Margin, 30, 165, 30, 70),
-			dots: _user$project$LineChart_Dots$custom(
-				_user$project$LineChart_Dots$full(0)),
+			margin: A4(_terezka$line_charts$LineChart_Container$Margin, 30, 165, 30, 70),
+			dots: _terezka$line_charts$LineChart_Dots$custom(
+				_terezka$line_charts$LineChart_Dots$full(0)),
 			id: 'line-chart-selection-main'
 		});
 };
-var _user$project$Selection$view = function (model) {
+var _terezka$line_charts$Selection$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -20494,10 +20570,10 @@ var _user$project$Selection$view = function (model) {
 			if (_p11.ctor === 'Nothing') {
 				return {
 					ctor: '::',
-					_0: _user$project$Selection$viewPlaceholder,
+					_0: _terezka$line_charts$Selection$viewPlaceholder,
 					_1: {
 						ctor: '::',
-						_0: _user$project$Selection$viewChartMain(model),
+						_0: _terezka$line_charts$Selection$viewChartMain(model),
 						_1: {ctor: '[]'}
 					}
 				};
@@ -20505,35 +20581,35 @@ var _user$project$Selection$view = function (model) {
 				var _p12 = _p11._0;
 				return _elm_lang$core$Native_Utils.eq(_p12.xStart, _p12.xEnd) ? {
 					ctor: '::',
-					_0: _user$project$Selection$viewPlaceholder,
+					_0: _terezka$line_charts$Selection$viewPlaceholder,
 					_1: {
 						ctor: '::',
-						_0: _user$project$Selection$viewChartMain(model),
+						_0: _terezka$line_charts$Selection$viewChartMain(model),
 						_1: {ctor: '[]'}
 					}
 				} : {
 					ctor: '::',
-					_0: A2(_user$project$Selection$viewChartZoom, model, _p12),
+					_0: A2(_terezka$line_charts$Selection$viewChartZoom, model, _p12),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Selection$viewChartMain(model),
+						_0: _terezka$line_charts$Selection$viewChartMain(model),
 						_1: {ctor: '[]'}
 					}
 				};
 			}
 		}());
 };
-var _user$project$Selection$RecieveData = function (a) {
+var _terezka$line_charts$Selection$RecieveData = function (a) {
 	return {ctor: 'RecieveData', _0: a};
 };
-var _user$project$Selection$generateData = function () {
+var _terezka$line_charts$Selection$generateData = function () {
 	var compile = F3(
 		function (a, b, c) {
 			return A3(
-				_user$project$Selection$Data,
-				_user$project$Selection$toData(a),
-				_user$project$Selection$toData(b),
-				_user$project$Selection$toData(c));
+				_terezka$line_charts$Selection$Data,
+				_terezka$line_charts$Selection$toData(a),
+				_terezka$line_charts$Selection$toData(b),
+				_terezka$line_charts$Selection$toData(c));
 		});
 	var genNumbers = F2(
 		function (min, max) {
@@ -20543,24 +20619,24 @@ var _user$project$Selection$generateData = function () {
 				A2(_elm_lang$core$Random$float, min, max));
 		});
 	return A2(
-		_user$project$Random_Pipeline$send,
-		_user$project$Selection$RecieveData,
+		_terezka$line_charts$Random_Pipeline$send,
+		_terezka$line_charts$Selection$RecieveData,
 		A2(
-			_user$project$Random_Pipeline$with,
+			_terezka$line_charts$Random_Pipeline$with,
 			A2(genNumbers, -8, 8),
 			A2(
-				_user$project$Random_Pipeline$with,
+				_terezka$line_charts$Random_Pipeline$with,
 				A2(genNumbers, -7, 7),
 				A2(
-					_user$project$Random_Pipeline$with,
+					_terezka$line_charts$Random_Pipeline$with,
 					A2(genNumbers, -10, 10),
-					_user$project$Random_Pipeline$generate(compile)))));
+					_terezka$line_charts$Random_Pipeline$generate(compile)))));
 }();
-var _user$project$Selection$init = {
+var _terezka$line_charts$Selection$init = {
 	ctor: '_Tuple2',
 	_0: {
 		data: A3(
-			_user$project$Selection$Data,
+			_terezka$line_charts$Selection$Data,
 			{ctor: '[]'},
 			{ctor: '[]'},
 			{ctor: '[]'}),
@@ -20569,146 +20645,146 @@ var _user$project$Selection$init = {
 		dragging: false,
 		hinted: _elm_lang$core$Maybe$Nothing
 	},
-	_1: _user$project$Selection$generateData
+	_1: _terezka$line_charts$Selection$generateData
 };
-var _user$project$Selection$main = _elm_lang$html$Html$program(
+var _terezka$line_charts$Selection$main = _elm_lang$html$Html$program(
 	{
-		init: _user$project$Selection$init,
-		update: _user$project$Selection$update,
-		view: _user$project$Selection$view,
+		init: _terezka$line_charts$Selection$init,
+		update: _terezka$line_charts$Selection$update,
+		view: _terezka$line_charts$Selection$view,
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})();
 
-var _user$project$Stepped$source = '\n\n  -- MODEL\n\n\n  type alias Model =\n    { data : Data\n    , hinted : Maybe Coordinate.Point\n    }\n\n\n  type alias Data =\n    { nora : List Coordinate.Point\n    , noah : List Coordinate.Point\n    , nina : List Coordinate.Point\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = Data [] [] []\n      , hinted = Nothing\n      }\n    , getNumbers\n    )\n\n\n  getNumbers : Cmd Msg\n  getNumbers =\n    let\n      genNumbers =\n        Random.list 30 (Random.int -70 100)\n    in\n    Random.map3 (,,) genNumbers genNumbers genNumbers\n      |> Random.generate RecieveNumbers\n\n\n\n  -- API\n\n\n  setData : ( List Int, List Int, List Int ) -> Model -> Model\n  setData ( n1, n2, n3 ) model =\n    { model | data = Data (toData n1) (toData n2) (toData n3) }\n\n\n  toData : List Int -> List Coordinate.Point\n  toData numbers =\n    List.indexedMap (\\i n -> Coordinate.Point (toDate i) (toFloat n)) numbers\n\n\n  toDate : Int -> Time.Time\n  toDate index =\n    Time.hour * 24 * 356 * 45 + Time.hour * 24 * toFloat index\n\n\n  setHint : Maybe Coordinate.Point -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = RecieveNumbers ( List Int, List Int, List Int )\n    | Hint (Maybe Coordinate.Point)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      RecieveNumbers numbers ->\n        model\n          |> setData numbers\n          |> addCmd Cmd.none\n\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, Cmd.none )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div [] [ chart model ]\n\n\n\n  -- CHART\n\n\n  chart : Model -> Html.Html Msg\n  chart model =\n    LineChart.viewCustom\n      { y =\n          Axis.custom\n            { title = Title.default \"LoC\"\n            , variable = Just << .y\n            , pixels = 450\n            , range = Range.padded 20 20\n            , axisLine = AxisLine.full Colors.gray\n            , ticks = Ticks.float 8\n            }\n      , x =\n          Axis.custom\n            { title = Title.default \"Time\"\n            , variable = Just << .x\n            , pixels = 1270\n            , range = Range.padded 20 20\n            , axisLine = AxisLine.full Colors.gray\n            , ticks = Ticks.time 10\n            }\n      , container = Container.spaced \"line-chart-area\" 30 100 60 70\n      , interpolation = Interpolation.stepped\n      , intersection = Intersection.default\n      , legends = Legends.default\n      , events = Events.hoverMany (Hint << List.head)\n      , junk =\n          case model.hinted of\n            Nothing ->\n              Junk.default\n\n            Just hinted ->\n              Junk.custom <| \\system ->\n                { below = [ Junk.vertical system [] hinted.x ]\n                , above = []\n                , html  = [ Junk.hoverAt system hinted.x system.y.max [] (viewHint hinted) ]\n                }\n      , grid = Grid.default\n      , area = Area.normal 0.5\n      , line = Line.default\n      , dots = Dots.custom (Dots.empty 5 1)\n      }\n      [ LineChart.line Colors.pink Dots.circle \"Nora\" model.data.nora ]\n\n\n  viewHint :  Coordinate.Point -> List (Html.Html msg)\n  viewHint { x, y } =\n    let\n      xString =\n         Date.Format.format \"%e. %b, %Y\" (Date.fromTime x)\n\n      pStyle other =\n        Html.Attributes.style <| ( \"margin\", \"3px\" ) :: other\n\n      ( loCStyle, loC ) =\n          if y == 0 then\n           ( [ ( \"color\", \"black\" ) ]\n           , \"0\"\n           )\n          else if y < 0 then\n           ( [ ( \"color\", Color.Convert.colorToHex Colors.red ) ]\n           , toString y\n           )\n          else\n           ( [ ( \"color\", Color.Convert.colorToHex Colors.green ) ]\n           , \"+\" ++ toString y\n           )\n    in\n    [ Html.p\n        [ pStyle\n            [ ( \"border-bottom\", \"1px solid rgb(163, 163, 163)\" )\n            , ( \"padding-bottom\", \"3px\" )\n            , ( \"margin-bottom\", \"5px\" )\n            ]\n        ]\n        [ Html.text xString ]\n    , Html.p\n      [ pStyle [] ]\n      [ Html.span [ Html.Attributes.style loCStyle ] [ Html.text loC ]\n      , Html.span [] [ Html.text \" lines of code\" ]\n      ]\n    ]\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n  ';
-var _user$project$Stepped$round100 = function ($float) {
+var _terezka$line_charts$Stepped$source = '\n\n  -- MODEL\n\n\n  type alias Model =\n    { data : List Data\n    , hinted : Maybe Data\n    }\n\n\n  type alias Data =\n    { year : Int\n    , price : Float\n    }\n\n\n\n  -- INIT\n\n\n  init : ( Model, Cmd Msg )\n  init =\n    ( { data = initData\n      , hinted = Nothing\n      }\n    , Cmd.none\n    )\n\n\n  initData : List Data\n  initData =\n    [ Data 1980 0.12\n    , Data 1981 0.14\n    , Data 1982 0.155\n    , Data 1983 0.16\n    , Data 1984 0.17\n    , Data 1985 0.17\n    , Data 1986 0.18\n    , Data 1987 0.18\n    , Data 1988 0.19\n    , Data 1989 0.20\n    , Data 1990 0.22\n    , Data 1991 0.24\n    , Data 1992 0.24\n    , Data 1993 0.25\n    , Data 1994 0.25\n    , Data 1995 0.25\n    , Data 1996 0.26\n    , Data 1997 0.26\n    , Data 1998 0.26\n    , Data 1999 0.26\n    , Data 2000 0.27\n    , Data 2001 0.27\n    , Data 2002 0.27\n    , Data 2003 0.28\n    , Data 2004 0.28\n    , Data 2005 0.30\n    , Data 2006 0.32\n    , Data 2007 0.34\n    , Data 2008 0.36\n    , Data 2009 0.39\n    , Data 2010 0.41\n    , Data 2011 0.46\n    , Data 2012 0.60\n    ]\n\n\n\n  -- MODEL API\n\n\n  setHint : Maybe Data -> Model -> Model\n  setHint hinted model =\n    { model | hinted = hinted }\n\n\n\n  -- UPDATE\n\n\n  type Msg\n    = Hint (Maybe Data)\n\n\n  update : Msg -> Model -> ( Model, Cmd Msg )\n  update msg model =\n    case msg of\n      Hint point ->\n        model\n          |> setHint point\n          |> addCmd Cmd.none\n\n\n  addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )\n  addCmd cmd model =\n    ( model, cmd )\n\n\n\n  -- VIEW\n\n\n  view : Model -> Html.Html Msg\n  view model =\n    Html.div [] [ chart model ]\n\n\n\n  -- CHART\n\n\n  chart : Model -> Html.Html Msg\n  chart model =\n    LineChart.viewCustom\n      { y =\n          Axis.custom\n            { title = Title.default \"price (£)\"\n            , variable = Just << .price\n            , pixels = 380\n            , range = Range.padded 20 20\n            , axisLine = AxisLine.full Colors.gray\n            , ticks = Ticks.float 5\n            }\n      , x =\n          let\n            toDate year =\n              Date.Extra.fromParts year Date.Jan 01 0 0 0 0\n          in\n          Axis.custom\n            { title = Title.default \"Year\"\n            , variable = Just << Date.toTime << toDate << .year\n            , pixels = 1270\n            , range = Range.padded 20 20\n            , axisLine = AxisLine.full Colors.gray\n            , ticks = Ticks.time 10\n            }\n      , container =\n          Container.custom\n            { attributesHtml = []\n            , attributesSvg = []\n            , size = Container.relative\n            , margin = Container.Margin 30 140 30 70\n            , id = \"line-chart-stepped\"\n            }\n      , interpolation = Interpolation.stepped\n      , intersection = Intersection.default\n      , legends = Legends.default\n      , events = Events.hoverOne Hint\n      , junk = Junk.hoverOne model.hinted\n          [ ( \"year\", \\datum -> toString datum.year )\n          , ( \"price\", \\datum -> toString datum.price ++ \"£\" )\n          ]\n      , grid = Grid.default\n      , area = Area.default\n      , line = Line.default\n      , dots =\n          let\n            styleLegend _ =\n              Dots.empty 5 1\n\n            styleIndividual datum =\n              if Just datum == model.hinted\n                then Dots.full 5\n                else Dots.empty 5 1\n          in\n          Dots.customAny\n            { legend = styleLegend\n            , individual = styleIndividual\n            }\n      }\n      [ LineChart.line Colors.pink Dots.circle \"UK stamp\" model.data ]\n\n\n\n\n  -- UTILS\n\n\n  round100 : Float -> Float\n  round100 float =\n    toFloat (round (float * 100)) / 100\n  ';
+var _terezka$line_charts$Stepped$round100 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 100)) / 100;
 };
-var _user$project$Stepped$addCmd = F2(
+var _terezka$line_charts$Stepped$addCmd = F2(
 	function (cmd, model) {
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		return {ctor: '_Tuple2', _0: model, _1: cmd};
 	});
-var _user$project$Stepped$setHint = F2(
+var _terezka$line_charts$Stepped$setHint = F2(
 	function (hinted, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{hinted: hinted});
 	});
-var _user$project$Stepped$update = F2(
+var _terezka$line_charts$Stepped$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
 		return A2(
-			_user$project$Stepped$addCmd,
+			_terezka$line_charts$Stepped$addCmd,
 			_elm_lang$core$Platform_Cmd$none,
-			A2(_user$project$Stepped$setHint, _p0._0, model));
+			A2(_terezka$line_charts$Stepped$setHint, _p0._0, model));
 	});
-var _user$project$Stepped$Model = F2(
+var _terezka$line_charts$Stepped$Model = F2(
 	function (a, b) {
 		return {data: a, hinted: b};
 	});
-var _user$project$Stepped$Data = F2(
+var _terezka$line_charts$Stepped$Data = F2(
 	function (a, b) {
 		return {year: a, price: b};
 	});
-var _user$project$Stepped$initData = {
+var _terezka$line_charts$Stepped$initData = {
 	ctor: '::',
-	_0: A2(_user$project$Stepped$Data, 1980, 0.12),
+	_0: A2(_terezka$line_charts$Stepped$Data, 1980, 0.12),
 	_1: {
 		ctor: '::',
-		_0: A2(_user$project$Stepped$Data, 1981, 0.14),
+		_0: A2(_terezka$line_charts$Stepped$Data, 1981, 0.14),
 		_1: {
 			ctor: '::',
-			_0: A2(_user$project$Stepped$Data, 1982, 0.155),
+			_0: A2(_terezka$line_charts$Stepped$Data, 1982, 0.155),
 			_1: {
 				ctor: '::',
-				_0: A2(_user$project$Stepped$Data, 1983, 0.16),
+				_0: A2(_terezka$line_charts$Stepped$Data, 1983, 0.16),
 				_1: {
 					ctor: '::',
-					_0: A2(_user$project$Stepped$Data, 1984, 0.17),
+					_0: A2(_terezka$line_charts$Stepped$Data, 1984, 0.17),
 					_1: {
 						ctor: '::',
-						_0: A2(_user$project$Stepped$Data, 1985, 0.17),
+						_0: A2(_terezka$line_charts$Stepped$Data, 1985, 0.17),
 						_1: {
 							ctor: '::',
-							_0: A2(_user$project$Stepped$Data, 1986, 0.18),
+							_0: A2(_terezka$line_charts$Stepped$Data, 1986, 0.18),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Stepped$Data, 1987, 0.18),
+								_0: A2(_terezka$line_charts$Stepped$Data, 1987, 0.18),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Stepped$Data, 1988, 0.19),
+									_0: A2(_terezka$line_charts$Stepped$Data, 1988, 0.19),
 									_1: {
 										ctor: '::',
-										_0: A2(_user$project$Stepped$Data, 1989, 0.2),
+										_0: A2(_terezka$line_charts$Stepped$Data, 1989, 0.2),
 										_1: {
 											ctor: '::',
-											_0: A2(_user$project$Stepped$Data, 1990, 0.22),
+											_0: A2(_terezka$line_charts$Stepped$Data, 1990, 0.22),
 											_1: {
 												ctor: '::',
-												_0: A2(_user$project$Stepped$Data, 1991, 0.24),
+												_0: A2(_terezka$line_charts$Stepped$Data, 1991, 0.24),
 												_1: {
 													ctor: '::',
-													_0: A2(_user$project$Stepped$Data, 1992, 0.24),
+													_0: A2(_terezka$line_charts$Stepped$Data, 1992, 0.24),
 													_1: {
 														ctor: '::',
-														_0: A2(_user$project$Stepped$Data, 1993, 0.25),
+														_0: A2(_terezka$line_charts$Stepped$Data, 1993, 0.25),
 														_1: {
 															ctor: '::',
-															_0: A2(_user$project$Stepped$Data, 1994, 0.25),
+															_0: A2(_terezka$line_charts$Stepped$Data, 1994, 0.25),
 															_1: {
 																ctor: '::',
-																_0: A2(_user$project$Stepped$Data, 1995, 0.25),
+																_0: A2(_terezka$line_charts$Stepped$Data, 1995, 0.25),
 																_1: {
 																	ctor: '::',
-																	_0: A2(_user$project$Stepped$Data, 1996, 0.26),
+																	_0: A2(_terezka$line_charts$Stepped$Data, 1996, 0.26),
 																	_1: {
 																		ctor: '::',
-																		_0: A2(_user$project$Stepped$Data, 1997, 0.26),
+																		_0: A2(_terezka$line_charts$Stepped$Data, 1997, 0.26),
 																		_1: {
 																			ctor: '::',
-																			_0: A2(_user$project$Stepped$Data, 1998, 0.26),
+																			_0: A2(_terezka$line_charts$Stepped$Data, 1998, 0.26),
 																			_1: {
 																				ctor: '::',
-																				_0: A2(_user$project$Stepped$Data, 1999, 0.26),
+																				_0: A2(_terezka$line_charts$Stepped$Data, 1999, 0.26),
 																				_1: {
 																					ctor: '::',
-																					_0: A2(_user$project$Stepped$Data, 2000, 0.27),
+																					_0: A2(_terezka$line_charts$Stepped$Data, 2000, 0.27),
 																					_1: {
 																						ctor: '::',
-																						_0: A2(_user$project$Stepped$Data, 2001, 0.27),
+																						_0: A2(_terezka$line_charts$Stepped$Data, 2001, 0.27),
 																						_1: {
 																							ctor: '::',
-																							_0: A2(_user$project$Stepped$Data, 2002, 0.27),
+																							_0: A2(_terezka$line_charts$Stepped$Data, 2002, 0.27),
 																							_1: {
 																								ctor: '::',
-																								_0: A2(_user$project$Stepped$Data, 2003, 0.28),
+																								_0: A2(_terezka$line_charts$Stepped$Data, 2003, 0.28),
 																								_1: {
 																									ctor: '::',
-																									_0: A2(_user$project$Stepped$Data, 2004, 0.28),
+																									_0: A2(_terezka$line_charts$Stepped$Data, 2004, 0.28),
 																									_1: {
 																										ctor: '::',
-																										_0: A2(_user$project$Stepped$Data, 2005, 0.3),
+																										_0: A2(_terezka$line_charts$Stepped$Data, 2005, 0.3),
 																										_1: {
 																											ctor: '::',
-																											_0: A2(_user$project$Stepped$Data, 2006, 0.32),
+																											_0: A2(_terezka$line_charts$Stepped$Data, 2006, 0.32),
 																											_1: {
 																												ctor: '::',
-																												_0: A2(_user$project$Stepped$Data, 2007, 0.34),
+																												_0: A2(_terezka$line_charts$Stepped$Data, 2007, 0.34),
 																												_1: {
 																													ctor: '::',
-																													_0: A2(_user$project$Stepped$Data, 2008, 0.36),
+																													_0: A2(_terezka$line_charts$Stepped$Data, 2008, 0.36),
 																													_1: {
 																														ctor: '::',
-																														_0: A2(_user$project$Stepped$Data, 2009, 0.39),
+																														_0: A2(_terezka$line_charts$Stepped$Data, 2009, 0.39),
 																														_1: {
 																															ctor: '::',
-																															_0: A2(_user$project$Stepped$Data, 2010, 0.41),
+																															_0: A2(_terezka$line_charts$Stepped$Data, 2010, 0.41),
 																															_1: {
 																																ctor: '::',
-																																_0: A2(_user$project$Stepped$Data, 2011, 0.46),
+																																_0: A2(_terezka$line_charts$Stepped$Data, 2011, 0.46),
 																																_1: {
 																																	ctor: '::',
-																																	_0: A2(_user$project$Stepped$Data, 2012, 0.6),
+																																	_0: A2(_terezka$line_charts$Stepped$Data, 2012, 0.6),
 																																	_1: {ctor: '[]'}
 																																}
 																															}
@@ -20743,21 +20819,21 @@ var _user$project$Stepped$initData = {
 		}
 	}
 };
-var _user$project$Stepped$init = {
+var _terezka$line_charts$Stepped$init = {
 	ctor: '_Tuple2',
-	_0: {data: _user$project$Stepped$initData, hinted: _elm_lang$core$Maybe$Nothing},
+	_0: {data: _terezka$line_charts$Stepped$initData, hinted: _elm_lang$core$Maybe$Nothing},
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _user$project$Stepped$Hint = function (a) {
+var _terezka$line_charts$Stepped$Hint = function (a) {
 	return {ctor: 'Hint', _0: a};
 };
-var _user$project$Stepped$chart = function (model) {
+var _terezka$line_charts$Stepped$chart = function (model) {
 	return A2(
-		_user$project$LineChart$viewCustom,
+		_terezka$line_charts$LineChart$viewCustom,
 		{
-			y: _user$project$LineChart_Axis$custom(
+			y: _terezka$line_charts$LineChart_Axis$custom(
 				{
-					title: _user$project$LineChart_Axis_Title$default('price (£)'),
+					title: _terezka$line_charts$LineChart_Axis_Title$default('price (£)'),
 					variable: function (_p1) {
 						return _elm_lang$core$Maybe$Just(
 							function (_) {
@@ -20765,17 +20841,17 @@ var _user$project$Stepped$chart = function (model) {
 							}(_p1));
 					},
 					pixels: 380,
-					range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
-					axisLine: _user$project$LineChart_Axis_Line$full(_user$project$LineChart_Colors$gray),
-					ticks: _user$project$LineChart_Axis_Ticks$float(5)
+					range: A2(_terezka$line_charts$LineChart_Axis_Range$padded, 20, 20),
+					axisLine: _terezka$line_charts$LineChart_Axis_Line$full(_terezka$line_charts$LineChart_Colors$gray),
+					ticks: _terezka$line_charts$LineChart_Axis_Ticks$float(5)
 				}),
 			x: function () {
 				var toDate = function (year) {
 					return A7(_justinmimbs$elm_date_extra$Date_Extra$fromParts, year, _elm_lang$core$Date$Jan, 1, 0, 0, 0, 0);
 				};
-				return _user$project$LineChart_Axis$custom(
+				return _terezka$line_charts$LineChart_Axis$custom(
 					{
-						title: _user$project$LineChart_Axis_Title$default('Year'),
+						title: _terezka$line_charts$LineChart_Axis_Title$default('Year'),
 						variable: function (_p2) {
 							return _elm_lang$core$Maybe$Just(
 								_elm_lang$core$Date$toTime(
@@ -20785,25 +20861,25 @@ var _user$project$Stepped$chart = function (model) {
 										}(_p2))));
 						},
 						pixels: 1270,
-						range: A2(_user$project$LineChart_Axis_Range$padded, 20, 20),
-						axisLine: _user$project$LineChart_Axis_Line$full(_user$project$LineChart_Colors$gray),
-						ticks: _user$project$LineChart_Axis_Ticks$time(10)
+						range: A2(_terezka$line_charts$LineChart_Axis_Range$padded, 20, 20),
+						axisLine: _terezka$line_charts$LineChart_Axis_Line$full(_terezka$line_charts$LineChart_Colors$gray),
+						ticks: _terezka$line_charts$LineChart_Axis_Ticks$time(10)
 					});
 			}(),
-			container: _user$project$LineChart_Container$custom(
+			container: _terezka$line_charts$LineChart_Container$custom(
 				{
 					attributesHtml: {ctor: '[]'},
 					attributesSvg: {ctor: '[]'},
-					size: _user$project$LineChart_Container$relative,
-					margin: A4(_user$project$LineChart_Container$Margin, 30, 140, 30, 70),
+					size: _terezka$line_charts$LineChart_Container$relative,
+					margin: A4(_terezka$line_charts$LineChart_Container$Margin, 30, 140, 30, 70),
 					id: 'line-chart-stepped'
 				}),
-			interpolation: _user$project$LineChart_Interpolation$stepped,
-			intersection: _user$project$LineChart_Axis_Intersection$default,
-			legends: _user$project$LineChart_Legends$default,
-			events: _user$project$LineChart_Events$hoverOne(_user$project$Stepped$Hint),
+			interpolation: _terezka$line_charts$LineChart_Interpolation$stepped,
+			intersection: _terezka$line_charts$LineChart_Axis_Intersection$default,
+			legends: _terezka$line_charts$LineChart_Legends$default,
+			events: _terezka$line_charts$LineChart_Events$hoverOne(_terezka$line_charts$Stepped$Hint),
 			junk: A2(
-				_user$project$LineChart_Junk$hoverOne,
+				_terezka$line_charts$LineChart_Junk$hoverOne,
 				model.hinted,
 				{
 					ctor: '::',
@@ -20829,90 +20905,90 @@ var _user$project$Stepped$chart = function (model) {
 						_1: {ctor: '[]'}
 					}
 				}),
-			grid: _user$project$LineChart_Grid$default,
-			area: _user$project$LineChart_Area$default,
-			line: _user$project$LineChart_Line$default,
+			grid: _terezka$line_charts$LineChart_Grid$default,
+			area: _terezka$line_charts$LineChart_Area$default,
+			line: _terezka$line_charts$LineChart_Line$default,
 			dots: function () {
 				var styleIndividual = function (datum) {
 					return _elm_lang$core$Native_Utils.eq(
 						_elm_lang$core$Maybe$Just(datum),
-						model.hinted) ? _user$project$LineChart_Dots$full(5) : A2(_user$project$LineChart_Dots$empty, 5, 1);
+						model.hinted) ? _terezka$line_charts$LineChart_Dots$full(5) : A2(_terezka$line_charts$LineChart_Dots$empty, 5, 1);
 				};
 				var styleLegend = function (_p3) {
-					return A2(_user$project$LineChart_Dots$empty, 5, 1);
+					return A2(_terezka$line_charts$LineChart_Dots$empty, 5, 1);
 				};
-				return _user$project$LineChart_Dots$customAny(
+				return _terezka$line_charts$LineChart_Dots$customAny(
 					{legend: styleLegend, individual: styleIndividual});
 			}()
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$pink, _user$project$LineChart_Dots$circle, 'UK stamp', model.data),
+			_0: A4(_terezka$line_charts$LineChart$line, _terezka$line_charts$LineChart_Colors$pink, _terezka$line_charts$LineChart_Dots$circle, 'UK stamp', model.data),
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Stepped$view = function (model) {
+var _terezka$line_charts$Stepped$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _user$project$Stepped$chart(model),
+			_0: _terezka$line_charts$Stepped$chart(model),
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Stepped$main = _elm_lang$html$Html$program(
+var _terezka$line_charts$Stepped$main = _elm_lang$html$Html$program(
 	{
-		init: _user$project$Stepped$init,
-		update: _user$project$Stepped$update,
-		view: _user$project$Stepped$view,
+		init: _terezka$line_charts$Stepped$init,
+		update: _terezka$line_charts$Stepped$update,
+		view: _terezka$line_charts$Stepped$view,
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})();
 
-var _user$project$Ticks$round10 = function ($float) {
+var _terezka$line_charts$Ticks$round10 = function ($float) {
 	return _elm_lang$core$Basics$toFloat(
 		_elm_lang$core$Basics$round($float * 10)) / 10;
 };
-var _user$project$Ticks$gridless = F2(
+var _terezka$line_charts$Ticks$gridless = F2(
 	function (format, n) {
-		return _user$project$LineChart_Axis_Tick$custom(
+		return _terezka$line_charts$LineChart_Axis_Tick$custom(
 			{
 				position: n,
-				color: _user$project$LineChart_Colors$gray,
+				color: _terezka$line_charts$LineChart_Colors$gray,
 				width: 1,
 				length: 5,
 				grid: false,
-				direction: _user$project$LineChart_Axis_Tick$negative,
+				direction: _terezka$line_charts$LineChart_Axis_Tick$negative,
 				label: _elm_lang$core$Maybe$Just(
 					A2(
-						_user$project$LineChart_Junk$label,
-						_user$project$LineChart_Colors$black,
+						_terezka$line_charts$LineChart_Junk$label,
+						_terezka$line_charts$LineChart_Colors$black,
 						format(n)))
 			});
 	});
-var _user$project$Ticks$opposite = F2(
+var _terezka$line_charts$Ticks$opposite = F2(
 	function (format, n) {
-		return _user$project$LineChart_Axis_Tick$custom(
+		return _terezka$line_charts$LineChart_Axis_Tick$custom(
 			{
 				position: n,
-				color: _user$project$LineChart_Colors$gray,
+				color: _terezka$line_charts$LineChart_Colors$gray,
 				width: 1,
 				length: 5,
 				grid: true,
-				direction: _user$project$LineChart_Axis_Tick$positive,
+				direction: _terezka$line_charts$LineChart_Axis_Tick$positive,
 				label: _elm_lang$core$Maybe$Just(
 					A2(
-						_user$project$LineChart_Junk$label,
-						_user$project$LineChart_Colors$black,
+						_terezka$line_charts$LineChart_Junk$label,
+						_terezka$line_charts$LineChart_Colors$black,
 						format(n)))
 			});
 	});
-var _user$project$Ticks$ticksConfig = F3(
+var _terezka$line_charts$Ticks$ticksConfig = F3(
 	function (toValue, format, maybeHovered) {
 		var framing = function (range) {
 			return A2(
 				_elm_lang$core$List$map,
-				_user$project$Ticks$gridless(format),
+				_terezka$line_charts$Ticks$gridless(format),
 				{
 					ctor: '::',
 					_0: range.min,
@@ -20929,7 +21005,7 @@ var _user$project$Ticks$ticksConfig = F3(
 				return {
 					ctor: '::',
 					_0: A2(
-						_user$project$Ticks$opposite,
+						_terezka$line_charts$Ticks$opposite,
 						format,
 						toValue(_p0._0)),
 					_1: {ctor: '[]'}
@@ -20938,7 +21014,7 @@ var _user$project$Ticks$ticksConfig = F3(
 				return {ctor: '[]'};
 			}
 		}();
-		return _user$project$LineChart_Axis_Ticks$custom(
+		return _terezka$line_charts$LineChart_Axis_Ticks$custom(
 			F2(
 				function (dataRange, axisRange) {
 					return A2(
@@ -20947,14 +21023,14 @@ var _user$project$Ticks$ticksConfig = F3(
 						hoverOne);
 				}));
 	});
-var _user$project$Ticks$yAxisConfig = function (model) {
+var _terezka$line_charts$Ticks$yAxisConfig = function (model) {
 	var formatY = function (_p1) {
 		return _elm_lang$core$Basics$toString(
-			_user$project$Ticks$round10(_p1));
+			_terezka$line_charts$Ticks$round10(_p1));
 	};
-	return _user$project$LineChart_Axis$custom(
+	return _terezka$line_charts$LineChart_Axis$custom(
 		{
-			title: A3(_user$project$LineChart_Axis_Title$atAxisMax, 10, 0, 'Grade avg.'),
+			title: A3(_terezka$line_charts$LineChart_Axis_Title$atAxisMax, 10, 0, 'Grade avg.'),
 			variable: function (_p2) {
 				return _elm_lang$core$Maybe$Just(
 					function (_) {
@@ -20962,10 +21038,10 @@ var _user$project$Ticks$yAxisConfig = function (model) {
 					}(_p2));
 			},
 			pixels: 450,
-			range: A2(_user$project$LineChart_Axis_Range$padded, 50, 20),
-			axisLine: _user$project$LineChart_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
+			range: A2(_terezka$line_charts$LineChart_Axis_Range$padded, 50, 20),
+			axisLine: _terezka$line_charts$LineChart_Axis_Line$rangeFrame(_terezka$line_charts$LineChart_Colors$gray),
 			ticks: A3(
-				_user$project$Ticks$ticksConfig,
+				_terezka$line_charts$Ticks$ticksConfig,
 				function (_) {
 					return _.y;
 				},
@@ -20973,13 +21049,13 @@ var _user$project$Ticks$yAxisConfig = function (model) {
 				model.hinted)
 		});
 };
-var _user$project$Ticks$xAxisConfig = function (model) {
+var _terezka$line_charts$Ticks$xAxisConfig = function (model) {
 	var formatX = function (x) {
 		return _elm_lang$core$Native_Utils.eq(x, 0) ? 'K' : _elm_lang$core$Basics$toString(x);
 	};
-	return _user$project$LineChart_Axis$custom(
+	return _terezka$line_charts$LineChart_Axis$custom(
 		{
-			title: _user$project$LineChart_Axis_Title$default('Year'),
+			title: _terezka$line_charts$LineChart_Axis_Title$default('Year'),
 			variable: function (_p3) {
 				return _elm_lang$core$Maybe$Just(
 					function (_) {
@@ -20987,10 +21063,10 @@ var _user$project$Ticks$xAxisConfig = function (model) {
 					}(_p3));
 			},
 			pixels: 800,
-			range: A2(_user$project$LineChart_Axis_Range$padded, 50, 20),
-			axisLine: _user$project$LineChart_Axis_Line$rangeFrame(_user$project$LineChart_Colors$gray),
+			range: A2(_terezka$line_charts$LineChart_Axis_Range$padded, 50, 20),
+			axisLine: _terezka$line_charts$LineChart_Axis_Line$rangeFrame(_terezka$line_charts$LineChart_Colors$gray),
 			ticks: A3(
-				_user$project$Ticks$ticksConfig,
+				_terezka$line_charts$Ticks$ticksConfig,
 				function (_) {
 					return _.x;
 				},
@@ -20998,101 +21074,101 @@ var _user$project$Ticks$xAxisConfig = function (model) {
 				model.hinted)
 		});
 };
-var _user$project$Ticks$addCmd = F2(
+var _terezka$line_charts$Ticks$addCmd = F2(
 	function (cmd, model) {
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
-var _user$project$Ticks$setHint = F2(
+var _terezka$line_charts$Ticks$setHint = F2(
 	function (hinted, model) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{hinted: hinted});
 	});
-var _user$project$Ticks$toData = function (numbers) {
+var _terezka$line_charts$Ticks$toData = function (numbers) {
 	return A2(
 		_elm_lang$core$List$indexedMap,
 		function (i) {
-			return _user$project$LineChart_Coordinate$Point(
+			return _terezka$line_charts$LineChart_Coordinate$Point(
 				_elm_lang$core$Basics$toFloat(i));
 		},
 		numbers);
 };
-var _user$project$Ticks$Model = F2(
+var _terezka$line_charts$Ticks$Model = F2(
 	function (a, b) {
 		return {data: a, hinted: b};
 	});
-var _user$project$Ticks$Data = F3(
+var _terezka$line_charts$Ticks$Data = F3(
 	function (a, b, c) {
 		return {nora: a, noah: b, nina: c};
 	});
-var _user$project$Ticks$setData = F2(
+var _terezka$line_charts$Ticks$setData = F2(
 	function (_p4, model) {
 		var _p5 = _p4;
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{
 				data: A3(
-					_user$project$Ticks$Data,
-					_user$project$Ticks$toData(_p5._0),
-					_user$project$Ticks$toData(_p5._1),
-					_user$project$Ticks$toData(_p5._2))
+					_terezka$line_charts$Ticks$Data,
+					_terezka$line_charts$Ticks$toData(_p5._0),
+					_terezka$line_charts$Ticks$toData(_p5._1),
+					_terezka$line_charts$Ticks$toData(_p5._2))
 			});
 	});
-var _user$project$Ticks$update = F2(
+var _terezka$line_charts$Ticks$update = F2(
 	function (msg, model) {
 		var _p6 = msg;
 		if (_p6.ctor === 'RecieveNumbers') {
 			return A2(
-				_user$project$Ticks$addCmd,
+				_terezka$line_charts$Ticks$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Ticks$setData, _p6._0, model));
+				A2(_terezka$line_charts$Ticks$setData, _p6._0, model));
 		} else {
 			return A2(
-				_user$project$Ticks$addCmd,
+				_terezka$line_charts$Ticks$addCmd,
 				_elm_lang$core$Platform_Cmd$none,
-				A2(_user$project$Ticks$setHint, _p6._0, model));
+				A2(_terezka$line_charts$Ticks$setHint, _p6._0, model));
 		}
 	});
-var _user$project$Ticks$Hint = function (a) {
+var _terezka$line_charts$Ticks$Hint = function (a) {
 	return {ctor: 'Hint', _0: a};
 };
-var _user$project$Ticks$chart = function (model) {
+var _terezka$line_charts$Ticks$chart = function (model) {
 	return A2(
-		_user$project$LineChart$viewCustom,
+		_terezka$line_charts$LineChart$viewCustom,
 		{
-			x: _user$project$Ticks$xAxisConfig(model),
-			y: _user$project$Ticks$yAxisConfig(model),
-			container: _user$project$LineChart_Container$custom(
+			x: _terezka$line_charts$Ticks$xAxisConfig(model),
+			y: _terezka$line_charts$Ticks$yAxisConfig(model),
+			container: _terezka$line_charts$LineChart_Container$custom(
 				{
 					attributesHtml: {ctor: '[]'},
 					attributesSvg: {ctor: '[]'},
-					size: _user$project$LineChart_Container$relative,
-					margin: A4(_user$project$LineChart_Container$Margin, 60, 100, 30, 70),
+					size: _terezka$line_charts$LineChart_Container$relative,
+					margin: A4(_terezka$line_charts$LineChart_Container$Margin, 60, 100, 30, 70),
 					id: 'line-chart-ticks'
 				}),
-			interpolation: _user$project$LineChart_Interpolation$default,
-			intersection: _user$project$LineChart_Axis_Intersection$default,
-			legends: _user$project$LineChart_Legends$default,
-			events: _user$project$LineChart_Events$hoverOne(_user$project$Ticks$Hint),
-			junk: _user$project$LineChart_Junk$default,
-			grid: _user$project$LineChart_Grid$default,
-			area: _user$project$LineChart_Area$default,
-			line: _user$project$LineChart_Line$default,
-			dots: _user$project$LineChart_Dots$custom(
-				A2(_user$project$LineChart_Dots$disconnected, 7, 2))
+			interpolation: _terezka$line_charts$LineChart_Interpolation$default,
+			intersection: _terezka$line_charts$LineChart_Axis_Intersection$default,
+			legends: _terezka$line_charts$LineChart_Legends$default,
+			events: _terezka$line_charts$LineChart_Events$hoverOne(_terezka$line_charts$Ticks$Hint),
+			junk: _terezka$line_charts$LineChart_Junk$default,
+			grid: _terezka$line_charts$LineChart_Grid$default,
+			area: _terezka$line_charts$LineChart_Area$default,
+			line: _terezka$line_charts$LineChart_Line$default,
+			dots: _terezka$line_charts$LineChart_Dots$custom(
+				A2(_terezka$line_charts$LineChart_Dots$disconnected, 7, 2))
 		},
 		{
 			ctor: '::',
-			_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$blue, _user$project$LineChart_Dots$plus, 'Nora', model.data.nora),
+			_0: A4(_terezka$line_charts$LineChart$line, _terezka$line_charts$LineChart_Colors$blue, _terezka$line_charts$LineChart_Dots$plus, 'Nora', model.data.nora),
 			_1: {
 				ctor: '::',
-				_0: A4(_user$project$LineChart$line, _user$project$LineChart_Colors$cyan, _user$project$LineChart_Dots$cross, 'Noah', model.data.noah),
+				_0: A4(_terezka$line_charts$LineChart$line, _terezka$line_charts$LineChart_Colors$cyan, _terezka$line_charts$LineChart_Dots$cross, 'Noah', model.data.noah),
 				_1: {
 					ctor: '::',
 					_0: A5(
-						_user$project$LineChart$dash,
-						_user$project$LineChart_Colors$pink,
-						_user$project$LineChart_Dots$none,
+						_terezka$line_charts$LineChart$dash,
+						_terezka$line_charts$LineChart_Colors$pink,
+						_terezka$line_charts$LineChart_Dots$none,
 						'Class',
 						{
 							ctor: '::',
@@ -21109,20 +21185,20 @@ var _user$project$Ticks$chart = function (model) {
 			}
 		});
 };
-var _user$project$Ticks$view = function (model) {
+var _terezka$line_charts$Ticks$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _user$project$Ticks$chart(model),
+			_0: _terezka$line_charts$Ticks$chart(model),
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Ticks$RecieveNumbers = function (a) {
+var _terezka$line_charts$Ticks$RecieveNumbers = function (a) {
 	return {ctor: 'RecieveNumbers', _0: a};
 };
-var _user$project$Ticks$getNumbers = function () {
+var _terezka$line_charts$Ticks$getNumbers = function () {
 	var genNumbers = F2(
 		function (min, max) {
 			return A2(
@@ -21132,7 +21208,7 @@ var _user$project$Ticks$getNumbers = function () {
 		});
 	return A2(
 		_elm_lang$core$Random$generate,
-		_user$project$Ticks$RecieveNumbers,
+		_terezka$line_charts$Ticks$RecieveNumbers,
 		A4(
 			_elm_lang$core$Random$map3,
 			F3(
@@ -21143,27 +21219,27 @@ var _user$project$Ticks$getNumbers = function () {
 			A2(genNumbers, 7, 10),
 			A2(genNumbers, 2, 10)));
 }();
-var _user$project$Ticks$init = {
+var _terezka$line_charts$Ticks$init = {
 	ctor: '_Tuple2',
 	_0: {
 		data: A3(
-			_user$project$Ticks$Data,
+			_terezka$line_charts$Ticks$Data,
 			{ctor: '[]'},
 			{ctor: '[]'},
 			{ctor: '[]'}),
 		hinted: _elm_lang$core$Maybe$Nothing
 	},
-	_1: _user$project$Ticks$getNumbers
+	_1: _terezka$line_charts$Ticks$getNumbers
 };
-var _user$project$Ticks$main = _elm_lang$html$Html$program(
+var _terezka$line_charts$Ticks$main = _elm_lang$html$Html$program(
 	{
-		init: _user$project$Ticks$init,
-		update: _user$project$Ticks$update,
-		view: _user$project$Ticks$view,
+		init: _terezka$line_charts$Ticks$init,
+		update: _terezka$line_charts$Ticks$update,
+		view: _terezka$line_charts$Ticks$view,
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
 	})();
 
-var _user$project$Main$viewTitle = A2(
+var _terezka$line_charts$Main$viewTitle = A2(
 	_elm_lang$html$Html$div,
 	{
 		ctor: '::',
@@ -21280,49 +21356,49 @@ var _user$project$Main$viewTitle = A2(
 			}
 		}
 	});
-var _user$project$Main$highlight = _elm_lang$core$Native_Platform.outgoingPort(
+var _terezka$line_charts$Main$highlight = _elm_lang$core$Native_Platform.outgoingPort(
 	'highlight',
 	function (v) {
 		return null;
 	});
-var _user$project$Main$setBodyScroll = _elm_lang$core$Native_Platform.outgoingPort(
+var _terezka$line_charts$Main$setBodyScroll = _elm_lang$core$Native_Platform.outgoingPort(
 	'setBodyScroll',
 	function (v) {
 		return v;
 	});
-var _user$project$Main$Model = F7(
+var _terezka$line_charts$Main$Model = F7(
 	function (a, b, c, d, e, f, g) {
 		return {focused: a, isSourceOpen: b, selection: c, area: d, stepped: e, ticks: f, lines: g};
 	});
-var _user$project$Main$LinesMsg = function (a) {
+var _terezka$line_charts$Main$LinesMsg = function (a) {
 	return {ctor: 'LinesMsg', _0: a};
 };
-var _user$project$Main$TicksMsg = function (a) {
+var _terezka$line_charts$Main$TicksMsg = function (a) {
 	return {ctor: 'TicksMsg', _0: a};
 };
-var _user$project$Main$SteppedMsg = function (a) {
+var _terezka$line_charts$Main$SteppedMsg = function (a) {
 	return {ctor: 'SteppedMsg', _0: a};
 };
-var _user$project$Main$AreaMsg = function (a) {
+var _terezka$line_charts$Main$AreaMsg = function (a) {
 	return {ctor: 'AreaMsg', _0: a};
 };
-var _user$project$Main$SelectionMsg = function (a) {
+var _terezka$line_charts$Main$SelectionMsg = function (a) {
 	return {ctor: 'SelectionMsg', _0: a};
 };
-var _user$project$Main$init = function () {
-	var _p0 = _user$project$Lines$init;
+var _terezka$line_charts$Main$init = function () {
+	var _p0 = _terezka$line_charts$Lines$init;
 	var lines = _p0._0;
 	var cmdLines = _p0._1;
-	var _p1 = _user$project$Ticks$init;
+	var _p1 = _terezka$line_charts$Ticks$init;
 	var ticks = _p1._0;
 	var cmdTicks = _p1._1;
-	var _p2 = _user$project$Stepped$init;
+	var _p2 = _terezka$line_charts$Stepped$init;
 	var stepped = _p2._0;
 	var cmdStepped = _p2._1;
-	var _p3 = _user$project$Area$init;
+	var _p3 = _terezka$line_charts$Area$init;
 	var area = _p3._0;
 	var cmdArea = _p3._1;
-	var _p4 = _user$project$Selection$init;
+	var _p4 = _terezka$line_charts$Selection$init;
 	var selection = _p4._0;
 	var cmdSelection = _p4._1;
 	return {
@@ -21331,22 +21407,22 @@ var _user$project$Main$init = function () {
 		_1: _elm_lang$core$Platform_Cmd$batch(
 			{
 				ctor: '::',
-				_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SelectionMsg, cmdSelection),
+				_0: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$SelectionMsg, cmdSelection),
 				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$AreaMsg, cmdArea),
+					_0: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$AreaMsg, cmdArea),
 					_1: {
 						ctor: '::',
-						_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SteppedMsg, cmdStepped),
+						_0: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$SteppedMsg, cmdStepped),
 						_1: {
 							ctor: '::',
-							_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$TicksMsg, cmdTicks),
+							_0: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$TicksMsg, cmdTicks),
 							_1: {
 								ctor: '::',
-								_0: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LinesMsg, cmdLines),
+								_0: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$LinesMsg, cmdLines),
 								_1: {
 									ctor: '::',
-									_0: _user$project$Main$highlight(
+									_0: _terezka$line_charts$Main$highlight(
 										{ctor: '_Tuple0'}),
 									_1: {ctor: '[]'}
 								}
@@ -21357,7 +21433,7 @@ var _user$project$Main$init = function () {
 			})
 	};
 }();
-var _user$project$Main$update = F2(
+var _terezka$line_charts$Main$update = F2(
 	function (msg, model) {
 		var _p5 = msg;
 		switch (_p5.ctor) {
@@ -21369,7 +21445,7 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{isSourceOpen: isSourceOpen, focused: _p6}),
-					_1: _user$project$Main$setBodyScroll(isSourceOpen)
+					_1: _terezka$line_charts$Main$setBodyScroll(isSourceOpen)
 				};
 			case 'CloseSource':
 				return {
@@ -21377,10 +21453,10 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{isSourceOpen: false}),
-					_1: _user$project$Main$setBodyScroll(false)
+					_1: _terezka$line_charts$Main$setBodyScroll(false)
 				};
 			case 'SelectionMsg':
-				var _p7 = A2(_user$project$Selection$update, _p5._0, model.selection);
+				var _p7 = A2(_terezka$line_charts$Selection$update, _p5._0, model.selection);
 				var selection = _p7._0;
 				var cmd = _p7._1;
 				return {
@@ -21388,10 +21464,10 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{selection: selection}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SelectionMsg, cmd)
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$SelectionMsg, cmd)
 				};
 			case 'AreaMsg':
-				var _p8 = A2(_user$project$Area$update, _p5._0, model.area);
+				var _p8 = A2(_terezka$line_charts$Area$update, _p5._0, model.area);
 				var area = _p8._0;
 				var cmd = _p8._1;
 				return {
@@ -21399,10 +21475,10 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{area: area}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$AreaMsg, cmd)
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$AreaMsg, cmd)
 				};
 			case 'SteppedMsg':
-				var _p9 = A2(_user$project$Stepped$update, _p5._0, model.stepped);
+				var _p9 = A2(_terezka$line_charts$Stepped$update, _p5._0, model.stepped);
 				var stepped = _p9._0;
 				var cmd = _p9._1;
 				return {
@@ -21410,10 +21486,10 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{stepped: stepped}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SteppedMsg, cmd)
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$SteppedMsg, cmd)
 				};
 			case 'TicksMsg':
-				var _p10 = A2(_user$project$Ticks$update, _p5._0, model.ticks);
+				var _p10 = A2(_terezka$line_charts$Ticks$update, _p5._0, model.ticks);
 				var ticks = _p10._0;
 				var cmd = _p10._1;
 				return {
@@ -21421,10 +21497,10 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{ticks: ticks}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$TicksMsg, cmd)
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$TicksMsg, cmd)
 				};
 			default:
-				var _p11 = A2(_user$project$Lines$update, _p5._0, model.lines);
+				var _p11 = A2(_terezka$line_charts$Lines$update, _p5._0, model.lines);
 				var lines = _p11._0;
 				var cmd = _p11._1;
 				return {
@@ -21432,12 +21508,12 @@ var _user$project$Main$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{lines: lines}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LinesMsg, cmd)
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _terezka$line_charts$Main$LinesMsg, cmd)
 				};
 		}
 	});
-var _user$project$Main$CloseSource = {ctor: 'CloseSource'};
-var _user$project$Main$viewSource = F2(
+var _terezka$line_charts$Main$CloseSource = {ctor: 'CloseSource'};
+var _terezka$line_charts$Main$viewSource = F2(
 	function (id, isSourceOpen) {
 		var viewInnerSource = F2(
 			function (i, s) {
@@ -21470,16 +21546,16 @@ var _user$project$Main$viewSource = F2(
 			viewInnerSource,
 			{
 				ctor: '::',
-				_0: _user$project$Area$source,
+				_0: _terezka$line_charts$Area$source,
 				_1: {
 					ctor: '::',
-					_0: _user$project$Selection$source,
+					_0: _terezka$line_charts$Selection$source,
 					_1: {
 						ctor: '::',
-						_0: _user$project$Lines$source,
+						_0: _terezka$line_charts$Lines$source,
 						_1: {
 							ctor: '::',
-							_0: _user$project$Stepped$source,
+							_0: _terezka$line_charts$Stepped$source,
 							_1: {ctor: '[]'}
 						}
 					}
@@ -21499,7 +21575,7 @@ var _user$project$Main$viewSource = F2(
 					_elm_lang$html$Html$button,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$CloseSource),
+						_0: _elm_lang$html$Html_Events$onClick(_terezka$line_charts$Main$CloseSource),
 						_1: {ctor: '[]'}
 					},
 					{
@@ -21521,10 +21597,10 @@ var _user$project$Main$viewSource = F2(
 				}
 			});
 	});
-var _user$project$Main$Focus = function (a) {
+var _terezka$line_charts$Main$Focus = function (a) {
 	return {ctor: 'Focus', _0: a};
 };
-var _user$project$Main$viewExample = F5(
+var _terezka$line_charts$Main$viewExample = F5(
 	function (id, modifier, toMsg, view, model) {
 		var $class = A2(_elm_lang$core$Basics_ops['++'], 'view__example__container view__example__container--', modifier);
 		return A2(
@@ -21550,7 +21626,7 @@ var _user$project$Main$viewExample = F5(
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Events$onClick(
-									_user$project$Main$Focus(id)),
+									_terezka$line_charts$Main$Focus(id)),
 								_1: {ctor: '[]'}
 							}
 						},
@@ -21563,7 +21639,7 @@ var _user$project$Main$viewExample = F5(
 				}
 			});
 	});
-var _user$project$Main$view = function (model) {
+var _terezka$line_charts$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -21573,7 +21649,7 @@ var _user$project$Main$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _user$project$Main$viewTitle,
+			_0: _terezka$line_charts$Main$viewTitle,
 			_1: {
 				ctor: '::',
 				_0: A2(
@@ -21585,16 +21661,16 @@ var _user$project$Main$view = function (model) {
 					},
 					{
 						ctor: '::',
-						_0: A5(_user$project$Main$viewExample, 0, 'full', _user$project$Main$AreaMsg, _user$project$Area$view, model.area),
+						_0: A5(_terezka$line_charts$Main$viewExample, 0, 'full', _terezka$line_charts$Main$AreaMsg, _terezka$line_charts$Area$view, model.area),
 						_1: {
 							ctor: '::',
-							_0: A5(_user$project$Main$viewExample, 1, 'full', _user$project$Main$SelectionMsg, _user$project$Selection$view, model.selection),
+							_0: A5(_terezka$line_charts$Main$viewExample, 1, 'full', _terezka$line_charts$Main$SelectionMsg, _terezka$line_charts$Selection$view, model.selection),
 							_1: {
 								ctor: '::',
-								_0: A5(_user$project$Main$viewExample, 2, 'full', _user$project$Main$LinesMsg, _user$project$Lines$view, model.lines),
+								_0: A5(_terezka$line_charts$Main$viewExample, 2, 'full', _terezka$line_charts$Main$LinesMsg, _terezka$line_charts$Lines$view, model.lines),
 								_1: {
 									ctor: '::',
-									_0: A5(_user$project$Main$viewExample, 3, 'full', _user$project$Main$SteppedMsg, _user$project$Stepped$view, model.stepped),
+									_0: A5(_terezka$line_charts$Main$viewExample, 3, 'full', _terezka$line_charts$Main$SteppedMsg, _terezka$line_charts$Stepped$view, model.stepped),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -21602,24 +21678,24 @@ var _user$project$Main$view = function (model) {
 					}),
 				_1: {
 					ctor: '::',
-					_0: A2(_user$project$Main$viewSource, model.focused, model.isSourceOpen),
+					_0: A2(_terezka$line_charts$Main$viewSource, model.focused, model.isSourceOpen),
 					_1: {ctor: '[]'}
 				}
 			}
 		});
 };
-var _user$project$Main$main = _elm_lang$html$Html$program(
+var _terezka$line_charts$Main$main = _elm_lang$html$Html$program(
 	{
-		init: _user$project$Main$init,
-		update: _user$project$Main$update,
+		init: _terezka$line_charts$Main$init,
+		update: _terezka$line_charts$Main$update,
 		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none),
-		view: _user$project$Main$view
+		view: _terezka$line_charts$Main$view
 	})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
-if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', undefined);
+if (typeof _terezka$line_charts$Main$main !== 'undefined') {
+    _terezka$line_charts$Main$main(Elm['Main'], 'Main', undefined);
 }
 
 if (typeof define === "function" && define['amd'])
