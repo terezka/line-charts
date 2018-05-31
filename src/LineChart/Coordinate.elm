@@ -119,13 +119,7 @@ check out `Axis.Range` for an explanation!_
 
 -}
 type alias System =
-  { frame : Frame
-  , x : Range -- TODO { full : Range, data : Range } ?
-  , y : Range
-  , xData : Range
-  , yData : Range
-  , id : String
-  }
+    Internal.Coordinate.System
 
 
 {-| These are minimum and maximum values that make up a range.

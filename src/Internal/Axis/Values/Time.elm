@@ -6,7 +6,6 @@ import Internal.Coordinate as Coordinate
 import Internal.Utils as Utils
 import Date
 import Date.Extra as Date
-import Date.Extra.Facts as Date
 import LineChart.Axis.Tick exposing (Time, Unit(..), Interval)
 
 
@@ -147,13 +146,16 @@ ceilingToInt number prec =
 
 ceilingToWeek : Date.Date -> Int -> Date.Date
 ceilingToWeek date multiple =
-  let weekNumber = ceilingToInt (Date.weekNumber date) multiple in
-  Date.fromSpec Date.utc Date.noTime (Date.weekDate (Date.year date) weekNumber 1)
+    let
+        weekNumber =
+            ceilingToInt (Date.weekNumber date) multiple
+    in
+        Date.fromSpec (Date.weekDate (Date.year date) weekNumber Date.Mon) Date.midnight Date.utc
 
 
 ceilingToMonth : Date.Date -> Int -> Date.Month
 ceilingToMonth date multiple =
-  Date.monthFromMonthNumber <| ceilingToInt (Date.monthNumber date) multiple
+    Date.numberToMonth <| ceilingToInt (Date.monthNumber date) multiple
 
 
 next : Float -> Unit -> Int -> Float
