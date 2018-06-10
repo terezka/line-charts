@@ -50,7 +50,7 @@ default =
 
 {-| The default container configuration, but you decide the margins.
 
-Pass the id and the top, right, bottom, and left margin respectivily.
+Pass the id and the top, right, bottom, and left margin respectively.
 
     customContainer : Container.Config msg
     customContainer =
