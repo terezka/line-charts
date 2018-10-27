@@ -108,16 +108,15 @@ onMouseLeave msg =
 on : String -> (a -> msg) -> Decoder data a -> Event data msg
 on event toMsg decoder =
   Event False <| \data system ->
-    Svg.Events.on event (toJsonDecoder data system (map toMsg decoder))
+    let defaultOptions = Options False False False in
+    Svg.Events.custom event (toJsonDecoder defaultOptions data system (map toMsg decoder))
 
 
 {-| -}
 onWithOptions : String -> Options -> (a -> msg) -> Decoder data a -> Event data msg
 onWithOptions event options toMsg decoder =
   Event options.catchOutsideChart <| \data system ->
-    Html.Events.onWithOptions event
-      (Html.Events.Options options.stopPropagation options.preventDefault)
-      (toJsonDecoder data system (map toMsg decoder))
+    Html.Events.custom event (toJsonDecoder options data system (map toMsg decoder))
 
 
 {-| -}
@@ -324,38 +323,45 @@ withinRadiusX system radius searched dot =
 
 
 {-| -}
-toJsonDecoder : List (Data.Data data) -> System -> Decoder data msg -> Json.Decoder msg
-toJsonDecoder data system (Decoder decoder) =
+toJsonDecoder : Options -> List (Data.Data data) -> System -> Decoder data msg -> Json.Decoder { message : msg, stopPropagation : Bool, preventDefault : Bool}
+toJsonDecoder options data system (Decoder decoder) =
   let
     handle mouseX mouseY { left, top, height, width } =
-      let 
+      let
         widthPercent = width / system.frame.size.width
         heightPercent = height / system.frame.size.height
 
-        newSize = 
+        newSize =
           { width = width
-          , height = height 
+          , height = height
           }
 
-        newMargin = 
+        newMargin =
           { top = system.frame.margin.top * heightPercent
           , right = system.frame.margin.right * widthPercent
           , bottom = system.frame.margin.bottom * heightPercent
           , left = system.frame.margin.left * widthPercent
           }
 
-        newSystem = 
+        newSystem =
           { system | frame = { size = newSize, margin = newMargin } }
 
         x = (mouseX - left)
         y = (mouseY - top)
       in
-      decoder data newSystem <| Point x y
+      decoder data newSystem (Point x y)
+
+    withOptions msg =
+      { message = msg
+      , stopPropagation = options.stopPropagation
+      , preventDefault = options.preventDefault
+      }
   in
   Json.map3 handle
     (Json.field "pageX" Json.float) -- TODO
     (Json.field "pageY" Json.float)
     (DOM.target position)
+    |> Json.map withOptions
 
 
 position : Json.Decoder DOM.Rectangle

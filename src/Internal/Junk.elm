@@ -7,7 +7,6 @@ import Svg exposing (Svg)
 import Html exposing (Html)
 import Html.Attributes
 import LineChart.Coordinate as Coordinate
-import Color.Convert
 import Internal.Svg as Svg
 import Internal.Utils as Utils
 
@@ -82,14 +81,12 @@ hoverOneHtml series system toX toY properties hovered =
     viewHeaderOne =
       Utils.viewMaybe (findSeries hovered series) <| \( color, label, _ ) ->
         viewHeader
-          [ viewColorLabel (Color.Convert.colorToHex color) label ]
+          [ viewColorLabel (Color.toCssString color) label ]
 
     viewColorLabel color label =
       Html.p
-        [ Html.Attributes.style
-            [ ( "margin", "0" )
-            , ( "color", color ) 
-            ]
+        [ Html.Attributes.style "margin" "0"
+        , Html.Attributes.style "color" color
         ]
         [ Html.text label ]
 
@@ -134,8 +131,8 @@ hoverManyHtml system toX toY formatX formatY first hovered series =
     x = Maybe.withDefault (middle .x system) (toX first)
 
     viewValue ( color, label, data ) =
-      Utils.viewMaybe (find hovered data) <| \hovered ->
-        viewRow (Color.Convert.colorToHex color) label (formatY hovered)
+      Utils.viewMaybe (find hovered data) <| \hovered_ ->
+        viewRow (Color.toCssString color) label (formatY hovered_)
   in
   hover system x [] <|
     viewHeader [ Html.text (formatX first) ] :: List.map viewValue series
@@ -155,19 +152,19 @@ standardStyles =
 viewHeader : List (Html.Html msg) -> Html.Html msg
 viewHeader =
   Html.p
-    [ Html.Attributes.style
-        [ ( "margin-top", "3px" )
-        , ( "margin-bottom", "5px" )
-        , ( "padding", "3px" )
-        , ( "border-bottom", "1px solid rgb(163, 163, 163)" )
-        ]
+    [ Html.Attributes.style "margin-top" "3px"
+    , Html.Attributes.style "margin-bottom" "5px"
+    , Html.Attributes.style "padding" "3px"
+    , Html.Attributes.style "border-bottom" "1px solid rgb(163, 163, 163)"
     ]
 
 
 viewRow : String -> String -> String -> Html.Html msg
 viewRow color label value =
   Html.p
-    [ Html.Attributes.style [ ( "margin", "3px" ), ( "color", color ) ] ]
+    [ Html.Attributes.style "margin" "3px"
+    , Html.Attributes.style "color" color
+    ]
     [ Html.text (label ++ ": " ++ value) ]
 
 
@@ -200,8 +197,8 @@ hoverAt system x y styles view =
     yPercentage = (Coordinate.toSvgY system y)  * 100 / system.frame.size.height
 
     posititonStyles =
-      [ ( "left", toString xPercentage ++ "%" )
-      , ( "top", toString yPercentage ++ "%" )
+      [ ( "left", String.fromFloat xPercentage ++ "%" )
+      , ( "top", String.fromFloat yPercentage ++ "%" )
       , ( "margin-right", "-400px" )
       , ( "position", "absolute" )
       , if shouldFlip system x
@@ -212,7 +209,7 @@ hoverAt system x y styles view =
     containerStyles =
       standardStyles ++ posititonStyles ++ styles
   in
-  Html.div [ Html.Attributes.style containerStyles ] view
+  Html.div (List.map (\(p,v) -> Html.Attributes.style p v) styles) view
 
 
 

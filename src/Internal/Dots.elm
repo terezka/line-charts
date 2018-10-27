@@ -13,7 +13,6 @@ import Svg.Attributes as Attributes
 import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Data as Data
 import Color
-import Color.Convert
 
 
 
@@ -36,10 +35,10 @@ default =
 
 {-| -}
 custom : Style -> Config data
-custom style =
+custom style_ =
   Config
-    { legend = \_ -> style
-    , individual = \_ -> style
+    { legend = \_ -> style_
+    , individual = \_ -> style_
     }
 
 
@@ -111,8 +110,8 @@ disconnected radius border =
 
 {-| -}
 aura : Float -> Int -> Float -> Style
-aura radius aura opacity =
-  style radius (Aura aura opacity)
+aura radius aura_ opacity =
+  style radius (Aura aura_ opacity)
 
 
 {-| -}
@@ -140,20 +139,20 @@ view { system, dotsConfig, shape, color } data =
     (Config config) =
       dotsConfig
 
-    (Style style) =
+    (Style style_) =
       config.individual data.user
   in
-  viewShape system style shape color data.point
+  viewShape system style_ shape color data.point
 
 
 {-| -}
 viewSample : Config data -> Shape -> Color.Color -> Coordinate.System -> List (Data.Data data) -> Coordinate.Point -> Svg msg
 viewSample (Config config) shape color system data =
   let
-    (Style style) =
+    (Style style_) =
        config.legend (List.map .user data)
   in
-  viewShape system style shape color
+  viewShape system style_ shape color
 
 
 
@@ -164,7 +163,7 @@ viewShape : Coordinate.System -> StyleConfig -> Shape -> Color.Color -> Point ->
 viewShape system { radius, variety } shape color point =
   let size = 2 * pi * radius
       pointSvg = toSvg system point
-      view =
+      view_ =
         case shape of
           Circle   -> viewCircle
           Triangle -> viewTriangle
@@ -174,7 +173,7 @@ viewShape system { radius, variety } shape color point =
           Plus     -> viewPlus
           None     -> \_ _ _ _ _ -> Svg.text ""
   in
-  view [] variety color size pointSvg
+  view_ [] variety color size pointSvg
 
 
 
@@ -183,9 +182,9 @@ viewCircle events variety color area point =
   let
     radius = sqrt (area / pi)
     attributes =
-      [ Attributes.cx (toString point.x)
-      , Attributes.cy (toString point.y)
-      , Attributes.r (toString radius)
+      [ Attributes.cx (String.fromFloat point.x)
+      , Attributes.cy (String.fromFloat point.y)
+      , Attributes.r (String.fromFloat radius)
       ]
   in
   Svg.circle (events ++ attributes ++ varietyAttributes color variety) []
@@ -205,10 +204,10 @@ viewSquare events variety color area point =
   let
     side = sqrt area
     attributes =
-      [ Attributes.x <| toString (point.x - side / 2)
-      , Attributes.y <| toString (point.y - side / 2)
-      , Attributes.width <| toString side
-      , Attributes.height <| toString side
+      [ Attributes.x <| String.fromFloat (point.x - side / 2)
+      , Attributes.y <| String.fromFloat (point.y - side / 2)
+      , Attributes.width <| String.fromFloat side
+      , Attributes.height <| String.fromFloat side
       ]
   in
   Svg.rect (events ++ attributes ++ varietyAttributes color variety) []
@@ -218,12 +217,12 @@ viewDiamond : List (Svg.Attribute msg) -> Variety -> Color.Color -> Float -> Coo
 viewDiamond events variety color area point =
   let
     side = sqrt area
-    rotation = "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
+    rotation = "rotate(45 " ++ String.fromFloat point.x ++ " " ++ String.fromFloat point.y  ++ ")"
     attributes =
-      [ Attributes.x <| toString (point.x - side / 2)
-      , Attributes.y <| toString (point.y - side / 2)
-      , Attributes.width <| toString side
-      , Attributes.height <| toString side
+      [ Attributes.x <| String.fromFloat (point.x - side / 2)
+      , Attributes.y <| String.fromFloat (point.y - side / 2)
+      , Attributes.width <| String.fromFloat side
+      , Attributes.height <| String.fromFloat side
       , Attributes.transform rotation
       ]
   in
@@ -242,7 +241,7 @@ viewPlus events variety color area point =
 viewCross : List (Svg.Attribute msg) -> Variety -> Color.Color -> Float -> Coordinate.Point -> Svg msg
 viewCross events variety color area point =
   let
-    rotation = "rotate(45 " ++ toString point.x ++ " " ++ toString point.y  ++ ")"
+    rotation = "rotate(45 " ++ String.fromFloat point.x ++ " " ++ String.fromFloat point.y  ++ ")"
     attributes =
       [ Attributes.d (pathPlus area point)
       , Attributes.transform rotation
@@ -263,9 +262,9 @@ pathTriangle area point =
     fromMiddle = height - tan (degrees 30) * side / 2
 
     commands =
-      [ "M" ++ toString point.x ++ " " ++ toString (point.y - fromMiddle)
-      , "l" ++ toString (-side / 2) ++ " " ++ toString height
-      , "h" ++ toString side
+      [ "M" ++ String.fromFloat point.x ++ " " ++ String.fromFloat (point.y - fromMiddle)
+      , "l" ++ String.fromFloat (-side / 2) ++ " " ++ String.fromFloat height
+      , "h" ++ String.fromFloat side
       , "z"
       ]
   in
@@ -280,20 +279,20 @@ pathPlus area point =
     r6 = side / 2
 
     commands =
-      [ "M" ++ toString (point.x - r6) ++ " " ++ toString (point.y - r3 - r6)
-      , "v" ++ toString r3
-      , "h" ++ toString -r3
-      , "v" ++ toString r3
-      , "h" ++ toString r3
-      , "v" ++ toString r3
-      , "h" ++ toString r3
-      , "v" ++ toString -r3
-      , "h" ++ toString r3
-      , "v" ++ toString -r3
-      , "h" ++ toString -r3
-      , "v" ++ toString -r3
-      , "h" ++ toString -r3
-      , "v" ++ toString r3
+      [ "M" ++ String.fromFloat (point.x - r6) ++ " " ++ String.fromFloat (point.y - r3 - r6)
+      , "v" ++ String.fromFloat r3
+      , "h" ++ String.fromFloat -r3
+      , "v" ++ String.fromFloat r3
+      , "h" ++ String.fromFloat r3
+      , "v" ++ String.fromFloat r3
+      , "h" ++ String.fromFloat r3
+      , "v" ++ String.fromFloat -r3
+      , "h" ++ String.fromFloat r3
+      , "v" ++ String.fromFloat -r3
+      , "h" ++ String.fromFloat -r3
+      , "v" ++ String.fromFloat -r3
+      , "h" ++ String.fromFloat -r3
+      , "v" ++ String.fromFloat r3
       ]
   in
   String.join " " commands
@@ -307,23 +306,23 @@ varietyAttributes : Color.Color -> Variety -> List (Svg.Attribute msg)
 varietyAttributes color variety =
   case variety of
     Empty width ->
-      [ Attributes.stroke (Color.Convert.colorToHex color)
-      , Attributes.strokeWidth (toString width)
+      [ Attributes.stroke (Color.toCssString color)
+      , Attributes.strokeWidth (String.fromInt width)
       , Attributes.fill "white"
       ]
 
     Aura width opacity ->
-      [ Attributes.stroke (Color.Convert.colorToHex color)
-      , Attributes.strokeWidth (toString width)
-      , Attributes.strokeOpacity (toString opacity)
-      , Attributes.fill (Color.Convert.colorToHex color)
+      [ Attributes.stroke (Color.toCssString color)
+      , Attributes.strokeWidth (String.fromInt width)
+      , Attributes.strokeOpacity (String.fromFloat opacity)
+      , Attributes.fill (Color.toCssString color)
       ]
 
     Disconnected width ->
       [ Attributes.stroke "white"
-      , Attributes.strokeWidth (toString width)
-      , Attributes.fill (Color.Convert.colorToHex color)
+      , Attributes.strokeWidth (String.fromInt width)
+      , Attributes.fill (Color.toCssString color)
       ]
 
     Full ->
-      [ Attributes.fill (Color.Convert.colorToHex color) ]
+      [ Attributes.fill (Color.toCssString color) ]

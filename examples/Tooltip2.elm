@@ -24,8 +24,8 @@ import Color
 
 main : Program Never Model Msg
 main =
-  Html.beginnerProgram
-    { model = init
+  Browser.sandbox
+    { init = init
     , update = update
     , view = view
     }

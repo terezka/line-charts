@@ -25,9 +25,8 @@ You can also make your own with `custom`!
 import Svg exposing (Svg, Attribute)
 import Internal.Axis.Tick as Tick
 import Internal.Svg as Svg
-import Date
-import Date.Extra
-import Date.Format
+import Time
+import DateFormat
 import Color
 
 
@@ -105,27 +104,7 @@ long =
 -- TIME
 
 
-{-| You can format your tick label differently based on it's unit. This is
-the default formatting. There are lots of different packages to help you out
-with this. I ended up using two different! Maybe one day I'll get around to
-sending a pull request for week formatting in `Date.Format`..
-
-    format : Unit -> Tick.Time -> String
-    format unit tick =
-      let time = tick.timestamp
-          date = Date.fromTime time
-          format1 = Date.Format.format
-          format2 = Date.Extra.toFormattedString
-      in
-      case unit of
-        Millisecond -> time |> toString
-        Second      -> date |> format1 "%S"
-        Minute      -> date |> format1 "%M"
-        Hour        -> date |> format1 "%l%P"
-        Day         -> date |> format1 "%e"
-        Week        -> date |> format2 "'Week' w"
-        Month       -> date |> format1 "%b"
-        Year        -> date |> format1 "%Y"
+{-| You can format your tick label differently based on it's unit.
 
 -}
 type Unit
@@ -152,7 +131,8 @@ type Unit
 
 -}
 type alias Time =
-  { timestamp : Float
+  { timestamp : Time.Posix
+  , zone : Time.Zone
   , isFirst : Bool
   , interval : Interval
   , change : Maybe Unit
@@ -170,15 +150,15 @@ type alias Interval =
 
 {-| -}
 time : Time -> Config msg
-time time =
+time time_ =
   custom
-    { position = time.timestamp
+    { position = Basics.toFloat (Time.posixToMillis time_.timestamp)
     , color = Color.gray
     , width = 1
     , length = 5
     , grid = True
     , direction = negative
-    , label = Just <| Svg.label "inherit" (format time)
+    , label = Just <| Svg.label "inherit" (format time_)
     }
 
 
@@ -200,13 +180,13 @@ change other properties of your time tick, but won't bother with the formatting.
 
 -}
 format : Time -> String
-format { change, interval, timestamp, isFirst } =
+format { zone, change, interval, timestamp, isFirst } =
   if isFirst then
-    formatBold (nextUnit interval.unit) timestamp
+    formatBold (nextUnit interval.unit) zone timestamp
   else
     case change of
-      Just change -> formatBold change timestamp
-      Nothing     -> formatNorm interval.unit timestamp
+      Just change_ -> formatBold change_ zone timestamp
+      Nothing     -> formatNorm interval.unit zone timestamp
 
 
 
@@ -293,35 +273,36 @@ custom =
 -- INTERNAL
 
 
-formatNorm : Unit -> Float -> String
-formatNorm unit time =
-  let date = Date.fromTime time
-      format1 = Date.Format.format
-      format2 = Date.Extra.toFormattedString
+formatNorm : Unit -> Time.Zone -> Time.Posix -> String
+formatNorm unit =
+  let tokens =
+        case unit of
+          Millisecond -> [ DateFormat.millisecondNumber ]
+          Second      -> [ DateFormat.secondNumber ]
+          Minute      -> [ DateFormat.minuteNumber ]
+          Hour        -> [ DateFormat.hourNumber, DateFormat.amPmLowercase ]
+          Day         -> [ DateFormat.dayOfMonthSuffix ]
+          Week        -> [ DateFormat.text "Week ", DateFormat.weekOfYearNumber ]
+          Month       -> [ DateFormat.monthNameAbbreviated ]
+          Year        -> [ DateFormat.yearNumber ]
   in
-  case unit of
-    Millisecond -> time |> toString
-    Second      -> date |> format1 "%S"
-    Minute      -> date |> format1 "%M"
-    Hour        -> date |> format1 "%l%P"
-    Day         -> date |> format1 "%e"
-    Week        -> date |> format2 "'Week' w"
-    Month       -> date |> format1 "%b"
-    Year        -> date |> format1 "%Y"
+  DateFormat.format tokens
 
 
-formatBold : Unit -> Float -> String
+formatBold : Unit -> Time.Zone -> Time.Posix -> String
 formatBold unit =
-  Date.fromTime >>
-    case unit of
-      Millisecond -> Basics.toString << Date.toTime
-      Second      -> Date.Format.format "%S"
-      Minute      -> Date.Format.format "%M"
-      Hour        -> Date.Format.format "%l%P"
-      Day         -> Date.Format.format "%a"
-      Week        -> Date.Extra.toFormattedString "'Week' w"
-      Month       -> Date.Format.format "%b"
-      Year        -> Date.Format.format "%Y"
+  let tokens =
+        case unit of
+          Millisecond -> [ DateFormat.millisecondNumber ]
+          Second      -> [ DateFormat.secondNumber ]
+          Minute      -> [ DateFormat.minuteNumber ]
+          Hour        -> [ DateFormat.hourNumber, DateFormat.amPmLowercase ]
+          Day         -> [ DateFormat.dayOfWeekNameFull ]
+          Week        -> [ DateFormat.text "Week ", DateFormat.weekOfYearNumber ]
+          Month       -> [ DateFormat.monthNameAbbreviated ]
+          Year        -> [ DateFormat.yearNumber ]
+  in
+  DateFormat.format tokens
 
 
 nextUnit : Unit -> Unit

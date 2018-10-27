@@ -59,15 +59,15 @@ type alias Range =
 range : (a -> Float) -> List a -> Range
 range toValue data =
   let
-    range =
+    range_ =
       { min = minimum toValue data
       , max = maximum toValue data
       }
   in
-  if range.min == range.max then
-    { range | max = range.max + 1 }
+  if range_.min == range_.max then
+    { range_ | max = range_.max + 1 }
   else
-    range
+    range_
 
 
 {-| -}
@@ -94,8 +94,8 @@ maximum toValue =
 
 {-| -}
 ground : Range -> Range
-ground range =
-  { range | min = Basics.min range.min 0 }
+ground range_ =
+  { range_ | min = Basics.min range_.min 0 }
 
 
 {-| -}
@@ -132,15 +132,15 @@ lengthY system =
 
 {-| -}
 smallestRange : Range -> Range -> Range
-smallestRange data range =
-  { min = Basics.max data.min range.min
-  , max = Basics.min data.max range.max
+smallestRange data range_ =
+  { min = Basics.max data.min range_.min
+  , max = Basics.min data.max range_.max
   }
 
 
 {-| -}
 largestRange : Range -> Range -> Range
-largestRange data range =
-  { min = Basics.min data.min range.min
-  , max = Basics.max data.max range.max
+largestRange data range_ =
+  { min = Basics.min data.min range_.min
+  , max = Basics.max data.max range_.max
   }

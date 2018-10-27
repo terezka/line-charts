@@ -47,7 +47,7 @@ _See full example [here](https://github.com/terezka/line-charts/blob/master/exam
 import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Axis.Ticks as Ticks
 import LineChart.Axis.Tick as Tick
-
+import Time
 
 
 {-| Part of the configuration in `Axis.custom`.
@@ -90,7 +90,7 @@ int =
 
 
 {-| -}
-time : Int -> Config msg
+time : Time.Zone -> Int -> Config msg
 time =
    Ticks.time
 
@@ -114,7 +114,7 @@ floatCustom =
 
 
 {-| -}
-timeCustom : Int -> (Tick.Time -> Tick.Config msg) -> Config msg
+timeCustom : Time.Zone -> Int -> (Tick.Time -> Tick.Config msg) -> Config msg
 timeCustom =
   Ticks.timeCustom
 

@@ -82,5 +82,5 @@ custom =
 
 {-| -}
 config : Config msg -> Coordinate.Range -> Coordinate.Range -> Properties msg
-config (Config config) =
-  config
+config (Config config_) =
+  config_

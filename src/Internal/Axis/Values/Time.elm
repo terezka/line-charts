@@ -4,8 +4,8 @@ module Internal.Axis.Values.Time exposing (values)
 
 import Internal.Coordinate as Coordinate
 import Internal.Utils as Utils
-import Date
-import Date.Extra as Date
+import Time
+import Time.Extra
 import LineChart.Axis.Tick exposing (Time, Unit(..), Interval)
 
 
@@ -14,8 +14,8 @@ import LineChart.Axis.Tick exposing (Time, Unit(..), Interval)
 
 
 {-| -}
-values : Int -> Coordinate.Range -> List Time
-values amountRough range =
+values : Time.Zone -> Int -> Coordinate.Range -> List Time
+values zone amountRough range =
   let
     intervalRough =
       (range.max - range.min) / toFloat amountRough
@@ -30,21 +30,21 @@ values amountRough range =
       toMs unit * toFloat multiple
 
     beginning =
-      beginAt range.min unit multiple
+      beginAt zone (floatToPosix range.min) unit multiple
 
     toPositions acc i =
-      let next_ = next beginning unit (i * multiple) in
-      if next_ > range.max then acc else toPositions (acc ++ [ next_ ]) (i + 1)
+      let next_ = next zone beginning unit (i * multiple) in
+      if posixsToFloat next_ > range.max then acc else toPositions (acc ++ [ next_ ]) (i + 1)
 
-    toTimes values unitChange acc =
-      case values of
-        value :: next :: rest ->
+    toTimes values_ unitChange acc =
+      case values_ of
+        value :: next_ :: rest ->
           let
             isFirst = List.isEmpty acc
             newAcc = toTime unitChange value isFirst :: acc
-            newUnitChange = getUnitChange unit value next
+            newUnitChange = getUnitChange unit zone value next_
           in
-          toTimes (next :: rest) newUnitChange newAcc
+          toTimes (next_ :: rest) newUnitChange newAcc
 
         [ value ] ->
            toTime unitChange value (List.isEmpty acc) :: acc
@@ -57,6 +57,7 @@ values amountRough range =
       , interval = Interval unit multiple
       , timestamp = value
       , isFirst = isFirst
+      , zone = zone
       }
 
   in
@@ -70,10 +71,10 @@ values amountRough range =
 {-| Find the best fitted unit for a given interval and unit options.
 -}
 findBestUnit : Float -> List Unit -> Unit
-findBestUnit interval units =
+findBestUnit interval units_ =
   let
-    findBest_ units u0 =
-      case units of
+    findBest_ units__ u0 =
+      case units__ of
         u1 :: u2 :: rest ->
           if interval <= middleOfNext u1 u2
             then u1
@@ -85,7 +86,7 @@ findBestUnit interval units =
     middleOfNext u1 u2 =
       (toMs u1 * highestMultiple (multiples u1) + toMs u2) / 2
   in
-  findBest_ units Year
+  findBest_ units_ Year
 
 
 {-| Finds the best fit multiple given the interval and it's best fit unit.
@@ -93,8 +94,8 @@ findBestUnit interval units =
 findBestMultiple : Float -> Unit -> Int
 findBestMultiple interval unit =
   let
-    findBest_ multiples =
-      case multiples of
+    findBest_ multiples_ =
+      case multiples_ of
         m1 :: m2 :: rest ->
           if interval <= (middleOfNext m1 m2)
             then m1
@@ -111,65 +112,23 @@ findBestMultiple interval unit =
 
 {-| Find the best position for the first tick.
 -}
-beginAt : Float -> Unit -> Int -> Float
-beginAt min unit multiple =
-  let
-    date =
-      Date.ceiling (toExtraUnit unit) (Date.fromTime min)
-
-    (y, m, d, hh, mm, ss, _) =
-      toParts date
-
-    interval =
-      toMs unit * toFloat multiple
-  in
-  case unit of
-    Millisecond -> ceilingTo min interval
-    Second      -> ceilingTo min interval
-    Minute      -> ceilingTo min interval
-    Hour        -> Date.toTime <| Date.fromParts y m d (ceilingToInt hh multiple) 0 0 0
-    Day         -> Date.toTime <| Date.fromParts y m (ceilingToInt d multiple) 0 0 0 0
-    Week        -> Date.toTime <| ceilingToWeek date multiple
-    Month       -> Date.toTime <| Date.fromParts y (ceilingToMonth date multiple) 1 0 0 0 0
-    Year        -> Date.toTime <| Date.fromParts (ceilingToInt y multiple) Date.Jan 1 0 0 0 0
+beginAt : Time.Zone -> Time.Posix -> Unit -> Int -> Time.Posix
+beginAt zone min unit multiple =
+  min
+    |> Time.Extra.add (toExtraUnit unit) multiple zone
+    |> Time.Extra.ceiling (toExtraUnit unit) zone
 
 
-ceilingTo : Float -> Float -> Float
-ceilingTo number prec =
-  prec * toFloat (ceiling (number / prec))
+next : Time.Zone -> Time.Posix -> Unit -> Int -> Time.Posix
+next zone timestamp unit multiple =
+  Time.Extra.add (toExtraUnit unit) multiple zone timestamp
 
 
-ceilingToInt : Int -> Int -> Int
-ceilingToInt number prec =
-  ceiling <| ceilingTo (toFloat number) (toFloat prec)
-
-
-ceilingToWeek : Date.Date -> Int -> Date.Date
-ceilingToWeek date multiple =
-    let
-        weekNumber =
-            ceilingToInt (Date.weekNumber date) multiple
-    in
-        Date.fromSpec (Date.weekDate (Date.year date) weekNumber Date.Mon) Date.midnight Date.utc
-
-
-ceilingToMonth : Date.Date -> Int -> Date.Month
-ceilingToMonth date multiple =
-    Date.numberToMonth <| ceilingToInt (Date.monthNumber date) multiple
-
-
-next : Float -> Unit -> Int -> Float
-next timestamp unit multiple =
-  Date.fromTime timestamp
-    |> Date.add (toExtraUnit unit) multiple
-    |> Date.toTime
-
-
-getUnitChange : Unit -> Float -> Float -> Maybe Unit
-getUnitChange interval value next =
+getUnitChange : Unit -> Time.Zone -> Time.Posix -> Time.Posix -> Maybe Unit
+getUnitChange interval zone value next_ =
   let
     equalBy unit =
-      Date.equalBy (toExtraUnit unit) (Date.fromTime value) (Date.fromTime next)
+      Time.Extra.diff (toExtraUnit unit) zone value next_ == 0
 
     unitChange_ units =
       case units of
@@ -227,29 +186,17 @@ multiples unit =
     Year        -> [ 1, 2, 5, 10, 20, 25, 50, 100, 200, 500, 1000, 10000 ]
 
 
-toExtraUnit : Unit -> Date.Interval
+toExtraUnit : Unit -> Time.Extra.Interval
 toExtraUnit unit =
   case unit of
-    Millisecond -> Date.Millisecond
-    Second      -> Date.Second
-    Minute      -> Date.Minute
-    Hour        -> Date.Hour
-    Day         -> Date.Day
-    Week        -> Date.Week
-    Month       -> Date.Month
-    Year        -> Date.Year
-
-
-toParts : Date.Date -> (Int, Date.Month, Int, Int, Int, Int, Int)
-toParts date =
-  ( Date.year date
-  , Date.month date
-  , Date.day date
-  , Date.hour date
-  , Date.minute date
-  , Date.second date
-  , Date.millisecond date
-  )
+    Millisecond -> Time.Extra.Millisecond
+    Second      -> Time.Extra.Second
+    Minute      -> Time.Extra.Minute
+    Hour        -> Time.Extra.Hour
+    Day         -> Time.Extra.Day
+    Week        -> Time.Extra.Week
+    Month       -> Time.Extra.Month
+    Year        -> Time.Extra.Year
 
 
 highestMultiple : List Int -> Float
@@ -265,3 +212,13 @@ magnitude interval unit =
 
     _ ->
       1
+
+
+floatToPosix : Float -> Time.Posix
+floatToPosix ms =
+  Time.millisToPosix (Basics.round ms)
+
+
+posixsToFloat : Time.Posix -> Float
+posixsToFloat posix =
+  Basics.toFloat (Time.posixToMillis posix)

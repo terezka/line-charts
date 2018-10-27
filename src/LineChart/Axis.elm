@@ -15,6 +15,7 @@ import Internal.Axis.Title as Title
 import LineChart.Axis.Range as Range
 import LineChart.Axis.Line as AxisLine
 import LineChart.Axis.Ticks as Ticks
+import Time
 
 
 
@@ -82,7 +83,7 @@ Pass the length of your axis in pixels, the title and it's variable.
 _See the full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Axis/Example3.elm)._
 
 -}
-time : Int -> String -> (data -> Float) -> Config data msg
+time : Time.Zone ->Int -> String -> (data -> Float) -> Config data msg
 time =
   Axis.time
 

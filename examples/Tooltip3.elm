@@ -22,8 +22,8 @@ import LineChart.Area as Area
 
 main : Program Never Model Msg
 main =
-  Html.beginnerProgram
-    { model = init
+  Browser.sandbox
+    { init = init
     , update = update
     , view = view
     }

@@ -20,7 +20,8 @@ import Internal.Axis.Intersection as Intersection
 import Internal.Axis.Title as Title
 import Internal.Svg as Svg exposing (..)
 import Internal.Utils exposing (..)
-import Color.Convert
+import Color
+import Time
 
 
 {-| -}
@@ -41,20 +42,20 @@ type alias Properties data msg =
 
 {-| -}
 default : Int -> String -> (data -> Float) -> Config data msg
-default pixels title variable =
+default pixels_ title_ variable_ =
   custom
-    { title = Title.atDataMax 0 0 title
-    , variable = Just << variable
-    , pixels = pixels
+    { title = Title.atDataMax 0 0 title_
+    , variable = Just << variable_
+    , pixels = pixels_
     , range = Range.padded 20 20
     , axisLine = AxisLine.rangeFrame Colors.gray
     , ticks =
-        Ticks.custom <| \data range ->
-          let smallest = Coordinate.smallestRange data range
-              rangeLong = range.max - range.min
+        Ticks.custom <| \data range_ ->
+          let smallest = Coordinate.smallestRange data range_
+              rangeLong = range_.max - range_.min
               rangeSmall = smallest.max - smallest.min
               diff = 1 - (rangeLong - rangeSmall) / rangeLong
-              amount = round <| diff * toFloat pixels / 90
+              amount = round <| diff * toFloat pixels_ / 90
           in
           List.map Tick.float <| Values.float (Values.around amount) smallest
     }
@@ -63,50 +64,50 @@ default pixels title variable =
 
 {-| -}
 full : Int -> String -> (data -> Float) -> Config data msg
-full pixels title variable =
+full pixels_ title_ variable_ =
   custom
-    { title = Title.atAxisMax 0 0 title
-    , variable = Just << variable
-    , pixels = pixels
+    { title = Title.atAxisMax 0 0 title_
+    , variable = Just << variable_
+    , pixels = pixels_
     , range = Range.padded 20 20
     , axisLine = AxisLine.default
     , ticks =
-        Ticks.custom <| \data range ->
-          let largest = Coordinate.largestRange data range
-              amount = pixels // 90
+        Ticks.custom <| \data range_ ->
+          let largest = Coordinate.largestRange data range_
+              amount = pixels_ // 90
           in
           List.map Tick.float <| Values.float (Values.around amount) largest
     }
 
 
 {-| -}
-time : Int -> String -> (data -> Float) -> Config data msg
-time pixels title variable =
+time : Time.Zone -> Int -> String -> (data -> Float) -> Config data msg
+time zone pixels_ title_ variable_ =
   custom
-    { title = Title.atDataMax 0 0 title
-    , variable = Just << variable
-    , pixels = pixels
+    { title = Title.atDataMax 0 0 title_
+    , variable = Just << variable_
+    , pixels = pixels_
     , range = Range.padded 20 20
     , axisLine = AxisLine.rangeFrame Colors.gray
     , ticks =
-        Ticks.custom <| \data range ->
-          let smallest = Coordinate.smallestRange data range
-              rangeLong = range.max - range.min
+        Ticks.custom <| \data range_ ->
+          let smallest = Coordinate.smallestRange data range_
+              rangeLong = range_.max - range_.min
               rangeSmall = smallest.max - smallest.min
               diff = 1 - (rangeLong - rangeSmall) / rangeLong
-              amount = round <| diff * toFloat pixels / 90
+              amount = round <| diff * toFloat pixels_ / 90
           in
-          List.map Tick.time <| Values.time amount smallest
+          List.map Tick.time <| Values.time zone amount smallest
     }
 
 
 {-| -}
 none : Int -> (data -> Float) ->  Config data msg
-none pixels variable =
+none pixels_ variable_ =
   custom
     { title = Title.default ""
-    , variable = Just << variable
-    , pixels = pixels
+    , variable = Just << variable_
+    , pixels = pixels_
     , range = Range.padded 20 20
     , axisLine = AxisLine.none
     , ticks = Ticks.custom <| \_ _ -> []
@@ -115,14 +116,14 @@ none pixels variable =
 
 {-| -}
 picky : Int -> String -> (data -> Float) -> List Float -> Config data msg
-picky pixels title variable ticks =
+picky pixels_ title_ variable_ ticks_ =
   custom
-    { title = Title.atAxisMax 0 0 title
-    , variable = Just << variable
-    , pixels = pixels
+    { title = Title.atAxisMax 0 0 title_
+    , variable = Just << variable_
+    , pixels = pixels_
     , range = Range.padded 20 20
     , axisLine = AxisLine.default
-    , ticks = Ticks.custom <| \_ _ -> List.map Tick.float ticks
+    , ticks = Ticks.custom <| \_ _ -> List.map Tick.float ticks_
     }
 
 
@@ -273,8 +274,8 @@ viewVerticalAxisLine system axisPosition config =
 attributesLine : Coordinate.System -> AxisLine.Properties msg -> List (Svg.Attribute msg)
 attributesLine system { events, width, color } =
   events ++
-    [ strokeWidth (toString width)
-    , stroke (Color.Convert.colorToHex color)
+    [ strokeWidth (String.fromFloat width)
+    , stroke (Color.toCssString color)
     , Svg.withinChartArea system
     ]
 
@@ -306,7 +307,7 @@ lengthOfTick { length, direction } =
 
 attributesTick : Tick.Properties msg -> List (Svg.Attribute msg)
 attributesTick { width, color } =
-  [ strokeWidth (toString width), stroke (Color.Convert.colorToHex color) ]
+  [ strokeWidth (String.fromFloat width), stroke (Color.toCssString color) ]
 
 
 viewHorizontalLabel : Coordinate.System -> Tick.Properties msg -> Data.Point -> Svg msg -> Svg msg
