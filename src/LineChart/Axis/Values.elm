@@ -36,6 +36,7 @@ hit whole days, weeks, months or hours, minutes, and seconds.
 import LineChart.Axis.Tick as Tick
 import Internal.Axis.Values as Values
 import LineChart.Coordinate as Coordinate
+import Time
 
 
 
@@ -136,6 +137,6 @@ custom =
 _See full example [here](https://github.com/terezka/line-charts/blob/master/examples/Docs/Values/Example2.elm)._
 
 -}
-time : Int -> Coordinate.Range -> List Tick.Time
+time : Time.Zone -> Int -> Coordinate.Range -> List Tick.Time
 time =
   Values.time

@@ -128,22 +128,21 @@ getUnitChange : Unit -> Time.Zone -> Time.Posix -> Time.Posix -> Maybe Unit
 getUnitChange interval zone value next_ =
   let
     equalBy unit =
-      Time.Extra.diff (toExtraUnit unit) zone value next_ == 0
+      Time.Extra.diff (toExtraUnit unit) zone
+        (Time.Extra.floor (toExtraUnit unit) zone value)
+        (Time.Extra.floor (toExtraUnit unit) zone next_) == 0
 
     unitChange_ units =
       case units of
-        Week :: rest -> -- Skip week
-          unitChange_ rest
-
         unit :: rest ->
-          if toMs unit <= toMs interval then Nothing
+          if toMs unit <= toMs interval then unitChange_ rest
           else if not (equalBy unit) then Just unit
-          else unitChange_ rest
+          else Nothing
 
         [] ->
           Nothing
   in
-  unitChange_ allReversed
+  unitChange_ all
 
 
 
@@ -152,7 +151,7 @@ getUnitChange interval zone value next_ =
 
 all : List Unit
 all =
-  [ Millisecond, Second, Minute, Hour, Day, Week, Month, Year ]
+  [ Millisecond, Second, Minute, Hour, Day, Month, Year ]
 
 
 allReversed : List Unit
@@ -168,7 +167,6 @@ toMs unit =
     Minute      -> 60000
     Hour        -> 3600000
     Day         -> 24 * 3600000
-    Week        -> 7 * 24 * 3600000
     Month       -> 28 * 24 * 3600000
     Year        -> 364 * 24 * 3600000
 
@@ -181,7 +179,6 @@ multiples unit =
     Minute      -> [ 1, 2, 5, 10, 15, 30 ]
     Hour        -> [ 1, 2, 3, 4, 6, 8, 12 ]
     Day         -> [ 1, 2 ]
-    Week        -> [ 1, 2 ]
     Month       -> [ 1, 2, 3, 4, 6 ]
     Year        -> [ 1, 2, 5, 10, 20, 25, 50, 100, 200, 500, 1000, 10000 ]
 
@@ -194,7 +191,6 @@ toExtraUnit unit =
     Minute      -> Time.Extra.Minute
     Hour        -> Time.Extra.Hour
     Day         -> Time.Extra.Day
-    Week        -> Time.Extra.Week
     Month       -> Time.Extra.Month
     Year        -> Time.Extra.Year
 

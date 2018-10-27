@@ -113,7 +113,6 @@ type Unit
   | Minute
   | Hour
   | Day
-  | Week
   | Month
   | Year
 
@@ -279,10 +278,9 @@ formatNorm unit =
         case unit of
           Millisecond -> [ DateFormat.millisecondNumber ]
           Second      -> [ DateFormat.secondNumber ]
-          Minute      -> [ DateFormat.minuteNumber ]
+          Minute      -> [ DateFormat.minuteFixed ]
           Hour        -> [ DateFormat.hourNumber, DateFormat.amPmLowercase ]
           Day         -> [ DateFormat.dayOfMonthSuffix ]
-          Week        -> [ DateFormat.text "Week ", DateFormat.weekOfYearNumber ]
           Month       -> [ DateFormat.monthNameAbbreviated ]
           Year        -> [ DateFormat.yearNumber ]
   in
@@ -298,7 +296,6 @@ formatBold unit =
           Minute      -> [ DateFormat.minuteNumber ]
           Hour        -> [ DateFormat.hourNumber, DateFormat.amPmLowercase ]
           Day         -> [ DateFormat.dayOfWeekNameFull ]
-          Week        -> [ DateFormat.text "Week ", DateFormat.weekOfYearNumber ]
           Month       -> [ DateFormat.monthNameAbbreviated ]
           Year        -> [ DateFormat.yearNumber ]
   in
@@ -312,7 +309,6 @@ nextUnit unit =
     Second      -> Minute
     Minute      -> Hour
     Hour        -> Day
-    Day         -> Week
-    Week        -> Month
+    Day         -> Month
     Month       -> Year
     Year        -> Year
