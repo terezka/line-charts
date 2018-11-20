@@ -196,7 +196,7 @@ hoverAt system x y styles view =
     xPercentage = (Coordinate.toSvgX system x + space) * 100 / system.frame.size.width
     yPercentage = (Coordinate.toSvgY system y)  * 100 / system.frame.size.height
 
-    posititonStyles =
+    positionStyles =
       [ ( "left", String.fromFloat xPercentage ++ "%" )
       , ( "top", String.fromFloat yPercentage ++ "%" )
       , ( "margin-right", "-400px" )
@@ -207,9 +207,9 @@ hoverAt system x y styles view =
       ]
 
     containerStyles =
-      standardStyles ++ posititonStyles ++ styles
+      standardStyles ++ positionStyles ++ styles
   in
-  Html.div (List.map (\(p,v) -> Html.Attributes.style p v) styles) view
+  Html.div (List.map (\(p,v) -> Html.Attributes.style p v) containerStyles) view
 
 
 
