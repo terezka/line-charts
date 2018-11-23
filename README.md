@@ -10,7 +10,7 @@ Run the following command in the root of your project
 $ elm package install terezka/line-charts
 ```
 
-and import the library in a elm file like this 
+and import the library in a elm file like this
 
 ```elm
 import LineChart
@@ -27,11 +27,12 @@ Find the documentation on [Elm's package website](http://package.elm-lang.org/pa
 ### Setup
 
 ```shell
+$ cd examples
 $ elm package install
 $ elm reactor
 ```
 
-and open [examples](https://localhost:8000/examples).
+and open [examples](https://localhost:8000).
 
 ### Tests
 

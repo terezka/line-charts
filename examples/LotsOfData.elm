@@ -20,13 +20,14 @@ import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
 import Random
+import Browser
 
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-  Html.program
-    { init = init
+  Browser.element
+    { init = \_ -> init
     , update = update
     , view = view
     , subscriptions = always Sub.none
