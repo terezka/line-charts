@@ -209,7 +209,7 @@ hoverAt system x y styles view =
     containerStyles =
       standardStyles ++ posititonStyles ++ styles
   in
-  Html.div (List.map (\(p,v) -> Html.Attributes.style p v) styles) view
+  Html.div (List.map (\(p,v) -> Html.Attributes.style p v) containerStyles) view
 
 
 
