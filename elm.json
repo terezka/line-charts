@@ -38,6 +38,7 @@
         "elm/time": "1.0.0 <= v < 2.0.0",
         "justinmimbs/time-extra": "1.1.0 <= v < 2.0.0",
         "myrho/elm-round": "1.0.4 <= v < 2.0.0",
+        "noahzgordon/elm-color-extra": "1.0.2 <= v < 2.0.0",
         "ryannhg/date-format": "2.0.1 <= v < 3.0.0"
     },
     "test-dependencies": {}
