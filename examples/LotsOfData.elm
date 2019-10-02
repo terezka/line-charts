@@ -1,5 +1,6 @@
 module LotsOfData exposing (main)
 
+import Browser
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
 import Svg exposing (Attribute, Svg, g, text_, tspan)
@@ -23,15 +24,17 @@ import Random
 
 
 
-main : Program Never Model Msg
+main : Program() Model Msg
 main =
-  Html.program
-    { init = init
+  Browser.element
+    { init = \_ -> init
     , update = update
     , view = view
-    , subscriptions = always Sub.none
+    , subscriptions = subscriptions
     }
 
+subscriptions : Model -> Sub Msg
+subscriptions _ = Sub.none
 
 
 -- MODEL
