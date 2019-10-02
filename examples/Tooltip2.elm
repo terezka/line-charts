@@ -1,5 +1,6 @@
 module Tooltip exposing (main)
 
+import Browser
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
 import Svg exposing (Attribute, Svg, g, text_, tspan)
@@ -22,7 +23,7 @@ import Color
 
 
 
-main : Program Never Model Msg
+main : Program() Model Msg
 main =
   Browser.sandbox
     { init = init
@@ -117,8 +118,8 @@ tooltipHtml system info =
     yPosition = Coordinate.toSvgY system info.weight
 
     containerStyles =
-      [ ( "left", toString xPosition ++ "px" )
-      , ( "top", toString yPosition ++ "px" )
+      [ ( "left", String.fromFloat xPosition ++ "px" )
+      , ( "top", String.fromFloat yPosition ++ "px" )
       , ( "position", "absolute" )
       , ( "padding", "5px" )
       , ( "background", "rgba(247, 193, 255, 0.8)" )
@@ -131,8 +132,8 @@ tooltipHtml system info =
 
     viewValue ( label, value ) =
       Html.p
-        [ Html.Attributes.style valueStyles ]
-        [ Html.text <| label ++ " - " ++ toString value ]
+        (List.map (\(k,v) -> Html.Attributes.style k v) valueStyles)
+        [ Html.text <| label ++ " - " ++ String.fromFloat value ]
 
     valueStyles =
       [ ( "margin", "3px" ) ]
@@ -143,7 +144,7 @@ tooltipHtml system info =
         , ( "weight", info.weight )
         ]
   in
-  Html.div [ Html.Attributes.style containerStyles ] valuesHtml
+    Html.div (List.map (\(key, value) -> Html.Attributes.style key value) containerStyles)  valuesHtml
 
 
 
