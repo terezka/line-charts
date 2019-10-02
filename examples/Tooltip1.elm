@@ -1,5 +1,6 @@
 module Tooltip1 exposing (main)
 
+import Browser
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
 import Svg exposing (Attribute, Svg, g, text_, tspan)
@@ -21,7 +22,7 @@ import Color
 
 
 
-main : Program Never Model Msg
+main : Program()  Model Msg
 main =
   Browser.sandbox
     { init = init
@@ -81,8 +82,8 @@ chart model =
     , events = Events.hoverOne Hover
     , junk =
         Junk.hoverOne model.hovered
-          [ ( "Age", toString << .age )
-          , ( "Weight", toString << .weight )
+          [ ( "Age", String.fromFloat << .age )
+          , ( "Weight", String.fromFloat << .weight )
           ]
     , grid = Grid.default
     , area = Area.default
