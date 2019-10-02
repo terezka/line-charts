@@ -1,5 +1,6 @@
 module Selection2 exposing (main)
 
+import Browser
 import Html
 import Html.Attributes
 import Svg
@@ -28,16 +29,17 @@ import LineChart.Axis.Intersection as Intersection
 
 
 
-main : Program Never Model Msg
+main : Program() Model Msg
 main =
-  Html.program
-    { init = init
+  Browser.element
+    { init = \_ -> init
     , update = update
     , view = view
-    , subscriptions = always Sub.none
+    , subscriptions = subscriptions
     }
 
-
+subscriptions : Model -> Sub Msg
+subscriptions _ = Sub.none
 
 -- MODEL
 
@@ -80,15 +82,18 @@ init =
   )
 
 
+genNumbers: Random.Generator (List Float)
+genNumbers =
+   Random.list 200 (Random.float 0 20)
+
+
 getNumbers : Cmd Msg
 getNumbers =
   let
-    genNumbers =
-      Random.list 200 (Random.float 0 20)
+    numbers = Random.map3 (\x y z -> (x,y,z)) genNumbers genNumbers genNumbers
   in
-  Random.map3 (,,) genNumbers genNumbers genNumbers
-    |> Random.generate RecieveNumbers
-
+    numbers
+    |> Random.generate ReceiveNumbers
 
 
 -- API
@@ -136,7 +141,7 @@ getSelectionStart hovered model =
 
 
 type Msg
-  = RecieveNumbers ( List Float, List Float, List Float )
+  = ReceiveNumbers ( List Float, List Float, List Float )
   -- Chart 1
   | Hold Coordinate.Point
   | Move Coordinate.Point
@@ -150,7 +155,7 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveNumbers numbers ->
+    ReceiveNumbers numbers ->
       model
         |> setData numbers
         |> addCmd Cmd.none
@@ -215,7 +220,7 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [ Html.Attributes.style [ ("display", "flex") ] ] <|
+  Html.div [ Html.Attributes.style "display" "flex" ] <|
     case model.selection of
       Nothing ->
         [ chart model ]
@@ -271,8 +276,8 @@ below system selection =
 
 
 above : Coordinate.System -> Maybe Float -> List (Svg.Svg msg)
-above system hovered =
-  case hovered of
+above system hoverState =
+  case hoverState of
     Just hovered ->
       [ Junk.vertical system [] hovered ]
 
@@ -290,8 +295,8 @@ chartZoom model selection =
     { range = xAxisRangeConfig selection
     , junk =
         Junk.hoverOne model.hinted
-          [ ( "x", toString << round100 << .x )
-          , ( "y", toString << round100 << .y )
+          [ ( "x", String.fromFloat << round100 << .x )
+          , ( "y", String.fromFloat << round100 << .y )
           ]
     , events = Events.hoverOne Hint
     , legends = Legends.none
@@ -344,7 +349,7 @@ viewChart data { range, junk, events, legends, dots, id } =
           }
     , container =
         Container.custom
-          { attributesHtml = [ Html.Attributes.style [ ( "font-family", "monospace" ) ] ]
+          { attributesHtml = [ Html.Attributes.style "font-family" "monospace" ]
           , attributesSvg = []
           , size = Container.static
           , margin = Container.Margin 30 100 60 50
