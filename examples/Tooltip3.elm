@@ -1,5 +1,6 @@
 module Tooltip3 exposing (main)
 
+import Browser
 import Html
 import Html.Attributes
 import LineChart as LineChart
@@ -20,7 +21,7 @@ import LineChart.Area as Area
 
 
 
-main : Program Never Model Msg
+main : Program() Model Msg
 main =
   Browser.sandbox
     { init = init
@@ -64,7 +65,7 @@ update msg model =
 view : Model -> Html.Html Msg
 view model =
   Html.div
-    [ Html.Attributes.style [ ( "font-family", "monospace" ) ] ]
+    [ Html.Attributes.style "font-family" "monospace" ]
     [ chart model ]
 
 
@@ -93,12 +94,12 @@ chart model =
 
 formatX : Info -> String
 formatX info =
-  "Age: " ++ toString info.age
+  "Age: " ++ String.fromFloat info.age
 
 
 formatY : Info -> String
 formatY info =
-  toString info.weight ++ " kg"
+  String.fromFloat info.weight ++ " kg"
 
 
 
