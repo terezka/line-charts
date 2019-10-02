@@ -1,5 +1,6 @@
 module Selection1 exposing (main)
 
+import Browser
 import Html
 import Svg
 import Svg.Attributes
@@ -22,7 +23,7 @@ import LineChart.Axis.Intersection as Intersection
 
 
 
-main : Program Never Model Msg
+main : Program()  Model Msg
 main =
   Browser.sandbox
     { init = init
