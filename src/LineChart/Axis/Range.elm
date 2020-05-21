@@ -72,7 +72,7 @@ default =
 
 
 {-| Add a given amount of pixels to the minimum and maximum of your axis range,
-respectivily.
+respectively.
 
     rangeConfig : Range.Config
     rangeConfig =
@@ -90,7 +90,7 @@ padded =
 
 
 {-| Straight up set your axis range by specifying the minimum and maximum,
-respectivily.
+respectively.
 
 
     rangeConfig : Range.Config

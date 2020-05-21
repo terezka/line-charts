@@ -11,7 +11,7 @@ the position of the grid or remove it all together, alter your tick
 configuration of your axis.
 
 The path to the tick in the configuration does through the `x` or `y`
-property for vertical and horizontal grids respectivily and then in the
+property for vertical and horizontal grids respectively and then in the
 `axis` property.
 
 See `LineChart.Axis` -> `LineChart.Axis.Ticks` -> `LineChart.Axis.Tick`.

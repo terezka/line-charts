@@ -107,7 +107,7 @@ type alias Properties msg =
   }
 
 
-{-| Given your data range and axis range respectivily, define your own
+{-| Given your data range and axis range respectively, define your own
 axis line configuration.
 
     axisLineConfig : AxisLine.Config msg
