@@ -1,6 +1,6 @@
 # Line Charts
 
-A opinionated library for plotting line charts in SVG. Written in all Elm. See [demo.](https://terezka.github.io/line-charts/)
+An opinionated library for plotting line charts in SVG. Written in all Elm. See [demo.](https://terezka.github.io/line-charts/)
 
 ## Installation
 
@@ -10,13 +10,13 @@ Run the following command in the root of your project
 $ elm install terezka/line-charts
 ```
 
-and import the library in a elm file like this
+and import the library in an elm file like this 
 
 ```elm
 import LineChart
 ```
 
-See the documntation for more information on usage!
+See the documentation for more information on usage!
 
 ## Documentation
 
