@@ -211,7 +211,7 @@ view toX toY =
   viewCustom (defaultConfig toX toY)
 
 
-{-| This is the type holds the visual configuration representing 
+{-| This is the type holds the visual configuration representing
 a _series_ of data.
 
 Definition of _series_:
@@ -272,7 +272,7 @@ line =
 ** Customize a dashed line **
 
 Works just like `line`, except it takes another argument which is an array of
-floats describing your dashing pattern. I recommend typing in random numbers and seeing what 
+floats describing your dashing pattern. I recommend typing in random numbers and seeing what
 happens, but you alternativelly you can see the SVG `stroke-dasharray`
 [documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray)
 for examples of patterns.
@@ -450,7 +450,7 @@ Typically, this would be when you have a quantity accumulating over time.
 Think profit over time or velocity over time!
 In the case of profit over time, the area under the curve shows the total amount
 of money earned in that time frame.<br/>
-If the that total amount is not important for the relationship you're 
+If the that total amount is not important for the relationship you're
 trying to visualize, it's best to leave it out!
 
 -}
@@ -468,10 +468,10 @@ viewCustom config lines =
       toSystem config dataAllSafe
 
     -- Junk
-    junkLineInfo line =
-       ( Internal.Line.color config.line line []
-       , Internal.Line.label line
-       , Internal.Line.data line
+    junkLineInfo line_ =
+       ( Internal.Line.color config.line line_ []
+       , Internal.Line.label line_
+       , Internal.Line.data line_
        )
 
     getJunk =
@@ -537,11 +537,11 @@ viewCustom config lines =
 viewBoxAttribute : Coordinate.System -> Html.Attribute msg
 viewBoxAttribute { frame } =
   Svg.Attributes.viewBox <|
-    "0 0 " ++ toString frame.size.width ++ " " ++ toString frame.size.height
+    "0 0 " ++ String.fromFloat frame.size.width ++ " " ++ String.fromFloat frame.size.height
 
 
 container : Config data msg -> Coordinate.System -> List (Html.Html msg) -> Html.Html msg -> Html.Html msg
-container config { frame } junkHtml plot  =
+container config { frame } junkHtml plot =
   let
     userAttributes =
       Internal.Container.properties .attributesHtml config.container
@@ -550,17 +550,17 @@ container config { frame } junkHtml plot  =
       Internal.Container.sizeStyles config.container frame.size.width frame.size.height
 
     styles =
-      Html.Attributes.style <| ( "position", "relative" ) :: sizeStyles
+      Html.Attributes.style "position" "relative" :: sizeStyles
   in
-  Html.div (styles :: userAttributes) (plot :: junkHtml)
+  Html.div (styles ++ userAttributes) (plot :: junkHtml)
 
 
 chartAreaAttributes : Coordinate.System -> List (Svg.Attribute msg)
 chartAreaAttributes system =
-  [ Svg.Attributes.x <| toString system.frame.margin.left
-  , Svg.Attributes.y <| toString system.frame.margin.top
-  , Svg.Attributes.width <| toString (Coordinate.lengthX system)
-  , Svg.Attributes.height <| toString (Coordinate.lengthY system)
+  [ Svg.Attributes.x <| String.fromFloat system.frame.margin.left
+  , Svg.Attributes.y <| String.fromFloat system.frame.margin.top
+  , Svg.Attributes.width <| String.fromFloat (Coordinate.lengthX system)
+  , Svg.Attributes.height <| String.fromFloat (Coordinate.lengthY system)
   ]
 
 
@@ -595,9 +595,9 @@ toDataPoints config lines =
 
     addPoint datum =
       case ( x datum, y datum ) of
-        ( Just x, Just y )   -> Just <| Data.Data datum (Data.Point x y) True
-        ( Just x, Nothing )  -> Just <| Data.Data datum (Data.Point x 0) False
-        ( Nothing, Just y )  -> Nothing -- TODO not allowed
+        ( Just x_, Just y_ )   -> Just <| Data.Data datum (Data.Point x_ y_) True
+        ( Just x_, Nothing )  -> Just <| Data.Data datum (Data.Point x_ 0) False
+        ( Nothing, Just y_ )  -> Nothing -- TODO not allowed
         ( Nothing, Nothing ) -> Nothing
   in
   case config.area of
@@ -610,8 +610,8 @@ toDataPoints config lines =
 stack : List (List (Data.Data data)) -> List (List (Data.Data data))
 stack dataset =
   let
-    stackBelows dataset result =
-      case dataset of
+    stackBelows dataset_ result =
+      case dataset_ of
         data :: belows ->
           stackBelows belows <|
             List.foldl addBelows data belows :: result
@@ -623,10 +623,10 @@ stack dataset =
 
 
 addBelows : List (Data.Data data) -> List (Data.Data data) -> List (Data.Data data)
-addBelows data dataBelow =
+addBelows alldata dataBelowAll =
   let
-    iterate datum0 data dataBelow result =
-      case ( data, dataBelow ) of
+    iterate datum0 dataTop dataBelowTop result =
+      case ( dataTop, dataBelowTop ) of
         ( datum1 :: data, datumBelow :: dataBelow ) ->
           -- if the data point is after the point below, add it
           if datum1.point.x > datumBelow.point.x
@@ -655,8 +655,8 @@ addBelows data dataBelow =
     add below datum =
       setY below (below.point.y + datum.point.y)
   in
-  List.reverse <| Maybe.withDefault [] <| Utils.withFirst data <| \first rest ->
-    iterate first rest dataBelow []
+  List.reverse <| Maybe.withDefault [] <| Utils.withFirst alldata <| \first rest ->
+    iterate first rest dataBelowAll []
 
 
 normalize : List (List (Data.Data data)) -> List (List (Data.Data data))
@@ -664,8 +664,8 @@ normalize datasets =
   case datasets of
     highest :: belows ->
       let
-        toPercentage highest datum =
-          setY datum (100 * datum.point.y / highest.point.y)
+        toPercentage highest_ datum =
+          setY datum (100 * datum.point.y / highest_.point.y)
       in
       List.map (List.map2 toPercentage highest) (highest :: belows)
 
@@ -681,10 +681,10 @@ setY datum y =
 toSystem : Config data msg -> List (Data.Data data) -> Coordinate.System
 toSystem config data =
   let
-    container = Internal.Container.properties identity config.container
+    container_ = Internal.Container.properties identity config.container
     hasArea = Internal.Area.hasArea config.area
     size   = Coordinate.Size (Internal.Axis.pixels config.x) (Internal.Axis.pixels config.y)
-    frame  = Coordinate.Frame container.margin size
+    frame  = Coordinate.Frame container_.margin size
     xRange = Coordinate.range (.point >> .x) data
     yRange = Coordinate.range (.point >> .y) data
 
@@ -694,7 +694,7 @@ toSystem config data =
       , y = adjustDomainRange yRange
       , xData = xRange
       , yData = yRange
-      , id = container.id
+      , id = container_.id
       }
 
     adjustDomainRange domain =

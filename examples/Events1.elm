@@ -18,13 +18,14 @@ import LineChart.Legends as Legends
 import LineChart.Area as Area
 import Color
 import Color.Manipulate
+import Browser
 
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-  Html.beginnerProgram
-    { model = init
+  Browser.sandbox
+    { init = init
     , update = update
     , view = view
     }

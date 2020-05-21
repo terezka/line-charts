@@ -20,13 +20,14 @@ import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
 import Random
+import Browser
 
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-  Html.program
-    { init = init
+  Browser.element
+    { init = \_ -> init
     , update = update
     , view = view
     , subscriptions = always Sub.none
@@ -51,13 +52,13 @@ init =
 
 
 type Msg
-  = RecieveNumbers (List Float)
+  = ReceiveNumbers (List Float)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveNumbers numbers ->
+    ReceiveNumbers numbers ->
       ( { model | data = List.indexedMap toData numbers }
       , Cmd.none
       )
@@ -71,7 +72,7 @@ toData index =
 getNumbers : Cmd Msg
 getNumbers =
   Random.list 1501 (Random.float 0 20)
-    |> Random.generate RecieveNumbers
+    |> Random.generate ReceiveNumbers
 
 
 

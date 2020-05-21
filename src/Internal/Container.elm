@@ -65,7 +65,7 @@ spaced id top right bottom left =
 styled : String -> List ( String, String ) -> Config msg
 styled id styles =
   custom
-    { attributesHtml = [ Html.Attributes.style styles ]
+    { attributesHtml = List.map (\(p, v) -> Html.Attributes.style p v) styles
     , attributesSvg = []
     , size = static
     , margin = Margin 60 140 60 80
@@ -109,17 +109,17 @@ static =
 
 {-| -}
 properties : (Properties msg -> a) -> Config msg -> a
-properties f (Config properties) =
-  f properties
+properties f (Config properties_) =
+  f properties_
 
 
 {-| -}
-sizeStyles : Config msg -> Float -> Float -> List ( String, String )
-sizeStyles (Config properties) width height =
-  case properties.size of
+sizeStyles : Config msg -> Float -> Float -> List (Html.Attribute msg)
+sizeStyles (Config properties_) width height =
+  case properties_.size of
     Static ->
-      [ ( "height", toString height ++ "px" )
-      , ( "width", toString width ++ "px" )
+      [ Html.Attributes.style "height" (String.fromFloat height ++ "px")
+      , Html.Attributes.style "width" (String.fromFloat width ++ "px")
       ]
 
     Relative ->

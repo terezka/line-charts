@@ -65,7 +65,7 @@ int n =
     , length = 5
     , grid = True
     , direction = Negative
-    , label = Just <| Svg.label "inherit" (toString n)
+    , label = Just <| Svg.label "inherit" (String.fromInt n)
     }
 
 
@@ -79,7 +79,7 @@ float n =
     , length = 5
     , grid = True
     , direction = Negative
-    , label = Just <| Svg.label "inherit" (toString n)
+    , label = Just <| Svg.label "inherit" (String.fromFloat n)
     }
 
 
@@ -93,7 +93,7 @@ gridless n =
     , length = 5
     , grid = False
     , direction = Negative
-    , label = Just <| Svg.label "inherit" (toString n)
+    , label = Just <| Svg.label "inherit" (String.fromFloat n)
     }
 
 
@@ -121,7 +121,7 @@ long n =
     , length = 20
     , grid = True
     , direction = Negative
-    , label = Just <| Svg.label "inherit" (toString n)
+    , label = Just <| Svg.label "inherit" (String.fromFloat n)
     }
 
 
@@ -135,7 +135,7 @@ opposite n =
     , length = 5
     , grid = True
     , direction = Positive
-    , label = Just <| Svg.label "inherit" (toString n)
+    , label = Just <| Svg.label "inherit" (String.fromFloat n)
     }
 
 
@@ -151,5 +151,5 @@ custom =
 
 {-| -}
 properties : Config msg -> Properties msg
-properties (Config properties) =
-  properties
+properties (Config properties_) =
+  properties_

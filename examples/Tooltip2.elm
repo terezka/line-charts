@@ -19,13 +19,14 @@ import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
 import Color
+import Browser
 
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-  Html.beginnerProgram
-    { model = init
+  Browser.sandbox
+    { init = init
     , update = update
     , view = view
     }
@@ -116,9 +117,9 @@ tooltipHtml system info =
     xPosition = Coordinate.toSvgX system info.age + space
     yPosition = Coordinate.toSvgY system info.weight
 
-    containerStyles =
-      [ ( "left", toString xPosition ++ "px" )
-      , ( "top", toString yPosition ++ "px" )
+    containerAttributes =
+      [ ( "left", String.fromFloat xPosition ++ "px" )
+      , ( "top", String.fromFloat yPosition ++ "px" )
       , ( "position", "absolute" )
       , ( "padding", "5px" )
       , ( "background", "rgba(247, 193, 255, 0.8)" )
@@ -128,14 +129,12 @@ tooltipHtml system info =
           then ( "transform", "translateX(-100%)" )
           else ( "transform", "translateX(0)" )
       ]
+        |> List.map (\(name, value) -> Html.Attributes.style name value)
 
     viewValue ( label, value ) =
       Html.p
-        [ Html.Attributes.style valueStyles ]
-        [ Html.text <| label ++ " - " ++ toString value ]
-
-    valueStyles =
-      [ ( "margin", "3px" ) ]
+        [ Html.Attributes.style "margin" "3px" ]
+        [ Html.text <| label ++ " - " ++ String.fromFloat value ]
 
     valuesHtml =
       List.map viewValue
@@ -143,7 +142,7 @@ tooltipHtml system info =
         , ( "weight", info.weight )
         ]
   in
-  Html.div [ Html.Attributes.style containerStyles ] valuesHtml
+  Html.div containerAttributes valuesHtml
 
 
 

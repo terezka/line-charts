@@ -121,8 +121,8 @@ type alias Arguments data msg =
 view : Arguments data msg -> Svg.Svg msg
 view arguments =
   case arguments.legends of
-    Free placement view ->
-      viewFrees arguments placement view
+    Free placement view_ ->
+      viewFrees arguments placement view_
 
     Grouped sampleWidth container ->
       viewGrouped arguments sampleWidth (container arguments)
@@ -136,9 +136,9 @@ view arguments =
 
 
 viewFrees : Arguments data msg -> Placement -> (String -> Svg msg) -> Svg.Svg msg
-viewFrees { system, lines, data } placement view =
+viewFrees { system, lines, data } placement view_ =
   Svg.g [ Attributes.class "chart__legends" ] <|
-    List.map2 (viewFree system placement view) lines data
+    List.map2 (viewFree system placement view_) lines data
 
 
 viewFree : Coordinate.System -> Placement -> (String -> Svg msg) -> Line.Series data -> List (Data.Data data) -> Svg.Svg msg

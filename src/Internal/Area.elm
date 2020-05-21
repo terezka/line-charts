@@ -65,9 +65,9 @@ opacity : Config -> Float
 opacity config =
   case config of
     None               -> 0
-    Normal opacity     -> opacity
-    Stacked opacity    -> opacity
-    Percentage opacity -> opacity
+    Normal opacity_     -> opacity_
+    Stacked opacity_    -> opacity_
+    Percentage opacity_ -> opacity_
 
 
 {-| -}
@@ -75,9 +75,9 @@ opacitySingle : Config -> Float
 opacitySingle config =
   case config of
     None               -> 0
-    Normal opacity     -> opacity
-    Stacked opacity    -> 1
-    Percentage opacity -> 1
+    Normal opacity_     -> opacity_
+    Stacked opacity_    -> 1
+    Percentage opacity_ -> 1
 
 
 {-| -}
@@ -85,6 +85,6 @@ opacityContainer : Config -> Float
 opacityContainer config =
   case config of
     None               -> 1
-    Normal opacity     -> 1
-    Stacked opacity    -> opacity
-    Percentage opacity -> opacity
+    Normal opacity_     -> 1
+    Stacked opacity_    -> opacity_
+    Percentage opacity_ -> opacity_

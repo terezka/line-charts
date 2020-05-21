@@ -43,9 +43,9 @@ unzip3 pairs =
 indexedMap2 : (Int -> a -> b -> c) -> List a -> List b -> List c
 indexedMap2 f a b =
   let
-    collect a b i c =
-      case ( a, b ) of
-        ( a0 :: a, b0 :: b ) -> collect a b (i + 1) <| c ++ [ f i a0 b0 ]
+    collect a_ b_ i c =
+      case ( a_, b_ ) of
+        ( a0 :: a__, b0 :: b__ ) -> collect a__ b__ (i + 1) <| c ++ [ f i a0 b0 ]
         ( [], _ ) -> c
         ( _, [] ) -> c
   in

@@ -7,7 +7,7 @@ An opinionated library for plotting line charts in SVG. Written in all Elm. See 
 Run the following command in the root of your project
 
 ```shell
-$ elm package install terezka/line-charts
+$ elm install terezka/line-charts
 ```
 
 and import the library in an elm file like this 
@@ -27,11 +27,12 @@ Find the documentation on [Elm's package website](http://package.elm-lang.org/pa
 ### Setup
 
 ```shell
+$ cd examples
 $ elm package install
 $ elm reactor
 ```
 
-and open [examples](https://localhost:8000/examples).
+and open [examples](https://localhost:8000).
 
 ### Tests
 

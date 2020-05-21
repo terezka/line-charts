@@ -6,7 +6,7 @@ import LineChart.Axis.Tick exposing (Time, Unit(..), Interval)
 import Internal.Axis.Values.Time as Time
 import Internal.Utils as Utils
 import Internal.Coordinate as Coordinate
-
+import Time
 
 
 {-| -}
@@ -36,16 +36,16 @@ exactly =
 int : Amount -> Coordinate.Range -> List Int
 int amount =
   case amount of
-    Exactly amount -> List.map round << values False True amount
-    Around amount  -> List.map round << values False False amount
+    Exactly amount_ -> List.map round << values False True amount_
+    Around amount_  -> List.map round << values False False amount_
 
 
 {-| -}
 float : Amount -> Coordinate.Range -> List Float
 float amount =
   case amount of
-    Exactly amount -> values True True amount
-    Around amount  -> values True False amount
+    Exactly amount_ -> values True True amount_
+    Around amount_  -> values True False amount_
 
 
 {-| -}
@@ -62,7 +62,7 @@ custom intersection interval range =
 
 
 {-| -}
-time : Int -> Coordinate.Range -> List Time
+time : Time.Zone -> Int -> Coordinate.Range -> List Time
 time =
   Time.values
 
@@ -121,8 +121,8 @@ getInterval intervalRaw allowDecimals hasTickAmount =
     multiples =
       getMultiples magnitude allowDecimals hasTickAmount
 
-    findMultiple multiples =
-      case multiples of
+    findMultiple multiples_ =
+      case multiples_ of
         m1 :: m2 :: rest ->
           if normalized <= (m1 + m2) / 2
             then m1 else findMultiple (m2 :: rest)
@@ -134,8 +134,8 @@ getInterval intervalRaw allowDecimals hasTickAmount =
         [] ->
           1
 
-    findMultipleExact multiples =
-      case multiples of
+    findMultipleExact multiples_ =
+      case multiples_ of
         m1 :: rest ->
           if m1 * magnitude >= intervalRaw
             then m1 else findMultipleExact rest
@@ -178,18 +178,18 @@ getMultiples magnitude allowDecimals hasTickAmount =
 {-| -}
 correctFloat : Int -> Float -> Float
 correctFloat prec =
-  Round.round prec >> String.toFloat >> Result.withDefault 0
+  Round.round prec >> String.toFloat >> Maybe.withDefault 0
 
 
 {-| -}
 getPrecision : Float -> Int
 getPrecision number =
-  case String.split "e" (toString number) of
+  case String.split "e" (String.fromFloat number) of
     [ before, after ] ->
-      String.toInt after |> Result.withDefault 0 |> abs
+      String.toInt after |> Maybe.withDefault 0 |> abs
 
     _ ->
-      case String.split "." (toString number) of
+      case String.split "." (String.fromFloat number) of
         [ before, after ] ->
             String.length after
 

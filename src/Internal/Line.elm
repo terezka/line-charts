@@ -23,7 +23,6 @@ import Internal.Interpolation as Interpolation
 import Internal.Path as Path
 import Internal.Utils as Utils
 import Color
-import Color.Convert
 
 
 
@@ -65,12 +64,12 @@ data (Series config) =
 
 {-| -}
 color : Config data -> Series data -> List (Data.Data data) -> Color.Color
-color (Config config) (Series line) data =
+color (Config config) (Series line_) data_ =
   let
-    (Style style) =
-      config (List.map .user data)
+    (Style style_) =
+      config (List.map .user data_)
   in
-  style.color line.color
+  style_.color line_.color
 
 
 
@@ -79,14 +78,14 @@ color (Config config) (Series line) data =
 
 {-| -}
 line : Color.Color -> Dot.Shape -> String -> List data -> Series data
-line color shape label data =
-  Series <| SeriesConfig color shape [] label data
+line color_ shape_ label_ data_ =
+  Series <| SeriesConfig color_ shape_ [] label_ data_
 
 
 {-| -}
 dash : Color.Color -> Dot.Shape -> String -> List Float -> List data -> Series data
-dash color shape label dashing data =
-  Series <| SeriesConfig color shape dashing label data
+dash color_ shape_ label_ dashing_ data_ =
+  Series <| SeriesConfig color_ shape_ dashing_ label_ data_
 
 
 
@@ -130,8 +129,8 @@ type Style =
 
 {-| -}
 style : Float -> (Color.Color -> Color.Color) -> Style
-style width color =
-  Style { width = width, color = color }
+style width color_ =
+  Style { width = width, color = color_ }
 
 
 
@@ -168,15 +167,15 @@ view arguments lines datas =
 viewNormal : ( List (Svg.Svg msg), List (Svg.Svg msg), List (Svg.Svg msg) ) -> List (Svg.Svg msg)
 viewNormal ( areas, lines, dots ) =
   let
-    view area line dots =
-      Svg.g [ Attributes.class "chart__line" ] [ area, line, dots ]
+    view_ area_ line_ dots_ =
+      Svg.g [ Attributes.class "chart__line" ] [ area_, line_, dots_ ]
   in
-  List.map3 view areas lines dots
+  List.map3 view_ areas lines dots
 
 
 viewStacked : Area.Config ->  ( List (Svg.Svg msg), List (Svg.Svg msg), List (Svg.Svg msg) ) -> List (Svg.Svg msg)
 viewStacked area ( areas, lines, dots ) =
-  let opacity = "opacity: " ++ toString (Area.opacityContainer area)
+  let opacity = "opacity: " ++ String.fromFloat (Area.opacityContainer area)
       toList l d = [ l, d ]
       bottoms = List.concat <| List.map2 toList lines dots
   in
@@ -186,25 +185,25 @@ viewStacked area ( areas, lines, dots ) =
 
 
 viewSingle : Arguments data -> Series data -> List (Data.Data data) -> ( Svg.Svg msg, Svg.Svg msg, Svg.Svg msg )
-viewSingle arguments line data =
+viewSingle arguments line_ data_ =
   let
     -- Parting
     sections =
-      Utils.part .isReal data [] []
+      Utils.part .isReal data_ [] []
 
     parts =
       List.map Tuple.first sections
 
     -- Style
-    style =
-      arguments.lineConfig |> \(Config look) -> look (List.map .user data)
+    style_ =
+      arguments.lineConfig |> \(Config look) -> look (List.map .user data_)
 
     -- Dots
     viewDots =
       parts
         |> List.concat
         |> List.filter (Data.isWithinRange arguments.system << .point)
-        |> List.map (viewDot arguments line style)
+        |> List.map (viewDot arguments line_ style_)
         |> Svg.g [ Attributes.class "chart__dots" ]
 
     -- Interpolations
@@ -214,12 +213,12 @@ viewSingle arguments line data =
     viewAreas () =
       Svg.g
         [ Attributes.class "chart__interpolation__area" ] <|
-        List.map2 (viewArea arguments line style) commands parts
+        List.map2 (viewArea arguments line_ style_) commands parts
 
     viewSeriess =
       Svg.g
         [ Attributes.class "chart__interpolation__line" ] <|
-        List.map2 (viewSeries arguments line style) commands parts
+        List.map2 (viewSeries arguments line_ style_) commands parts
   in
   ( Utils.viewIf (Area.hasArea arguments.area) viewAreas
   , viewSeriess
@@ -232,12 +231,12 @@ viewSingle arguments line data =
 
 
 viewDot : Arguments data -> Series data -> Style -> Data.Data data -> Svg.Svg msg
-viewDot arguments (Series lineConfig) (Style style) =
+viewDot arguments (Series lineConfig) (Style style_) =
   Dot.view
     { system = arguments.system
     , dotsConfig = arguments.dotsConfig
     , shape = lineConfig.shape
-    , color = style.color lineConfig.color
+    , color = style_.color lineConfig.color
     }
 
 
@@ -246,22 +245,22 @@ viewDot arguments (Series lineConfig) (Style style) =
 
 
 viewSeries : Arguments data -> Series data -> Style -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
-viewSeries { system, lineConfig } line style interpolation data =
+viewSeries { system, lineConfig } line_ style_ interpolation data_ =
   let
     attributes =
-      Junk.withinChartArea system :: toSeriesAttributes line style
+      Junk.withinChartArea system :: toSeriesAttributes line_ style_
   in
-  Utils.viewWithFirst data <| \first _ ->
+  Utils.viewWithFirst data_ <| \first _ ->
     Path.view system attributes (Path.Move first.point :: interpolation)
 
 
 toSeriesAttributes : Series data -> Style -> List (Svg.Attribute msg)
-toSeriesAttributes (Series { color, dashing }) (Style style) =
+toSeriesAttributes (Series serie) (Style style_) =
   [ Attributes.style "pointer-events: none;"
   , Attributes.class "chart__interpolation__line__fragment"
-  , Attributes.stroke (Color.Convert.colorToHex (style.color color))
-  , Attributes.strokeWidth (toString style.width)
-  , Attributes.strokeDasharray (String.join " " (List.map toString dashing))
+  , Attributes.stroke (Color.toCssString (style_.color serie.color))
+  , Attributes.strokeWidth (String.fromFloat style_.width)
+  , Attributes.strokeDasharray (String.join " " (List.map String.fromFloat serie.dashing))
   , Attributes.fill "transparent"
   ]
 
@@ -271,15 +270,15 @@ toSeriesAttributes (Series { color, dashing }) (Style style) =
 
 
 viewArea : Arguments data -> Series data -> Style -> List Path.Command -> List (Data.Data data) -> Svg.Svg msg
-viewArea { system, lineConfig, area } line style interpolation data =
+viewArea { system, lineConfig, area } line_ style_ interpolation data_ =
   let
     ground point =
       Data.Point point.x (Utils.towardsZero system.y)
 
     attributes =
       Junk.withinChartArea system
-        :: Attributes.fillOpacity (toString (Area.opacitySingle area))
-        :: toAreaAttributes line style area
+        :: Attributes.fillOpacity (String.fromFloat (Area.opacitySingle area))
+        :: toAreaAttributes line_ style_ area
 
     commands first middle last =
       Utils.concat
@@ -291,9 +290,9 @@ viewArea { system, lineConfig, area } line style interpolation data =
 
 
 toAreaAttributes : Series data -> Style -> Area.Config -> List (Svg.Attribute msg)
-toAreaAttributes (Series { color }) (Style style) area =
+toAreaAttributes (Series serie) (Style style_) area =
   [ Attributes.class "chart__interpolation__area__fragment"
-  , Attributes.fill (Color.Convert.colorToHex (style.color color))
+  , Attributes.fill (Color.toCssString (style_.color serie.color))
   ]
 
 
@@ -303,30 +302,30 @@ toAreaAttributes (Series { color }) (Style style) area =
 
 {-| -}
 viewSample : Config data -> Series data -> Area.Config -> List (Data.Data data) -> Float -> Svg.Svg msg
-viewSample (Config look) line area data sampleWidth =
+viewSample (Config look) line_ area data_ sampleWidth =
   let
-    style =
-      look (List.map .user data)
+    style_ =
+      look (List.map .user data_)
 
     lineAttributes =
-      toSeriesAttributes line style
+      toSeriesAttributes line_ style_
 
     sizeAttributes =
       [ Attributes.x1 "0"
       , Attributes.y1 "0"
-      , Attributes.x2 (toString sampleWidth)
+      , Attributes.x2 (String.fromFloat sampleWidth)
       , Attributes.y2 "0"
       ]
 
     areaAttributes =
-      Attributes.fillOpacity (toString (Area.opacity area))
-       :: toAreaAttributes line style area
+      Attributes.fillOpacity (String.fromFloat (Area.opacity area))
+       :: toAreaAttributes line_ style_ area
 
     rectangleAttributes =
       [ Attributes.x "0"
       , Attributes.y "0"
       , Attributes.height "9"
-      , Attributes.width (toString sampleWidth)
+      , Attributes.width (String.fromFloat sampleWidth)
       ]
 
     viewRectangle () =

@@ -12,7 +12,7 @@ import LineChart.Axis.Tick as Tick
 import Internal.Axis.Tick
 import Internal.Coordinate as Coordinate exposing (..)
 import Internal.Axis.Values as Values
-
+import Time
 
 
 -- AXIS
@@ -40,9 +40,9 @@ float amount =
 
 
 {-| -}
-time : Int -> Config msg
-time amount =
-  timeCustom amount Tick.time
+time : Time.Zone -> Int -> Config msg
+time zone amount =
+  timeCustom zone amount Tick.time
 
 
 
@@ -64,10 +64,10 @@ floatCustom amount tick =
 
 
 {-| -}
-timeCustom : Int -> (Tick.Time -> Tick.Config msg) -> Config msg
-timeCustom amount tick =
+timeCustom : Time.Zone -> Int -> (Tick.Time -> Tick.Config msg) -> Config msg
+timeCustom zone amount tick =
   custom <| \data range ->
-    List.map tick <| Values.time amount (Coordinate.smallestRange data range)
+    List.map tick <| Values.time zone amount (Coordinate.smallestRange data range)
 
 
 

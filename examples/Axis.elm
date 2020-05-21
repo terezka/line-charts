@@ -42,9 +42,9 @@ chart =
     { y = Axis.default 450 "Weight" .weight
     , x =
         -- Try out these different configs!
-        Axis.default 700 "Age" .age
+        -- Axis.default 700 "Age" .age
         -- Axis.full 700 "Age" .age
-        -- Axis.time 700 "Date" .date
+        Axis.time Time.utc 700 "Date" (toFloat << Time.posixToMillis << .date)
         -- customAxis
     , container = Container.styled "line-chart-1" [ ( "font-family", "monospace" ) ]
     , interpolation = Interpolation.default
@@ -116,7 +116,7 @@ customFloatTick position =
     , label =
         -- Junk.label just produces a SVG! Try using your own SVG markup!
         Just <|
-          Junk.label Color.blue (toString position)
+          Junk.label Color.blue (String.fromFloat position)
           -- customLabel position
     }
 
@@ -128,12 +128,12 @@ customLabel position =
       [ SvgA.fill "#717171"
       , SvgA.style "pointer-events: none;"
       ]
-      [ Svg.tspan [] [ Svg.text (toString position) ] ]
+      [ Svg.tspan [] [ Svg.text (String.fromFloat position) ] ]
     , Svg.circle
       [ SvgA.cx "15"
       , SvgA.cy "-10"
       , SvgA.r "3"
-      , SvgA.fill <| if round position % 2 == 0 then "pink" else "lightblue"
+      , SvgA.fill <| if Basics.remainderBy 2 (round position) == 0 then "pink" else "lightblue"
       ]
       []
     ]
@@ -148,7 +148,7 @@ customIntTick position =
     , length = 8
     , grid = False
     , direction = Tick.positive
-    , label = Just <| Junk.label Color.green (toString position)
+    , label = Just <| Junk.label Color.green (String.fromInt position)
     }
 
 
@@ -161,7 +161,7 @@ customTimeTick info =
       -- customFormat2 info
   in
   Tick.custom
-    { position = info.timestamp
+    { position = toFloat (Time.posixToMillis info.timestamp)
     , color = Color.orange
     , width = 2
     , length = 8
@@ -179,7 +179,6 @@ customFormat info =
     Tick.Minute      -> "m"
     Tick.Hour        -> "h"
     Tick.Day         -> "d"
-    Tick.Week        -> "w"
     Tick.Month       -> "m"
     Tick.Year        -> "y"
 
@@ -199,7 +198,6 @@ customFormatChange info =
     Tick.Minute      -> "new m!"
     Tick.Hour        -> "new h!"
     Tick.Day         -> "new d!"
-    Tick.Week        -> "new w!"
     Tick.Month       -> "new m!"
     Tick.Year        -> "new y!"
 
@@ -226,33 +224,38 @@ type alias Info =
   , weight : Float
   , height : Float
   , income : Float
-  , date : Time.Time
+  , date : Time.Posix
   }
+
+
+toInfo : Float -> Float -> Float -> Float -> Int -> Info
+toInfo age weight height income ms =
+  Info age weight height income (Time.millisToPosix ms)
 
 
 -- TODO fix date data
 alice : List Info
 alice =
-  [ Info 10 34 1.34 0     (1 * 3600000)
-  , Info 16 42 1.62 3000  (2 * 3600000)
-  , Info 25 75 1.73 25000 (3 * 3600000)
-  , Info 43 83 1.75 40000 (4 * 3600000)
+  [ toInfo 10 34 1.34 0     (1 * 3600000)
+  , toInfo 16 42 1.62 3000  (2 * 3600000)
+  , toInfo 25 75 1.73 25000 (3 * 3600000)
+  , toInfo 43 83 1.75 40000 (4 * 3600000)
   ]
 
 
 bobby : List Info
 bobby =
-  [ Info 10 38 1.32 0     (1 * 3600000)
-  , Info 17 69 1.75 2000  (2 * 3600000)
-  , Info 25 75 1.87 32000 (3 * 3600000)
-  , Info 43 77 1.87 52000 (4 * 3600000)
+  [ toInfo 10 38 1.32 0     (1 * 3600000)
+  , toInfo 17 69 1.75 2000  (2 * 3600000)
+  , toInfo 25 75 1.87 32000 (3 * 3600000)
+  , toInfo 43 77 1.87 52000 (4 * 3600000)
   ]
 
 
 chuck : List Info
 chuck =
-  [ Info 10 42 1.35 0      (1 * 3600000)
-  , Info 15 72 1.72 1800   (2 * 3600000)
-  , Info 25 89 1.83 85000  (3 * 3600000)
-  , Info 43 95 1.84 120000 (4 * 3600000)
+  [ toInfo 10 42 1.35 0      (1 * 3600000)
+  , toInfo 15 72 1.72 1800   (2 * 3600000)
+  , toInfo 25 89 1.83 85000  (3 * 3600000)
+  , toInfo 43 95 1.84 120000 (4 * 3600000)
   ]

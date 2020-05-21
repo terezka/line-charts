@@ -17,13 +17,13 @@ import LineChart.Events as Events
 import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
+import Browser
 
 
-
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-  Html.beginnerProgram
-    { model = init
+  Browser.sandbox
+    { init = init
     , update = update
     , view = view
     }
@@ -64,7 +64,7 @@ update msg model =
 view : Model -> Html.Html Msg
 view model =
   Html.div
-    [ Html.Attributes.style [ ( "font-family", "monospace" ) ] ]
+    [ Html.Attributes.style "font-family" "monospace" ]
     [ chart model ]
 
 
@@ -93,12 +93,12 @@ chart model =
 
 formatX : Info -> String
 formatX info =
-  "Age: " ++ toString info.age
+  "Age: " ++ String.fromFloat info.age
 
 
 formatY : Info -> String
 formatY info =
-  toString info.weight ++ " kg"
+  String.fromFloat info.weight ++ " kg"
 
 
 

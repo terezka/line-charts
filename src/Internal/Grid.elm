@@ -11,7 +11,6 @@ import LineChart.Coordinate as Coordinate
 import Internal.Axis as Axis
 import Internal.Axis.Ticks as Ticks
 import Color
-import Color.Convert
 
 
 
@@ -66,7 +65,7 @@ view system xAxis yAxis grid =
 viewDots : Coordinate.System -> List Float -> List Float -> Float -> Color.Color -> List (Svg.Svg msg)
 viewDots system verticals horizontals radius color =
   let
-    dots =
+    alldots =
       List.concatMap dots_ verticals
 
     dots_ g =
@@ -75,14 +74,14 @@ viewDots system verticals horizontals radius color =
     dot x y =
       Coordinate.toSvg system (Coordinate.Point x y)
   in
-  List.map (Svg.gridDot radius color) dots
+  List.map (Svg.gridDot radius color) alldots
 
 
 viewLines : Coordinate.System -> List Float -> List Float -> Float -> Color.Color -> List (Svg.Svg msg)
 viewLines system verticals horizontals width color =
   let
     attributes =
-      [ Attributes.strokeWidth (toString width), Attributes.stroke (Color.Convert.colorToHex color) ]
+      [ Attributes.strokeWidth (String.fromFloat width), Attributes.stroke (Color.toCssString color) ]
   in
   List.map (Svg.horizontalGrid system attributes) horizontals ++
   List.map (Svg.verticalGrid system attributes) verticals

@@ -1,0 +1,43 @@
+{
+    "type": "package",
+    "name": "terezka/line-charts",
+    "summary": "A library for plotting lines charts in SVG.",
+    "license": "BSD-3-Clause",
+    "version": "2.0.0",
+    "exposed-modules": [
+        "LineChart",
+        "LineChart.Area",
+        "LineChart.Axis",
+        "LineChart.Axis.Intersection",
+        "LineChart.Axis.Line",
+        "LineChart.Axis.Range",
+        "LineChart.Axis.Tick",
+        "LineChart.Axis.Ticks",
+        "LineChart.Axis.Title",
+        "LineChart.Axis.Values",
+        "LineChart.Colors",
+        "LineChart.Container",
+        "LineChart.Coordinate",
+        "LineChart.Dots",
+        "LineChart.Events",
+        "LineChart.Grid",
+        "LineChart.Interpolation",
+        "LineChart.Junk",
+        "LineChart.Legends",
+        "LineChart.Line"
+    ],
+    "elm-version": "0.19.0 <= v < 0.20.0",
+    "dependencies": {
+        "avh4/elm-color": "1.0.0 <= v < 2.0.0",
+        "debois/elm-dom": "1.3.0 <= v < 2.0.0",
+        "elm/core": "1.0.0 <= v < 2.0.0",
+        "elm/html": "1.0.0 <= v < 2.0.0",
+        "elm/json": "1.0.0 <= v < 2.0.0",
+        "elm/svg": "1.0.0 <= v < 2.0.0",
+        "elm/time": "1.0.0 <= v < 2.0.0",
+        "justinmimbs/time-extra": "1.1.0 <= v < 2.0.0",
+        "myrho/elm-round": "1.0.4 <= v < 2.0.0",
+        "ryannhg/date-format": "2.0.1 <= v < 3.0.0"
+    },
+    "test-dependencies": {}
+}

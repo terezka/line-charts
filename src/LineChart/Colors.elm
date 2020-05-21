@@ -28,109 +28,109 @@ import Color
 {-| -}
 pink : Color.Color
 pink =
-  Color.rgba 245 105 215 1
+  Color.rgb255 245 105 215
 
 
 {-| -}
 pinkLight : Color.Color
 pinkLight =
-  Color.rgba 244 143 177 1
+  Color.rgb255 244 143 177
 
 
 {-| -}
 gold : Color.Color
 gold =
-  Color.rgba 205 145 60 1
+  Color.rgb255 205 145 60
 
 
 {-| -}
 goldLight : Color.Color
 goldLight =
-  Color.rgba 255 204 128 1
+  Color.rgb255 255 204 128
 
 
 {-| -}
 blue : Color.Color
 blue =
-  Color.rgba 3 169 244 1
+  Color.rgb255 3 169 244
 
 
 {-| -}
 blueLight : Color.Color
 blueLight =
-  Color.rgba 128 222 234 1
+  Color.rgb255 128 222 234
 
 
 {-| -}
 green : Color.Color
 green =
-  Color.rgba 67 160 71 1
+  Color.rgb255 67 160 71
 
 
 {-| -}
 greenLight : Color.Color
 greenLight =
-  Color.rgba 197 225 165 1
+  Color.rgb255 197 225 165
 
 
 {-| -}
 red : Color.Color
 red =
-  Color.rgba 216 27 96 1
+  Color.rgb255 216 27 96
 
 
 {-| -}
 redLight : Color.Color
 redLight =
-  Color.rgba 239 154 154 1
+  Color.rgb255 239 154 154
 
 
 {-| -}
 rust : Color.Color
 rust =
-  Color.rgba 205 102 51 1
+  Color.rgb255 205 102 51
 
 
 {-| -}
 purple : Color.Color
 purple =
-  Color.rgba 156 39 176 1
+  Color.rgb255 156 39 176
 
 
 {-| -}
 purpleLight : Color.Color
 purpleLight =
-  Color.rgba 206 147 216 1
+  Color.rgb255 206 147 216
 
 
 {-| -}
 cyan : Color.Color
 cyan =
-  Color.rgba 0 229 255 1
+  Color.rgb255 0 229 255
 
 
 {-| -}
 cyanLight : Color.Color
 cyanLight =
-  Color.rgba 128 222 234 1
+  Color.rgb255 128 222 234
 
 
 {-| -}
 teal : Color.Color
 teal =
-  Color.rgba 29 233 182 1
+  Color.rgb255 29 233 182
 
 
 {-| -}
 tealLight : Color.Color
 tealLight =
-  Color.rgba 128 203 196 1
+  Color.rgb255 128 203 196
 
 
 {-| -}
 strongBlue : Color.Color
 strongBlue =
-  Color.rgba 89 51 204 1
+  Color.rgb255 89 51 204
 
 
 
@@ -142,25 +142,25 @@ strongBlue =
 {-| -}
 black : Color.Color
 black =
-  Color.rgb 0 0 0
+  Color.rgb255 0 0 0
 
 
 {-| -}
 gray : Color.Color
 gray =
-  Color.rgb 163 163 163
+  Color.rgb255 163 163 163
 
 
 {-| -}
 grayLight : Color.Color
 grayLight =
-  Color.rgb 211 211 211
+  Color.rgb255 211 211 211
 
 
 {-| -}
 grayLightest : Color.Color
 grayLightest =
-  Color.rgb 243 243 243
+  Color.rgb255 243 243 243
 
 
 {-| -}

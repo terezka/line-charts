@@ -51,7 +51,6 @@ import LineChart.Coordinate as Coordinate exposing (..)
 import Internal.Path as Path exposing (..)
 import Internal.Utils exposing (..)
 import Color
-import Color.Convert
 
 
 
@@ -69,10 +68,10 @@ withinChartArea { id } =
 gridDot : Float -> Color.Color -> Point -> Svg msg
 gridDot radius color point =
   Svg.circle
-    [ Attributes.cx (toString point.x)
-    , Attributes.cy (toString point.y)
-    , Attributes.r (toString radius)
-    , Attributes.fill (Color.Convert.colorToHex color)
+    [ Attributes.cx (String.fromFloat point.x)
+    , Attributes.cy (String.fromFloat point.y)
+    , Attributes.r (String.fromFloat radius)
+    , Attributes.fill (Color.toCssString color)
     ]
     []
 
@@ -87,7 +86,7 @@ horizontal system userAttributes y x1 x2 =
   let
     attributes =
       concat
-        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray)
+        [ Attributes.stroke (Color.toCssString Colors.gray)
         , Attributes.style "pointer-events: none;"
         ] userAttributes []
   in
@@ -104,7 +103,7 @@ vertical system userAttributes x y1 y2 =
   let
     attributes =
       concat
-        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray)
+        [ Attributes.stroke (Color.toCssString Colors.gray)
         , Attributes.style "pointer-events: none;"
         ] userAttributes []
   in
@@ -121,7 +120,7 @@ rectangle system userAttributes x1 x2 y1 y2 =
   let
     attributes =
       concat
-        [ Attributes.fill (Color.Convert.colorToHex Colors.gray) ]
+        [ Attributes.fill (Color.toCssString Colors.gray) ]
         userAttributes []
   in
     Path.view system attributes
@@ -138,7 +137,7 @@ horizontalGrid system userAttributes y =
   let
     attributes =
       concat
-        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray)
+        [ Attributes.stroke (Color.toCssString Colors.gray)
         , Attributes.style "pointer-events: none;"
         ] userAttributes []
   in
@@ -151,7 +150,7 @@ verticalGrid system userAttributes x =
   let
     attributes =
       concat
-        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray)
+        [ Attributes.stroke (Color.toCssString Colors.gray)
         , Attributes.style "pointer-events: none;"
         ] userAttributes []
   in
@@ -168,12 +167,12 @@ xTick system height userAttributes y x =
   let
     attributes =
       concat
-        [ Attributes.stroke (Color.Convert.colorToHex Colors.gray) ]
+        [ Attributes.stroke (Color.toCssString Colors.gray) ]
         userAttributes
-        [ Attributes.x1 <| toString (toSvgX system x)
-        , Attributes.x2 <| toString (toSvgX system x)
-        , Attributes.y1 <| toString (toSvgY system y)
-        , Attributes.y2 <| toString (toSvgY system y + height)
+        [ Attributes.x1 <| String.fromFloat (toSvgX system x)
+        , Attributes.x2 <| String.fromFloat (toSvgX system x)
+        , Attributes.y1 <| String.fromFloat (toSvgY system y)
+        , Attributes.y2 <| String.fromFloat (toSvgY system y + height)
         ]
   in
     Svg.line attributes []
@@ -186,13 +185,13 @@ yTick system width userAttributes x y =
     attributes =
       concat
         [ Attributes.class "chart__tick"
-        , Attributes.stroke (Color.Convert.colorToHex Colors.gray)
+        , Attributes.stroke (Color.toCssString Colors.gray)
         ]
         userAttributes
-        [ Attributes.x1 <| toString (toSvgX system x)
-        , Attributes.x2 <| toString (toSvgX system x - width)
-        , Attributes.y1 <| toString (toSvgY system y)
-        , Attributes.y2 <| toString (toSvgY system y)
+        [ Attributes.x1 <| String.fromFloat (toSvgX system x)
+        , Attributes.x2 <| String.fromFloat (toSvgX system x - width)
+        , Attributes.y1 <| String.fromFloat (toSvgY system y)
+        , Attributes.y2 <| String.fromFloat (toSvgY system y)
         ]
   in
     Svg.line attributes []
@@ -264,7 +263,7 @@ transform translations =
       toPosition translations
   in
   Attributes.transform <|
-    "translate(" ++ toString x ++ ", " ++ toString y ++ ")"
+    "translate(" ++ String.fromFloat x ++ ", " ++ String.fromFloat y ++ ")"
 
 
 toPosition : List Transfrom -> Transfrom
