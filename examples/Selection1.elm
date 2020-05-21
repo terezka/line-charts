@@ -19,10 +19,10 @@ import LineChart.Container as Container
 import LineChart.Coordinate as Coordinate
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
+import Browser
 
 
-
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
   Browser.sandbox
     { init = init

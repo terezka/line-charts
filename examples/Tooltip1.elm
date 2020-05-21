@@ -18,10 +18,11 @@ import LineChart.Grid as Grid
 import LineChart.Legends as Legends
 import LineChart.Area as Area
 import Color
+import Browser
 
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
   Browser.sandbox
     { init = init
@@ -81,8 +82,8 @@ chart model =
     , events = Events.hoverOne Hover
     , junk =
         Junk.hoverOne model.hovered
-          [ ( "Age", toString << .age )
-          , ( "Weight", toString << .weight )
+          [ ( "Age", String.fromFloat << .age )
+          , ( "Weight", String.fromFloat << .weight )
           ]
     , grid = Grid.default
     , area = Area.default

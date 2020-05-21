@@ -25,13 +25,13 @@ import LineChart.Container as Container
 import LineChart.Coordinate as Coordinate
 import LineChart.Interpolation as Interpolation
 import LineChart.Axis.Intersection as Intersection
+import Browser
 
 
-
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-  Html.program
-    { init = init
+  Browser.element
+    { init = \_ -> init
     , update = update
     , view = view
     , subscriptions = always Sub.none
@@ -85,23 +85,24 @@ getNumbers =
   let
     genNumbers =
       Random.list 200 (Random.float 0 20)
+      |> Random.map toData
   in
-  Random.map3 (,,) genNumbers genNumbers genNumbers
-    |> Random.generate ReceiveNumbers
+  Random.map3 Data genNumbers genNumbers genNumbers
+    |> Random.generate DataReceived
 
 
 
 -- API
 
 
-setData : ( List Float, List Float, List Float ) -> Model -> Model
-setData ( n1, n2, n3 ) model =
-  { model | data = Data (toData n1) (toData n2) (toData n3) }
-
-
 toData : List Float -> List Coordinate.Point
 toData numbers =
   List.indexedMap (\i -> Coordinate.Point (toFloat i)) numbers
+
+
+setData : Data -> Model -> Model
+setData data model =
+  { model | data = data }
 
 
 setSelection : Maybe Selection -> Model -> Model
@@ -136,7 +137,7 @@ getSelectionStart hovered model =
 
 
 type Msg
-  = ReceiveNumbers ( List Float, List Float, List Float )
+  = DataReceived Data
   -- Chart 1
   | Hold Coordinate.Point
   | Move Coordinate.Point
@@ -150,9 +151,9 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    ReceiveNumbers2 numbers ->
+    DataReceived data ->
       model
-        |> setData numbers
+        |> setData data
         |> addCmd Cmd.none
 
     Hold point ->
@@ -204,10 +205,9 @@ update msg model =
         |> addCmd Cmd.none
 
 
-addCmd : Cmd Msg -> Model -> ( Model, Cmd Msg )
+addCmd : Cmd Msg -> Model -> (Model, Cmd Msg)
 addCmd cmd model =
-  ( model, Cmd.none )
-
+    ( model, cmd )
 
 
 -- VIEW
@@ -215,7 +215,7 @@ addCmd cmd model =
 
 view : Model -> Html.Html Msg
 view model =
-  Html.div [ Html.Attributes.style [ ("display", "flex") ] ] <|
+  Html.div [ Html.Attributes.style "display" "flex" ] <|
     case model.selection of
       Nothing ->
         [ chart model ]
@@ -271,8 +271,8 @@ below system selection =
 
 
 above : Coordinate.System -> Maybe Float -> List (Svg.Svg msg)
-above system hovered =
-  case hovered of
+above system maybeHovered =
+  case maybeHovered of
     Just hovered ->
       [ Junk.vertical system [] hovered ]
 
@@ -290,8 +290,8 @@ chartZoom model selection =
     { range = xAxisRangeConfig selection
     , junk =
         Junk.hoverOne model.hinted
-          [ ( "x", toString << round100 << .x )
-          , ( "y", toString << round100 << .y )
+          [ ( "x", String.fromFloat << round100 << .x )
+          , ( "y", String.fromFloat << round100 << .y )
           ]
     , events = Events.hoverOne Hint
     , legends = Legends.none
@@ -344,7 +344,7 @@ viewChart data { range, junk, events, legends, dots, id } =
           }
     , container =
         Container.custom
-          { attributesHtml = [ Html.Attributes.style [ ( "font-family", "monospace" ) ] ]
+          { attributesHtml = [ Html.Attributes.style "font-family" "monospace" ]
           , attributesSvg = []
           , size = Container.static
           , margin = Container.Margin 30 100 60 50
