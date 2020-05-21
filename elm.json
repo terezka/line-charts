@@ -3,7 +3,7 @@
     "name": "terezka/line-charts",
     "summary": "A library for plotting lines charts in SVG.",
     "license": "BSD-3-Clause",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "exposed-modules": [
         "LineChart",
         "LineChart.Area",
