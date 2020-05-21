@@ -51,13 +51,13 @@ init =
 
 
 type Msg
-  = RecieveNumbers (List Float)
+  = ReceiveNumbers (List Float)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveNumbers numbers ->
+    ReceiveNumbers numbers ->
       ( { model | data = List.indexedMap toData numbers }
       , Cmd.none
       )
@@ -71,7 +71,7 @@ toData index =
 getNumbers : Cmd Msg
 getNumbers =
   Random.list 1501 (Random.float 0 20)
-    |> Random.generate RecieveNumbers
+    |> Random.generate ReceiveNumbers
 
 
 

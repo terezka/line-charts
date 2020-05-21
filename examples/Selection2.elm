@@ -87,7 +87,7 @@ getNumbers =
       Random.list 200 (Random.float 0 20)
   in
   Random.map3 (,,) genNumbers genNumbers genNumbers
-    |> Random.generate RecieveNumbers
+    |> Random.generate ReceiveNumbers
 
 
 
@@ -136,7 +136,7 @@ getSelectionStart hovered model =
 
 
 type Msg
-  = RecieveNumbers ( List Float, List Float, List Float )
+  = ReceiveNumbers ( List Float, List Float, List Float )
   -- Chart 1
   | Hold Coordinate.Point
   | Move Coordinate.Point
@@ -150,7 +150,7 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveNumbers numbers ->
+    ReceiveNumbers2 numbers ->
       model
         |> setData numbers
         |> addCmd Cmd.none
