@@ -27,7 +27,7 @@ import Internal.Container as Container
     chartConfig : LineChart.Config Data Msg
     chartConfig =
       { ...
-      , conatiner = Container.default
+      , container = Container.default
       , ...
       }
 
