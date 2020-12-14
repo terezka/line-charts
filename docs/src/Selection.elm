@@ -102,7 +102,7 @@ generateData =
     |> Random.Pipeline.with (genNumbers -10 10)
     |> Random.Pipeline.with (genNumbers -7 7)
     |> Random.Pipeline.with (genNumbers -8 8)
-    |> Random.Pipeline.send RecieveData
+    |> Random.Pipeline.send ReceiveData
 
 
 toData : List Float -> List Datum
@@ -162,7 +162,7 @@ getSelectionXStart hovered model =
 
 
 type Msg
-  = RecieveData Data
+  = ReceiveData Data
   -- Chart Main
   | Hold Coordinate.Point
   | Move Coordinate.Point
@@ -176,7 +176,7 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveData data ->
+    ReceiveData data ->
       model
         |> setData data
         |> addCmd Cmd.none
@@ -540,7 +540,7 @@ source =
         Random.list 201 (Random.float 0 20)
     in
     Random.map3 (,,) genNumbers genNumbers genNumbers
-      |> Random.generate RecieveData
+      |> Random.generate ReceiveData
 
 
 
@@ -589,7 +589,7 @@ source =
 
 
   type Msg
-    = RecieveData ( List Float, List Float, List Float )
+    = ReceiveData ( List Float, List Float, List Float )
     -- Chart Main
     | Hold Datum
     | Move Datum
@@ -603,7 +603,7 @@ source =
   update : Msg -> Model -> ( Model, Cmd Msg )
   update msg model =
     case msg of
-      RecieveData numbers ->
+      ReceiveData numbers ->
         model
           |> setData numbers
           |> addCmd Cmd.none

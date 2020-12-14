@@ -79,14 +79,14 @@ setHint hinted model =
 
 
 type Msg
-  = RecieveData Data
+  = ReceiveData Data
   | Hint (List Datum)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveData data ->
+    ReceiveData data ->
       model
         |> setData data
         |> addCmd Cmd.none
@@ -185,7 +185,7 @@ generateData =
     |> Random.Pipeline.with genNumbers
     |> Random.Pipeline.with genNumbers
     |> Random.Pipeline.with genNumbers
-    |> Random.Pipeline.send RecieveData
+    |> Random.Pipeline.send ReceiveData
 
 
 toData : List Float -> List Datum
@@ -267,7 +267,7 @@ source =
         Random.list 40 (Random.float 5 20)
     in
     Random.map3 (,,) genNumbers genNumbers genNumbers
-      |> Random.generate RecieveData
+      |> Random.generate ReceiveData
 
 
 
@@ -305,14 +305,14 @@ source =
 
 
   type Msg
-    = RecieveData ( List Float, List Float, List Float )
+    = ReceiveData ( List Float, List Float, List Float )
     | Hint (List Datum)
 
 
   update : Msg -> Model -> ( Model, Cmd Msg )
   update msg model =
     case msg of
-      RecieveData numbers ->
+      ReceiveData numbers ->
         model
           |> setData numbers
           |> addCmd Cmd.none

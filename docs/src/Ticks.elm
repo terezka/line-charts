@@ -73,7 +73,7 @@ getNumbers =
       Random.list 10 (Random.float min max)
   in
   Random.map3 (,,) (genNumbers 9 12) (genNumbers 7 10) (genNumbers 2 10)
-    |> Random.generate RecieveNumbers
+    |> Random.generate ReceiveNumbers
 
 
 
@@ -100,14 +100,14 @@ setHint hinted model =
 
 
 type Msg
-  = RecieveNumbers ( List Float, List Float, List Float )
+  = ReceiveNumbers ( List Float, List Float, List Float )
   | Hint (Maybe Coordinate.Point)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    RecieveNumbers numbers ->
+    ReceiveNumbers numbers ->
       model
         |> setData numbers
         |> addCmd Cmd.none

@@ -268,7 +268,7 @@ source =
         Random.list 30 (Random.int -70 100)
     in
     Random.map3 (,,) genNumbers genNumbers genNumbers
-      |> Random.generate RecieveNumbers
+      |> Random.generate ReceiveNumbers
 
 
 
@@ -300,14 +300,14 @@ source =
 
 
   type Msg
-    = RecieveNumbers ( List Int, List Int, List Int )
+    = ReceiveNumbers ( List Int, List Int, List Int )
     | Hint (Maybe Coordinate.Point)
 
 
   update : Msg -> Model -> ( Model, Cmd Msg )
   update msg model =
     case msg of
-      RecieveNumbers numbers ->
+      ReceiveNumbers numbers ->
         model
           |> setData numbers
           |> addCmd Cmd.none
