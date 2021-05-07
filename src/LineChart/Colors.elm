@@ -5,6 +5,15 @@ module LineChart.Colors exposing
   )
 
 {-|
+This module defines some default colors palette that looks good "out of the box". If you need some custom
+colors, install the [color module from Aaron VonderHaar](https://package.elm-lang.org/packages/avh4/elm-color/latest/):
+`elm install avh4/elm-color`, then just built the color you need:
+
+    import Color
+    
+    myCustomColor = Color.rgb255 142 35 140
+    
+ 
 
 <img alt="Colors!" width="610" src="https://github.com/terezka/line-charts/blob/master/images/colors.png?raw=true"></src>
 
