@@ -1,6 +1,6 @@
 # Line Charts
 
-This libary is deprecated in favor of [elm-charts](https://github.com/terezka/elm-charts).
+This library is deprecated in favor of [elm-charts](https://github.com/terezka/elm-charts).
 
 An library for plotting line charts in SVG. Written in all Elm. See [demo.](https://terezka.github.io/line-charts/)
 
