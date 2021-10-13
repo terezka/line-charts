@@ -1,4 +1,4 @@
-module Tooltip exposing (main)
+module Tooltip2 exposing (main)
 
 import Html exposing (Html, div, h1, node, p, text)
 import Html.Attributes exposing (class)
