@@ -3,7 +3,7 @@
     "name": "terezka/line-charts",
     "summary": "A library for plotting lines charts in SVG.",
     "license": "BSD-3-Clause",
-    "version": "2.0.0",
+    "version": "2.0.2",
     "exposed-modules": [
         "LineChart",
         "LineChart.Area",
@@ -37,7 +37,7 @@
         "elm/time": "1.0.0 <= v < 2.0.0",
         "justinmimbs/time-extra": "1.1.0 <= v < 2.0.0",
         "myrho/elm-round": "1.0.4 <= v < 2.0.0",
-        "ryannhg/date-format": "2.0.1 <= v < 3.0.0"
+        "ryan-haskell/date-format": "1.0.0 <= v < 2.0.0"
     },
     "test-dependencies": {}
 }
